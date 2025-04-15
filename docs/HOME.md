@@ -1,5 +1,5 @@
 # 2025.1-Marventura
-um projeto baseado em one piece 
+Um projeto baseado em One Piece 
 
 ## Grupo 04
 
