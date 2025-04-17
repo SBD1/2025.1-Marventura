@@ -3,8 +3,7 @@
 - [Home](/)
 
 - **Módulo 1**
-  - Modelo Entidade-Relacionamento
-  - Diagrama Entidade-Relacionamento
+  - [Modelo Entidade-Relacionamento](modelagem/modelo-entidade-relacionamento.md)
   - Modelo Relacional
   - Dicionário de Dados
 
