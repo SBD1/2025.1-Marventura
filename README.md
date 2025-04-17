@@ -1,4 +1,4 @@
-# <img src="./assets/logo.jpg" alt="logo" width="28" style="border-radius: 50%;" /> Marventura
+# <img src="/docs/assets/logo.jpg" alt="logo" width="28" style="border-radius: 50%;" /> Marventura
 
 Este projeto é um jogo inspirado no universo de One Piece. Além de proporcionar uma experiência divertida e estilizada, o principal objetivo é servir como ferramenta de aprendizado, especialmente no uso de bancos de dados aplicados ao desenvolvimento de jogos. Ao longo do semestre, serão exploradas formas de armazenar informações como progresso do jogador, inventário, habilidades, personagens encontrados e eventos da história, com foco em boas práticas de estruturação e acesso a dados.
 
@@ -93,7 +93,7 @@ docsify serve ./docs
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do README.md | [Helder Lourenço](https://github.com/F1reFinger) | 14/04/25 | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/25 |
-| `2.0` | Criação do Github Pages | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/25 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/25 |
-| `2.1` | Adicionando equipe e descrição do projeto | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/25 | [Israel Thalles](https://github.com/IsraelThalles) | 16/04/25 |
-| `2.2` | Correção de links e imagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/25 |  |  |
+| `1.0` | Criação do README.md | [Helder Lourenço](https://github.com/F1reFinger) | 14/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/2025 |
+| `2.0` | Criação do Github Pages | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 |
+| `2.1` | Adicionando equipe e descrição do projeto | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 16/04/2025 |
+| `2.2` | Correção de links e imagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 |

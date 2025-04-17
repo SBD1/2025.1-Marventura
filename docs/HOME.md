@@ -60,7 +60,7 @@ A equipe do projeto é composta por cinco integrantes dedicados, conforme aprese
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do README.md | [Helder Lourenço](https://github.com/F1reFinger) | 14/04/25 | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/25 |
-| `2.0` | Criação do Github Pages | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/25 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/25 |
-| `2.1` | Adicionando equipe e descrição do projeto | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/25 | [Israel Thalles](https://github.com/IsraelThalles) | 16/04/25 |
-| `2.2` | Correção de links e imagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/25 |  |  |
+| `1.0` | Criação do README.md | [Helder Lourenço](https://github.com/F1reFinger) | 14/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/2025 |
+| `2.0` | Criação do Github Pages | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 |
+| `2.1` | Adicionando equipe e descrição do projeto | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 16/04/2025 |
+| `2.2` | Correção de links e imagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 |
