@@ -9,4 +9,7 @@
 
 - **Módulo 3**
 
+- **Atas**
+  - [Ata 01](atas/ata01.md)
+
 - **Apresentações**
