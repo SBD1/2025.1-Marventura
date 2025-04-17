@@ -57,7 +57,7 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
   <summary>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</strong></p>
-    <img src="../assets/modelo-entidade-relacionamento-item-v1.0.png">
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-entidade-relacionamento-item-v1.0.png?raw=true">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
@@ -74,4 +74,4 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 |  |  |
+| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 |
