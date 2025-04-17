@@ -6,10 +6,84 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  <link rel="icon" href="./assets/logo.jpg" type="image/jpg">
+  <link id="docsify-theme" rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="icon" href="./assets/favicon.png" type="image/png">
+
+  <style>
+    body {
+      text-align: justify;
+    }
+    
+    body.dark-theme .markdown-section tr:nth-child(2n) {
+      background-color: #262626 !important;
+    }
+
+    body.dark-theme .markdown-section tr {
+      background-color: #2e2e2e !important;
+    }
+
+    body.dark-theme .markdown-section table th,
+    body.dark-theme .markdown-section table td {
+      border-color: #444 !important;
+      color: #eee !important;
+    }
+
+    body.dark-theme .markdown-section table th {
+      background-color: #333 !important;
+      color: #fff !important;
+      border-color: #555 !important;
+    }
+
+    body .markdown-section hr {
+      border-bottom: 2px solid #eee !important;
+    }
+    body.dark-theme .markdown-section code {
+      color: #e96900 !important;
+    }
+
+    body.dark-theme .cover-main {
+      color: #34495e !important;
+    }
+
+    body.dark-theme .cover-main .anchor span {
+      color: #34495e !important;
+    }
+
+    /* --- Estilos do botão de tema --- */
+    #theme-toggle {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 9999;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+      color: #34495e;
+    }
+    body.dark-theme #theme-toggle #theme-icon {
+      color: #c8c8c8;
+    }
+    body:not(.dark-theme) #theme-toggle #theme-icon {
+      color: #34495e;
+    }
+  </style>
 </head>
+
 <body>
+  <button id="theme-toggle" aria-label="Toggle Dark Mode">
+    <svg id="theme-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+    </svg>
+  </button>
+
   <div id="app"></div>
   <script>
     window.$docsify = {
@@ -18,10 +92,55 @@
       repo: 'https://github.com/SBD1/2025.1-Marventura',
       homepage: 'HOME.md',
       coverpage: true,
+      auto2top: true
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  
+
+  <script>
+    const themeToggle = document.getElementById('theme-toggle')
+    const themeIcon = document.getElementById('theme-icon')
+    const themeLink = document.createElement('link')
+
+    themeLink.id = 'docsify-theme'
+    themeLink.rel = 'stylesheet'
+    document.head.appendChild(themeLink)
+
+    // Função para definir o ícone SVG
+    function setIcon(isDark) {
+      themeIcon.innerHTML = isDark
+        ? `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>` // Lua
+        : `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>` // Sol
+    }
+
+    // Função para aplicar o tema
+    function applyTheme(isDark) {
+      themeLink.href = isDark
+        ? "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css"
+        : "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css"
+
+      setIcon(isDark)
+
+      if (isDark) {
+        document.body.classList.add('dark-theme')
+      } else {
+        document.body.classList.remove('dark-theme')
+      }
+    }
+
+    const savedTheme = localStorage.getItem('docsify-theme') || 'light'
+    const initialIsDark = savedTheme === 'dark'
+    applyTheme(initialIsDark)
+
+    // Adiciona o listener para o botão de toggle
+    themeToggle.addEventListener('click', () => {
+      const currentIsDark = document.body.classList.contains('dark-theme')
+      const newIsDark = !currentIsDark
+      applyTheme(newIsDark)
+      localStorage.setItem('docsify-theme', newIsDark ? 'dark' : 'light')
+    })
+  </script>
+
 </body>
 </html>

@@ -1,7 +1,5 @@
 <!-- docs/_sidebar.md -->
 
-- [Home](/)
-
 - **Módulo 1**
   - Modelo Entidade-Relacionamento
   - Diagrama Entidade-Relacionamento
