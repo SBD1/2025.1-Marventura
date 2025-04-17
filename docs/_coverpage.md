@@ -9,4 +9,4 @@
 > Um projeto baseado em One Piece
 
 [GitHub](https://github.com/SBD1/2025.1-Marventura)
-[Acesse a documentação](#_20251-marventura)
+[Acesse a documentação](#-marventura)
