@@ -29,3 +29,10 @@ Para realizar essa transição, foi adotada a abordagem teórica proposta por C.
 
 >*   DATE, C. J. **Introdução a Sistemas de Bancos de Dados**. 8. ed. Rio de Janeiro: Campus, 2004.
 >*   SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. **Fundamentos de bases de datos**. 5. ed. Madrid: McGraw-Hill España, 2006.
+
+
+## 📑 Histórico de Versões
+
+| Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
+| :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
+| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 17/04/2025 | [Diassis Bezerra](https://github.com/Diaxiz) | 20/04/2025 |
