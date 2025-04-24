@@ -57,12 +57,14 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
   <summary>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-entidade-relacionamento-item-v1.0.png?raw=true">
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-entidade-relacionamento-item-v1.1.png?raw=true">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
 
+Os efeitos *Cura* e *Recuperação de energia* são aqueles obtidos através de itens consumíveis e são usados para recuperar os pontos que foram perdidos desses atributos, sem ultrapassar o máximo, enquanto os efeitos *Aumento de vida* e *Aumento de energia* são aplicáveis aos acessórios e servem para aumentar o limite máximo desses atributos. Ademais, *Ataque* e *Sorte* aplicam-se a ambos. Todos esses efeitos possuem três tipos: pequeno, médio e grande, que estão relacionados com os níveis ★, ★★ e ★★★, respectivamente, com excessão de *Sorte* que possui apenas um nível.
 
+---
 
 ## 📚 Bibliografia
 
@@ -75,3 +77,4 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 |
+| `1.1` | Atualização do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 24/04/2025 |  |  |
