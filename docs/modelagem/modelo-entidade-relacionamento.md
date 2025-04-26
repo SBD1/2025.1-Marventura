@@ -77,7 +77,7 @@ A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos 
   </div>
 </details>
 
-
+Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou não ter um inventário de itens. Porém, esse inventário é útil apenas para o Jogador, os Inimigos (que funcionaria como os itens de queda) e os Vendedores (que funcionaria como o estoque). Os demais personagens não possuem um inventário de itens.
 
 ## 📚 Bibliografia
 
