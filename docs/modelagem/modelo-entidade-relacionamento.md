@@ -72,7 +72,7 @@ A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos 
   </summary>
   <div align="center">
     <p><strong>Figura 2 – Diagrama Entidade-Relacionamento dos Personagens</strong></p>
-    <img src="../assets/diagrama-entidade-relacionamento-personagem-v1.0.png">
+    <img src="../assets/diagrama-entidade-relacionamento-personagem-v2.0.png">
     <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
   </div>
 </details>
@@ -90,4 +90,5 @@ A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 |
-| `2.0` | Adição do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 23/04/2025 |  |  |
+| `2.0` | Adição do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 23/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/04/2025 |
+| `2.1` | Adição da versão 2.0 do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 26/04/2025 |  |  |
