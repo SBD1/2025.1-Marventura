@@ -2,7 +2,7 @@
 
 - **Módulo 1**
   - [Modelo Entidade-Relacionamento](modelagem/modelo-entidade-relacionamento.md)
-  - Modelo Relacional
+  - [Modelo Relacional](modelagem/Modelo-Relacional.md)
   - Dicionário de Dados
 
 - **Módulo 2**

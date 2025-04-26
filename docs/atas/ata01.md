@@ -41,9 +41,9 @@
 | ------ | ----------- | ----- |
 | Criar o Diagrama Entidade-Relacionamento para as missões | Diassis Bezerra, Pablo Serra | 23/04/2025 |
 | Criar o Diagrama Entidade-Relacionamento para o mapa | Helder Lourenço | 23/04/2025 |
-| Criar o Diagrama Entidade-Relacionamento para o personagens | Israel Thalles | 23/04/2025 |
+| Criar o Diagrama Entidade-Relacionamento para os personagens | Israel Thalles | 23/04/2025 |
 | Criar o documento de Modelo Relacional | Pablo Serra | 23/04/2025 |
-| Pesquisar sobre o ambiente de desenvolvimento do jogo (Python no termnal, pygames) | Diassis Bezerra, Helder Lourenço, Israel Thalles, Matheus Henrick, Pablo Serra | 23/04/2025 |
+| Pesquisar sobre o ambiente de desenvolvimento do jogo (Python no terminal, pygames) | Diassis Bezerra, Helder Lourenço, Israel Thalles, Matheus Henrick, Pablo Serra | 23/04/2025 |
 
 <center>
 
@@ -63,4 +63,4 @@
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 |  |  |
+| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 18/04/2025 |
