@@ -3,7 +3,7 @@
 - **Módulo 1**
   - [Modelo Entidade-Relacionamento](modelagem/modelo-entidade-relacionamento.md)
   - [Modelo Relacional](modelagem/Modelo-Relacional.md)
-  - Dicionário de Dados
+  - [Dicionário de Dados](modelagem/dicionario-de-dados.md)
 
 - **Módulo 2**
 
