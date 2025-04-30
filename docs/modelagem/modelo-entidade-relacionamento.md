@@ -59,7 +59,7 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
   </summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-entidade-relacionamento-item-v2.0.png?raw=true">
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama-entidade-relacionamento-item-v2.1.png?raw=true">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
@@ -101,5 +101,6 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 | `1.1` | Atualização do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 24/04/2025 | - | - |
 | `2.0` | Adição do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 23/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/04/2025 |
 | `2.1` | Adição da versão 2.0 do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 26/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |
-| `3.0` | Refatoração do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |  |  |
+| `3.0` | Refatoração do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 | - | -ZZ |
+| `3.1` | Correção dos atributos do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |  |  |
 
