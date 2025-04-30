@@ -49,3 +49,4 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 17/04/2025 | [Diassis Bezerra](https://github.com/Diaxiz) | 20/04/2025 |
+| `1.1` | Adição do diagrama do Missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 30/04/2025  |  |  |
