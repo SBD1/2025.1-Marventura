@@ -59,10 +59,14 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
   </summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-entidade-relacionamento-item-v1.0.png?raw=true">
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-entidade-relacionamento-item-v2.0.png?raw=true">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
+
+Os efeitos *Cura* e *Recuperação de energia* são aqueles obtidos através de itens consumíveis e são usados para recuperar os pontos que foram perdidos desses atributos, sem ultrapassar o máximo, enquanto os efeitos *Aumento de vida* e *Aumento de energia* são aplicáveis aos acessórios e servem para aumentar o limite máximo desses atributos. Ademais, *Ataque* e *Sorte* aplicam-se a ambos. Todos esses efeitos possuem três tipos: pequeno, médio e grande, que estão relacionados com as raridades ★, ★★ e ★★★, respectivamente, com excessão de *Sorte* que possui apenas um nível.
+
+---
 
 A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos personagens que abarca tanto o personagem jogável, que é o próprio jogador, quanto os personagens não-jogáveis, que são os inimigos e os habitantes.
 
@@ -79,6 +83,10 @@ A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos 
 
 Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou não ter um inventário de itens. Porém, esse inventário é útil apenas para o Jogador, os Inimigos (que funcionaria como os itens de queda) e os Vendedores (que funcionaria como o estoque). Os demais personagens não possuem um inventário de itens.
 
+---
+
+
+
 ## 📚 Bibliografia
 
 > SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. Fundamentos de bases de datos. 5. ed. Madrid: McGraw-Hill España, 2006.
@@ -90,5 +98,8 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 |
+| `1.1` | Atualização do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 24/04/2025 | - | - |
 | `2.0` | Adição do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 23/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/04/2025 |
 | `2.1` | Adição da versão 2.0 do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 26/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |
+| `3.0` | Refatoração do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |  |  |
+
