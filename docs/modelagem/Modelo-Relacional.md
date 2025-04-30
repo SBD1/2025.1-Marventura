@@ -25,6 +25,19 @@ Para realizar essa transição, foi adotada a abordagem teórica proposta por C.
 
 ## Diagrama Modelo Relacional
 
+A **Figura 1** abaixo apresenta o Diagrama relacional construído para representar a organização dos dados de um sistema de jogo, tendo a entidade missão como elemento central de conexão entre os demais componentes. Cada missão está associada a um Item, que pode ser necessário para completá-la, e a um Mapa, que define o local onde a missão ocorre. Além disso, a missão está diretamente ligada ao jogador, indicando quem a executa, e também ao controller_missão, responsável por agrupar ou organizar missões em conjuntos coerentes.
+
+<details>
+  <summary>Figura 1 – Diagrama Relacional do Missão
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 1 – Diagrama Relacional do Missão</strong></p>
+    <img src="/assets/Modelo_relacional_mapa (2).png">
+    <p>Autor: <a href="https://github.com/Pabloserrapxx">Pablo Serra</a>.</p>
+  </div>
+</details>
+
 ## 📚 Bibliografia
 
 >*   DATE, C. J. **Introdução a Sistemas de Bancos de Dados**. 8. ed. Rio de Janeiro: Campus, 2004.
