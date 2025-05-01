@@ -2,9 +2,9 @@
 
 ## Introdução
 
-Dando continuidade ao processo de modelagem de dados iniciado com o Modelo Entidade-Relacionamento (MER) — conforme apresentado anteriormente, baseado nos conceitos de Silberschatz (2006) — avançamos agora para a construção do Modelo Relacional, que é uma representação mais detalhada e formal, adequada para implementação em sistemas de gerenciamento de banco de dados relacionais.
+Dando continuidade ao processo de modelagem de dados iniciado com o Modelo Entidade-Relacionamento (MER) — conforme apresentado anteriormente, baseado nos conceitos de *Silberschatz (2006)* — avançamos agora para a construção do Modelo Relacional, que é uma representação mais detalhada e formal, adequada para implementação em sistemas de gerenciamento de banco de dados relacionais.
 
-  De acordo com C. J. Date (2004, p. 47), o Modelo Relacional é fundamentado na teoria dos conjuntos e na lógica de predicados, e organiza os dados em estruturas chamadas relações (ou tabelas). Cada relação contém um conjunto de tuplas (linhas) e atributos (colunas), onde:
+  De acordo com *C. J. Date (2004, p. 47)*, o Modelo Relacional é fundamentado na teoria dos conjuntos e na lógica de predicados, e organiza os dados em estruturas chamadas relações (ou tabelas). Cada relação contém um conjunto de tuplas (linhas) e atributos (colunas), onde:
 
  *   Cada atributo representa uma propriedade da entidade ou do relacionamento;
  *   Cada tupla representa uma instância individual dessa entidade;
@@ -25,6 +25,19 @@ Para realizar essa transição, foi adotada a abordagem teórica proposta por C.
 
 ## Diagrama Modelo Relacional
 
+A **Figura 1** abaixo apresenta o Diagrama relacional construído para representar a organização dos dados de um sistema de jogo, tendo a entidade missão como elemento central de conexão entre os demais componentes. Cada missão está associada a um Item, que pode ser necessário para completá-la, e a um Mapa, que define o local onde a missão ocorre. Além disso, a missão está diretamente ligada ao jogador, indicando quem a executa, e também ao `controller_missão`, responsável por agrupar ou organizar missões em conjuntos coerentes.
+
+<details>
+  <summary>Figura 1 – Diagrama Relacional do Missão
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 1 – Diagrama Relacional do Missão</strong></p>
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-missão-v1.0.png?raw=true">
+    <p>Autor: <a href="https://github.com/Pabloserrapxx">Pablo Serra</a>.</p>
+  </div>
+</details>
+
 ## 📚 Bibliografia
 
 >*   DATE, C. J. **Introdução a Sistemas de Bancos de Dados**. 8. ed. Rio de Janeiro: Campus, 2004.
@@ -36,3 +49,4 @@ Para realizar essa transição, foi adotada a abordagem teórica proposta por C.
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 17/04/2025 | [Diassis Bezerra](https://github.com/Diaxiz) | 20/04/2025 |
+| `1.1` | Adição do diagrama do Missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 30/04/2025  | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 30/04/2025 |
