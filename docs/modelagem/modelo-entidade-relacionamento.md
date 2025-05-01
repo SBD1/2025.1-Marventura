@@ -85,7 +85,23 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 
 ---
 
+---
 
+A **Figura 3** apresenta o diagrama Entidade-Relacionamento com foco nas missões e elementos do cenário interativo. O jogador é a entidade central, sendo capaz de realizar diversas missões, as quais estão disponíveis em diferentes mapas. Durante o jogo, o jogador obtém itens por meio do relacionamento "Dropa", que associa os itens adquiridos a ele.
+
+<details>
+  <summary>Figura 3 – Diagrama Entidade-Relacionamento de missões
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 3 – Diagrama Entidade-Relacionamento de missões</strong></p>
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama_missoesv1.0.png?raw=true">
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p>
+  </div>
+</details>
+
+
+---
 
 ## 📚 Bibliografia
 
@@ -103,3 +119,4 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 | `2.1` | Adição da versão 2.0 do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 26/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |
 | `3.0` | Refatoração do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 | [Pablo Serra](https://github.com/Pabloserrapxx) | 30/04/2025  |
 | `3.1` | Correção dos atributos do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 30/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 30/04/2025 |
+| `3.1` | Adicionado Diagrama Entidade-Relacionamento de Missoes | [Diassis](https://github.com/Diaxiz) | 30/04/2025 | [Pablo Serra](https://github.com/IsraelThalles) | 01/05/2025 |
