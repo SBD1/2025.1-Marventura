@@ -76,7 +76,7 @@ A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos 
   </summary>
   <div align="center">
     <p><strong>Figura 2 – Diagrama Entidade-Relacionamento dos Personagens</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama-entidade-relacionamento-personagem-v2.0.png?raw=true">
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama-entidade-relacionamento-personagem-v3.0.png?raw=true">
     <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
   </div>
 </details>
