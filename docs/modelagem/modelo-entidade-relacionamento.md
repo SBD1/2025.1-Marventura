@@ -85,6 +85,19 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 
 ---
 
+<details>
+  <summary>Figura 3 – Diagrama Entidade-Relacionamento do Mapa
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 3 – Diagrama Entidade-Relacionamento do Mapa</strong></p>
+    <img src="../assets/diagrama-entidade-relacionamento-mapa-v1.0.png">
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a>.</p>
+  </div>
+</details>
+
+---
+
 
 
 ## 📚 Bibliografia
@@ -103,3 +116,4 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 | `2.1` | Adição da versão 2.0 do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 26/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |
 | `3.0` | Refatoração do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 | [Pablo Serra](https://github.com/Pabloserrapxx) | 30/04/2025  |
 | `3.1` | Correção dos atributos do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 30/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 30/04/2025 |
+| `4.0` | Adição do diagrama do mapa | [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 |  |  |
