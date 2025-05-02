@@ -53,7 +53,7 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
 
 ---
 
-A **Figura 3** abaixo apresenta o Diagrama Relacional com foco nos itens do inventário. Nela é possível observar que somente as entidades específicas apareceram, pois no *Diagrama Entidade-Relacionamento dos Itens do Inventário* a especialização para essas entidades é total e exclusiva. Note que os relacionamentos também foram modelados para as tabelas auxiliares `HabilidadeArma`, `HabilidadeFruta`, `IngredienteConsumível`, `IngredienteNãoConsumível`, `EfeitoAcessório` e `EfeitoConsumível`.
+A **Figura 3** abaixo apresenta o Diagrama Relacional com foco nos itens do inventário. Nela é possível observar que somente as entidades específicas apareceram, pois no *Diagrama Entidade-Relacionamento dos Itens do Inventário* a especialização para essas entidades é total e exclusiva. Note que os relacionamentos também foram modelados para as tabelas auxiliares `IngredienteConsumível`, `IngredienteNãoConsumível`, `EfeitoAcessório` e `EfeitoConsumível`.
 
 <details>
   <summary>Figura 3 – Diagrama Relacional dos Itens do Inventário
@@ -61,7 +61,7 @@ A **Figura 3** abaixo apresenta o Diagrama Relacional com foco nos itens do inve
   </summary>
   <div align="center">
     <p><strong>Figura 3 – Diagrama Relacional dos Itens do Inventário</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-item-v1.0.png?raw=true">
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-item-v1.1.png?raw=true">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
@@ -104,3 +104,4 @@ Além disso, o diagrama contempla os processos de negociação de itens, atravé
 | `2.0` | Adição do diagrama do Mapa | [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 |
 | `2.1` | Adição do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 | [Helder Lourenço](https://github.com/F1reFinger) | 01/05/2025 |
 | `2.2` | Adição do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
+| `2.3` | Atualização do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
