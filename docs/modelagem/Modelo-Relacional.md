@@ -53,7 +53,7 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
 
 ---
 
-A **Figura 3** abaixo apresenta o Diagrama Relacional com foque nos itens do inventário. Nela é possível observar que somente as entidades específicas apareceram, pois no *Diagrama Entidade-Relacionamento dos Itens do Inventário* a especialização para essas entidades é total e exclusiva. Note que os relacionamentos também foram modelados para as tabelas auxiliares `HabilidadeArma`, `HabilidadeFruta`, `IngredienteConsumível`, `IngredienteNãoConsumível`, `EfeitoAcessório` e `EfeitoConsumível`.
+A **Figura 3** abaixo apresenta o Diagrama Relacional com foco nos itens do inventário. Nela é possível observar que somente as entidades específicas apareceram, pois no *Diagrama Entidade-Relacionamento dos Itens do Inventário* a especialização para essas entidades é total e exclusiva. Note que os relacionamentos também foram modelados para as tabelas auxiliares `HabilidadeArma`, `HabilidadeFruta`, `IngredienteConsumível`, `IngredienteNãoConsumível`, `EfeitoAcessório` e `EfeitoConsumível`.
 
 <details>
   <summary>Figura 3 – Diagrama Relacional dos Itens do Inventário
@@ -63,6 +63,25 @@ A **Figura 3** abaixo apresenta o Diagrama Relacional com foque nos itens do inv
     <p><strong>Figura 3 – Diagrama Relacional dos Itens do Inventário</strong></p>
     <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-item-v1.0.png?raw=true">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
+A **Figura 4** abaixo apresenta o Diagrama Relacional, com destaque para os personagens. Nela é possível observar que as entidades principais `Jogador`, `Aliado`, `Lacaio`, `Chefe` e `Habitante` são especializações distintas de `Personagen` no mapa, cada uma com atributos próprios como vida, nível, experiência e coordenadas. A entidade `Habitante` representa uma especialização parcial e exclusiva entre os papéis de `Vendedor`, `Recrutador` e `Cozinheiro`, mas optou-se por mapear todos os papéis em uma única tabela, utilizando o atributo `Tipo` para diferenciar as especializações.
+
+Vale destacar que alguns dos relacionamentos também foram modelados para tabelas auxiliares como `HabilidadeAliado`, `ReceitasConhecidas` e `ItemInventário`, permitindo a associação de habilidades específicas por aliado, o conhecimento de receitas pelo jogador e o armazenamento de itens no inventário, respectivamente.
+
+Além disso, o diagrama contempla os processos de negociação de itens, através da entidade `Negociação`, e a modelagem de batalhas, por meio da tabela `Batalha`, que integra chefes, aliados, instâncias de lacaios e jogadores em uma única estrutura de combate.
+
+<details>
+  <summary>Figura 4 – Diagrama Relacional dos Personagens
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 4 – Diagrama Relacional dos Personagens</strong></p>
+    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-personagem-v1.0.png?raw=true">
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
   </div>
 </details>
 
@@ -84,3 +103,4 @@ A **Figura 3** abaixo apresenta o Diagrama Relacional com foque nos itens do inv
 | `1.1` | Adição do diagrama das Missões | [Pablo Serra](https://github.com/Pabloserrapxx) | 30/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 30/04/2025 |
 | `2.0` | Adição do diagrama do Mapa | [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 |
 | `2.1` | Adição do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 | [Helder Lourenço](https://github.com/F1reFinger) | 01/05/2025 |
+| `2.2` | Adição do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |  |  |
