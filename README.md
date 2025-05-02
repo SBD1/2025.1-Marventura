@@ -97,3 +97,4 @@ docsify serve ./docs
 | `2.0` | Criação do Github Pages | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 |
 | `2.1` | Adicionando equipe e descrição do projeto | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 16/04/2025 |
 | `2.2` | Correção de links e imagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 |
+| `2.3` | Revisão | [Helder Lourenço](https://github.com/F1reFinger) | 01/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 10105/2025 |
