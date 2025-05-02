@@ -43,7 +43,7 @@ A partir das entidades designadas, cada integrante elaborou as tabelas correspon
 
 - Tipo de Dados;
 
-- Tamanho;
+- Tamanho (lógico);
 
 - Valores Permitidos;
 
@@ -81,21 +81,21 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
       </thead>
       <tbody>
         <tr>
-          <td><code>identificador</code></td>
+          <td><code>identificador_acessorio</code></td>
           <td>Identificador único do acessório.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
-          <td>10</td>
+          <td>3</td>
           <td>"ace"</td>
-          <td>PK</td>
+          <td>-</td>
           <td>Not NULL</td>
         </tr>
         <tr>
@@ -114,14 +114,14 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>1</td>
           <td>&gt;= 0, &lt;= 1</td>
           <td>-</td>
-          <td>Default = 0</td>
+          <td>Default = 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
           <td>Nível de raridade do item.</td>
-          <td>Numérico</td>
-          <td>1</td>
-          <td>1, 2, 3</td>
+          <td>Caracter</td>
+          <td>3</td>
+          <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -173,21 +173,21 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
       </thead>
       <tbody>
         <tr>
-          <td><code>identificador</code></td>
+          <td><code>identificador_arma</code></td>
           <td>Identificador único da arma.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
-          <td>10</td>
+          <td>3</td>
           <td>"arm"</td>
-          <td>PK</td>
+          <td>-</td>
           <td>Not NULL</td>
         </tr>
         <tr>
@@ -206,14 +206,14 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>1</td>
           <td>&gt;= 0, &lt;= 1</td>
           <td>-</td>
-          <td>Default = 0</td>
+          <td>Default = 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
           <td>Nível de raridade do item.</td>
-          <td>Numérico</td>
-          <td>1</td>
-          <td>1, 2, 3</td>
+          <td>Caracter</td>
+          <td>3</td>
+          <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -234,15 +234,6 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>NULL</td>
           <td>-</td>
           <td>-</td>
-        </tr>
-        <tr>
-          <td><code>dano_da_arma</code></td>
-          <td>Dano causado pela arma em pontos de vida.</td>
-          <td>Inteiro</td>
-          <td>2</td>
-          <td>&gt;= 1, &lt;= 25</td>
-          <td>-</td>
-          <td>Default = 1 / Not NULL</td>
         </tr>
       </tbody>
     </table>
@@ -274,21 +265,21 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
       </thead>
       <tbody>
         <tr>
-          <td><code>identificador</code></td>
+          <td><code>identificador_consumivel</code></td>
           <td>Identificador único do consumivel.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
-          <td>10</td>
+          <td>3</td>
           <td>"con"</td>
-          <td>PK</td>
+          <td>-</td>
           <td>Not NULL</td>
         </tr>
         <tr>
@@ -307,14 +298,14 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>2</td>
           <td>&gt;= 0, &lt;= 99</td>
           <td>-</td>
-          <td>Default = 0</td>
+          <td>Default = 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
           <td>Nível de raridade do item.</td>
-          <td>Numérico</td>
-          <td>1</td>
-          <td>1, 2, 3</td>
+          <td>Caracter</td>
+          <td>3</td>
+          <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -366,21 +357,21 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
       </thead>
       <tbody>
         <tr>
-          <td><code>identificador</code></td>
-          <td>Identificador único do Não-Consumivel.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td><code>identificador_nao_consumivel</code></td>
+          <td>Identificador único do não-consumível.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
-          <td>10</td>
+          <td>3</td>
           <td>"ncn"</td>
-          <td>PK</td>
+          <td>-</td>
           <td>Not NULL</td>
         </tr>
         <tr>
@@ -399,14 +390,14 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>2</td>
           <td>&gt;= 0, &lt;= 99</td>
           <td>-</td>
-          <td>Default = 0</td>
+          <td>Default = 0 / Not Null</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
           <td>Nível de raridade do item.</td>
-          <td>Numérico</td>
-          <td>1</td>
-          <td>1, 2, 3</td>
+          <td>Caracter</td>
+          <td>3</td>
+          <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -458,40 +449,22 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
       </thead>
       <tbody>
         <tr>
-          <td><code>identificador</code></td>
+          <td><code>identificador_receita</code></td>
           <td>Identificador único da receita.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>id_consumivel</code></td>
-          <td>Identificador único do consumível.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
+          <td><code>consumivel_produzido</code></td>
+          <td>Identificador único do consumível gerado por essa receita.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>id_não_consumivel</code></td>
-          <td>Identificador único do não-consumível.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>FK</td>
-          <td>Unique / Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>quantidade</code></td>
-          <td>Quantidade de cada item.</td>
-          <td>Inteiro</td>
-          <td>2</td>
-          <td>&gt;= 0, &lt;= 99</td>
-          <td>-</td>
-          <td>Default = 0</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
@@ -523,37 +496,19 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
       </thead>
       <tbody>
         <tr>
-          <td><code>identificador</code></td>
+          <td><code>identificador_efeito</code></td>
           <td>Identificador único do efeito.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>id_acessório</code></td>
-          <td>Identificador único do acessório.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>FK</td>
-          <td>Unique / Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>id_arma</code></td>
-          <td>Identificador único da arma.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0-9</td>
-          <td>FK</td>
-          <td>Unique / Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>tipo</code></td>
-          <td>Tipo do efeito.</td>
+          <td><code>nome</code></td>
+          <td>Nome do efeito.</td>
           <td>Texto</td>
-          <td>20</td>
+          <td>100</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -575,11 +530,256 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 
 ---
 
+### Tabela: `habilidade`
+
+<details>
+  <summary>Tabela 7 – Dicionário de Dados da Entidade Habilidade
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 7 – Dicionário de Dados da Entidade Habilidade</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Identificador único da habilidade.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>dano</code></td>
+          <td>Dano causado pela habilidade.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>&gt;= 0, &lt;= 15</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>custo</code></td>
+          <td>Custo para usar a habilidade.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>&gt;= 0, &lt;= 4</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `ingrediente_consumivel`
+
+<details>
+  <summary>Tabela 8 – Dicionário de Dados da Tabela Ingrediente Consumível
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 8 – Dicionário de Dados da Tabela Ingrediente Consumível</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_receita</code></td>
+          <td>Identificador único da receita.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_consumivel</code></td>
+          <td>Identificador único do consumível.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `ingrediente_nao_consumivel`
+
+<details>
+  <summary>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Não-Consumível
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Não-Consumível</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_receita</code></td>
+          <td>Identificador único da receita.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_nao_consumivel</code></td>
+          <td>Identificador único do não-consumível.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `efeito_acessorio`
+
+<details>
+  <summary>Tabela 10 – Dicionário de Dados da Tabela Efeito Acessório
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 10 – Dicionário de Dados da Tabela Efeito Acessório</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_efeito</code></td>
+          <td>Identificador único do efeito.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_acessorio</code></td>
+          <td>Identificador único do acessório.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `efeito_consumivel`
+
+<details>
+  <summary>Tabela 11 – Dicionário de Dados da Tabela Efeito Consumível
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 11 – Dicionário de Dados da Tabela Efeito Consumível</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_efeito</code></td>
+          <td>Identificador único do efeito.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_consumivel</code></td>
+          <td>Identificador único do consumível.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
 
 
 ## Convenções
 - **Nomes de campos**: Devem ser escritos em `snake_case`.
 - **Tipos de dados**: Devem seguir os padrões do banco de dados utilizado.
+  - **Importante:** O tipo de dados "ID" será alfanumérico, composto por três números de 0 a 9 e três caracteres de 'a' a 'z'.
 - **Tamanhos**: Representam o limite máximo de caracteres ou valores.
 
 
@@ -595,3 +795,4 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/04/2025 |  |  |
+| `1.1` | Adição das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |  |  |
