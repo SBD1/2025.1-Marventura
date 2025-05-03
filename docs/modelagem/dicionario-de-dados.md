@@ -578,6 +578,15 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>-</td>
           <td>Not NULL</td>
         </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da habilidade.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
       </tbody>
     </table>
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
@@ -774,7 +783,1068 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 
 ---
 
+### Tabela: `jogador`
 
+<details>
+  <summary>Tabela 16 – Dicionário de Dados da Tabela Jogador
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 16 – Dicionário de Dados da Tabela Jogador</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_jogador</code></td>
+          <td>Identificador único do jogador.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Identificador da habilidade associada ao jogador.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_mapa</code></td>
+          <td>Identificador do mapa atual do jogador.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>energia</code></td>
+          <td>Energia do jogador.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>DEFAULT 100</td>
+        </tr>
+        <tr>
+          <td><code>vida</code></td>
+          <td>Vida máxima do jogador.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>DEFAULT 100</td>
+        </tr>
+        <tr>
+          <td><code>nivel</code></td>
+          <td>Nível atual do jogador.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>1 a 99</td>
+          <td>-</td>
+          <td>DEFAULT 1</td>
+        </tr>
+        <tr>
+          <td><code>sorte</code></td>
+          <td>Valor de sorte do jogador.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>0 a 99</td>
+          <td>-</td>
+          <td>DEFAULT 0</td>
+        </tr>
+        <tr>
+          <td><code>vida_atual</code></td>
+          <td>Vida atual do jogador.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a vida</td>
+          <td>-</td>
+          <td>CHECK (vida_atual <= vida)</td>
+        </tr>
+        <tr>
+          <td><code>dano_base</code></td>
+          <td>Dano base do jogador.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>experiencia_atual</code></td>
+          <td>Experiência atual acumulada pelo jogador.</td>
+          <td>Inteiro</td>
+          <td>5</td>
+          <td>0 a 99999</td>
+          <td>-</td>
+          <td>DEFAULT 0</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_x</code></td>
+          <td>Coordenada X atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_y</code></td>
+          <td>Coordenada Y atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `aliado`
+
+<details>
+  <summary>Tabela 17 – Dicionário de Dados da Tabela Aliado
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 17 – Dicionário de Dados da Tabela Aliado</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_aliado</code></td>
+          <td>Identificador único do aliado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_mapa</code></td>
+          <td>Identificador do mapa atual do aliado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>vida</code></td>
+          <td>Vida máxima do aliado.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>DEFAULT 100</td>
+        </tr>
+        <tr>
+          <td><code>nivel</code></td>
+          <td>Nível atual do aliado.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>1 a 99</td>
+          <td>-</td>
+          <td>DEFAULT 1</td>
+        </tr>
+        <tr>
+          <td><code>vida_atual</code></td>
+          <td>Vida atual do aliado.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a vida</td>
+          <td>-</td>
+          <td>CHECK (vida_atual <= vida)</td>
+        </tr>
+        <tr>
+          <td><code>dano_base</code></td>
+          <td>Dano base do aliado.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_x</code></td>
+          <td>Coordenada X atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_y</code></td>
+          <td>Coordenada Y atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `habitante`
+
+<details>
+  <summary>Tabela 18 – Dicionário de Dados da Tabela Habitante
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 18 – Dicionário de Dados da Tabela Habitante</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_habitante</code></td>
+          <td>Identificador único do habitante.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_mapa</code></td>
+          <td>Identificador do mapa atual do habitante.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo de habitante.</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"hab", "rec", "coz", "ven"</td>
+          <td>-</td>
+          <td>CHECK</td>
+        </tr>
+        <tr>
+          <td><code>especialidade</code></td>
+          <td>Tipo de item vendido pelo vendedor.</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"arm", "ace", "com"</td>
+          <td>-</td>
+          <td>CHECK</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_x</code></td>
+          <td>Coordenada X atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_y</code></td>
+          <td>Coordenada Y atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `lacaio`
+
+<details>
+  <summary>Tabela 19 – Dicionário de Dados da Tabela Lacaio
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 19 – Dicionário de Dados da Tabela Lacaio</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_lacaio</code></td>
+          <td>Identificador único do lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Identificador da habilidade associada ao lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_mapa</code></td>
+          <td>Identificador do mapa atual do lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>vida</code></td>
+          <td>Vida máxima do lacaio.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>DEFAULT 100</td>
+        </tr>
+        <tr>
+          <td><code>nivel</code></td>
+          <td>Nível do lacaio.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>1 a 99</td>
+          <td>-</td>
+          <td>DEFAULT 1</td>
+        </tr>
+        <tr>
+          <td><code>dano</code></td>
+          <td>Dano base do lacaio.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>experiencia</code></td>
+          <td>Experiência que o lacaio dá ao jogador ao ser derrotado.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_x</code></td>
+          <td>Coordenada X atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_y</code></td>
+          <td>Coordenada Y atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `chefe`
+
+<details>
+  <summary>Tabela 20 – Dicionário de Dados da Tabela Chefe
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 20 – Dicionário de Dados da Tabela Chefe</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_chefe</code></td>
+          <td>Identificador único do chefe.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Identificador da habilidade associada ao chefe.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_mapa</code></td>
+          <td>Identificador do mapa atual do chefe.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>vida</code></td>
+          <td>Vida máxima do chefe.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>DEFAULT 100</td>
+        </tr>
+        <tr>
+          <td><code>nivel</code></td>
+          <td>Nível do chefe.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>1 a 99</td>
+          <td>-</td>
+          <td>DEFAULT 1</td>
+        </tr>
+        <tr>
+          <td><code>dano</code></td>
+          <td>Dano base do chefe.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>experiencia</code></td>
+          <td>Experiência que o chefe dá ao jogador ao ser derrotado.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_x</code></td>
+          <td>Coordenada X atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_y</code></td>
+          <td>Coordenada Y atual no mapa.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>-9999 a 9999</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `instancia_lacaio`
+
+<details>
+  <summary>Tabela 21 – Dicionário de Dados da Tabela Instancia Lacaio
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 21 – Dicionário de Dados da Tabela Instancia Lacaio</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_instancia_lacaio</code></td>
+          <td>Identificador parcial único da instância de lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_lacaio</code></td>
+          <td>Identificador do lacaio gerador da instância.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>vida_atual</code></td>
+          <td>Vida atual da instância de lacaio.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td>-</td>
+          <td>DEFAULT 100</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `tipo_personagem`
+
+<details>
+  <summary>Tabela 22 – Dicionário de Dados da Tabela Tipo Personagem
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 22 – Dicionário de Dados da Tabela Tipo Personagem</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_personagem</code></td>
+          <td>Identificador único do personagem.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo de personagem.</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"hab", "rec", "coz", "ven", "ali", "jog", "lac", "che"</td>
+          <td>-</td>
+          <td>CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `inventario`
+
+<details>
+  <summary>Tabela 23 – Dicionário de Dados da Tabela Inventário
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 23 – Dicionário de Dados da Tabela Inventário</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_inventario</code></td>
+          <td>Identificador parcial único do inventário.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_personagem</code></td>
+          <td>Identificador do personagem que possui o inventário.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo de inventário.</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"ger", "eqp"</td>
+          <td>-</td>
+          <td>CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `item_inventario`
+
+<details>
+  <summary>Tabela 24 – Dicionário de Dados da Tabela Item Inventário
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 24 – Dicionário de Dados da Tabela Item Inventário</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_inventario</code></td>
+          <td>Identificador único do inventário.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_item</code></td>
+          <td>Identificador único do item.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `habilidade_aliado`
+
+<details>
+  <summary>Tabela 25 – Dicionário de Dados da Tabela Habilidade Aliado
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 25 – Dicionário de Dados da Tabela Habilidade Aliado</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Identificador único da habilidade.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_aliado</code></td>
+          <td>Identificador único do aliado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `batalha_instancia_lacaio`
+
+<details>
+  <summary>Tabela 26 – Dicionário de Dados da Tabela Batalha Instância Lacaio
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 26 – Dicionário de Dados da Tabela Batalha Instância Lacaio</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_batalha</code></td>
+          <td>Identificador único da batalha.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_instancia_lacaio</code></td>
+          <td>Identificador único da instância de lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `receitas_conhecidas`
+
+<details>
+  <summary>Tabela 27 – Dicionário de Dados da Tabela Receitas Conhecidas
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 27 – Dicionário de Dados da Tabela Receitas Conhecidas</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_jogador</code></td>
+          <td>Identificador único do jogador.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_receita</code></td>
+          <td>Identificador único da receita.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `negociacao`
+
+<details>
+  <summary>Tabela 28 – Dicionário de Dados da Tabela Negociação
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 28 – Dicionário de Dados da Tabela Negociação</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_negociacao</code></td>
+          <td>Identificador único do negociação.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_item</code></td>
+          <td>Identificador único de item.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_jogador</code></td>
+          <td>Identificador único de jogador.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_vendedor</code></td>
+          <td>Identificador único de vendedor.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>quantidade</code></td>
+          <td>Quantidade de cada item.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>&gt;= 0, &lt;= 99</td>
+          <td>-</td>
+          <td>Default = 0 / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>preco_final</code></td>
+          <td>Valor total gasto ao comprar uma quantia de itens.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>&gt;= 1, &lt;= 98901</td>
+          <td>-</td>
+          <td>Default = 1 / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo de negociação.</td>
+          <td>Texto</td>
+          <td>6</td>
+          <td>"compra", "venda</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `batalha`
+
+<details>
+  <summary>Tabela 29 – Dicionário de Dados da Tabela Batalha
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 29 – Dicionário de Dados da Tabela Batalha</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_batalha</code></td>
+          <td>Identificador único da batalha.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_aliado</code></td>
+          <td>Identificador único do aliado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_jogador</code></td>
+          <td>Identificador único de jogador.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_chefe</code></td>
+          <td>Identificador único de chefe.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>identificador_instancia_lacaio</code></td>
+          <td>Identificador único da instância de lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>experiencia_ganha</code></td>
+          <td>Experiência recebida pelo jogador ao vencer uma batalha.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>&gt;= 5, &lt;= 999</td>
+          <td>-</td>
+          <td>Default = 5 / Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
 
 ## Convenções
 - **Nomes de campos**: Devem ser escritos em `snake_case`.
@@ -796,3 +1866,4 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/04/2025 |  |  |
 | `1.1` | Adição das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
+| `1.3` | Adição das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |  |  |
