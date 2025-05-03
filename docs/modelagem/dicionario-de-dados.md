@@ -57,7 +57,7 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 
 ## Estrutura do Dicionário de Dados
 
-As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
+As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
 
 ### Tabela: `acessorio`
 
@@ -2072,11 +2072,11 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 ### Tabela: `Missão`
 
 <details>
-  <summary>Tabela 2 – Dicionário de Dados da Tabela Missão
+  <summary>Tabela 30 – Dicionário de Dados da Tabela Missão
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 2 – Dicionário de Dados da Tabela Missão</strong></p>
+    <p><strong>Tabela 30 – Dicionário de Dados da Tabela Missão</strong></p>
     <table>
       <thead>
         <tr>
@@ -2093,63 +2093,63 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
         <tr>
           <td><code>MissãoID</code></td>
           <td>Identificador único da missão.</td>
-          <td>Inteiro</td>
+          <td>ID</td>
           <td></td>
-          <td>Padrão do tipo Inteiro</td>
+          <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / Unique / CHECK</td>
         </tr>
         <tr>
           <td><code>MapaID</code></td>
           <td>Identificador único do mapa onde a missão ocorre.</td>
-          <td>Inteiro</td>
+          <td>ID</td>
           <td></td>
           <td>IDs da tabela Mapa</td>
           <td>FK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>idJogador</code></td>
           <td>Identificador único do jogador associado à missão.</td>
-          <td>Inteiro</td>
+          <td>ID</td>
           <td></td>
           <td>IDs da tabela Jogador</td>
           <td>FK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>SalaID</code></td>
           <td>Identificador único da sala ou instância onde a missão está ativa.</td>
-          <td>Inteiro</td>
+          <td>ID</td>
           <td></td>
           <td>IDs da tabela Sala</td>
           <td>FK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
          <tr>
           <td><code>TipoSala</code></td>
           <td>Identificador do tipo de sala relacionado à missão.</td>
-          <td>Inteiro</td>
+          <td>ID</td>
           <td></td>
           <td>IDs da tabela TipoSala</td>
           <td>FK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
          <tr>
           <td><code>idRecrutador</code></td>
           <td>Identificador único do NPC ou entidade que ofereceu a missão.</td>
-          <td>Inteiro</td>
+          <td>ID</td>
           <td></td>
           <td>IDs da tabela Recrutador</td>
           <td>FK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
          <tr>
           <td><code>descricao</code></td>
           <td>Texto descritivo detalhado dos objetivos e contexto da missão.</td>
           <td>Texto</td>
           <td>500</td>
-          <td>Qualquer texto</td>
+          <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -2158,7 +2158,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>Nome ou título curto da missão.</td>
           <td>Texto</td>
           <td>100</td>
-          <td>Qualquer texto (a-z, A-Z, 0-9, etc.)</td>
+          <td>a-z, A-Z, 0-9</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -2192,5 +2192,5 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 | `1.1` | Adição das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
 | `1.2` | Adição das tabelas referentes ao mapa | [Helder Lourenço](https://github.com/F1reFinger) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.3` | Adição das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
-| `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |  |  |
-| `1.4` | adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 |  | |
+| `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | - | - |
+| `1.5` | Adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
