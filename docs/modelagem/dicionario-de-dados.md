@@ -783,6 +783,457 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 
 ---
 
+### Tabela: `mapa`
+
+<details>
+  <summary>Tabela 12 – Dicionário de Dados da Entidade Mapa
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 12 – Dicionário de Dados da Entidade Mapa</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único do mapa.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome do mapa.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+
+---
+
+### Tabela `ilha`
+
+<details>
+  <summary>Tabela 13 – Dicionário de Dados da Entidade Ilha
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 13 – Dicionário de Dados da Entidade Ilha</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único da ilha.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da ilha.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Tipo da ilha.</td>
+          <td>Texto</td>
+          <td>15</td>
+          <td>"vulcânica", "deserta", etc.</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tamanho</code></td>
+          <td>Tamanho da ilha.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>&ge; 1</td>
+          <td>–</td>
+          <td>Default = 1 / Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+---
+
+### Tabela `barco`
+
+<details>
+  <summary>Tabela 14 – Dicionário de Dados da Entidade Barco
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <strong>Tabela 14 – Dicionário de Dados da Entidade Barco</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único do barco.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome do barco.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>Letras</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>velocidade</code></td>
+          <td>Velocidade máxima.</td>
+          <td>Decimal</td>
+          <td>5</td>
+          <td>&gt; 0</td>
+          <td>–</td>
+          <td>Default = 1.0 / Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+---
+
+### Tabela `sala`
+
+<details>
+  <summary>Tabela 15 – Dicionário de Dados da Entidade Sala
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 15 – Dicionário de Dados da Entidade Sala</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único da sala.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>ilha_id</code></td>
+          <td>Ilha onde a sala está.</td>
+          <td>FK</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Tipo da sala.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>"normal", "tesouro", etc.</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+---
+
+
+### Tabela: `mapa`
+
+<details>
+  <summary>Tabela 12 – Dicionário de Dados da Entidade Mapa
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 12 – Dicionário de Dados da Entidade Mapa</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único do mapa.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome do mapa.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+
+---
+
+### Tabela `ilha`
+
+<details>
+  <summary>Tabela 13 – Dicionário de Dados da Entidade Ilha
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 13 – Dicionário de Dados da Entidade Ilha</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único da ilha.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da ilha.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Tipo da ilha.</td>
+          <td>Texto</td>
+          <td>15</td>
+          <td>"vulcânica", "deserta", etc.</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tamanho</code></td>
+          <td>Tamanho da ilha.</td>
+          <td>Inteiro</td>
+          <td>2</td>
+          <td>&ge; 1</td>
+          <td>–</td>
+          <td>Default = 1 / Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+---
+
+### Tabela `barco`
+
+<details>
+  <summary>Tabela 14 – Dicionário de Dados da Entidade Barco
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <strong>Tabela 14 – Dicionário de Dados da Entidade Barco</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único do barco.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome do barco.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>Letras</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>velocidade</code></td>
+          <td>Velocidade máxima.</td>
+          <td>Decimal</td>
+          <td>5</td>
+          <td>&gt; 0</td>
+          <td>–</td>
+          <td>Default = 1.0 / Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+---
+
+### Tabela `sala`
+
+<details>
+  <summary>Tabela 15 – Dicionário de Dados da Entidade Sala
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 15 – Dicionário de Dados da Entidade Sala</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id</code></td>
+          <td>Identificador único da sala.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>ilha_id</code></td>
+          <td>Ilha onde a sala está.</td>
+          <td>FK</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Tipo da sala.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>"normal", "tesouro", etc.</td>
+          <td>–</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+  </div>
+</details>
+
+---
+
 ### Tabela: `jogador`
 
 <details>
@@ -1864,6 +2315,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/04/2025 |  |  |
+| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/04/2025 | - | - |
 | `1.1` | Adição das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
+| `1.2` | Adição das tabelas referentes ao mapa | [Helder Lourenço](https://github.com/F1reFinger) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.3` | Adição das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |  |  |
