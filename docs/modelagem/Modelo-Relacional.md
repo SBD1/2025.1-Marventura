@@ -96,8 +96,8 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Relacional final</strong></p>
-    <a href="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-Completo-v1.1.drawio.svg?raw=true" target="_blank">
-      <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-Completo-v1.1.drawio.svg"?raw=true alt="Diagrama Relacional">
+    <a href="/assets/modelo-relacional-Completo-v1.1.drawio.png" target="_blank">
+      <img src="/assets/modelo-relacional-Completo-v1.1.drawio.png" alt="Diagrama Relacional">
     </a>
   </div>
 </details>
