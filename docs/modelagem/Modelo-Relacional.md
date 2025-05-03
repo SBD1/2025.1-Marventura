@@ -87,7 +87,22 @@ Além disso, o diagrama contempla os processos de negociação de itens, atravé
 
 ---
 
+A **Figura 5** é uma junção de todos os diagramas relacionais apresentados nas figuras anteriores, integrando as entidades e relacionamentos dos itens do inventário, personagens, missões e mapas em uma única estrutura abrangente. Este diagrama relacional consolidado oferece uma visão completa do sistema de jogo, permitindo entender como todas as partes interagem entre si.
+<details>
+  <summary>Figura 5 – Diagrama Relacional final - Clique na imagem para melhor visualização
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+    </svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 5 – Diagrama Relacional final</strong></p>
+    <a href="/assets/modelo-relacional-Completo-v1.1.drawio.svg" target="_blank">
+      <img src="/assets/modelo-relacional-Completo-v1.1.drawio.svg" alt="Diagrama Relacional">
+    </a>
+  </div>
+</details>
 
+---
 
 ## 📚 Bibliografia
 
@@ -105,3 +120,4 @@ Além disso, o diagrama contempla os processos de negociação de itens, atravé
 | `2.1` | Adição do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 | [Helder Lourenço](https://github.com/F1reFinger) | 01/05/2025 |
 | `2.2` | Adição do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `2.3` | Atualização do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
+| `2.4` | adição do diagrama relacional final | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 |  | |

@@ -112,7 +112,23 @@ A **Figura 4** apresenta o diagrama Entidade-Relacionamento com foco nas missõe
 </details>
 
 ---
+A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores, consolidando o modelo de dados do sistema de inventário, personagens, mapas, e missões de uma maneira integrada. Nesse diagrama, observa-se como as entidades interagem entre si, formando um conjunto coeso de tabelas e relacionamentos que representam o funcionamento do jogo como um todo.
 
+<details>
+  <summary>Figura 5 – Diagrama Entidade-Relacionamento final - Clique na imagem para melhor visualização
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+    </svg>
+  </summary>
+  <div align="center">
+    <p><strong>Figura 5 – Diagrama Entidade-Relacionamento final</strong></p>
+    <a href="assets/diagrama-entidade-relacionamento-completo-v7.2.png" target="_blank">
+      <img src="assets/diagrama-entidade-relacionamento-completo-v7.2.png" alt="Diagrama Relacional">
+    </a>
+  </div>
+</details>
+
+---
 ## 📚 Bibliografia
 
 > SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. Fundamentos de bases de datos. 5. ed. Madrid: McGraw-Hill España, 2006.
@@ -131,3 +147,4 @@ A **Figura 4** apresenta o diagrama Entidade-Relacionamento com foco nas missõe
 | `3.1` | Correção dos atributos do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 30/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 30/04/2025 |
 | `3.2` | Adicionado Diagrama Entidade-Relacionamento de Missoes | [Diassis](https://github.com/Diaxiz) | 30/04/2025 | [Pablo Serra](https://github.com/IsraelThalles), [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 |
 | `4.0` | Adição do diagrama do mapa | [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 |
+| `4.1` | adição do diagrama Entidade-Relacionamento final| [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 |  | |
