@@ -96,7 +96,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>3</td>
           <td>"ace"</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -188,7 +188,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>3</td>
           <td>"arm"</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -280,7 +280,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>3</td>
           <td>"con"</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -372,7 +372,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>3</td>
           <td>"ncn"</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -802,7 +802,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -850,7 +850,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -868,7 +868,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>15</td>
           <td>"vulcânica", "deserta", etc.</td>
           <td>–</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>tamanho</code></td>
@@ -915,7 +915,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -971,7 +971,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>PK</td>
-          <td>Unique / Not NULL</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>ilha_id</code></td>
@@ -980,7 +980,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>tipo</code></td>
@@ -989,7 +989,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
           <td>50</td>
           <td>"normal", "tesouro", etc.</td>
           <td>–</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
@@ -1005,7 +1005,7 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 ## Convenções
 - **Nomes de campos**: Devem ser escritos em `snake_case`.
 - **Tipos de dados**: Devem seguir os padrões do banco de dados utilizado.
-  - **Importante:** O tipo de dados "ID" será alfanumérico, composto por três números de 0 a 9 e três caracteres de 'a' a 'z'.
+  - **Importante:** O tipo de dados "ID" será alfanumérico, composto por três caracteres de 'a' a 'z' e três números de 0 a 9. Ex: "abc000".
 - **Tamanhos**: Representam o limite máximo de caracteres ou valores.
 
 
@@ -1023,3 +1023,4 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/04/2025 | - | - |
 | `1.1` | Adição das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
 | `1.2` | Adição das tabelas referentes ao mapa | [Helder Lourenço](https://github.com/F1reFinger) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
+| `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |  |  |
