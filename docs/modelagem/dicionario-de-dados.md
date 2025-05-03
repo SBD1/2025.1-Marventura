@@ -2069,6 +2069,105 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
   </div>
 </details>
 
+### Tabela: `Missão`
+
+<details>
+  <summary>Tabela 2 – Dicionário de Dados da Tabela Missão
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 2 – Dicionário de Dados da Tabela Missão</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>MissãoID</code></td>
+          <td>Identificador único da missão.</td>
+          <td>Inteiro</td>
+          <td></td>
+          <td>Padrão do tipo Inteiro</td>
+          <td>PK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>MapaID</code></td>
+          <td>Identificador único do mapa onde a missão ocorre.</td>
+          <td>Inteiro</td>
+          <td></td>
+          <td>IDs da tabela Mapa</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>idJogador</code></td>
+          <td>Identificador único do jogador associado à missão.</td>
+          <td>Inteiro</td>
+          <td></td>
+          <td>IDs da tabela Jogador</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>SalaID</code></td>
+          <td>Identificador único da sala ou instância onde a missão está ativa.</td>
+          <td>Inteiro</td>
+          <td></td>
+          <td>IDs da tabela Sala</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+         <tr>
+          <td><code>TipoSala</code></td>
+          <td>Identificador do tipo de sala relacionado à missão.</td>
+          <td>Inteiro</td>
+          <td></td>
+          <td>IDs da tabela TipoSala</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+         <tr>
+          <td><code>idRecrutador</code></td>
+          <td>Identificador único do NPC ou entidade que ofereceu a missão.</td>
+          <td>Inteiro</td>
+          <td></td>
+          <td>IDs da tabela Recrutador</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+         <tr>
+          <td><code>descricao</code></td>
+          <td>Texto descritivo detalhado dos objetivos e contexto da missão.</td>
+          <td>Texto</td>
+          <td>500</td>
+          <td>Qualquer texto</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+         <tr>
+          <td><code>Nome</code></td>
+          <td>Nome ou título curto da missão.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>Qualquer texto (a-z, A-Z, 0-9, etc.)</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Pabloserrapxx">Pablo Serra</a>.</p> 
+  </div>
+</details>
+
 ---
 
 ## Convenções
@@ -2094,3 +2193,4 @@ As tabelas 1 a N a seguir representam o dicionário de dados do jogo **Marventur
 | `1.2` | Adição das tabelas referentes ao mapa | [Helder Lourenço](https://github.com/F1reFinger) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.3` | Adição das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |  |  |
+| `1.4` | adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 |  | |
