@@ -11,6 +11,7 @@
 
 - **Atas**
   - [Ata 01](atas/ata01.md)
+  - [Ata 02](atas/ata02.md)
 
 - **Apresentações**
   - [Apresentação 01](apresentacao/apresentacao01.md)
