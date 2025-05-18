@@ -1,12 +1,12 @@
 # mapa_dados.py
 
+from utilidades.constantes import *
+
 # Dicionário para armazenar os dados de configuração de cada mapa do jogo.
 # Cada chave é o ID único do mapa.
 mapas_data = {
-    'ilha_inicial': { # ID do primeiro mapa
-        'background_key': 'cenario_ilha_1', # Chave do gerenciador de recursos para a imagem de fundo deste mapa
-        'player_start_x': 100, # Posição X inicial do jogador neste mapa (coordenada do mundo)
-        'player_start_y': 370, # Posição Y inicial do jogador neste mapa (coordenada do mundo)
+    ID_MAPA_CAMPO_VILA: { # ID do primeiro mapa
+        'chave_cenario': CHAVE_CENARIO_CAMPO_VILA, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
         'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
             # Limite superior do caminho (particionado em segmentos)
             {'x': 0, 'y': 323, 'largura': 1715, 'altura': 20},
@@ -14,8 +14,6 @@ mapas_data = {
             {'x': 1916, 'y': 323, 'largura': 3540 - 1915, 'altura': 20}, # Continuação do limite superior
             # Limite inferior do caminho (segmento único)
             {'x': 0, 'y': 530, 'largura': 3540, 'altura': 20},
-            # Adicione outros obstáculos aqui (paredes, limites verticais, etc.)
-            # {'x': 500, 'y': 400, 'largura': 50, 'altura': 100}, # Exemplo de uma caixa
         ],
         'npcs': [
             # Lista de NPCs para este mapa.
@@ -25,21 +23,42 @@ mapas_data = {
             # Lista de inimigos para este mapa.
             # Ex: {'tipo': 'inimigo_goblin', 'x': 800, 'y': 450, 'patrulha': [800, 1000]}
         ],
+        'pontos_entrada_saida': {
+            # Ponto de entrada padrão (usado se nenhum ponto específico for dado ao criar a TelaJogo)
+            'entrada_padrao': {'x': 100, 'y': 370, 'olhando_direita': True},
+            # Ponto onde o jogador começa em um novo jogo
+            'entrada_leste': {'x': 3361, 'y': 370, 'olhando_direita': False},
+            # Ponto onde aparece na ilha inicial ao SAIR da loja principal
+            'saida_loja_principal': {'x': 1777, 'y': 312, 'olhando_direita': True}, # Ajuste as coordenadas para a frente da loja
+            # Adicione outros pontos conforme necessário (entradas/saídas para outras áreas na ilha)
+        },
         'areas_interacao': [
+            # Entrada esquerda
             {
-                'x': 0, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do início do mapa
+                'x': 0, 'y': 360, 'largura': 50, 'altura': 150, # Perto do início do mapa
                 'tipo_evento': 'mudar_mapa',
-                'dados_evento': {'proximo_mapa_id': 'outra_ilha'} # O ID da área anterior
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_CAMPO_VILA,  # O ID da área anterior
+                    'ponto_entrada_destino_id': 'entrada_padrao'
+                }
             },
+            # Entrada da loja
             {
-                'x': 1716, 'y': 300, 'largura': 200, 'altura': 40, # Ex: Perto da entrada da loja
+                'x': 1716, 'y': 300, 'largura': 200, 'altura': 40, # Perto da entrada da loja
                 'tipo_evento': 'mudar_mapa',
-                'dados_evento': {'proximo_mapa_id': 'loja_comida_ilha_1'} # O ID do interior da loja
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_CAMPO_LOJA, # O ID do interior da loja
+                    'ponto_entrada_destino_id': 'entrada_padrao'
+                }
             },
+            # Entrada direita
             {
                 'x': 3490, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do final do mapa
                 'tipo_evento': 'mudar_mapa',
-                'dados_evento': {'proximo_mapa_id': 'outra_ilha'} # O ID do próximo mapa
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_NEVE_VILA, # O ID da próxima área
+                    'ponto_entrada_destino_id': 'entrada_padrao'
+                }
             },
             # {
             #     'x': 500, 'y': 400, 'largura': 50, 'altura': 50, # Ex: Perto de uma prateleira
@@ -55,53 +74,140 @@ mapas_data = {
         # Adicione outros dados específicos do mapa (ex: pontos de spawn de itens, triggers de eventos)
     },
     # Adicione dados para outros mapas aqui
-    'outra_ilha': {
-        'background_key': 'background_outra_ilha',
-        'player_start_x': 50,
-        'player_start_y': 200,
-         'obstaculos': [
-            # Obstáculos específicos de outra_ilha
-            {'x': 0, 'y': 150, 'largura': 1000, 'altura': 20},
-            {'x': 0, 'y': 300, 'largura': 1000, 'altura': 20},
+    # 'outra_ilha': {
+    #     'chave_cenario': 'background_outra_ilha',
+    #     'player_start_x': 50,
+    #     'player_start_y': 200,
+    #      'obstaculos': [
+    #         # Obstáculos específicos de outra_ilha
+    #         {'x': 0, 'y': 150, 'largura': 1000, 'altura': 20},
+    #         {'x': 0, 'y': 300, 'largura': 1000, 'altura': 20},
+    #     ],
+    #     'npcs': [],
+    #     'inimigos': [],
+    #     'areas_interacao': [
+    #          # Áreas de interação específicas para outra_ilha
+    #           {
+    #             'x': 50, 'y': 180, 'largura': 50, 'altura': 50, # Ex: Perto de um portal para voltar
+    #             'tipo_evento': 'mudar_mapa',
+    #             'dados_evento': {'proximo_mapa_id': 'ilha_inicial'} # Volta para a ilha inicial
+    #         },
+    #     ]
+    # },
+    ID_MAPA_CAMPO_LOJA: {
+        'chave_cenario': CHAVE_LOJA_INTERIOR,
+        'obstaculos': [
+            # Limite superior do caminho
+            {'x': 0, 'y': 245, 'largura': 900, 'altura': 20},
+            # Limite inferior do caminho
+            {'x': 0, 'y': 600, 'largura': 900, 'altura': 20},
         ],
         'npcs': [],
         'inimigos': [],
+        'pontos_entrada_saida': {
+            # Ponto de entrada padrão
+            'entrada_padrao': {'x': 100, 'y': 275, 'olhando_direita': True},
+        },
         'areas_interacao': [
-             # Áreas de interação específicas para outra_ilha
               {
-                'x': 50, 'y': 180, 'largura': 50, 'altura': 50, # Ex: Perto de um portal para voltar
+                'x': 0, 'y': 300, 'largura': 50, 'altura': 270, # Perto da saída da loja
                 'tipo_evento': 'mudar_mapa',
-                'dados_evento': {'proximo_mapa_id': 'ilha_inicial'} # Volta para a ilha inicial
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_CAMPO_VILA, # Volta para a ilha inicial
+                    'ponto_entrada_destino_id': 'saida_loja_principal'
+                }
             },
         ]
     },
-    'loja_comida_ilha_1': {
-        'background_key': 'loja_interior',
-        'player_start_x': 50,
-        'player_start_y': 370,
-         'obstaculos': [
-            # Obstáculos específicos de outra_ilha
-            {'x': 0, 'y': 150, 'largura': 900, 'altura': 20},
-            {'x': 0, 'y': 500, 'largura': 900, 'altura': 20},
+    ID_MAPA_NEVE_VILA: { # ID do primeiro mapa
+        'chave_cenario': CHAVE_CENARIO_NEVE_VILA, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
+        'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
+            # Limite superior do caminho (particionado em segmentos)
+            {'x': 0, 'y': 300, 'largura': 678, 'altura': 20},
+            {'x': 679, 'y': 252, 'largura': 116, 'altura': 20}, # Exemplo de segmento inclinado/variado
+            {'x': 795, 'y': 300, 'largura': 3540 - 795, 'altura': 20}, # Continuação do limite superior
+            # Limite inferior do caminho (segmento único)
+            {'x': 0, 'y': 570, 'largura': 3540, 'altura': 20},
+        ],
+        'npcs': [
+            # Lista de NPCs para este mapa.
+            # Ex: {'tipo': 'npc_aldeao', 'x': 500, 'y': 400, 'dialogo_id': 'ilha_inicial_intro'}
+        ],
+        'inimigos': [
+            # Lista de inimigos para este mapa.
+            # Ex: {'tipo': 'inimigo_goblin', 'x': 800, 'y': 450, 'patrulha': [800, 1000]}
+        ],
+        'pontos_entrada_saida': {
+            # Ponto de entrada padrão (usado se nenhum ponto específico for dado ao criar a TelaJogo)
+            'entrada_padrao': {'x': 100, 'y': 415, 'olhando_direita': True},
+            # Ponto onde o jogador começa em um novo jogo
+            'entrada_leste': {'x': 3361, 'y': 415, 'olhando_direita': False},
+            # Ponto onde aparece na ilha inicial ao SAIR da loja principal
+            'saida_cozinha': {'x': 705, 'y': 325, 'olhando_direita': True}, # Ajuste as coordenadas para a frente da loja
+            # Adicione outros pontos conforme necessário (entradas/saídas para outras áreas na ilha)
+        },
+        'areas_interacao': [
+            # Entrada esquerda
+            {
+                'x': 0, 'y': 360, 'largura': 50, 'altura': 150, # Perto do início do mapa
+                'tipo_evento': 'mudar_mapa',
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_CAMPO_VILA,  # O ID da área anterior
+                    'ponto_entrada_destino_id': 'entrada_leste'
+                }
+            },
+            # Entrada da cozinha
+            {
+                'x': 679, 'y': 270, 'largura': 116, 'altura': 40, # Perto da entrada da cozinha
+                'tipo_evento': 'mudar_mapa',
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_NEVE_COZINHA, # O ID do interior da cozinha
+                    'ponto_entrada_destino_id': 'entrada_padrao'
+                }
+            },
+            # Entrada direita
+            {
+                'x': 3490, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do final do mapa
+                'tipo_evento': 'mudar_mapa',
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_NEVE_VILA, # O ID da próxima área
+                    'ponto_entrada_destino_id': 'entrada_leste'
+                }
+            },
+        ]
+    },
+    ID_MAPA_NEVE_COZINHA: {
+        'chave_cenario': CHAVE_COZINHA_INTERIOR,
+        'obstaculos': [
+            # Limite superior do caminho
+            {'x': 0, 'y': 213, 'largura': 900, 'altura': 20},
+            # Limite inferior do caminho
+            {'x': 0, 'y': 600, 'largura': 900, 'altura': 20},
         ],
         'npcs': [],
         'inimigos': [],
+        'pontos_entrada_saida': {
+            # Ponto de entrada padrão
+            'entrada_padrao': {'x': 100, 'y': 260, 'olhando_direita': True},
+        },
         'areas_interacao': [
-             # Áreas de interação específicas para outra_ilha
               {
-                'x': 50, 'y': 180, 'largura': 50, 'altura': 50, # Ex: Perto de um portal para voltar
+                'x': 0, 'y': 280, 'largura': 50, 'altura': 270, # Perto da saída da cozinha
                 'tipo_evento': 'mudar_mapa',
-                'dados_evento': {'proximo_mapa_id': 'ilha_inicial'} # Volta para a ilha inicial
+                'dados_evento': {
+                    'proximo_mapa_id': ID_MAPA_NEVE_VILA,
+                    'ponto_entrada_destino_id': 'saida_cozinha'
+                }
             },
         ]
     },
     # Adicione quantos mapas forem necessários
 }
 
-def get_mapa_data(map_id):
+def get_mapa_data(id_mapa):
     """
     Retorna os dados de configuração para um mapa específico pelo seu ID.
-    :param map_id: O ID (string) do mapa desejado.
+    :param id_mapa: O ID (string) do mapa desejado.
     :return: Um dicionário contendo os dados do mapa, ou None se o ID do mapa não for encontrado.
     """
-    return mapas_data.get(map_id) # O método .get() retorna None se a chave não existe
+    return mapas_data.get(id_mapa) # O método .get() retorna None se a chave não existe

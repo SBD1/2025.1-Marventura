@@ -41,7 +41,7 @@ class TelaModelo:
         :param tela: A superfície principal (tela) onde desenhar.
         """
         # Obtém a imagem de fundo comum do gerenciador para desenhar
-        imagem_fundo = self.gerenciador_recursos.get_image('fundo_inicial')
+        imagem_fundo = self.gerenciador_recursos.get_image(CHAVE_TELA_INICIAL)
         if imagem_fundo:
             tela.blit(imagem_fundo, (0, 0))
         else:

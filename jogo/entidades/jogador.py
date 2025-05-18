@@ -6,18 +6,18 @@ from utilidades.constantes import *
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, character_type):
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_personagem):
         """
         Inicializa o jogador.
         :param resource_manager: O gerenciador de recursos.
         :param x_inicial: Posição X inicial no mundo.
         :param y_inicial: Posição Y inicial no mundo.
-        :param character_type: O tipo de personagem ('menino' ou 'menina').
+        :param tipo_personagem: O tipo de personagem ('menino' ou 'menina').
         """
         super().__init__()
         # Armazena a referência ao gerenciador de recursos
         self.gerenciador_recursos = gerenciador_recursos
-        self.tipo_personagem = character_type
+        self.tipo_personagem = tipo_personagem
 
         # --- Carregar e armazenar frames de animação do gerenciador ---
         prefixo_chave = f'protagonista_{self.tipo_personagem}_' # Ex: 'protagonista_menina_' ou 'protagonista_menina_'

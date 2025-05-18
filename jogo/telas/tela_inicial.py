@@ -18,9 +18,9 @@ class TelaInicial(TelaModelo):
 
         # --- Obtém os recursos necessários do gerenciador ---
         # Obtém a imagem da logo e as fontes para os botões e títulos
-        self.imagem_logo = self.gerenciador_recursos.get_image('logo')
-        self.fonte_botoes = self.gerenciador_recursos.get_font('botao')
-        self.fonte_grande = self.gerenciador_recursos.get_font('titulo')
+        self.imagem_logo = self.gerenciador_recursos.get_image(CHAVE_LOGO)
+        self.fonte_botoes = self.gerenciador_recursos.get_font(CHAVE_FONTE_BOTAO)
+        self.fonte_grande = self.gerenciador_recursos.get_font(CHAVE_FONTE_TITULO)
 
         # Nota: O carregamento e redimensionamento da logo são feitos no GerenciadorDeRecursos
 
