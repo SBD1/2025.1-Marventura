@@ -57,7 +57,7 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 
 ## Estrutura do Dicionário de Dados
 
-As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
+As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
 
 ### Tabela: `acessorio`
 
@@ -108,6 +108,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL</td>
         </tr>
         <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do acessório.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>quantidade</code></td>
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
@@ -124,6 +133,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>local_encontrado</code></td>
+          <td>Local onde é possível encontrar o item.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z, ','</td>
+          <td>-</td>
+          <td>-</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
@@ -200,6 +218,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL</td>
         </tr>
         <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição da arma.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>quantidade</code></td>
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
@@ -216,6 +243,125 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>local_encontrado</code></td>
+          <td>Local onde é possível encontrar o item.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z, ','</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>preco_de_compra</code></td>
+          <td>Valor gasto ao comprar o item.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>&gt;= 1, &lt;= 999</td>
+          <td>-</td>
+          <td>Default = 1 / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>preco_de_venda</code></td>
+          <td>Valor ganhado ao vender o item.</td>
+          <td>-</td>
+          <td>-</td>
+          <td>NULL</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `fruta`
+
+<details>
+  <summary>Tabela 3 – Dicionário de Dados da Entidade Fruta
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 3 – Dicionário de Dados da Entidade Fruta</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_fruta</code></td>
+          <td>Identificador único da fruta.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo de item.</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"arm"</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da fruta.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição da fruta.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>quantidade</code></td>
+          <td>Quantidade de cada item.</td>
+          <td>Inteiro</td>
+          <td>1</td>
+          <td>&gt;= 0, &lt;= 1</td>
+          <td>-</td>
+          <td>Default = 0 / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>raridade</code></td>
+          <td>Nível de raridade do item.</td>
+          <td>Caracter</td>
+          <td>3</td>
+          <td>★ (U+2605)</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>local_encontrado</code></td>
+          <td>Local onde é possível encontrar o item.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z, ','</td>
+          <td>-</td>
+          <td>-</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
@@ -246,11 +392,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `consumivel`
 
 <details>
-  <summary>Tabela 3 – Dicionário de Dados da Entidade Consumivel
+  <summary>Tabela 4 – Dicionário de Dados da Entidade Consumivel
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 3 – Dicionário de Dados da Entidade Consumivel</strong></p>
+    <p><strong>Tabela 4 – Dicionário de Dados da Entidade Consumivel</strong></p>
     <table>
       <thead>
         <tr>
@@ -292,6 +438,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL</td>
         </tr>
         <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do consumível.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>quantidade</code></td>
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
@@ -308,6 +463,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>local_encontrado</code></td>
+          <td>Local onde é possível encontrar o item.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z, ','</td>
+          <td>-</td>
+          <td>-</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
@@ -338,11 +502,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `nao_consumivel`
 
 <details>
-  <summary>Tabela 4 – Dicionário de Dados da Entidade Não-Consumivel
+  <summary>Tabela 5 – Dicionário de Dados da Entidade Não-Consumivel
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 4 – Dicionário de Dados da Entidade Não-Consumivel</strong></p>
+    <p><strong>Tabela 5 – Dicionário de Dados da Entidade Não-Consumivel</strong></p>
     <table>
       <thead>
         <tr>
@@ -384,6 +548,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL</td>
         </tr>
         <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do não-consumível.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>quantidade</code></td>
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
@@ -400,6 +573,15 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>★ (U+2605)</td>
           <td>-</td>
           <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>local_encontrado</code></td>
+          <td>Local onde é possível encontrar o item.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z, ','</td>
+          <td>-</td>
+          <td>-</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
@@ -430,11 +612,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `receita`
 
 <details>
-  <summary>Tabela 5 – Dicionário de Dados da Entidade Receita
+  <summary>Tabela 6 – Dicionário de Dados da Entidade Receita
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 5 – Dicionário de Dados da Entidade Receita</strong></p>
+    <p><strong>Tabela 6 – Dicionário de Dados da Entidade Receita</strong></p>
     <table>
       <thead>
         <tr>
@@ -464,7 +646,7 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
@@ -477,11 +659,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito`
 
 <details>
-  <summary>Tabela 6 – Dicionário de Dados da Entidade Efeito
+  <summary>Tabela 7 – Dicionário de Dados da Entidade Efeito
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 6 – Dicionário de Dados da Entidade Efeito</strong></p>
+    <p><strong>Tabela 7 – Dicionário de Dados da Entidade Efeito</strong></p>
     <table>
       <thead>
         <tr>
@@ -533,11 +715,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habilidade`
 
 <details>
-  <summary>Tabela 7 – Dicionário de Dados da Entidade Habilidade
+  <summary>Tabela 8 – Dicionário de Dados da Entidade Habilidade
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 7 – Dicionário de Dados da Entidade Habilidade</strong></p>
+    <p><strong>Tabela 8 – Dicionário de Dados da Entidade Habilidade</strong></p>
     <table>
       <thead>
         <tr>
@@ -598,11 +780,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `ingrediente_consumivel`
 
 <details>
-  <summary>Tabela 8 – Dicionário de Dados da Tabela Ingrediente Consumível
+  <summary>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Consumível
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 8 – Dicionário de Dados da Tabela Ingrediente Consumível</strong></p>
+    <p><strong>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Consumível</strong></p>
     <table>
       <thead>
         <tr>
@@ -645,11 +827,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `ingrediente_nao_consumivel`
 
 <details>
-  <summary>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Não-Consumível
+  <summary>Tabela 10 – Dicionário de Dados da Tabela Ingrediente Não-Consumível
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Não-Consumível</strong></p>
+    <p><strong>Tabela 10 – Dicionário de Dados da Tabela Ingrediente Não-Consumível</strong></p>
     <table>
       <thead>
         <tr>
@@ -692,11 +874,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito_acessorio`
 
 <details>
-  <summary>Tabela 10 – Dicionário de Dados da Tabela Efeito Acessório
+  <summary>Tabela 11 – Dicionário de Dados da Tabela Efeito Acessório
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 10 – Dicionário de Dados da Tabela Efeito Acessório</strong></p>
+    <p><strong>Tabela 11 – Dicionário de Dados da Tabela Efeito Acessório</strong></p>
     <table>
       <thead>
         <tr>
@@ -739,11 +921,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito_consumivel`
 
 <details>
-  <summary>Tabela 11 – Dicionário de Dados da Tabela Efeito Consumível
+  <summary>Tabela 12 – Dicionário de Dados da Tabela Efeito Consumível
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 11 – Dicionário de Dados da Tabela Efeito Consumível</strong></p>
+    <p><strong>Tabela 12 – Dicionário de Dados da Tabela Efeito Consumível</strong></p>
     <table>
       <thead>
         <tr>
@@ -786,11 +968,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `mapa`
 
 <details>
-  <summary>Tabela 12 – Dicionário de Dados da Entidade Mapa
+  <summary>Tabela 13 – Dicionário de Dados da Entidade Mapa
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 12 – Dicionário de Dados da Entidade Mapa</strong></p>
+    <p><strong>Tabela 13 – Dicionário de Dados da Entidade Mapa</strong></p>
     <table>
       <thead>
         <tr>
@@ -834,11 +1016,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `ilha`
 
 <details>
-  <summary>Tabela 13 – Dicionário de Dados da Entidade Ilha
+  <summary>Tabela 14 – Dicionário de Dados da Entidade Ilha
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 13 – Dicionário de Dados da Entidade Ilha</strong></p>
+    <p><strong>Tabela 14 – Dicionário de Dados da Entidade Ilha</strong></p>
     <table>
       <thead>
         <tr>
@@ -899,11 +1081,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `barco`
 
 <details>
-  <summary>Tabela 14 – Dicionário de Dados da Entidade Barco
+  <summary>Tabela 15 – Dicionário de Dados da Entidade Barco
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <strong>Tabela 14 – Dicionário de Dados da Entidade Barco</strong>
+    <strong>Tabela 15 – Dicionário de Dados da Entidade Barco</strong>
     <table>
       <thead>
         <tr>
@@ -955,11 +1137,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `sala`
 
 <details>
-  <summary>Tabela 15 – Dicionário de Dados da Entidade Sala
+  <summary>Tabela 16 – Dicionário de Dados da Entidade Sala
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 15 – Dicionário de Dados da Entidade Sala</strong></p>
+    <p><strong>Tabela 16 – Dicionário de Dados da Entidade Sala</strong></p>
     <table>
       <thead>
         <tr>
@@ -1011,11 +1193,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `jogador`
 
 <details>
-  <summary>Tabela 16 – Dicionário de Dados da Tabela Jogador
+  <summary>Tabela 17 – Dicionário de Dados da Tabela Jogador
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 16 – Dicionário de Dados da Tabela Jogador</strong></p>
+    <p><strong>Tabela 17 – Dicionário de Dados da Tabela Jogador</strong></p>
     <table>
       <thead>
         <tr>
@@ -1148,11 +1330,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `aliado`
 
 <details>
-  <summary>Tabela 17 – Dicionário de Dados da Tabela Aliado
+  <summary>Tabela 18 – Dicionário de Dados da Tabela Aliado
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 17 – Dicionário de Dados da Tabela Aliado</strong></p>
+    <p><strong>Tabela 18 – Dicionário de Dados da Tabela Aliado</strong></p>
     <table>
       <thead>
         <tr>
@@ -1249,11 +1431,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habitante`
 
 <details>
-  <summary>Tabela 18 – Dicionário de Dados da Tabela Habitante
+  <summary>Tabela 19 – Dicionário de Dados da Tabela Habitante
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 18 – Dicionário de Dados da Tabela Habitante</strong></p>
+    <p><strong>Tabela 19 – Dicionário de Dados da Tabela Habitante</strong></p>
     <table>
       <thead>
         <tr>
@@ -1332,11 +1514,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `lacaio`
 
 <details>
-  <summary>Tabela 19 – Dicionário de Dados da Tabela Lacaio
+  <summary>Tabela 20 – Dicionário de Dados da Tabela Lacaio
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 19 – Dicionário de Dados da Tabela Lacaio</strong></p>
+    <p><strong>Tabela 20 – Dicionário de Dados da Tabela Lacaio</strong></p>
     <table>
       <thead>
         <tr>
@@ -1442,11 +1624,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `chefe`
 
 <details>
-  <summary>Tabela 20 – Dicionário de Dados da Tabela Chefe
+  <summary>Tabela 21 – Dicionário de Dados da Tabela Chefe
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 20 – Dicionário de Dados da Tabela Chefe</strong></p>
+    <p><strong>Tabela 21 – Dicionário de Dados da Tabela Chefe</strong></p>
     <table>
       <thead>
         <tr>
@@ -1552,11 +1734,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `instancia_lacaio`
 
 <details>
-  <summary>Tabela 21 – Dicionário de Dados da Tabela Instancia Lacaio
+  <summary>Tabela 22 – Dicionário de Dados da Tabela Instancia Lacaio
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 21 – Dicionário de Dados da Tabela Instancia Lacaio</strong></p>
+    <p><strong>Tabela 22 – Dicionário de Dados da Tabela Instancia Lacaio</strong></p>
     <table>
       <thead>
         <tr>
@@ -1608,11 +1790,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `tipo_personagem`
 
 <details>
-  <summary>Tabela 22 – Dicionário de Dados da Tabela Tipo Personagem
+  <summary>Tabela 23 – Dicionário de Dados da Tabela Tipo Personagem
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 22 – Dicionário de Dados da Tabela Tipo Personagem</strong></p>
+    <p><strong>Tabela 23 – Dicionário de Dados da Tabela Tipo Personagem</strong></p>
     <table>
       <thead>
         <tr>
@@ -1655,11 +1837,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `inventario`
 
 <details>
-  <summary>Tabela 23 – Dicionário de Dados da Tabela Inventário
+  <summary>Tabela 24 – Dicionário de Dados da Tabela Inventário
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 23 – Dicionário de Dados da Tabela Inventário</strong></p>
+    <p><strong>Tabela 24 – Dicionário de Dados da Tabela Inventário</strong></p>
     <table>
       <thead>
         <tr>
@@ -1711,11 +1893,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `item_inventario`
 
 <details>
-  <summary>Tabela 24 – Dicionário de Dados da Tabela Item Inventário
+  <summary>Tabela 25 – Dicionário de Dados da Tabela Item Inventário
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 24 – Dicionário de Dados da Tabela Item Inventário</strong></p>
+    <p><strong>Tabela 25 – Dicionário de Dados da Tabela Item Inventário</strong></p>
     <table>
       <thead>
         <tr>
@@ -1758,11 +1940,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habilidade_aliado`
 
 <details>
-  <summary>Tabela 25 – Dicionário de Dados da Tabela Habilidade Aliado
+  <summary>Tabela 26 – Dicionário de Dados da Tabela Habilidade Aliado
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 25 – Dicionário de Dados da Tabela Habilidade Aliado</strong></p>
+    <p><strong>Tabela 26 – Dicionário de Dados da Tabela Habilidade Aliado</strong></p>
     <table>
       <thead>
         <tr>
@@ -1805,11 +1987,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `batalha_instancia_lacaio`
 
 <details>
-  <summary>Tabela 26 – Dicionário de Dados da Tabela Batalha Instância Lacaio
+  <summary>Tabela 27 – Dicionário de Dados da Tabela Batalha Instância Lacaio
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 26 – Dicionário de Dados da Tabela Batalha Instância Lacaio</strong></p>
+    <p><strong>Tabela 27 – Dicionário de Dados da Tabela Batalha Instância Lacaio</strong></p>
     <table>
       <thead>
         <tr>
@@ -1852,11 +2034,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `receitas_conhecidas`
 
 <details>
-  <summary>Tabela 27 – Dicionário de Dados da Tabela Receitas Conhecidas
+  <summary>Tabela 28 – Dicionário de Dados da Tabela Receitas Conhecidas
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 27 – Dicionário de Dados da Tabela Receitas Conhecidas</strong></p>
+    <p><strong>Tabela 28 – Dicionário de Dados da Tabela Receitas Conhecidas</strong></p>
     <table>
       <thead>
         <tr>
@@ -1899,11 +2081,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `negociacao`
 
 <details>
-  <summary>Tabela 28 – Dicionário de Dados da Tabela Negociação
+  <summary>Tabela 29 – Dicionário de Dados da Tabela Negociação
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 28 – Dicionário de Dados da Tabela Negociação</strong></p>
+    <p><strong>Tabela 29 – Dicionário de Dados da Tabela Negociação</strong></p>
     <table>
       <thead>
         <tr>
@@ -1991,11 +2173,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `batalha`
 
 <details>
-  <summary>Tabela 29 – Dicionário de Dados da Tabela Batalha
+  <summary>Tabela 30 – Dicionário de Dados da Tabela Batalha
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 29 – Dicionário de Dados da Tabela Batalha</strong></p>
+    <p><strong>Tabela 30 – Dicionário de Dados da Tabela Batalha</strong></p>
     <table>
       <thead>
         <tr>
@@ -2072,11 +2254,11 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `Missão`
 
 <details>
-  <summary>Tabela 30 – Dicionário de Dados da Tabela Missão
+  <summary>Tabela 31 – Dicionário de Dados da Tabela Missão
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 30 – Dicionário de Dados da Tabela Missão</strong></p>
+    <p><strong>Tabela 31 – Dicionário de Dados da Tabela Missão</strong></p>
     <table>
       <thead>
         <tr>
@@ -2194,3 +2376,4 @@ As tabelas 1 a 30 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.3` | Adição das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | - | - |
 | `1.5` | Adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
+| `1.6` | Atualização das tabelas referentes aos itens e adição da tabela "fruta" | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 |  |  |
