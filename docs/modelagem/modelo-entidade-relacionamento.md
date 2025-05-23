@@ -59,7 +59,7 @@ A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para 
   </summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama-entidade-relacionamento-item-v2.2.png?raw=true">
+    <img src="../assets/diagrama-entidade-relacionamento-item-v2.3.png">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
@@ -81,9 +81,12 @@ A **Figura 2** abaixo apresenta o diagrama Entidade-Relacionamento com foco nos 
   </div>
 </details>
 
+
 Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou não ter um inventário de itens. Porém, esse inventário é útil apenas para o Jogador, os Inimigos (que funcionaria como os itens de queda) e os Vendedores (que funcionaria como o estoque). Os demais personagens não possuem um inventário de itens.
 
 ---
+
+A **Figura 3** apresenta o diagrama Entidade-Relacionamento com foco na estrutura do mapa e na organização espacial do cenário do jogo. Nela é possível perceber que as entidades *CampoBatalha*, *Vila* e *Porto* são generalizações do tipo total e exclusiva de *Sala* e também que *CorredorMarítimo é uma região do mapa que liga duas ilhas e é onde o barco poderá navegar.
 
 <details>
   <summary>Figura 3 – Diagrama Entidade-Relacionamento do Mapa
@@ -112,13 +115,12 @@ A **Figura 4** apresenta o diagrama Entidade-Relacionamento com foco nas missõe
 </details>
 
 ---
+
 A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores, consolidando o modelo de dados do sistema de inventário, personagens, mapas, e missões de uma maneira integrada. Nesse diagrama, observa-se como as entidades interagem entre si, formando um conjunto coeso de tabelas e relacionamentos que representam o funcionamento do jogo como um todo.
 
 <details>
   <summary>Figura 5 – Diagrama Entidade-Relacionamento final - Clique na imagem para melhor visualização
-    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-      <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
-    </svg>
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Entidade-Relacionamento final</strong></p>
@@ -129,6 +131,9 @@ A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores
 </details>
 
 ---
+
+
+
 ## 📚 Bibliografia
 
 > SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. Fundamentos de bases de datos. 5. ed. Madrid: McGraw-Hill España, 2006.
@@ -145,6 +150,7 @@ A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores
 | `2.1` | Adição da versão 2.0 do diagrama de personagens | [Israel Thalles](https://github.com/IsraelThalles) | 26/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 |
 | `3.0` | Refatoração do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 26/04/2025 | [Pablo Serra](https://github.com/Pabloserrapxx) | 30/04/2025  |
 | `3.1` | Correção dos atributos do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 30/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 30/04/2025 |
-| `3.2` | Adicionado Diagrama Entidade-Relacionamento de Missoes | [Diassis](https://github.com/Diaxiz) | 30/04/2025 | [Pablo Serra](https://github.com/IsraelThalles), [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 |
+| `3.2` | Adicionado Diagrama Entidade-Relacionamento de Missões | [Diassis](https://github.com/Diaxiz) | 30/04/2025 | [Pablo Serra](https://github.com/IsraelThalles), [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 |
 | `4.0` | Adição do diagrama do mapa | [Israel Thalles](https://github.com/IsraelThalles) | 01/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 01/05/2025 |
-| `4.1` | adição do diagrama Entidade-Relacionamento final| [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 |  | |
+| `4.1` | Adição do diagrama Entidade-Relacionamento final | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 |
+| `4.2` | Atualização do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 |  |  |
