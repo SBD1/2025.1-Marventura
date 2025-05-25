@@ -51,20 +51,17 @@ class Jogador(pygame.sprite.Sprite):
         self.movendo_baixo = False
 
     def carregar_animacoes(self):
-        # Prefixo para chaves de imagem
-        prefixo_chave = f'protagonista_{self.personagem}_'
-        
         # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
-        imagem_parado = self.gerenciador_recursos.get_image(prefixo_chave + 'em_repouso')
-        imagem_caminhar_frame_1 = self.gerenciador_recursos.get_image(prefixo_chave + 'caminhando_1')
-        imagem_caminhar_frame_2 = self.gerenciador_recursos.get_image(prefixo_chave + 'caminhando_2')
+        imagem_parado = self.gerenciador_recursos.get_image(self.personagem + '_em_repouso')
+        imagem_caminhar_frame_1 = self.gerenciador_recursos.get_image(self.personagem + '_caminhando_1')
+        imagem_caminhar_frame_2 = self.gerenciador_recursos.get_image(self.personagem + '_caminhando_2')
+        imagem_caminhar_frame_3 = self.gerenciador_recursos.get_image(self.personagem + '_caminhando_3')
 
         # Adiciona frame 'parado'
         if imagem_parado:
             self.frames_animacao['parado'].append(imagem_parado)
         else:
-            print(f"AVISO: Imagem '{prefixo_chave}em_repouso' não encontrada para o jogador. Usando fallback padrão.")
-            # Fallback para uma superfície preta se a imagem principal não for carregada
+            print(f"AVISO: Imagem '{self.personagem}_em_repouso' não encontrada para o jogador. Usando fallback padrão.")
             fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
             fallback_surface.fill(PRETO)
             self.frames_animacao['parado'].append(fallback_surface)
@@ -75,35 +72,40 @@ class Jogador(pygame.sprite.Sprite):
             valid_caminhada_frames.append(imagem_caminhar_frame_1)
         if imagem_caminhar_frame_2:
             valid_caminhada_frames.append(imagem_caminhar_frame_2)
-        
+        if imagem_caminhar_frame_3:
+            valid_caminhada_frames.append(imagem_caminhar_frame_3)
+
         # Se não houver frames de caminhada carregados, usa o frame 'parado' como fallback
         if not valid_caminhada_frames:
-            print(f"AVISO: Nenhuma imagem de caminhada para '{prefixo_chave}' carregada. Usando imagem parada como fallback para caminhada.")
-            # Garante que haja pelo menos 2 frames para a animação de caminhada, mesmo que repetidos
-            # Isso é para evitar divisões por zero ou erros de índice em `len(self.frames_animacao['caminhando'])`
+            print(f"AVISO: Nenhuma imagem de caminhada para '{self.personagem}' carregada. Usando imagem parada como fallback para caminhada.")
             if self.frames_animacao['parado']:
-                valid_caminhada_frames = [self.frames_animacao['parado'][0], self.frames_animacao['parado'][0]]
-            else: # Fallback extremo se nem a imagem de parado foi carregada
+                fallback = self.frames_animacao['parado'][0]
+                valid_caminhada_frames = [fallback, fallback, fallback]
+            else:
                 fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
-                fallback_surface.fill(VERMELHO) # Sinaliza erro visível
-                valid_caminhada_frames = [fallback_surface, fallback_surface]
+                fallback_surface.fill(VERMELHO)
+                valid_caminhada_frames = [fallback_surface, fallback_surface, fallback_surface]
 
-        # Define a sequência de caminhada: Frame1, Parado, Frame2, Parado
-        # Esta é a sequência de animação que você tinha anteriormente.
-        self.frames_animacao['caminhando'] = [
-            valid_caminhada_frames[0],
-            self.frames_animacao['parado'][0], # O primeiro frame de parado
-            valid_caminhada_frames[1] if len(valid_caminhada_frames) > 1 else valid_caminhada_frames[0], # Garante que haja um segundo frame
-            self.frames_animacao['parado'][0] # O primeiro frame de parado
-        ]
+        # Define a sequência de caminhada: 1 → 2 → 3 → 2
+        if len(valid_caminhada_frames) >= 3:
+            self.frames_animacao['caminhando'] = [
+                valid_caminhada_frames[0],
+                valid_caminhada_frames[1],
+                valid_caminhada_frames[2],
+                valid_caminhada_frames[1]
+            ]
+        else:
+            print("AVISO: Nem todos os 3 frames de caminhada disponíveis. Repetindo os existentes.")
+            self.frames_animacao['caminhando'] = valid_caminhada_frames * 2  # Loop com o que tiver
 
-        # GARANTE que sempre haverá pelo menos um frame na animação 'parado'
-        # Isso é crucial para que self.image não seja None ao inicializar self.rect
+        # Garante pelo menos um frame em 'parado'
         if not self.frames_animacao['parado']:
             print("ERRO CRÍTICO: frames_animacao['parado'] ainda está vazio após todos os fallbacks.")
             fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
-            fallback_surface.fill(VERMELHO) # Cor para erros críticos
+            fallback_surface.fill(VERMELHO)
             self.frames_animacao['parado'].append(fallback_surface)
+
+        self.frame_parada_apos_caminhada = valid_caminhada_frames[1] if len(valid_caminhada_frames) > 1 else self.frames_animacao['parado'][0]
 
 
     def handle_input_continuo(self):
@@ -189,6 +191,13 @@ class Jogador(pygame.sprite.Sprite):
             self.estado = 'parado'
             self.indice_frame = 0 # Volta para o primeiro frame de parado
             self.tempo_desde_ultimo_frame = 0.0
+
+            # Quando parar, primeiro mostra o frame 2 de caminhada, depois repouso
+            if hasattr(self, 'frame_parada_apos_caminhada'):
+                self.image = self.frame_parada_apos_caminhada
+                # Isso mostra o frame 2 por 1 ciclo, na próxima atualização ele volta pro em_repouso
+                del self.frame_parada_apos_caminhada
+                return
 
         # Selecionar a imagem do frame atual
         imagem_atual = None

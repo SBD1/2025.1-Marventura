@@ -20,7 +20,7 @@ class TelaSalvamento(TelaModelo):
         {
             'ocupado': True, # Indica que este slot tem dados salvos
             'id_mapa': ID_MAPA_CAMPO_COSTA_OESTE, # O ID do mapa onde o jogo foi salvo
-            'personagem': PERSONAGEM_MENINO, # O tipo de personagem salvo neste slot
+            'personagem': SHUAN, # O tipo de personagem salvo neste slot
             'data_salva': '05/05/2025 13:02', # Data/hora do último salvamento (para exibição)
             'progresso': '30%', # Exemplo de informação de progresso (opcional)
             # Adicionamos as coordenadas e orientação salvas (mundo do jogo)
@@ -41,7 +41,7 @@ class TelaSalvamento(TelaModelo):
          {
             'ocupado': True, # Outro slot salvo
             'id_mapa': ID_MAPA_NEVE_VILA, # Exemplo de salvo no mapa inicial novamente
-            'personagem': PERSONAGEM_MENINA, # Exemplo de personagem diferente
+            'personagem': SILVIE, # Exemplo de personagem diferente
             'data_salva': '06/05/2025 10:15',
             'progresso': '60%',
             'coordenada_x': 200, # <-- Posição X salva
@@ -166,9 +166,9 @@ class TelaSalvamento(TelaModelo):
 
             if dados_slot['ocupado']:
                  # Se o slot está ocupado, seleciona a imagem com base no tipo de personagem salvo no dicionário de dados
-                 if dados_slot['personagem'] == PERSONAGEM_MENINO: # Compara com a constante PERSONAGEM_MENINO
+                 if dados_slot['personagem'] == SHUAN: # Compara com a constante PERSONAGEM_MENINO
                       imagem_a_desenhar = self.imagem_cartaz_procurado # Usa o atributo que armazena a imagem do cartaz de menino
-                 elif dados_slot['personagem'] == PERSONAGEM_MENINA: # Compara com a constante PERSONAGEM_MENINA
+                 elif dados_slot['personagem'] == SILVIE: # Compara com a constante PERSONAGEM_MENINA
                       imagem_a_desenhar = self.imagem_cartaz_procurada # Usa o atributo que armazena a imagem do cartaz de menina
                  else:
                       # Se o tipo de personagem salvo for desconhecido nos dados, usa o fallback genérico visual

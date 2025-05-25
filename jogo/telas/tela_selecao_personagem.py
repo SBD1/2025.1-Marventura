@@ -25,8 +25,8 @@ class TelaSelecaoPersonagem(TelaModelo):
             self.imagem_fundo.fill(CINZA_ESCURO) # Fallback
 
         # Carregue imagens dos personagens aqui se forem desenhadas na UI desta tela
-        self.imagem_menino_ui = self.gerenciador_recursos.get_image(PERSONAGEM_MENINO) # Exemplo: Usando sprite existente
-        self.imagem_menina_ui = self.gerenciador_recursos.get_image(PERSONAGEM_MENINA) # Exemplo: Usando sprite existente
+        self.imagem_menino_ui = self.gerenciador_recursos.get_image(SHUAN) # Exemplo: Usando sprite existente
+        self.imagem_menina_ui = self.gerenciador_recursos.get_image(SILVIE) # Exemplo: Usando sprite existente
 
         # --- Constantes de Layout da Tela de Seleção ---
         self._largura_opcao = 250 # Largura da área clicável da opção
@@ -42,7 +42,7 @@ class TelaSelecaoPersonagem(TelaModelo):
             self._largura_opcao,
             self._altura_opcao
         )
-        self._texto_menino = PERSONAGEM_MENINO
+        self._texto_menino = SHUAN
         self._imagem_menino_offset_y = 0 # Ajuste vertical para a imagem
 
         # Opção Menina
@@ -52,7 +52,7 @@ class TelaSelecaoPersonagem(TelaModelo):
             self._largura_opcao,
             self._altura_opcao
         )
-        self._texto_menina = PERSONAGEM_MENINA
+        self._texto_menina = SILVIE
         self._imagem_menina_offset_y = 0 # Ajuste vertical para a imagem
 
         # Botão "Voltar"
@@ -69,11 +69,11 @@ class TelaSelecaoPersonagem(TelaModelo):
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if evento.button == 1: # Clique com o botão esquerdo
                 if self._rect_opcao_menino.collidepoint(evento.pos):
-                    print(f"Selecionado {PERSONAGEM_MENINO}! Iniciando novo jogo...")
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=PERSONAGEM_MENINO)
+                    print(f"Selecionado {SHUAN}! Iniciando novo jogo...")
+                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=SHUAN)
                 elif self._rect_opcao_menina.collidepoint(evento.pos):
-                    print(f"Selecionado {PERSONAGEM_MENINA}! Iniciando novo jogo...")
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=PERSONAGEM_MENINA)
+                    print(f"Selecionado {SILVIE}! Iniciando novo jogo...")
+                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=SILVIE)
                 elif self._rect_botao_voltar.collidepoint(evento.pos):
                     print("Voltando ao Menu Principal...")
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)

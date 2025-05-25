@@ -63,8 +63,8 @@ TECLA_INTERACAO = pygame.K_e # Tecla para interagir (Ex: tecla 'E')
 OFFSET_ICONE_INTERACAO_Y = 40
 
 # --- Jogador ---
-PERSONAGEM_MENINA = 'Sylvie'
-PERSONAGEM_MENINO = 'Ikki'
+SILVIE = 'Silvie'
+SHUAN = 'Shuan'
 
 # --- Inimigos ---
 INIMIGO_LOBO = 'inimigo_lobo'

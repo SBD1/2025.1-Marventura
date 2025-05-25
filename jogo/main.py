@@ -49,16 +49,18 @@ gerenciador_recursos.load_image(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenari
 
 
 # --- Carregar Imagens do Jogador para Animação (Para Ambos os Tipos) ---
-gerenciador_recursos.load_image(PERSONAGEM_MENINO, 'recursos/imagens/jogador/jogador_parado.png', escalar_para_altura=300)
-gerenciador_recursos.load_image(PERSONAGEM_MENINA, 'recursos/imagens/jogador/jogadora_parada.png', escalar_para_altura=300)
+gerenciador_recursos.load_image(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
+gerenciador_recursos.load_image(SILVIE, 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=300)
 
-gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINO}_em_repouso', 'recursos/imagens/jogador/jogador_parado.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINO}_caminhando_1', 'recursos/imagens/jogador/jogador_caminhando_1.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINO}_caminhando_2', 'recursos/imagens/jogador/jogador_caminhando_2.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SHUAN}_em_repouso', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SHUAN}_caminhando_1', 'recursos/imagens/jogador/Shuan_pose-caminhada-direito.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SHUAN}_caminhando_2', 'recursos/imagens/jogador/Shuan_pose-caminhada.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SHUAN}_caminhando_3', 'recursos/imagens/jogador/Shuan_pose-caminhada-esquerdo.png', escalar_para_altura=120)
 
-gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINA}_em_repouso', 'recursos/imagens/jogador/jogadora_parada.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINA}_caminhando_1', 'recursos/imagens/jogador/jogadora_caminhando_1.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINA}_caminhando_2', 'recursos/imagens/jogador/jogadora_caminhando_2.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SILVIE}_em_repouso', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SILVIE}_caminhando_1', 'recursos/imagens/jogador/Silvie_pose-caminhada-direito.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SILVIE}_caminhando_2', 'recursos/imagens/jogador/Silvie_pose-caminhada.png', escalar_para_altura=120)
+gerenciador_recursos.load_image(f'{SILVIE}_caminhando_3', 'recursos/imagens/jogador/Silvie_pose-caminhada-esquerdo.png', escalar_para_altura=120)
 
 # --- Carregar Imagens dos Inimigos ---
 gerenciador_recursos.load_image(INIMIGO_LOBO, 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
