@@ -25,6 +25,9 @@ COR_TEXTO_SALVAR = (53, 38, 16) # Cor específica para texto de salvar
 VELOCIDADE_ANIMACAO_CAMINHADA = 0.15 # Segundos por frame na animação de caminhada (ajuste conforme quiser)
 FPS = 60 # Quadros por segundo
 
+# --- Animação do Inimigo ---
+VELOCIDADE_ANIMACAO_INIMIGO = 0.2
+
 # --- Constantes do Jogador ---
 VELOCIDADE_JOGADOR = 5 # Exemplo de velocidade padrão para o jogador
 LARGURA_JOGADOR = 80
@@ -67,8 +70,8 @@ SILVIE = 'Silvie'
 SHUAN = 'Shuan'
 
 # --- Inimigos ---
-INIMIGO_LOBO = 'inimigo_lobo'
-INIMIGO_CORVO = 'inimigo_corvo'
+INIMIGO_LOBO = 'Lobo'
+INIMIGO_CORVO = 'Corvo'
 
 # --- Identificadores de Mapas ---
 ID_MAPA_CAMPO_COSTA_OESTE = 'ilha_campo_costa_oeste'

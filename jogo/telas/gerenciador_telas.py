@@ -38,7 +38,6 @@ class GerenciadorDeTelas:
         elif estado_desejado == CHAVE_TRANSICAO_SELECAO_PERSONAGEM:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
-            print(f"kargs: {kwargs.get('personagem')}")
             return TelaJogo(self, self.gerenciador_recursos,
                             id_mapa_atual=ID_MAPA_CAMPO_COSTA_OESTE, # Mapa inicial padrão
                             personagem=kwargs.get('personagem'),
@@ -54,7 +53,6 @@ class GerenciadorDeTelas:
                             personagem=kwargs.get('personagem'),
                             ponto_de_destino=kwargs.get('ponto_de_destino'))
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
-            print(kwargs.get('personagem'))
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                inimigo_tipo=kwargs.get('inimigo_batalha'),
                                personagem=kwargs.get('personagem'),

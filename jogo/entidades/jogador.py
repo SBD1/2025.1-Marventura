@@ -50,6 +50,11 @@ class Jogador(pygame.sprite.Sprite):
         self.movendo_cima = False
         self.movendo_baixo = False
 
+        # Variáveis para o ícone de interação
+        self.mostrar_icone_interacao = False
+        self.icone_interacao = self.gerenciador_recursos.get_image(CHAVE_ICONE_INTERACAO)
+
+
     def carregar_animacoes(self):
         # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
         imagem_parado = self.gerenciador_recursos.get_image(self.personagem + '_em_repouso')
@@ -193,11 +198,15 @@ class Jogador(pygame.sprite.Sprite):
             self.tempo_desde_ultimo_frame = 0.0
 
             # Quando parar, primeiro mostra o frame 2 de caminhada, depois repouso
-            if hasattr(self, 'frame_parada_apos_caminhada'):
+            if hasattr(self, 'frame_parada_apos_caminhada') and self.frame_parada_apos_caminhada:
                 self.image = self.frame_parada_apos_caminhada
-                # Isso mostra o frame 2 por 1 ciclo, na próxima atualização ele volta pro em_repouso
+                # Remove o atributo para que isso só aconteça uma vez ao parar
                 del self.frame_parada_apos_caminhada
-                return
+                # Return aqui interromperia a atualização da imagem para o estado parado
+                # O ideal é que na próxima chamada do update ele já esteja no estado parado
+                # Remova o 'return' e deixe a lógica de seleção de imagem abaixo cuidar disso.
+                # Não é necessário um 'return' aqui.
+                pass # Apenas passa para a próxima linha
 
         # Selecionar a imagem do frame atual
         imagem_atual = None
@@ -229,6 +238,12 @@ class Jogador(pygame.sprite.Sprite):
         posicao_tela_y = self.mundo_y - camera_y
         
         screen.blit(self.image, (int(posicao_tela_x), int(posicao_tela_y)))
+
+        # Desenha o ícone de interação se aplicável
+        if self.mostrar_icone_interacao and self.icone_interacao:
+            icone_x = posicao_tela_x + self.rect.width // 2 - self.icone_interacao.get_width() // 2
+            icone_y = posicao_tela_y - self.icone_interacao.get_height() + 10
+            screen.blit(self.icone_interacao, (int(icone_x), int(icone_y)))
 
         # DEBUG: Desenha o retângulo de colisão do jogador
         if DEBUG_DESENHAR_CAIXAS_COLISAO:

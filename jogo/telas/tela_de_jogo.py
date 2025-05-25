@@ -28,8 +28,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
     def __init__(self, gerenciador_telas, gerenciador_recursos, id_mapa_atual, personagem, ponto_de_destino, coordenada_x = None, coordenada_y = None):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
 
-        print(f"id_mapa_atual: {id_mapa_atual}")
-
         self.id_mapa = id_mapa_atual
         self.personagem = personagem
         self.ponto_de_destino = ponto_de_destino
@@ -80,8 +78,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         Prioriza um ponto de destino específico do mapa, depois coordenadas de fallback.
         Retorna um dicionário {'x': int, 'y': int, 'olhando_direita': bool}.
         """
-        print(id_mapa_atual, ponto_de_destino)
-
         map_data = mapas_data.get(id_mapa_atual)
         if not map_data:
             print(f"ERRO: Dados para o mapa com ID '{id_mapa_atual}' não encontrados. Usando posição padrão.")
@@ -91,7 +87,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if ponto_de_destino:
             pontos_de_entrada = map_data.get('pontos_de_entrada_no_mapa', {})
             entrada = pontos_de_entrada.get(ponto_de_destino)
-            print(entrada)
             if entrada:
                 return {
                     'x': entrada.get('x', 100),
@@ -165,14 +160,12 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 for area in areas_colidindo_agora:
                     if area.tipo_evento == 'mudar_mapa':
                         print(f"Detectou interação para mudar mapa para {area.dados_evento.get('id_proximo_mapa')}")
-                        print(self.personagem)
                         return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
                                 'id_mapa': area.dados_evento['id_proximo_mapa'],
                                 'ponto_de_destino': area.dados_evento['ponto_de_destino'],
                                 'personagem': self.personagem} # Mantenha o tipo de personagem
                     elif area.tipo_evento == 'iniciar_batalha':
                         print(f"Detectou interação para iniciar batalha com {area.dados_evento.get('inimigos')}")
-                        print(self.personagem)
                         return {'estado': CHAVE_TRANSICAO_BATALHA,
                                 'inimigos': area.dados_evento['inimigos'], # Passe os inimigos da área
                                 'jogador_x': self.jogador.mundo_x,
@@ -215,7 +208,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.jogador.mundo_x = self.jogador.rect.x
         self.jogador.mundo_y = self.jogador.rect.y
 
+        # Atualiza a visibilidade do ícone de interação
         self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
+        self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
+
 
         self.camera.update(self.jogador.rect)
 
@@ -263,12 +259,3 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     obstaculo.rect.height
                 )
                 pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
-
-            # Desenha o rect do jogador (DEBUG)
-            rect_colisao_jogador = pygame.Rect(
-                self.jogador.rect.x - self.camera.rect.x,
-                self.jogador.rect.y - self.camera.rect.y, # Ajusta Y pela câmera também
-                self.jogador.rect.width,
-                self.jogador.rect.height
-            )
-            pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_jogador, 1)

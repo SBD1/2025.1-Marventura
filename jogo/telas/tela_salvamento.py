@@ -124,7 +124,6 @@ class TelaSalvamento(TelaModelo):
                         slot_data = self._dados_salvamento_estatico[i]
                         if slot_data['ocupado']:
                             print(f"Carregando jogo do Slot {i+1}...")
-                            print(slot_data['id_mapa'], slot_data['personagem'], slot_data['olhando_para_direita'])
                             self.gerenciador_telas.mudar_tela(
                                 CHAVE_TRANSICAO_CARREGAR_JOGO,
                                 id_mapa=slot_data['id_mapa'],

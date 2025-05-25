@@ -44,7 +44,6 @@ class TelaBatalha(TelaModelo):
             if self.rect_botao.collidepoint(evento.pos):
                 print("Fugindo da batalha...")
                 # Usa o gerenciador de telas para solicitar a transição de volta
-                print(f"pers: {self.personagem}")
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_MAPA,
                     id_mapa=self.mapa_retorno_id, # Usar 'id_proximo_mapa' para o TelaJogo
