@@ -1,205 +1,227 @@
-# jogador.py
+# entidades/jogador.py
 
 import pygame
-from utilidades.constantes import *
+from utilidades.constantes import * # Importa as constantes
 
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_personagem):
-        """
-        Inicializa o jogador.
-        :param resource_manager: O gerenciador de recursos.
-        :param x_inicial: Posição X inicial no mundo.
-        :param y_inicial: Posição Y inicial no mundo.
-        :param tipo_personagem: O tipo de personagem ('menino' ou 'menina').
-        """
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, personagem, olhando_direita_inicial=True):
         super().__init__()
-        # Armazena a referência ao gerenciador de recursos
+        print(f"Inicializando Jogador: {personagem} em ({x_inicial}, {y_inicial}), olhando_direita={olhando_direita_inicial}")
         self.gerenciador_recursos = gerenciador_recursos
-        self.tipo_personagem = tipo_personagem
+        self.personagem = personagem
+        # REMOVIDO: self.fator_de_escala = fator_de_escala
 
-        # --- Carregar e armazenar frames de animação do gerenciador ---
-        prefixo_chave = f'protagonista_{self.tipo_personagem}_' # Ex: 'protagonista_menina_' ou 'protagonista_menina_'
-        
-        imagem_parado = self.gerenciador_recursos.get_image(prefixo_chave + 'em_repouso')
-        imagem_caminhar_frame_1 = self.gerenciador_recursos.get_image(prefixo_chave + 'caminhando_1')
-        imagem_caminhar_frame_2 = self.gerenciador_recursos.get_image(prefixo_chave + 'caminhando_2')
+        # Estado do jogador
+        self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.velocidade = VELOCIDADE_JOGADOR
+        self.olhando_direita = olhando_direita_inicial
 
-        # --- Verificar se as imagens foram carregadas e fornecer fallbacks ---
-        # Verifica se a imagem parada foi carregada. Se não, cria um fallback.
-        if imagem_parado is None:
-             print(f"AVISO: Imagem '{prefixo_chave}em_repouso' não carregada. Usando fallback.")
-             # Criar uma Surface de fallback com tamanho e cor
-             # Certifique-se de que este tamanho é razoável para o sprite (width, height)
-             imagem_parado = pygame.Surface((50, 80)) # Tamanho de fallback (ajuste se necessário)
-             imagem_parado.fill(AZUL) # Cor de fallback (AZUL deve estar em constantes.py)
-
-        # Verifica se os frames de caminhada foram carregados. Se não, usa a imagem parada como fallback para eles.
-        # Cria uma lista com os frames obtidos
-        frames_caminhada = [imagem_caminhar_frame_1, imagem_caminhar_frame_2]
-        # Verifica se a lista não está vazia E se algum item na lista é None
-        if not frames_caminhada or any(img is None for img in frames_caminhada):
-             print("AVISO: Frames de animação de caminhada incompletos ou não carregados. Usando imagem parada como fallback para caminhada.")
-             # Usa a imagem parada (ou seu fallback) como fallback para AMBOS os frames de caminhada
-             frames_caminhada = [imagem_parado, imagem_parado]
-
-
-        # --- Montar as sequências de animação ---
-        # Armazena as imagens/sequências usando chaves descritivas
-        self.imagens = {
-            'parado': imagem_parado, # A imagem parada é armazenada diretamente
-            # Define a sequência de caminhada: Perna Direita -> Parado -> Perna Esquerda -> Parado
-            # Usando os nomes das chaves que você usa para carregar em main.py
-            'caminhar': [frames_caminhada[0], imagem_parado, frames_caminhada[1], imagem_parado]
-            # Se você prefere a sequência original [Perna Direita, Perna Esquerda]:
-            # 'caminhar': frames_caminhada
+        # Animação e estado
+        self.estado = 'parado' # 'parado', 'caminhando'
+        self.frames_animacao = {
+            'parado': [],
+            'caminhando': []
         }
+        self.indice_frame = 0
+        self.tempo_desde_ultimo_frame = 0.0 # Usado com dt
+        self.taxa_animacao = VELOCIDADE_ANIMACAO_CAMINHADA # Constante de constantes.py
 
-        # --- Variáveis de Animação ---
-        self.estado = 'parado' # Estado atual: 'parado' ou 'caminhar'
-        self.indice_frame = 0 # Índice do frame atual na sequência de animação
-        self.contador_animacao = 0 # Contador para controlar a troca de frames
-        self.olhando_direita = True # Direção para onde o jogador está olhando (True = Direita)
+        # Carregar frames de animação
+        self.carregar_animacoes()
 
-        # --- Inicializar a imagem e o rect ---
-        # self.image é o atributo que o pygame.sprite.Group.draw usa para desenhar o sprite
-        self.image = self.imagens[self.estado] # Começa com a imagem do estado 'parado' (ou seu fallback)
-        self.rect = self.image.get_rect() # O rect inicialmente usa o tamanho da imagem atual
+        # Configura o sprite inicial
+        # Garante que 'parado' tenha pelo menos um frame
+        if self.frames_animacao['parado']: # Verifica se a lista não está vazia
+            self.image = self.frames_animacao[self.estado][self.indice_frame]
+        else:
+            # Fallback robusto caso todas as imagens falhem
+            print("ERRO GRAVE: frames_animacao['parado'] está vazio no __init__ do Jogador. Criando superfície vazia para evitar crash.")
+            self.image = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR))
+            self.image.fill(AZUL) # Uma cor diferente para indicar um erro mais grave
+        
+        self.rect = self.image.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
 
-        # Posição no mundo do jogo (coordenadas do jogo, não da tela)
-        self.mundo_x = x_inicial
-        self.mundo_y = y_inicial
-
-        # Posicionar o rect no mundo inicialmente (será ajustado pela GameScreen)
-        self.rect.topleft = (self.mundo_x, self.mundo_y)
-
-        # Velocidade de movimento do jogador
-        self.velocidade = 3 # Ajuste a velocidade conforme necessário
-
-        # Flags de movimento contínuo (controladas pelos eventos de teclado)
+        # Flags de movimento contínuo (agora gerenciadas internamente por handle_input_continuo)
         self.movendo_esquerda = False
         self.movendo_direita = False
         self.movendo_cima = False
         self.movendo_baixo = False
 
-    def handle_event(self, event):
-        """
-        Processa eventos específicos do jogador (como pressionar/soltar teclas de movimento).
-        """
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a: # Tecla 'A' para mover para a esquerda
-                self.movendo_esquerda = True
-                self.olhando_direita = False # Olhando para a esquerda
-            elif event.key == pygame.K_d: # Tecla 'D' para mover para a direita
-                self.movendo_direita = True
-                self.olhando_direita = True # Olhando para a direita
-            elif event.key == pygame.K_w: # Tecla 'W' para mover para cima
-                self.movendo_cima = True
-            elif event.key == pygame.K_s: # Tecla 'S' para mover para baixo
-                self.movendo_baixo = True
+    def carregar_animacoes(self):
+        # Prefixo para chaves de imagem
+        prefixo_chave = f'protagonista_{self.personagem}_'
+        
+        # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
+        imagem_parado = self.gerenciador_recursos.get_image(prefixo_chave + 'em_repouso')
+        imagem_caminhar_frame_1 = self.gerenciador_recursos.get_image(prefixo_chave + 'caminhando_1')
+        imagem_caminhar_frame_2 = self.gerenciador_recursos.get_image(prefixo_chave + 'caminhando_2')
 
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_a:
-                self.movendo_esquerda = False
-            elif event.key == pygame.K_d:
-                self.movendo_direita = False
-            elif event.key == pygame.K_w:
-                self.movendo_cima = False
-            elif event.key == pygame.K_s:
-                self.movendo_baixo = False
+        # Adiciona frame 'parado'
+        if imagem_parado:
+            self.frames_animacao['parado'].append(imagem_parado)
+        else:
+            print(f"AVISO: Imagem '{prefixo_chave}em_repouso' não encontrada para o jogador. Usando fallback padrão.")
+            # Fallback para uma superfície preta se a imagem principal não for carregada
+            fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
+            fallback_surface.fill(PRETO)
+            self.frames_animacao['parado'].append(fallback_surface)
 
-    def update(self):
+        # Adiciona frames 'caminhando'
+        valid_caminhada_frames = []
+        if imagem_caminhar_frame_1:
+            valid_caminhada_frames.append(imagem_caminhar_frame_1)
+        if imagem_caminhar_frame_2:
+            valid_caminhada_frames.append(imagem_caminhar_frame_2)
+        
+        # Se não houver frames de caminhada carregados, usa o frame 'parado' como fallback
+        if not valid_caminhada_frames:
+            print(f"AVISO: Nenhuma imagem de caminhada para '{prefixo_chave}' carregada. Usando imagem parada como fallback para caminhada.")
+            # Garante que haja pelo menos 2 frames para a animação de caminhada, mesmo que repetidos
+            # Isso é para evitar divisões por zero ou erros de índice em `len(self.frames_animacao['caminhando'])`
+            if self.frames_animacao['parado']:
+                valid_caminhada_frames = [self.frames_animacao['parado'][0], self.frames_animacao['parado'][0]]
+            else: # Fallback extremo se nem a imagem de parado foi carregada
+                fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
+                fallback_surface.fill(VERMELHO) # Sinaliza erro visível
+                valid_caminhada_frames = [fallback_surface, fallback_surface]
+
+        # Define a sequência de caminhada: Frame1, Parado, Frame2, Parado
+        # Esta é a sequência de animação que você tinha anteriormente.
+        self.frames_animacao['caminhando'] = [
+            valid_caminhada_frames[0],
+            self.frames_animacao['parado'][0], # O primeiro frame de parado
+            valid_caminhada_frames[1] if len(valid_caminhada_frames) > 1 else valid_caminhada_frames[0], # Garante que haja um segundo frame
+            self.frames_animacao['parado'][0] # O primeiro frame de parado
+        ]
+
+        # GARANTE que sempre haverá pelo menos um frame na animação 'parado'
+        # Isso é crucial para que self.image não seja None ao inicializar self.rect
+        if not self.frames_animacao['parado']:
+            print("ERRO CRÍTICO: frames_animacao['parado'] ainda está vazio após todos os fallbacks.")
+            fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
+            fallback_surface.fill(VERMELHO) # Cor para erros críticos
+            self.frames_animacao['parado'].append(fallback_surface)
+
+
+    def handle_input_continuo(self):
+        """
+        Processa as entradas contínuas do teclado usando pygame.key.get_pressed().
+        Este método substitui a lógica baseada em eventos KEYDOWN/KEYUP para movimento contínuo.
+        """
+        keys = pygame.key.get_pressed()
+        self.movendo_esquerda = False
+        self.movendo_direita = False
+        self.movendo_cima = False
+        self.movendo_baixo = False
+
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.movendo_esquerda = True
+            self.olhando_direita = False # Olhando para a esquerda
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.movendo_direita = True
+            self.olhando_direita = True # Olhando para a direita
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.movendo_cima = True
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            self.movendo_baixo = True
+
+    def update(self, dt, obstaculos):
         """
         Atualiza a posição do jogador e a animação a cada frame do jogo.
-        A GameScreen aplicará os limites de colisão e atualizará a posição final do rect.
+        :param dt: Delta time (tempo em segundos desde o último frame).
+        :param obstaculos: Um grupo de sprites de obstáculos para colisão.
         """
-        # --- Atualizar Posição no Mundo ---
+        self.handle_input_continuo() # Processa as entradas do teclado continuamente
+
+        # Salva a posição anterior para reverter em caso de colisão
+        pos_anterior_x = self.mundo_x
+        pos_anterior_y = self.mundo_y
+
+        # Calcula o movimento
+        dx = 0
+        dy = 0
         if self.movendo_esquerda:
-            self.mundo_x -= self.velocidade
+            dx -= self.velocidade
         if self.movendo_direita:
-            self.mundo_x += self.velocidade
+            dx += self.velocidade
         if self.movendo_cima:
-            self.mundo_y -= self.velocidade
+            dy -= self.velocidade
         if self.movendo_baixo:
-            self.mundo_y += self.velocidade
+            dy += self.velocidade
+
+        # Atualiza a posição X e verifica colisão
+        self.mundo_x += dx
+        self.rect.x = int(self.mundo_x) # Atualiza o rect para colisão
+
+        # Verifica colisão em X com obstáculos
+        if pygame.sprite.spritecollideany(self, obstaculos):
+            self.mundo_x = pos_anterior_x # Reverte o movimento em X
+            self.rect.x = int(self.mundo_x) # Atualiza o rect para a posição revertida
+
+        # Atualiza a posição Y e verifica colisão
+        self.mundo_y += dy
+        self.rect.y = int(self.mundo_y) # Atualiza o rect para colisão
+
+        # Verifica colisão em Y com obstáculos
+        if pygame.sprite.spritecollideany(self, obstaculos):
+            self.mundo_y = pos_anterior_y # Reverte o movimento em Y
+            self.rect.y = int(self.mundo_y) # Atualiza o rect para a posição revertida
+
 
         # --- Atualizar Animação ---
-        # Verifica se o jogador está se movendo em qualquer direção
-        esta_movendo = self.movendo_esquerda or self.movendo_direita or self.movendo_cima or self.movendo_baixo
+        esta_movendo = (self.movendo_esquerda or self.movendo_direita or
+                        self.movendo_cima or self.movendo_baixo)
 
-        # Determina o estado da animação com base no movimento
         if esta_movendo:
-             # Se houver qualquer movimento, está no estado de caminhada
-             self.estado = 'caminhar'
+            self.estado = 'caminhando'
+            self.tempo_desde_ultimo_frame += dt
+            if self.tempo_desde_ultimo_frame >= self.taxa_animacao:
+                # Garante que a lista de frames de caminhada não esteja vazia
+                if self.frames_animacao['caminhando']:
+                    self.indice_frame = (self.indice_frame + 1) % len(self.frames_animacao['caminhando'])
+                else:
+                    self.indice_frame = 0 # Fallback se não houver frames
+                self.tempo_desde_ultimo_frame = 0.0
         else:
-             # Se não houver movimento, está no estado parado
-             self.estado = 'parado'
-             # Ao parar, podemos resetar o frame index para o estado parado
-             self.indice_frame = 0
-             self.contador_animacao = 0 # Resetar o timer de animação ao parar
+            self.estado = 'parado'
+            self.indice_frame = 0 # Volta para o primeiro frame de parado
+            self.tempo_desde_ultimo_frame = 0.0
 
-
-        # Atualiza o timer de animação APENAS se estiver no estado de caminhada
-        if self.estado == 'caminhar':
-             # Verifica se a sequência de caminhada existe e tem frames antes de tentar acessar
-             if self.imagens.get('caminhar') and len(self.imagens['caminhar']) > 0:
-                try:
-                    # Use a constante FPS importada de constantes.py para um timer baseado em tempo
-                    # Verifique se FPS está importado corretamente e é um número
-                    self.contador_animacao += 1/FPS
-                except (NameError, TypeError):
-                    # Fallback se FPS não estiver definido ou for inválido
-                    print("AVISO: FPS não definido ou inválido para animação. Verifique importação de constantes. Usando incremento fixo.")
-                    self.contador_animacao += 0.01 # Incremento pequeno fixo para fallback
-
-                if self.contador_animacao >= VELOCIDADE_ANIMACAO_CAMINHADA:
-                    # Passa para o próximo frame na sequência de caminhada
-                    self.indice_frame = (self.indice_frame + 1) % len(self.imagens['caminhar'])
-                    self.contador_animacao = 0 # Resetar o timer
-             else:
-                 # Não há frames de caminhada válidos, a animação não pode ocorrer
-                 self.indice_frame = 0 # Fica no frame 0 (geralmente o primeiro fallback)
-                 self.contador_animacao = 0 # Resetar o timer
-
-
-        # --- Selecionar a imagem do frame atual ---
-        imagem_atual = None # Começa como None
-
-        if self.estado == 'parado':
-            # Se o estado é parado, usa a imagem única parada
-            imagem_atual = self.imagens.get('parado')
-
-        elif self.estado == 'caminhar':
-             # Se o estado é caminhar, pega o frame correto da sequência
-             # Verifica se a sequência 'caminhar' existe, não está vazia e o frame index é válido
-             if self.imagens.get('caminhar') and len(self.imagens['caminhar']) > self.indice_frame:
-                imagem_atual = self.imagens['caminhar'][self.indice_frame]
-             else:
-                 # Fallback se faltarem frames de caminhada, usa a imagem parada
-                 imagem_atual = self.imagens.get('parado')
-
-
-        # Se por algum motivo imagem_atual ainda for None (ex: parada também falhou), usa um fallback final visual
-        if imagem_atual is None:
-             print(f"ERRO FATAL (Fallback): Imagem para estado '{self.estado}' e índice '{self.indice_frame}' não encontrada. Criando fallback visual.")
-             imagem_atual = pygame.Surface((50, 80)) # Último recurso de fallback visual
-             imagem_atual.fill(VERMELHO) # Cor de erro/fallback (VERMELHO deve estar em constantes.py)
-
+        # Selecionar a imagem do frame atual
+        imagem_atual = None
+        if self.estado == 'parado' and self.frames_animacao['parado']:
+            imagem_atual = self.frames_animacao['parado'][self.indice_frame]
+        elif self.estado == 'caminhando' and self.frames_animacao['caminhando']:
+            imagem_atual = self.frames_animacao['caminhando'][self.indice_frame]
+        else:
+            # Fallback final se nada foi encontrado
+            print(f"ERRO FATAL (Fallback): Imagem para estado '{self.estado}' e índice '{self.indice_frame}' não encontrada. Criando superfície de erro.")
+            imagem_atual = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
+            imagem_atual.fill(VERMELHO)
 
         # Aplicar inversão horizontal se estiver olhando para a esquerda
-        # A inversão só faz sentido se a imagem precisar ser espelhada para a direção
-        # E se a animação de caminhada for simétrica e precisar ser espelhada.
-        # Se o jogador está parado mas olhando_direita é False, ele continua olhando para a esquerda.
-        # A imagem parada também deve ser invertida.
-        if not self.olhando_direita: # Se não estiver olhando para a direita (olhando para a esquerda)
-            # Certifique-se de que a imagem_atual não é None antes de tentar inverter
-            if imagem_atual:
-                 imagem_atual = pygame.transform.flip(imagem_atual, True, False)
+        if not self.olhando_direita:
+            imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
-        # Atribuir a imagem selecionada ao self.image do Sprite
-        # Este é o atributo que o Pygame usa para desenhar o sprite na tela
         self.image = imagem_atual
 
-        # Nota: A atualização de self.rect.topleft = (self.mundo_x, self.mundo_y)
-        # será feita *depois* pela GameScreen, após aplicar os limites de colisão.
+    def draw(self, screen, camera_x, camera_y):
+        """
+        Desenha o jogador na tela, ajustando pela posição da câmera.
+        :param screen: A superfície do Pygame onde desenhar.
+        :param camera_x: A posição X da câmera.
+        :param camera_y: A posição Y da câmera (se o jogo rolar verticalmente).
+        """
+        # A posição do jogador na tela é sua posição no mundo menos a posição da câmera
+        posicao_tela_x = self.mundo_x - camera_x
+        posicao_tela_y = self.mundo_y - camera_y
+        
+        screen.blit(self.image, (int(posicao_tela_x), int(posicao_tela_y)))
+
+        # DEBUG: Desenha o retângulo de colisão do jogador
+        if DEBUG_DESENHAR_CAIXAS_COLISAO:
+            debug_rect = pygame.Rect(self.rect.x - camera_x, self.rect.y - camera_y, self.rect.width, self.rect.height)
+            pygame.draw.rect(screen, COR_CAIXA_COLISAO, debug_rect, 1)

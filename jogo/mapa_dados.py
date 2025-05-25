@@ -5,6 +5,59 @@ from utilidades.constantes import *
 # Dicionário para armazenar os dados de configuração de cada mapa do jogo.
 # Cada chave é o ID único do mapa.
 mapas_data = {
+    ID_MAPA_CAMPO_COSTA_OESTE: { # ID do primeiro mapa
+        'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_OESTE, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
+        'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
+            # Limite superior do caminho (particionado em segmentos)
+            {'x': 0, 'y': 300, 'largura': 3540, 'altura': 20},
+            # Limite inferior do caminho (segmento único)
+            {'x': 0, 'y': 600, 'largura': 3540, 'altura': 20},
+        ],
+        'npcs': [
+            # Lista de NPCs para este mapa.
+            # Ex: {'tipo': 'npc_aldeao', 'x': 500, 'y': 400, 'dialogo_id': 'ilha_inicial_intro'}
+        ],
+        'inimigos': [
+            {
+                'tipo': 'goblin',
+                'x': 500, 'y': 350,
+                'largura': 64, 'altura': 64,
+                'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
+                'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
+                'alcance_visao': 150,
+                'angulo_visao_graus': 90,
+                'tempo_reacao_ms': 0,      # 0.75 segundos para reagir
+                'imagem_chave': 'inimigo_goblin'
+            },
+            {
+                'tipo': 'esqueleto',
+                'x': 720, 'y': 320,
+                'largura': 70, 'altura': 70,
+                'velocidade_caminhada': 150,
+                'velocidade_corrida': 300,
+                'alcance_visao': 150,
+                'angulo_visao_graus': 120,
+                'tempo_reacao_ms': 1200,     # 1.2 segundos para reagir (mais lento)
+                'imagem_chave': 'inimigo_esqueleto'
+            }
+        ],
+        'pontos_de_entrada_no_mapa': {
+            # Ponto de entrada padrão (usado se nenhum ponto específico for dado ao criar a TelaJogo)
+            'entrada_padrao': {'x': 100, 'y': 370, 'olhando_direita': True},
+            'entrada_esquerda': {'x': 3361, 'y': 370, 'olhando_direita': False},
+        },
+        'areas_interacao': [
+            # Entrada direita
+            {
+                'x': 850, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do final do mapa
+                'tipo_evento': 'mudar_mapa',
+                'dados_evento': {
+                    'id_proximo_mapa': ID_MAPA_CAMPO_VILA, # O ID da próxima área
+                    'ponto_de_destino': 'entrada_padrao'
+                }
+            },
+        ]
+    },
     ID_MAPA_CAMPO_VILA: { # ID do primeiro mapa
         'chave_cenario': CHAVE_CENARIO_CAMPO_VILA, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
         'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
@@ -23,7 +76,7 @@ mapas_data = {
             # Lista de inimigos para este mapa.
             # Ex: {'tipo': 'inimigo_goblin', 'x': 800, 'y': 450, 'patrulha': [800, 1000]}
         ],
-        'pontos_entrada_saida': {
+        'pontos_de_entrada_no_mapa': {
             # Ponto de entrada padrão (usado se nenhum ponto específico for dado ao criar a TelaJogo)
             'entrada_padrao': {'x': 100, 'y': 370, 'olhando_direita': True},
             # Ponto onde o jogador começa em um novo jogo
@@ -38,8 +91,8 @@ mapas_data = {
                 'x': 0, 'y': 360, 'largura': 50, 'altura': 150, # Perto do início do mapa
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_CAMPO_VILA,  # O ID da área anterior
-                    'ponto_entrada_destino_id': 'entrada_padrao'
+                    'id_proximo_mapa': ID_MAPA_CAMPO_COSTA_OESTE,  # O ID da área anterior
+                    'ponto_de_destino': 'entrada_padrao'
                 }
             },
             # Entrada da loja
@@ -47,8 +100,8 @@ mapas_data = {
                 'x': 1716, 'y': 300, 'largura': 200, 'altura': 40, # Perto da entrada da loja
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_CAMPO_LOJA, # O ID do interior da loja
-                    'ponto_entrada_destino_id': 'entrada_padrao'
+                    'id_proximo_mapa': ID_MAPA_CAMPO_LOJA, # O ID do interior da loja
+                    'ponto_de_destino': 'entrada_padrao'
                 }
             },
             # Entrada direita
@@ -56,8 +109,8 @@ mapas_data = {
                 'x': 3490, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do final do mapa
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_NEVE_VILA, # O ID da próxima área
-                    'ponto_entrada_destino_id': 'entrada_padrao'
+                    'id_proximo_mapa': ID_MAPA_NEVE_VILA, # O ID da próxima área
+                    'ponto_de_destino': 'entrada_padrao'
                 }
             },
             # {
@@ -90,12 +143,13 @@ mapas_data = {
     #           {
     #             'x': 50, 'y': 180, 'largura': 50, 'altura': 50, # Ex: Perto de um portal para voltar
     #             'tipo_evento': 'mudar_mapa',
-    #             'dados_evento': {'proximo_mapa_id': 'ilha_inicial'} # Volta para a ilha inicial
+    #             'dados_evento': {'id_proximo_mapa': 'ilha_inicial'} # Volta para a ilha inicial
     #         },
     #     ]
     # },
     ID_MAPA_CAMPO_LOJA: {
         'chave_cenario': CHAVE_LOJA_INTERIOR,
+        'escala': 2.5,
         'obstaculos': [
             # Limite superior do caminho
             {'x': 0, 'y': 245, 'largura': 900, 'altura': 20},
@@ -104,7 +158,7 @@ mapas_data = {
         ],
         'npcs': [],
         'inimigos': [],
-        'pontos_entrada_saida': {
+        'pontos_de_entrada_no_mapa': {
             # Ponto de entrada padrão
             'entrada_padrao': {'x': 100, 'y': 275, 'olhando_direita': True},
         },
@@ -113,8 +167,8 @@ mapas_data = {
                 'x': 0, 'y': 300, 'largura': 50, 'altura': 270, # Perto da saída da loja
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_CAMPO_VILA, # Volta para a ilha inicial
-                    'ponto_entrada_destino_id': 'saida_loja_principal'
+                    'id_proximo_mapa': ID_MAPA_CAMPO_VILA, # Volta para a ilha inicial
+                    'ponto_de_destino': 'saida_loja_principal'
                 }
             },
         ]
@@ -137,7 +191,7 @@ mapas_data = {
             # Lista de inimigos para este mapa.
             # Ex: {'tipo': 'inimigo_goblin', 'x': 800, 'y': 450, 'patrulha': [800, 1000]}
         ],
-        'pontos_entrada_saida': {
+        'pontos_de_entrada_no_mapa': {
             # Ponto de entrada padrão (usado se nenhum ponto específico for dado ao criar a TelaJogo)
             'entrada_padrao': {'x': 100, 'y': 415, 'olhando_direita': True},
             # Ponto onde o jogador começa em um novo jogo
@@ -152,8 +206,8 @@ mapas_data = {
                 'x': 0, 'y': 360, 'largura': 50, 'altura': 150, # Perto do início do mapa
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_CAMPO_VILA,  # O ID da área anterior
-                    'ponto_entrada_destino_id': 'entrada_leste'
+                    'id_proximo_mapa': ID_MAPA_CAMPO_VILA,  # O ID da área anterior
+                    'ponto_de_destino': 'entrada_leste'
                 }
             },
             # Entrada da cozinha
@@ -161,8 +215,8 @@ mapas_data = {
                 'x': 679, 'y': 270, 'largura': 116, 'altura': 40, # Perto da entrada da cozinha
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_NEVE_COZINHA, # O ID do interior da cozinha
-                    'ponto_entrada_destino_id': 'entrada_padrao'
+                    'id_proximo_mapa': ID_MAPA_NEVE_COZINHA, # O ID do interior da cozinha
+                    'ponto_de_destino': 'entrada_padrao'
                 }
             },
             # Entrada direita
@@ -170,14 +224,15 @@ mapas_data = {
                 'x': 3490, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do final do mapa
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_NEVE_VILA, # O ID da próxima área
-                    'ponto_entrada_destino_id': 'entrada_leste'
+                    'id_proximo_mapa': ID_MAPA_NEVE_VILA, # O ID da próxima área
+                    'ponto_de_destino': 'entrada_leste'
                 }
             },
         ]
     },
     ID_MAPA_NEVE_COZINHA: {
         'chave_cenario': CHAVE_COZINHA_INTERIOR,
+        'escala': 2.5,
         'obstaculos': [
             # Limite superior do caminho
             {'x': 0, 'y': 213, 'largura': 900, 'altura': 20},
@@ -186,7 +241,7 @@ mapas_data = {
         ],
         'npcs': [],
         'inimigos': [],
-        'pontos_entrada_saida': {
+        'pontos_de_entrada_no_mapa': {
             # Ponto de entrada padrão
             'entrada_padrao': {'x': 100, 'y': 260, 'olhando_direita': True},
         },
@@ -195,8 +250,8 @@ mapas_data = {
                 'x': 0, 'y': 280, 'largura': 50, 'altura': 270, # Perto da saída da cozinha
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
-                    'proximo_mapa_id': ID_MAPA_NEVE_VILA,
-                    'ponto_entrada_destino_id': 'saida_cozinha'
+                    'id_proximo_mapa': ID_MAPA_NEVE_VILA,
+                    'ponto_de_destino': 'saida_cozinha'
                 }
             },
         ]

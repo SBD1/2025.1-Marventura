@@ -1,65 +1,71 @@
 # tela_modelo.py
 
+import pygame
+import sys # Para sys.exit()
 from utilidades.constantes import *
 
 class TelaModelo:
     """
-    Classe base para as telas do jogo.
-    Recebe e armazena o gerenciador de recursos para acesso comum.
-    Lida com elementos comuns como fundo (acessado via gerenciador).
-    Inclui um método auxiliar para desenhar texto com borda.
+    Classe base para todas as telas do jogo.
+    Define a interface comum (contrato) para as telas, incluindo gerenciadores
+    e métodos essenciais como handle_input, update e draw.
     """
-    # Recebe o gerenciador de recursos no construtor
-    def __init__(self, gerenciador_recursos):
-        # Armazena a referência ao gerenciador de recursos
+    def __init__(self, gerenciador_telas, gerenciador_recursos):
+        """
+        Construtor da TelaModelo.
+        :param gerenciador_telas: Referência ao gerenciador de telas para transições.
+        :param gerenciador_recursos: Referência ao gerenciador de recursos para assets.
+        """
+        self.gerenciador_telas = gerenciador_telas
         self.gerenciador_recursos = gerenciador_recursos
 
-        # A imagem de fundo comum não é mais passada diretamente, é obtida do gerenciador
-        # self.imagem_fundo = self.gerenciador_recursos.get_image('background_common')
-        # É melhor obter o fundo no método draw, pois pode variar entre subclasses ou ser None
 
-    def handle_event(self, event):
+    def handle_input(self, evento):
         """
-        Processa um evento. Deve ser sobrescrito pelas subclasses para lidar com a lógica específica da tela.
-        Eventos comuns a todas as telas podem ser tratados aqui (ex: menu de pausa com ESC).
-        Retorna o ID do próximo estado do jogo (um int da constante) ou None (continua na mesma tela).
-        Retorna sys.exit para sinalizar a saída completa do jogo.
+        Processa um evento de entrada.
+        Deve ser sobrescrito pelas subclasses para lidar com a lógica específica da tela.
+        Retorna um dicionário de transição (com a chave 'estado' e kwargs) ou None.
+        Um retorno de 'sys.exit' ou similar pode sinalizar a saída do jogo.
         """
+        if evento.type == pygame.QUIT:
+            sys.exit() # Evento de fechar a janela, saída imediata
+
         # Lógica de eventos comum a todas as telas (ex: pressionar ESC para menu de pausa)
-        # if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-        #     print("ESC pressionado na tela base")
-        #     # Retornaria o ID do estado de pausa, por exemplo
-        #     # return ESTADO_PAUSA # Assumindo que ESTADO_PAUSA está em constantes.py
-        pass # Implementação base não faz nada com eventos específicos
+        # if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+        #     # Exemplo de como uma TelaModelo pode solicitar uma transição via gerenciador
+        #     # self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PAUSA)
+        #     return None # Ou um dicionário de transição, se a TelaModelo decidir a transição
 
-        return None # Retorna None por padrão (continua na mesma tela atual)
+        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
+            self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
+            return None # Ou um dicionário de transição, se a TelaModelo decidir a transição
+
+        return None # Por padrão, não faz nada e não solicita transição
+
+    def update(self, dt):
+        """
+        Atualiza a lógica interna da tela (movimento de entidades, timers, etc.).
+        Deve ser sobrescrito pelas classes filhas.
+        :param dt: Delta time (tempo desde o último frame) em segundos.
+        Retorna um dicionário de transição (com a chave 'estado' e kwargs) ou None.
+        """
+        return None # Implementação padrão não faz nada
 
     def draw(self, tela):
         """
-        Desenha o conteúdo da tela. Deve ser sobrescrito pelas subclasses para desenhar seus elementos específicos.
-        Desenha o fundo comum (obtido do gerenciador de recursos).
-        :param tela: A superfície principal (tela) onde desenhar.
+        Desenha os elementos da tela na superfície principal do Pygame.
+        Deve ser sobrescrito pelas classes filhas.
+        :param tela: A superfície de exibição do Pygame onde desenhar.
         """
-        # Obtém a imagem de fundo comum do gerenciador para desenhar
-        imagem_fundo = self.gerenciador_recursos.get_image(CHAVE_TELA_INICIAL)
-        if imagem_fundo:
-            tela.blit(imagem_fundo, (0, 0))
-        else:
-            tela.fill(PRETO)
+        # A lógica de desenho de fundo comum, se aplicável a TODAS as telas, viria aqui.
+        # Se o fundo comum é apenas para algumas telas (menu, salvar),
+        # então as subclasses deverão implementá-lo no seu próprio método draw.
+        pass # Por padrão, não desenha nada
 
-    # Método auxiliar de desenho de texto com borda (útil para as subclasses)
-    # Este método já recebe a fonte como parâmetro, o que é bom.
-    # Poderíamos modificá-lo para obter a fonte pelo nome do gerenciador, mas passá-la é mais flexível.
     def _desenhar_texto_com_borda(self, superficie, texto, fonte, cor, cor_borda, grossura_borda, posicao_centro):
         """
-        Desenha um texto em uma superfície com uma borda simples.
-        :param superficie: A superfície onde desenhar (ex: a tela do jogo).
-        :param texto: O texto a ser desenhado.
-        :param fonte: O objeto pygame.font.Font a ser usado.
-        :param cor: A cor principal do texto.
-        :param cor_borda: A cor da borda do texto.
-        :param grossura_borda: A espessura da borda em pixels.
-        :param posicao_centro: Uma tupla (x, y) para o centro onde o texto deve ser posicionado.
+        Método auxiliar para desenhar um texto em uma superfície com uma borda simples.
+        Pode ser reutilizado por qualquer tela que herde desta base.
         """
         # Renderiza a superfície da borda do texto
         superficie_borda = fonte.render(texto, True, cor_borda)
@@ -68,12 +74,10 @@ class TelaModelo:
         # Desenha a borda movendo a superfície da borda ligeiramente
         for dx in [-grossura_borda, 0, grossura_borda]:
             for dy in [-grossura_borda, 0, grossura_borda]:
-                 if dx != 0 or dy != 0:
+                 if dx != 0 or dy != 0: # Desenha apenas as 8 direções em volta do centro
                     superficie.blit(superficie_borda, (rect_borda.x + dx, rect_borda.y + dy))
 
         # Renderiza a superfície principal do texto
         superficie_principal = fonte.render(texto, True, cor)
         rect_principal = superficie_principal.get_rect(center=posicao_centro)
-
-        # Desenha a superfície principal do texto por cima da borda
         superficie.blit(superficie_principal, rect_principal)
