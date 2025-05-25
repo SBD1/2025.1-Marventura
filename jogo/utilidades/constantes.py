@@ -66,6 +66,10 @@ OFFSET_ICONE_INTERACAO_Y = 40
 PERSONAGEM_MENINA = 'Sylvie'
 PERSONAGEM_MENINO = 'Ikki'
 
+# --- Inimigos ---
+INIMIGO_LOBO = 'inimigo_lobo'
+INIMIGO_CORVO = 'inimigo_corvo'
+
 # --- Identificadores de Mapas ---
 ID_MAPA_CAMPO_COSTA_OESTE = 'ilha_campo_costa_oeste'
 ID_MAPA_CAMPO_VILA = 'ilha_campo_vila'
@@ -84,6 +88,8 @@ CHAVE_CARTAZ_PROCURADA = 'cartaz_de_procurada'
 CHAVE_CARTAZ_PROCURADO = 'cartaz_de_procurado'
 CHAVE_CARTAZ_VAZIO = 'cartaz_vazio'
 CHAVE_ICONE_INTERACAO = 'icone_interacao'
+CHAVE_ICONE_ALERTA = 'icone_alerta'
+CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
 
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'

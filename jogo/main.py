@@ -61,13 +61,13 @@ gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINA}_caminhando_1'
 gerenciador_recursos.load_image(f'protagonista_{PERSONAGEM_MENINA}_caminhando_2', 'recursos/imagens/jogador/jogadora_caminhando_2.png', escalar_para_altura=120)
 
 # --- Carregar Imagens dos Inimigos ---
-gerenciador_recursos.load_image('inimigo_goblin', 'recursos/imagens/inimigos/goblin.png', escalar_para_altura=120) # Exemplo
-gerenciador_recursos.load_image('inimigo_esqueleto', 'recursos/imagens/inimigos/esqueleto.png', escalar_para_altura=120) # Exemplo
+gerenciador_recursos.load_image(INIMIGO_LOBO, 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
+gerenciador_recursos.load_image(INIMIGO_CORVO, 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
 
 # --- Carregar Ícone de Interação ---
 gerenciador_recursos.load_image(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
-gerenciador_recursos.load_image('icone_alerta_inimigo', 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
-gerenciador_recursos.load_image('icone_interrogacao_inimigo', 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48) # Novo!
+gerenciador_recursos.load_image(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
+gerenciador_recursos.load_image(CHAVE_ICONE_INTERROGACAO, 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48)
 
 
 # Verifica se todos os recursos críticos foram carregados com sucesso

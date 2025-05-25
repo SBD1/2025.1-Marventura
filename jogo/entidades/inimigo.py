@@ -5,7 +5,7 @@ import math
 from utilidades.constantes import * # Certifique-se de que todas as constantes estão aqui
 
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, resource_manager, x_inicial, y_inicial, tipo_inimigo, largura, altura,
+    def __init__(self, resource_manager, x_inicial, y_inicial, tipo_inimigo,
                  velocidade_caminhada, velocidade_corrida, alcance_visao, angulo_visao_graus,
                  tempo_reacao_ms, imagem_chave, cor_fallback=VERMELHO,
                  alcance_ataque=DISTANCIA_ATAQUE_INIMIGO, duracao_ataque_ms=DURACAO_ATAQUE_INIMIGO_MS): # Usando nova constante
@@ -25,7 +25,7 @@ class Inimigo(pygame.sprite.Sprite):
             self.image = self.imagem_original
         else:
             print(f"AVISO: Imagem '{imagem_chave}' não encontrada para o inimigo '{tipo_inimigo}'. Usando fallback color.")
-            self.image = pygame.Surface((largura, altura), pygame.SRCALPHA)
+            self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
             self.image.fill(self.cor_fallback)
 
         self.rect = self.image.get_rect(topleft=(x_inicial, y_inicial))

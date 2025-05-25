@@ -125,7 +125,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 self.gerenciador_recursos,
                 inimigo_data['x'], inimigo_data['y'],
                 inimigo_data['tipo'],
-                inimigo_data['largura'], inimigo_data['altura'],
                 inimigo_data['velocidade_caminhada'],
                 inimigo_data['velocidade_corrida'],
                 inimigo_data['alcance_visao'],

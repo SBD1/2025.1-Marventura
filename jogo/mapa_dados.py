@@ -19,26 +19,24 @@ mapas_data = {
         ],
         'inimigos': [
             {
-                'tipo': 'goblin',
+                'tipo': 'lobo',
                 'x': 500, 'y': 350,
-                'largura': 64, 'altura': 64,
                 'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
                 'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
                 'alcance_visao': 150,
                 'angulo_visao_graus': 90,
                 'tempo_reacao_ms': 0,      # 0.75 segundos para reagir
-                'imagem_chave': 'inimigo_goblin'
+                'imagem_chave': INIMIGO_LOBO
             },
             {
-                'tipo': 'esqueleto',
+                'tipo': 'corvo',
                 'x': 720, 'y': 320,
-                'largura': 70, 'altura': 70,
                 'velocidade_caminhada': 150,
                 'velocidade_corrida': 300,
                 'alcance_visao': 150,
                 'angulo_visao_graus': 120,
                 'tempo_reacao_ms': 1200,     # 1.2 segundos para reagir (mais lento)
-                'imagem_chave': 'inimigo_esqueleto'
+                'imagem_chave': INIMIGO_CORVO
             }
         ],
         'pontos_de_entrada_no_mapa': {
