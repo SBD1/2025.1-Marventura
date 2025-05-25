@@ -119,5 +119,5 @@ CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_ilha_6_parte_2'
 CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_ilha_6_parte_3'
 
 # --- Debugging ---
-DEBUG_DESENHAR_CAIXAS_COLISAO = True # (True para exibir, False para ocultar)
+DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão

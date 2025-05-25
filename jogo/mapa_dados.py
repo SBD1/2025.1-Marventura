@@ -9,9 +9,11 @@ mapas_data = {
         'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_OESTE, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
         'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
             # Limite superior do caminho (particionado em segmentos)
-            {'x': 0, 'y': 300, 'largura': 3540, 'altura': 20},
+            {'x': 0, 'y': -20, 'largura': 3540, 'altura': 20},
             # Limite inferior do caminho (segmento único)
             {'x': 0, 'y': 600, 'largura': 3540, 'altura': 20},
+            {'x': -20, 'y': 0, 'largura': 20, 'altura': 600},
+            {'x': 900, 'y': 0, 'largura': 20, 'altura': 600},
         ],
         'npcs': [
             # Lista de NPCs para este mapa.
@@ -25,7 +27,7 @@ mapas_data = {
                 'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
                 'alcance_visao': 150,
                 'angulo_visao_graus': 90,
-                'tempo_reacao_ms': 0,      # 0.75 segundos para reagir
+                'tempo_reacao_ms': 750,      # 0.75 segundos para reagir
                 'imagem_chave': INIMIGO_LOBO
             },
             {
