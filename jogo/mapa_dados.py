@@ -21,21 +21,21 @@ mapas_data = {
         ],
         'inimigos': [
             {
-                'tipo': 'lobo',
+                'tipo': INIMIGO_LOBO,
                 'x': 500, 'y': 350,
                 'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
                 'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
-                'alcance_visao': 150,
+                'alcance_visao': 200,
                 'angulo_visao_graus': 90,
                 'tempo_reacao_ms': 750,      # 0.75 segundos para reagir
                 'imagem_chave': INIMIGO_LOBO
             },
             {
-                'tipo': 'corvo',
+                'tipo': INIMIGO_CORVO,
                 'x': 720, 'y': 320,
                 'velocidade_caminhada': 150,
                 'velocidade_corrida': 300,
-                'alcance_visao': 150,
+                'alcance_visao': 200,
                 'angulo_visao_graus': 120,
                 'tempo_reacao_ms': 1200,     # 1.2 segundos para reagir (mais lento)
                 'imagem_chave': INIMIGO_CORVO

@@ -116,7 +116,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
     def _carregar_entidades_dos_dados_do_mapa(self):
         for obj_data in self.mapa_data['obstaculos']:
-            obstaculo = Obstaculo(self.gerenciador_recursos, obj_data['x'], obj_data['y'], obj_data['largura'], obj_data['altura'])
+            obstaculo = Obstaculo(
+                self.gerenciador_recursos,
+                obj_data['x'], obj_data['y'],
+                obj_data['largura'], obj_data['altura']
+            )
             self.obstaculos_caminho.add(obstaculo)
             self.obstaculos_visao.add(obstaculo)
 
@@ -130,7 +134,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 inimigo_data['alcance_visao'],
                 inimigo_data['angulo_visao_graus'],
                 inimigo_data['tempo_reacao_ms'],
-                inimigo_data['imagem_chave'],
                 alcance_ataque=inimigo_data.get('alcance_ataque', DISTANCIA_ATAQUE_INIMIGO),
                 duracao_ataque_ms=inimigo_data.get('duracao_ataque_ms', DURACAO_ATAQUE_INIMIGO_MS)
             )

@@ -7,7 +7,7 @@ from utilidades.constantes import *
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self, resource_manager, x_inicial, y_inicial, tipo_inimigo,
                  velocidade_caminhada, velocidade_corrida, alcance_visao, angulo_visao_graus,
-                 tempo_reacao_ms, imagem_chave, cor_fallback=VERMELHO,
+                 tempo_reacao_ms, cor_fallback=VERMELHO,
                  alcance_ataque=DISTANCIA_ATAQUE_INIMIGO, duracao_ataque_ms=DURACAO_ATAQUE_INIMIGO_MS):
         super().__init__()
         self.resource_manager = resource_manager
@@ -20,10 +20,17 @@ class Inimigo(pygame.sprite.Sprite):
         self.tempo_reacao_ms = tempo_reacao_ms
         self.cor_fallback = cor_fallback
 
-        self.imagem_original = self.resource_manager.get_image(imagem_chave)
-        self.image = self.imagem_original if self.imagem_original else pygame.Surface((80, 80), pygame.SRCALPHA)
-        if not self.imagem_original:
-            print(f"AVISO: Imagem '{imagem_chave}' não encontrada para o inimigo '{tipo_inimigo}'. Usando fallback.")
+        self.imagens_animacao = {}
+        self.carregar_animacoes(tipo_inimigo)
+        self.frame_atual = 0
+        self.tempo_ultimo_frame = pygame.time.get_ticks()
+        self.velocidade_animacao = 150 # ms por frame
+
+        # Define a imagem inicial. Se não houver frames carregados, usa fallback.
+        self.image = self.imagens_animacao.get(0)
+        if not self.image:
+            print(f"AVISO: Imagens de animação para '{tipo_inimigo}' não encontradas. Usando fallback.")
+            self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
             self.image.fill(self.cor_fallback)
 
         self.rect = self.image.get_rect(topleft=(x_inicial, y_inicial))
@@ -45,6 +52,42 @@ class Inimigo(pygame.sprite.Sprite):
         self.icone_alerta = self.resource_manager.get_image(CHAVE_ICONE_ALERTA)
         self.icone_interrogacao = self.resource_manager.get_image(CHAVE_ICONE_INTERROGACAO)
 
+    def carregar_animacoes(self, chave_base):
+        # Carrega as imagens de animação com base na chave_base (ex: 'lobo', 'corvo')
+        # e os sufixos '_0', '_1', etc.
+        i = 0
+        while True:
+            chave_frame = f"{chave_base}_{i}"
+            imagem_frame = self.resource_manager.get_image(chave_frame)
+            if imagem_frame:
+                self.imagens_animacao[i] = imagem_frame
+                i += 1
+            else:
+                break
+        if not self.imagens_animacao:
+            print(f"AVISO: Nenhuma imagem de animação encontrada para a chave base: {chave_base}")
+
+    def _atualiza_animacao(self, dt):
+        agora = pygame.time.get_ticks()
+        # Se o inimigo estiver se movendo, avança a animação
+        if self.estado == ESTADO_INIMIGO_MOVENDO:
+            if agora - self.tempo_ultimo_frame > self.velocidade_animacao:
+                self.frame_atual = (self.frame_atual + 1) % len(self.imagens_animacao)
+                self.tempo_ultimo_frame = agora
+        else: # Se o inimigo não estiver se movendo, volta para o frame 0 (repouso)
+            self.frame_atual = 0
+
+        # Define a imagem atual e aplica o flip se necessário
+        current_animation_image = self.imagens_animacao.get(self.frame_atual)
+        if current_animation_image:
+            if self.olhando_direita:
+                self.image = pygame.transform.flip(current_animation_image, True, False)
+            else:
+                self.image = current_animation_image
+        else:
+            # Fallback se o frame atual não for encontrado (nunca deveria acontecer se as imagens forem carregadas corretamente)
+            self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
+            self.image.fill(self.cor_fallback)
 
     def update(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
         self.atingiu_jogador = False
@@ -53,12 +96,15 @@ class Inimigo(pygame.sprite.Sprite):
         jogador_centro = pygame.math.Vector2(jogador.rect.centerx, jogador.rect.centery)
         distancia_ao_jogador = inimigo_centro.distance_to(jogador_centro)
 
-        self.olhando_direita = jogador_centro.x > inimigo_centro.x
+        # Atualiza a direção que o inimigo está olhando com base no jogador
+        # Apenas se o inimigo estiver perseguindo ou se houver um alvo identificado.
+        # Caso contrário, a direção é definida pela patrulha.
+        if self.alvo_identificado or self.estado == ESTADO_INIMIGO_MOVENDO:
+             self.olhando_direita = jogador_centro.x > inimigo_centro.x
 
         # Visão
         if distancia_ao_jogador <= self.alcance_visao:
             self.alvo_identificado = self._verifica_linha_de_visao(inimigo_centro, jogador.rect, obstaculos_visao)
-
         else:
             self.alvo_identificado = False
 
@@ -69,28 +115,26 @@ class Inimigo(pygame.sprite.Sprite):
                     if distancia_ao_jogador <= self.alcance_ataque:
                         self._tenta_atacar(jogador_centro)
                     else:
-                        self.estado = ESTADO_INIMIGO_MOVENDO
+                        self.estado = ESTADO_INIMIGO_MOVENDO # <-- Aqui ele começa a se mover para perseguir
                         self._perseguir_jogador(dt, jogador_centro, obstaculos_caminho)
                 elif self.estado == ESTADO_INIMIGO_ATACANDO:
                     if pygame.time.get_ticks() - self.ultimo_ataque_tempo > self.duracao_ataque_ms:
                         self.estado = ESTADO_INIMIGO_RECARGA
                 elif self.estado == ESTADO_INIMIGO_RECARGA:
                     if pygame.time.get_ticks() - self.ultimo_ataque_tempo > TEMPO_RECARGA_ATAQUE_INIMIGO_MS:
-                        self.estado = ESTADO_INIMIGO_PARADO
-        else:
+                        self.estado = ESTADO_INIMIGO_PARADO # <-- Volta para parado após recarga
+            else: # Durante o tempo de reação, mas ainda não agiu
+                # Adicionar este bloco para garantir que o inimigo pare de se mover
+                # e entre no estado 'parado' durante o tempo de reação
+                if self.estado == ESTADO_INIMIGO_MOVENDO: # Se ele estava se movendo antes de reagir
+                    self.estado = ESTADO_INIMIGO_PARADO # Coloca ele no estado parado
+        else: # Sem alvo identificado
             self.timer_reacao = 0
             if self.estado != ESTADO_INIMIGO_RECARGA:
-                self.estado = ESTADO_INIMIGO_MOVENDO
+                self.estado = ESTADO_INIMIGO_MOVENDO # <-- Volta para se mover (patrulhar)
                 self._patrulhar(dt, obstaculos_caminho)
 
-        if self.imagem_original:
-            if self.olhando_direita:
-                print("Olhando para DIREITA → aplicando flip")
-                self.image = pygame.transform.flip(self.imagem_original, True, False)
-            else:
-                print("Olhando para ESQUERDA → imagem normal")
-                self.image = self.imagem_original
-
+        self._atualiza_animacao(dt) # Atualiza a animação com base no estado de movimento
 
         self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
 
@@ -121,6 +165,7 @@ class Inimigo(pygame.sprite.Sprite):
             self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
             self._resolver_colisoes(obstaculos, 'y', dy)
 
+            # Atualiza a direção que o inimigo está olhando com base no movimento de patrulha
             if dx > 0:
                 self.olhando_direita = True
             elif dx < 0:
@@ -143,10 +188,6 @@ class Inimigo(pygame.sprite.Sprite):
         self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
         self._resolver_colisoes(obstaculos, 'y', dy)
 
-        if dx > 0:
-            self.olhando_direita = True
-        elif dx < 0:
-            self.olhando_direita = False
 
     def _tenta_atacar(self, jogador_centro):
         agora = pygame.time.get_ticks()
@@ -235,7 +276,6 @@ class Inimigo(pygame.sprite.Sprite):
     def draw(self, tela, camera_x):
         tela.blit(self.image, (self.mundo_x - camera_x, self.mundo_y))
 
-        icone = None
         icone = None
         if self.alvo_identificado and self.timer_reacao < self.tempo_reacao_ms:
             icone = self.icone_interrogacao

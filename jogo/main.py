@@ -63,8 +63,11 @@ gerenciador_recursos.load_image(f'{SILVIE}_caminhando_2', 'recursos/imagens/joga
 gerenciador_recursos.load_image(f'{SILVIE}_caminhando_3', 'recursos/imagens/jogador/Silvie_pose-caminhada-esquerdo.png', escalar_para_altura=120)
 
 # --- Carregar Imagens dos Inimigos ---
-gerenciador_recursos.load_image(INIMIGO_LOBO, 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
-gerenciador_recursos.load_image(INIMIGO_CORVO, 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
+gerenciador_recursos.load_image(f"{INIMIGO_LOBO}_0", 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
+gerenciador_recursos.load_image(f"{INIMIGO_LOBO}_1", 'recursos/imagens/inimigos/Lobo_1.png', escalar_para_altura=80)
+gerenciador_recursos.load_image(f"{INIMIGO_LOBO}_2", 'recursos/imagens/inimigos/Lobo_2.png', escalar_para_altura=80)
+gerenciador_recursos.load_image(f"{INIMIGO_CORVO}_0", 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
+gerenciador_recursos.load_image(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
 
 # --- Carregar Ícone de Interação ---
 gerenciador_recursos.load_image(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
