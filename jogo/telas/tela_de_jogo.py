@@ -25,12 +25,15 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, id_mapa_atual, personagem, ponto_de_destino, coordenada_x = None, coordenada_y = None):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, id_mapa_atual, personagem, ponto_de_destino, coordenada_x = None, coordenada_y = None, olhando_direita = None):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
 
         self.id_mapa = id_mapa_atual
         self.personagem = personagem
         self.ponto_de_destino = ponto_de_destino
+        self.coordenada_x = coordenada_x
+        self.coordenada_y = coordenada_y
+        self.olhando_direita = olhando_direita
 
         self.mapa_data = mapas_data[self.id_mapa]
 
@@ -38,6 +41,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if not self.mapa_fundo_imagem:
             print(f"ERRO: Imagem de cenário '{self.mapa_data['chave_cenario']}' não encontrada para o mapa '{self.id_mapa}'!")
             sys.exit()
+
+        # --- Carregar a camada superior (opcional) ---
+        self.camada_superior_imagem = None
+        if 'chave_camada_superior' in self.mapa_data:
+            self.camada_superior_imagem = self.gerenciador_recursos.get_image(self.mapa_data['chave_camada_superior'])
+            if not self.camada_superior_imagem:
+                print(f"AVISO: Imagem de camada superior '{self.mapa_data['chave_camada_superior']}' não encontrada para o mapa '{self.id_mapa}'. A camada superior não será exibida.")
+
 
         self.largura_mundo = self.mapa_fundo_imagem.get_width()
         self.altura_mundo = self.mapa_fundo_imagem.get_height()
@@ -48,7 +59,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             tamanho_mundo=(self.largura_mundo, self.altura_mundo)
         )
 
-        pos_info = self._definir_posicao_inicial_jogador(id_mapa_atual, ponto_de_destino)
+        pos_info = self._definir_posicao_inicial_jogador()
         pos_x_jogador = pos_info['x']
         pos_y_jogador = pos_info['y']
         olhando_direita_inicial = pos_info['olhando_direita']
@@ -72,21 +83,21 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         self._carregar_entidades_dos_dados_do_mapa()
 
-    def _definir_posicao_inicial_jogador(self, id_mapa_atual, ponto_de_destino='entrada_padrao'):
+    def _definir_posicao_inicial_jogador(self):
         """
         Determina a posição inicial do jogador e a direção para onde ele está olhando.
         Prioriza um ponto de destino específico do mapa, depois coordenadas de fallback.
         Retorna um dicionário {'x': int, 'y': int, 'olhando_direita': bool}.
         """
-        map_data = mapas_data.get(id_mapa_atual)
+        map_data = mapas_data.get(self.id_mapa)
         if not map_data:
-            print(f"ERRO: Dados para o mapa com ID '{id_mapa_atual}' não encontrados. Usando posição padrão.")
+            print(f"ERRO: Dados para o mapa com ID '{self.id_mapa}' não encontrados. Usando posição padrão.")
             return {'x': 100, 'y': 400, 'olhando_direita': True} # Posição padrão segura
 
         # 1. Tenta usar o ponto de destino se fornecido
-        if ponto_de_destino:
+        if self.ponto_de_destino:
             pontos_de_entrada = map_data.get('pontos_de_entrada_no_mapa', {})
-            entrada = pontos_de_entrada.get(ponto_de_destino)
+            entrada = pontos_de_entrada.get(self.ponto_de_destino)
             if entrada:
                 return {
                     'x': entrada.get('x', 100),
@@ -94,18 +105,18 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     'olhando_direita': entrada.get('olhando_direita', True)
                 }
             else:
-                print(f"AVISO: Ponto de destino '{ponto_de_destino}' não encontrado no mapa '{id_mapa_atual}'. Usando coordenadas de fallback ou padrão.")
+                print(f"AVISO: Ponto de destino '{self.ponto_de_destino}' não encontrado no mapa '{self.id_mapa}'. Usando coordenadas de fallback ou padrão.")
 
         # 2. Se o ponto de destino não foi encontrado ou não foi fornecido, usa as coordenadas de fallback
-        # if coordenada_x_fallback is not None and coordenada_y_fallback is not None:
-        #     return {
-        #         'x': coordenada_x_fallback,
-        #         'y': coordenada_y_fallback,
-        #         'olhando_direita': olhando_direita_fallback if olhando_direita_fallback is not None else True
-        #     }
+        if self.coordenada_x is not None and self.coordenada_y is not None:
+            return {
+                'x': self.coordenada_x,
+                'y': self.coordenada_y,
+                'olhando_direita': self.olhando_direita if self.olhando_direita is not None else True
+            }
 
         # 3. Se nenhuma opção acima, retorna uma posição padrão
-        print(f"AVISO: Nenhuma posição inicial específica fornecida para o mapa '{id_mapa_atual}'. Usando posição padrão.")
+        print(f"AVISO: Nenhuma posição inicial específica fornecida para o mapa '{self.id_mapa}'. Usando posição padrão.")
         return {'x': 100, 'y': 400, 'olhando_direita': True}
 
 
@@ -234,12 +245,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         return None
 
     def draw(self, tela):
+        # Desenha a imagem de fundo
         tela.blit(self.mapa_fundo_imagem, (self.mapa_fundo_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
         
+        # Desenha o jogador
         self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)
 
+        # Desenha os inimigos
         for inimigo in self.inimigos:
             inimigo.draw(tela, self.camera.rect.x)
+
+        # --- Desenhar a camada superior (se existir) ---
+        if self.camada_superior_imagem:
+            tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
 
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
             for area in self.areas_interacao:

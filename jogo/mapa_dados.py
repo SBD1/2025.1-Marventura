@@ -7,13 +7,19 @@ from utilidades.constantes import *
 mapas_data = {
     ID_MAPA_CAMPO_COSTA_OESTE: { # ID do primeiro mapa
         'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_OESTE, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
+        'chave_camada_superior': CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, # Chave do gerenciador de recursos para a camada superior deste mapa
         'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
             # Limite superior do caminho (particionado em segmentos)
-            {'x': 0, 'y': -20, 'largura': 3540, 'altura': 20},
+            {'x': 0, 'y': 276, 'largura': 329, 'altura': 196},
+            {'x': 330, 'y': 276, 'largura': 140, 'altura': 20},
+            {'x': 470, 'y': 12, 'largura': 375, 'altura': 328},
+            {'x': 845, 'y': 12, 'largura': 2491, 'altura': 108},
+            {'x': 3320, 'y': -20, 'largura': 1180, 'altura': 20},
+            {'x': 4480, 'y': 0, 'largura': 20, 'altura': 114},
             # Limite inferior do caminho (segmento único)
-            {'x': 0, 'y': 600, 'largura': 3540, 'altura': 20},
-            {'x': -20, 'y': 0, 'largura': 20, 'altura': 600},
-            {'x': 900, 'y': 0, 'largura': 20, 'altura': 600},
+            {'x': 958, 'y': 361, 'largura': 2338, 'altura': 239},
+            {'x': 3320, 'y': 600, 'largura': 1180, 'altura': 20},
+            {'x': 4480, 'y': 356, 'largura': 20, 'altura': 244},
         ],
         'npcs': [
             # Lista de NPCs para este mapa.
@@ -22,7 +28,17 @@ mapas_data = {
         'inimigos': [
             {
                 'tipo': INIMIGO_LOBO,
-                'x': 500, 'y': 350,
+                'x': 3600, 'y': 427,
+                'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
+                'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
+                'alcance_visao': 200,
+                'angulo_visao_graus': 90,
+                'tempo_reacao_ms': 750,      # 0.75 segundos para reagir
+                'imagem_chave': INIMIGO_LOBO
+            },
+            {
+                'tipo': INIMIGO_LOBO,
+                'x': 3935, 'y': 208,
                 'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
                 'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
                 'alcance_visao': 200,
@@ -32,24 +48,34 @@ mapas_data = {
             },
             {
                 'tipo': INIMIGO_CORVO,
-                'x': 720, 'y': 320,
+                'x': 3430, 'y': 55,
                 'velocidade_caminhada': 150,
                 'velocidade_corrida': 300,
                 'alcance_visao': 200,
                 'angulo_visao_graus': 120,
                 'tempo_reacao_ms': 1200,     # 1.2 segundos para reagir (mais lento)
                 'imagem_chave': INIMIGO_CORVO
-            }
+            },
+            {
+                'tipo': INIMIGO_CORVO,
+                'x': 4273, 'y': 412,
+                'velocidade_caminhada': 150,
+                'velocidade_corrida': 300,
+                'alcance_visao': 200,
+                'angulo_visao_graus': 120,
+                'tempo_reacao_ms': 1200,     # 1.2 segundos para reagir (mais lento)
+                'imagem_chave': INIMIGO_CORVO
+            },
         ],
         'pontos_de_entrada_no_mapa': {
             # Ponto de entrada padrão (usado se nenhum ponto específico for dado ao criar a TelaJogo)
-            'entrada_padrao': {'x': 100, 'y': 370, 'olhando_direita': True},
-            'entrada_esquerda': {'x': 3361, 'y': 370, 'olhando_direita': False},
+            'entrada_padrao': {'x': 400, 'y': 430, 'olhando_direita': True},
+            'entrada_esquerda': {'x': 4373, 'y': 174, 'olhando_direita': False},
         },
         'areas_interacao': [
             # Entrada direita
             {
-                'x': 850, 'y': 360, 'largura': 50, 'altura': 150, # Ex: Perto do final do mapa
+                'x': 4485, 'y': 214, 'largura': 15, 'altura': 142, # Ex: Perto do final do mapa
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
                     'id_proximo_mapa': ID_MAPA_CAMPO_VILA, # O ID da próxima área
@@ -92,7 +118,7 @@ mapas_data = {
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
                     'id_proximo_mapa': ID_MAPA_CAMPO_COSTA_OESTE,  # O ID da área anterior
-                    'ponto_de_destino': 'entrada_padrao'
+                    'ponto_de_destino': 'entrada_esquerda'
                 }
             },
             # Entrada da loja

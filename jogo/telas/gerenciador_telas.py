@@ -41,7 +41,7 @@ class GerenciadorDeTelas:
             return TelaJogo(self, self.gerenciador_recursos,
                             id_mapa_atual=ID_MAPA_CAMPO_COSTA_OESTE, # Mapa inicial padrão
                             personagem=kwargs.get('personagem'),
-                            ponto_de_destino='entrada_novo_jogo')
+                            ponto_de_destino='entrada_padrao')
         elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
             return TelaJogo(self, self.gerenciador_recursos,
                             id_mapa_atual=kwargs.get('id_mapa'),
@@ -51,7 +51,10 @@ class GerenciadorDeTelas:
             return TelaJogo(self, self.gerenciador_recursos,
                             id_mapa_atual=kwargs.get('id_mapa'),
                             personagem=kwargs.get('personagem'),
-                            ponto_de_destino=kwargs.get('ponto_de_destino'))
+                            ponto_de_destino=kwargs.get('ponto_de_destino'),
+                            coordenada_x=kwargs.get('coordenada_x'),
+                            coordenada_y=kwargs.get('coordenada_y'),
+                            olhando_direita=kwargs.get('olhando_direita'))
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                inimigo_tipo=kwargs.get('inimigo_batalha'),

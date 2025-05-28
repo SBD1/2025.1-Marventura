@@ -41,6 +41,7 @@ gerenciador_recursos.load_image(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/
 # Carregar backgrounds para os mapas do jogo
 # Use as chaves que você definiu para os backgrounds dos mapas em mapa_dados.py
 gerenciador_recursos.load_image(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
+gerenciador_recursos.load_image(CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_campo_costa_oeste-camada_superior.png', escalar_para_altura=ALTURA_TELA)
 gerenciador_recursos.load_image(CHAVE_CENARIO_CAMPO_VILA, 'recursos/imagens/cenario/ilha_campo_vila.png', escalar_para_altura=ALTURA_TELA)
 gerenciador_recursos.load_image(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
 gerenciador_recursos.load_image(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')

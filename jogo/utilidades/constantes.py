@@ -98,6 +98,7 @@ CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
 
 CHAVE_CENARIO_CAMPO_COSTA_OESTE = 'cenario_ilha_1_parte_1'
+CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR = 'cenario_ilha_1_parte_1-camada_superior'
 CHAVE_CENARIO_CAMPO_VILA = 'cenario_ilha_1_parte_2'
 CHAVE_CENARIO_CAMPO_COSTA_LESTE = 'cenario_ilha_1_parte_3'
 
