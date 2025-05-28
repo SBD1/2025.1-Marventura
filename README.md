@@ -84,7 +84,7 @@ No Windows, siga estes comandos para instalar as dependências e iniciar o jogo:
 
 ```shell
 pip install -r requisitos.txt
-python -m main.py
+python main.py
 ```
 
 Isso garantirá que todas as bibliotecas necessárias estejam instaladas antes da execução.
