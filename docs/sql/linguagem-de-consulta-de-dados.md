@@ -1,26 +1,36 @@
-# Linguagem de Definição de Dados (DDL)
+# Linguagem de Consulta de Dados (DQL)
 
 ## Introdução
 
-A **Linguagem de Definição de Dados (DDL - *Data Definition Language*)** é um componente fundamental dos Sistemas Gerenciadores de Banco de Dados (SGBDs). Ela compreende um conjunto de comandos SQL (*Structured Query Language*) utilizados para **definir, modificar e excluir a estrutura de um banco de dados e seus objetos**. Ao contrário da Linguagem de Manipulação de Dados (DML), que lida com os dados em si, a DDL foca na **esquematização** do banco de dados, estabelecendo as tabelas, índices, visões, procedimentos armazenados, funções, gatilhos, entre outros, e definindo suas características e relacionamentos.
+A **Linguagem de Consulta de Dados (DQL)**, ou Data Query Language, é um subconjunto da SQL (Structured Query Language) focado exclusivamente na **consulta e recuperação de informações** armazenadas em um banco de dados. Diferentemente de outras partes da SQL, como DML (Data Manipulation Language) que modifica dados, ou DDL (Data Definition Language) que define a estrutura do banco de dados, a DQL é utilizada para fazer perguntas ao banco de dados e obter conjuntos de resultados.
 
-Os comandos DDL são responsáveis por criar o esqueleto onde os dados serão armazenados. Eles permitem que os desenvolvedores e administradores de banco de dados especifiquem os **tipos de dados** para cada coluna, as **restrições de integridade** (como chaves primárias e estrangeiras, valores únicos, não nulos) e os **relacionamentos entre as tabelas**. A correta utilização da DDL é crucial para garantir a integridade, consistência e eficiência de um banco de dados, pois a estrutura definida influencia diretamente o desempenho das operações de manipulação de dados e a segurança das informações.
+O comando central e mais emblemático da DQL é o `SELECT`. Através dele, é possível especificar quais colunas de quais tabelas devem ser retornadas, aplicar filtros para selecionar linhas específicas, ordenar os resultados, agregar dados e combinar informações de múltiplas tabelas.
+
+Dominar a DQL é fundamental para qualquer profissional que trabalhe com bancos de dados, incluindo desenvolvedores, analistas de dados, cientistas de dados e administradores de banco de dados (DBAs), pois permite extrair insights valiosos e informações precisas dos dados armazenados. 🔍
 
 ---
 
 ## Metodologia
 
-Para a elaboração deste material sobre DDL, foram seguidas as seguintes etapas metodológicas:
+A elaboração deste conteúdo seguiu as seguintes etapas:
 
-Pesquisa Bibliográfica: Levantamento e estudo de livros, artigos e documentação oficial sobre SQL e DDL.
+1.  **Compreensão dos Fundamentos do Banco de Dados Relacional**:
+    * Entender a estrutura de tabelas, colunas, linhas, chaves primárias e estrangeiras.
+    * Visualizar como os dados são organizados e relacionados.
 
-Estudo de Casos: Elaboração de exemplos práticos, simulando a criação e modificação de tabelas e outros objetos.
+2.  **O Comando `SELECT` Básico**:
+    * Selecionar todas as colunas de uma tabela: `SELECT * FROM nome_da_tabela;`
+    * Selecionar colunas específicas: `SELECT coluna1, coluna2 FROM nome_da_tabela;`
+    * Uso de `AS` para criar aliases para colunas, melhorando a legibilidade dos resultados.
 
-Revisão Técnica: Verificação e validação do conteúdo por especialistas em bancos de dados para garantir a precisão e atualidade das informações.
-
+3.  **Filtragem de Dados com `WHERE`**:
+    * Aplicar condições para selecionar apenas as linhas que atendem a critérios específicos.
+    * Uso de operadores de comparação (`=`, `>`, `<`, `<>`, `!=`, `>=`, `<=`).
+    * Uso de operadores lógicos (`AND`, `OR`, `NOT`).
+    * Uso de operadores como `BETWEEN`, `LIKE`, `IN`, `IS NULL`.
 ---
 
-## DDL - Linguagem de Definição de Dados
+## DQL - Linguagem de Consulta de Dados
 
 
 ## 📚 Bibliografia

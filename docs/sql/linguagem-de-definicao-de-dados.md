@@ -1,50 +1,27 @@
-# Linguagem de Manipulação de Dados (DML)
+# Linguagem de Definição de Dados (DDL)
 
 ## Introdução
 
-A Linguagem de Manipulação de Dados (DML) é um subconjunto de linguagens de banco de dados usado para **recuperar, inserir, excluir e modificar informações** em um banco de dados. É o principal meio pelo qual os usuários e aplicativos interagem com os dados armazenados.Ela permite que os usuários realizem as operações mais comuns e fundamentais em um banco de dados: a consulta e a modificação dos dados. Diferentemente da Linguagem de Definição de Dados (DDL), que se preocupa com a estrutura e o esquema do banco de dados, a DML foca no conteúdo.
+A **Linguagem de Definição de Dados (DDL - *Data Definition Language*)** é um componente fundamental dos Sistemas Gerenciadores de Banco de Dados (SGBDs). Ela compreende um conjunto de comandos SQL (*Structured Query Language*) utilizados para **definir, modificar e excluir a estrutura de um banco de dados e seus objetos**. Ao contrário da Linguagem de Manipulação de Dados (DML), que lida com os dados em si, a DDL foca na **esquematização** do banco de dados, estabelecendo as tabelas, índices, visões, procedimentos armazenados, funções, gatilhos, entre outros, e definindo suas características e relacionamentos.
 
-As operações DML são geralmente executadas usando comandos específicos que são parte de uma linguagem de consulta mais ampla, como SQL (Structured Query Language). Esses comandos são o coração da interação diária com qualquer banco de dados relacional.
-
-Os principais comandos DML incluem:
-
-* `SELECT`: Usado para consultar e recuperar dados das tabelas do banco de dados.
-* `INSERT`: Usado para adicionar novas linhas (registros) a uma tabela.
-* `UPDATE`: Usado para modificar os dados existentes em uma ou mais linhas de uma tabela.
-* `DELETE`: Usado para remover linhas de uma tabela.
-
-Compreender a DML é crucial para desenvolvedores, analistas de dados, administradores de banco de dados e qualquer pessoa que precise interagir com dados armazenados de forma estruturada. 
+Os comandos DDL são responsáveis por criar o esqueleto onde os dados serão armazenados. Eles permitem que os desenvolvedores e administradores de banco de dados especifiquem os **tipos de dados** para cada coluna, as **restrições de integridade** (como chaves primárias e estrangeiras, valores únicos, não nulos) e os **relacionamentos entre as tabelas**. A correta utilização da DDL é crucial para garantir a integridade, consistência e eficiência de um banco de dados, pois a estrutura definida influencia diretamente o desempenho das operações de manipulação de dados e a segurança das informações.
 
 ---
 
 ## Metodologia
 
-Para o desenvolvimento deste material, foram seguidos os seguintes passos:
+Para a elaboração deste material sobre DDL, foram seguidas as seguintes etapas metodológicas:
 
-1.  **Compreensão dos Conceitos Fundamentais**:
-    * Entender o que é um banco de dados relacional e seus componentes (tabelas, colunas, linhas, chaves primárias e estrangeiras).
-    * Diferenciar DML de outras linguagens de banco de dados como DDL (Data Definition Language) e DCL (Data Control Language).
+Pesquisa Bibliográfica: Levantamento e estudo de livros, artigos e documentação oficial sobre SQL e DDL.
 
-2.  **Aprendizado dos Comandos Básicos**:
-    * **`SELECT`**: Iniciar com consultas simples para recuperar todas as colunas ou colunas específicas de uma tabela. Aprender a usar a cláusula `WHERE` para filtrar registros com base em condições.
-    * **`INSERT`**: Praticar a inserção de novos registros em tabelas, especificando valores para todas as colunas ou um subconjunto delas.
-    * **`UPDATE`**: Aprender a modificar registros existentes, utilizando a cláusula `WHERE` para especificar quais registros devem ser atualizados e a cláusula `SET` para definir os novos valores.
-    * **`DELETE`**: Entender como remover registros de uma tabela, usando a cláusula `WHERE` para evitar a exclusão acidental de todos os dados. 
+Estudo de Casos: Elaboração de exemplos práticos, simulando a criação e modificação de tabelas e outros objetos.
 
-3.  **Aprofundamento em Consultas (`SELECT`)**:
-    * Uso de operadores lógicos (`AND`, `OR`, `NOT`) e de comparação (`=`, `>`, `<`, `<>`, `LIKE`, `IN`, `BETWEEN`).
-    * Ordenação de resultados com `ORDER BY`.
-    * Agrupamento de dados com `GROUP BY` e funções de agregação (`COUNT`, `SUM`, `AVG`, `MAX`, `MIN`).
-    * Condições em dados agrupados com `HAVING`.
-    * Junção de múltiplas tabelas (`INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL JOIN`).
-    * Subconsultas (subqueries).
-
-4.  **Prática com Exercícios e Projetos**:
-    * Resolver problemas práticos que envolvam a criação de cenários e a manipulação de dados para atender a requisitos específicos.
+Revisão Técnica: Verificação e validação do conteúdo por especialistas em bancos de dados para garantir a precisão e atualidade das informações.
 
 ---
 
-# DML -  Linguagem de Manipulação de Dados
+## DDL - Linguagem de Definição de Dados
+
 
 ## 📚 Bibliografia
 
