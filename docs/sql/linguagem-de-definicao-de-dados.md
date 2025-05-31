@@ -38,4 +38,4 @@ Revisão Técnica: Verificação e validação do conteúdo por especialistas em
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) |29/05/2025 |  |  |
+| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 29/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
