@@ -4,7 +4,7 @@
 
 A Linguagem de Manipulação de Dados (DML) é um subconjunto de linguagens de banco de dados usado para **recuperar, inserir, excluir e modificar informações** em um banco de dados. É um componente essencial dos Sistemas de Gerenciamento de Banco de Dados (SGBDs). Ela permite que os usuários realizem as operações mais comuns e fundamentais em um banco de dados: a consulta e a modificação dos dados. Diferentemente da Linguagem de Definição de Dados (DDL), que se preocupa com a estrutura e o esquema do banco de dados, a DML foca no conteúdo.
 
-As operações DML são geralmente executadas usando comandos específicos que são parte de uma linguagem de consulta mais ampla, como SQL (Structured Query Language). Esses comandos são o coração da interação diária com qualquer banco de dados relacional.
+As operações DML são geralmente executadas usando comandos específicos que são parte de uma linguagem de consulta mais ampla, como SQL (*Structured Query Language*). Esses comandos são o coração da interação diária com qualquer banco de dados relacional.
 
 Os principais comandos DML incluem:
 
@@ -23,7 +23,7 @@ O aprendizado e a utilização da Linguagem de Manipulação de Dados (DML) gera
 
 1.  **Compreensão dos Conceitos Fundamentais**:
     * Entender o que é um banco de dados relacional e seus componentes (tabelas, colunas, linhas, chaves primárias e estrangeiras).
-    * Diferenciar DML de outras linguagens de banco de dados como DDL (Data Definition Language) e DCL (Data Control Language).
+    * Diferenciar DML de outras linguagens de banco de dados como DDL (*Data Definition Language*) e DCL (*Data Control Language*).
 
 2.  **Aprendizado dos Comandos Básicos**:
     * **`SELECT`**: Iniciar com consultas simples para recuperar todas as colunas ou colunas específicas de uma tabela. Aprender a usar a cláusula `WHERE` para filtrar registros com base em condições.
@@ -54,4 +54,4 @@ O aprendizado e a utilização da Linguagem de Manipulação de Dados (DML) gera
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) |29/05/2025 |  |  |
+| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 29/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
