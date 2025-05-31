@@ -2,11 +2,11 @@
 
 ## Introdução
 
-A **Linguagem de Consulta de Dados (DQL)**, ou Data Query Language, é um subconjunto da SQL (Structured Query Language) focado exclusivamente na **consulta e recuperação de informações** armazenadas em um banco de dados. Diferentemente de outras partes da SQL, como DML (Data Manipulation Language) que modifica dados, ou DDL (Data Definition Language) que define a estrutura do banco de dados, a DQL é utilizada para fazer perguntas ao banco de dados e obter conjuntos de resultados.
+A **Linguagem de Consulta de Dados (DQL)**, ou *Data Query Language*, é um subconjunto da SQL (*Structured Query Language*) focado exclusivamente na **consulta e recuperação de informações** armazenadas em um banco de dados. Diferentemente de outras partes da SQL, como DML (*Data Manipulation Language*) que modifica dados, ou DDL (*Data Definition Language*) que define a estrutura do banco de dados, a DQL é utilizada para fazer perguntas ao banco de dados e obter conjuntos de resultados.
 
 O comando central e mais emblemático da DQL é o `SELECT`. Através dele, é possível especificar quais colunas de quais tabelas devem ser retornadas, aplicar filtros para selecionar linhas específicas, ordenar os resultados, agregar dados e combinar informações de múltiplas tabelas.
 
-Dominar a DQL é fundamental para qualquer profissional que trabalhe com bancos de dados, incluindo desenvolvedores, analistas de dados, cientistas de dados e administradores de banco de dados (DBAs), pois permite extrair insights valiosos e informações precisas dos dados armazenados. 🔍
+Dominar a DQL é fundamental para qualquer profissional que trabalhe com bancos de dados, incluindo desenvolvedores, analistas de dados, cientistas de dados e administradores de banco de dados (DBAs), pois permite extrair *insights* valiosos e informações precisas dos dados armazenados. 🔍
 
 ---
 
@@ -21,7 +21,7 @@ A elaboração deste conteúdo seguiu as seguintes etapas:
 2.  **O Comando `SELECT` Básico**:
     * Selecionar todas as colunas de uma tabela: `SELECT * FROM nome_da_tabela;`
     * Selecionar colunas específicas: `SELECT coluna1, coluna2 FROM nome_da_tabela;`
-    * Uso de `AS` para criar aliases para colunas, melhorando a legibilidade dos resultados.
+    * Uso de `AS` para criar *aliases* para colunas, melhorando a legibilidade dos resultados.
 
 3.  **Filtragem de Dados com `WHERE`**:
     * Aplicar condições para selecionar apenas as linhas que atendem a critérios específicos.
@@ -48,4 +48,4 @@ A elaboração deste conteúdo seguiu as seguintes etapas:
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) |29/05/2025 |  |  |
+| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 29/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
