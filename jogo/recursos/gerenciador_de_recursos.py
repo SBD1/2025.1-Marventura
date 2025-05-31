@@ -1,6 +1,7 @@
 # gerenciador_de_recursos.py
 
 import pygame
+from utilidades import caminho_absoluto
 
 class GerenciadorDeRecursos:
     """
@@ -28,7 +29,7 @@ class GerenciadorDeRecursos:
         :param escalar_para_altura: Um número inteiro para redimensionar a imagem proporcionalmente com base em uma nova altura.
         """
         try:
-            imagem = pygame.image.load(caminho).convert_alpha() # Carrega a imagem e converte com canal alpha
+            imagem = pygame.image.load(caminho_absoluto(caminho)).convert_alpha()
 
             # Aplicar redimensionamento se especificado
             if escalar_para_tamanho:
@@ -78,7 +79,8 @@ class GerenciadorDeRecursos:
         :param tamanho: O tamanho da fonte.
         """
         try:
-            fonte = pygame.font.Font(caminho, tamanho) # Carrega a fonte
+            fonte = pygame.font.Font(caminho_absoluto(caminho), tamanho)
+
             self._fontes[chave] = fonte
             print(f"Recurso carregado: Fonte '{chave}' de '{caminho}' (tamanho {tamanho})")
 
