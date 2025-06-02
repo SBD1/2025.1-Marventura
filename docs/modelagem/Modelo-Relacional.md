@@ -33,7 +33,7 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
   </summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Relacional das Missões</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-missão-v1.0.png?raw=true">
+    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-miss%C3%A3o-v1.0.png">
     <p>Autor: <a href="https://github.com/Pabloserrapxx">Pablo Serra</a>.</p>
   </div>
 </details>
@@ -46,7 +46,7 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
   </summary>
   <div align="center">
     <p><strong>Figura 2 – Diagrama Relacional do Mapa</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-mapa-v1.0.png?raw=true">
+    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-mapa-v1.0.png">
     <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a>.</p>
   </div>
 </details>
@@ -61,7 +61,7 @@ A **Figura 3** abaixo apresenta o Diagrama Relacional com foco nos itens do inve
   </summary>
   <div align="center">
     <p><strong>Figura 3 – Diagrama Relacional dos Itens do Inventário</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-item-v1.1.png?raw=true">
+    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-item-v1.1.png">
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
@@ -96,7 +96,7 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Relacional final</strong></p>
-      <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/modelo-relacional-Completo-v1.1.drawio.png?raw=true" alt="Diagrama Relacional">
+      <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-Completo-v1.1.drawio.png" alt="Diagrama Relacional">
   </div>
 </details>
 
