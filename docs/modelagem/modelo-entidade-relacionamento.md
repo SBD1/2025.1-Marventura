@@ -53,7 +53,7 @@ Essa abordagem incremental e organizada tornou possível construir um modelo cla
 
 A **Figura 1** abaixo apresenta o diagrama Entidade-Relacionamento pensado para representar os itens do inventário do jogador, que vão desde os itens equipáveis e não-equipáveis, como moedas (não-equipável) e espadas (equipável), ambos não consumíveis, e itens consumíveis, como os itens de recuperação de vida e energia.
 
-<details open>
+<details>
   <summary>Figura 1 – Diagrama Entidade-Relacionamento dos Itens do Inventário
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
@@ -88,13 +88,13 @@ Nesse diagrama, é possível perceber que todos os tipos de personagens podem ou
 
 A **Figura 3** apresenta o diagrama Entidade-Relacionamento com foco na estrutura do mapa e na organização espacial do cenário do jogo. Nela é possível perceber que as entidades *CampoBatalha*, *Vila* e *Porto* são generalizações do tipo total e exclusiva de *Sala* e também que *CorredorMarítimo é uma região do mapa que liga duas ilhas e é onde o barco poderá navegar.
 
-<details open>
+<details>
   <summary>Figura 3 – Diagrama Entidade-Relacionamento do Mapa
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
     <p><strong>Figura 3 – Diagrama Entidade-Relacionamento do Mapa</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama-entidade-relacionamento-mapa-v1.0.png?raw=true">
+    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/diagrama-entidade-relacionamento-mapa-v1.0.png">
     <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a>.</p>
   </div>
 </details>
@@ -103,13 +103,13 @@ A **Figura 3** apresenta o diagrama Entidade-Relacionamento com foco na estrutur
 
 A **Figura 4** apresenta o diagrama Entidade-Relacionamento com foco nas missões e elementos do cenário interativo. O jogador é a entidade central, sendo capaz de realizar diversas missões, as quais estão disponíveis em diferentes mapas. Durante o jogo, o jogador obtém itens por meio do relacionamento "Dropa", que associa os itens adquiridos a ele.
 
-<details open>
+<details>
   <summary>Figura 4 – Diagrama Entidade-Relacionamento de missões
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
     <p><strong>Figura 4 – Diagrama Entidade-Relacionamento de missões</strong></p>
-    <img src="https://github.com/SBD1/2025.1-Marventura/blob/main/docs/assets/diagrama_missoesv1.0.png?raw=true">
+    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/diagrama_missoesv1.0.png">
     <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p>
   </div>
 </details>
@@ -118,14 +118,14 @@ A **Figura 4** apresenta o diagrama Entidade-Relacionamento com foco nas missõe
 
 A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores, consolidando o modelo de dados do sistema de inventário, personagens, mapas, e missões de uma maneira integrada. Nesse diagrama, observa-se como as entidades interagem entre si, formando um conjunto coeso de tabelas e relacionamentos que representam o funcionamento do jogo como um todo.
 
-<details open>
+<details>
   <summary>Figura 5 – Diagrama Entidade-Relacionamento final - Clique na imagem para melhor visualização
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Entidade-Relacionamento final</strong></p>
     <a href="assets/diagrama-entidade-relacionamento-completo-v7.2.png" target="_blank">
-      <img src="assets/diagrama-entidade-relacionamento-completo-v7.2.png" alt="Diagrama Relacional">
+      <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/diagrama-entidade-relacionamento-completo-v7.2.png" alt="Diagrama Relacional">
     </a>
   </div>
 </details>
