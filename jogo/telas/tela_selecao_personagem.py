@@ -15,18 +15,18 @@ class TelaSelecaoPersonagem(TelaModelo):
         super().__init__(gerenciador_telas, gerenciador_recursos)
 
         # --- Recursos específicos da Tela de Seleção de Personagem ---
-        self.fonte_botoes = self.gerenciador_recursos.get_font(CHAVE_FONTE_BOTAO)
-        self.fonte_titulo = self.gerenciador_recursos.get_font(CHAVE_FONTE_TITULO)
+        self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
         
         # Imagem de fundo comum para telas de menu
-        self.imagem_fundo = self.gerenciador_recursos.get_image(CHAVE_TELA_INICIAL)
+        self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_TELA_INICIAL)
         if not self.imagem_fundo:
             self.imagem_fundo = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.imagem_fundo.fill(CINZA_ESCURO) # Fallback
 
         # Carregue imagens dos personagens aqui se forem desenhadas na UI desta tela
-        self.imagem_menino_ui = self.gerenciador_recursos.get_image(SHUAN) # Exemplo: Usando sprite existente
-        self.imagem_menina_ui = self.gerenciador_recursos.get_image(SILVIE) # Exemplo: Usando sprite existente
+        self.imagem_menino_ui = self.gerenciador_recursos.obter_imagem(SHUAN) # Exemplo: Usando sprite existente
+        self.imagem_menina_ui = self.gerenciador_recursos.obter_imagem(SILVIE) # Exemplo: Usando sprite existente
 
         # --- Constantes de Layout da Tela de Seleção ---
         self._largura_opcao = 250 # Largura da área clicável da opção

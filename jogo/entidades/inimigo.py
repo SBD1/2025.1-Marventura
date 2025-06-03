@@ -5,12 +5,12 @@ import math
 from utilidades.constantes import *
 
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, resource_manager, x_inicial, y_inicial, tipo_inimigo,
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_inimigo,
                  velocidade_caminhada, velocidade_corrida, alcance_visao, angulo_visao_graus,
                  tempo_reacao_ms, cor_fallback=VERMELHO,
                  alcance_ataque=DISTANCIA_ATAQUE_INIMIGO, duracao_ataque_ms=DURACAO_ATAQUE_INIMIGO_MS):
         super().__init__()
-        self.resource_manager = resource_manager
+        self.gerenciador_recursos = gerenciador_recursos
         self.tipo_inimigo = tipo_inimigo
         self.velocidade_caminhada = velocidade_caminhada
         self.velocidade_corrida = velocidade_corrida
@@ -49,8 +49,8 @@ class Inimigo(pygame.sprite.Sprite):
         # Patrulha
         self.direcao_patrulha = pygame.math.Vector2(0, 0)
         self.tempo_patrulha_restante = 0  # ms
-        self.icone_alerta = self.resource_manager.get_image(CHAVE_ICONE_ALERTA)
-        self.icone_interrogacao = self.resource_manager.get_image(CHAVE_ICONE_INTERROGACAO)
+        self.icone_alerta = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_ALERTA)
+        self.icone_interrogacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERROGACAO)
 
     def carregar_animacoes(self, chave_base):
         # Carrega as imagens de animação com base na chave_base (ex: 'lobo', 'corvo')
@@ -58,7 +58,7 @@ class Inimigo(pygame.sprite.Sprite):
         i = 0
         while True:
             chave_frame = f"{chave_base}_{i}"
-            imagem_frame = self.resource_manager.get_image(chave_frame)
+            imagem_frame = self.gerenciador_recursos.obter_imagem(chave_frame)
             if imagem_frame:
                 self.imagens_animacao[i] = imagem_frame
                 i += 1

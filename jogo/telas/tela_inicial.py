@@ -9,12 +9,12 @@ class TelaInicial(TelaModelo): # Herda de TelaModelo
     def __init__(self, gerenciador_telas, gerenciador_recursos): # Adiciona gerenciador_telas
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
 
-        self.imagem_logo = self.gerenciador_recursos.get_image(CHAVE_LOGO)
-        self.fonte_titulo = self.gerenciador_recursos.get_font(CHAVE_FONTE_TITULO)
-        self.fonte_botao = self.gerenciador_recursos.get_font(CHAVE_FONTE_BOTAO)
+        self.imagem_logo = self.gerenciador_recursos.obter_imagem(CHAVE_LOGO)
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
+        self.fonte_botao = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
 
         # A imagem de fundo comum pode ser carregada e mantida aqui
-        self.imagem_fundo = self.gerenciador_recursos.get_image(CHAVE_TELA_INICIAL) # Se tiver um background comum para menus
+        self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_TELA_INICIAL) # Se tiver um background comum para menus
         if not self.imagem_fundo:
             # Fallback se a imagem não for encontrada
             self.imagem_fundo = pygame.Surface((LARGURA_TELA, ALTURA_TELA))

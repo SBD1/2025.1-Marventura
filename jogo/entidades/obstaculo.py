@@ -29,7 +29,7 @@ class Obstaculo(pygame.sprite.Sprite):
         # Imagem do obstáculo (opcional, para visualização se não for apenas um limite invisível)
         self.imagem = None
         if chave_imagem:
-            self.imagem = self.gerenciador_recursos.get_image(chave_imagem)
+            self.imagem = self.gerenciador_recursos.obter_imagem(chave_imagem)
             # Nota: Se o obstáculo tiver uma imagem visível, o self.rect
             # normalmente seria o rect da imagem, posicionado em (x, y).
             # Ou a imagem seria redimensionada para self.rect.

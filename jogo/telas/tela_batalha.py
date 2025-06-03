@@ -16,20 +16,20 @@ class TelaBatalha(TelaModelo):
         self.jogador_olhando_direita_retorno = jogador_olhando_direita
         self.mapa_retorno_id = mapa_retorno_id
 
-        self.fundo_batalha = self.gerenciador_recursos.get_image('batalha_fundo_padrao')
+        self.fundo_batalha = self.gerenciador_recursos.obter_imagem('batalha_fundo_padrao')
         if not self.fundo_batalha:
             self.fundo_batalha = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.fundo_batalha.fill(CINZA_ESCURO)
             print("AVISO: Imagem 'batalha_fundo_padrao' não encontrada. Usando fundo cinza.")
 
-        self.imagem_inimigo = self.gerenciador_recursos.get_image(f'batalha_inimigo_{inimigo_tipo}')
+        self.imagem_inimigo = self.gerenciador_recursos.obter_imagem(f'batalha_inimigo_{inimigo_tipo}')
         if not self.imagem_inimigo:
              print(f"AVISO: Imagem de batalha para '{inimigo_tipo}' não encontrada. Usando cor fallback.")
              self.imagem_inimigo = pygame.Surface((150, 150))
              self.imagem_inimigo.fill(VERMELHO)
 
-        self.fonte_titulo = self.gerenciador_recursos.get_font(CHAVE_FONTE_TITULO)
-        self.fonte_botao = self.gerenciador_recursos.get_font(CHAVE_FONTE_BOTAO)
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
+        self.fonte_botao = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
 
         self.texto_batalha = f"Uma batalha contra um {self.inimigo_tipo}!"
         self.texto_botao = "Fugir (Voltar ao Mapa)"

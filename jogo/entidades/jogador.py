@@ -52,15 +52,15 @@ class Jogador(pygame.sprite.Sprite):
 
         # Variáveis para o ícone de interação
         self.mostrar_icone_interacao = False
-        self.icone_interacao = self.gerenciador_recursos.get_image(CHAVE_ICONE_INTERACAO)
+        self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO)
 
 
     def carregar_animacoes(self):
         # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
-        imagem_parado = self.gerenciador_recursos.get_image(self.personagem + '_em_repouso')
-        imagem_caminhar_frame_1 = self.gerenciador_recursos.get_image(self.personagem + '_caminhando_1')
-        imagem_caminhar_frame_2 = self.gerenciador_recursos.get_image(self.personagem + '_caminhando_2')
-        imagem_caminhar_frame_3 = self.gerenciador_recursos.get_image(self.personagem + '_caminhando_3')
+        imagem_parado = self.gerenciador_recursos.obter_imagem(self.personagem + '_em_repouso')
+        imagem_caminhar_frame_1 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_1')
+        imagem_caminhar_frame_2 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_2')
+        imagem_caminhar_frame_3 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_3')
 
         # Adiciona frame 'parado'
         if imagem_parado:

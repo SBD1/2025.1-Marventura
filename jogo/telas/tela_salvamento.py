@@ -54,17 +54,17 @@ class TelaSalvamento(TelaModelo):
         super().__init__(gerenciador_telas, gerenciador_recursos)
 
         # --- Recursos específicos da Tela de Salvamento ---
-        self.imagem_cartaz_procurado = self.gerenciador_recursos.get_image(CHAVE_CARTAZ_PROCURADO)
-        self.imagem_cartaz_procurada = self.gerenciador_recursos.get_image(CHAVE_CARTAZ_PROCURADA)
-        self.imagem_cartaz_vazio = self.gerenciador_recursos.get_image(CHAVE_CARTAZ_VAZIO)
+        self.imagem_cartaz_procurado = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADO)
+        self.imagem_cartaz_procurada = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADA)
+        self.imagem_cartaz_vazio = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_VAZIO)
 
-        self.fonte_titulo = self.gerenciador_recursos.get_font(CHAVE_FONTE_TITULO)
-        self.fonte_botoes = self.gerenciador_recursos.get_font(CHAVE_FONTE_BOTAO)
-        self.fonte_nome_cartaz = self.gerenciador_recursos.get_font(CHAVE_FONTE_NOME_CARTAZ) # Fonte para o nome/tipo no cartaz
-        self.fonte_data_cartaz = self.gerenciador_recursos.get_font(CHAVE_FONTE_DATA_CARTAZ) # Fonte para data/dados no cartaz
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
+        self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
+        self.fonte_nome_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_NOME_CARTAZ) # Fonte para o nome/tipo no cartaz
+        self.fonte_data_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_DATA_CARTAZ) # Fonte para data/dados no cartaz
 
         # Imagem de fundo comum para telas de menu
-        self.imagem_fundo = self.gerenciador_recursos.get_image(CHAVE_TELA_INICIAL)
+        self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_TELA_INICIAL)
         if not self.imagem_fundo:
             self.imagem_fundo = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.imagem_fundo.fill(CINZA_ESCURO) # Fallback

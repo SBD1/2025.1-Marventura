@@ -1,6 +1,8 @@
 # gerenciador_de_recursos.py
 
 import pygame
+import sys
+from utilidades.constantes import *
 from utilidades import caminho_absoluto
 
 class GerenciadorDeRecursos:
@@ -18,7 +20,7 @@ class GerenciadorDeRecursos:
         # Flag para rastrear se todos os recursos marcados como essenciais foram carregados sem erros fatais
         self._carregado_com_sucesso = True
 
-    def load_image(self, chave, caminho, escalar_para_tamanho=None, escalar_para_altura=None):
+    def _carregar_imagem(self, chave, caminho, escalar_para_tamanho=None, escalar_para_altura=None):
         """
         Carrega uma imagem de um caminho, opcionalmente a redimensiona e a armazena
         sob uma chave identificadora.
@@ -54,7 +56,7 @@ class GerenciadorDeRecursos:
             self._imagens[chave] = None # Armazena None para indicar falha, ou pode criar uma imagem de placeholder de erro
             self._carregado_com_sucesso = False # Marca que houve falha no carregamento de um recurso
 
-    def get_image(self, chave):
+    def obter_imagem(self, chave):
         """
         Retorna uma imagem carregada anteriormente pelo seu identificador (chave).
 
@@ -69,7 +71,7 @@ class GerenciadorDeRecursos:
             print(f"AVISO: Imagem '{chave}' não encontrada no gerenciador de recursos. Verifique se foi carregada.")
             return None # Retorna None se a imagem não foi carregada ou a chave está errada
 
-    def load_font(self, chave, caminho, tamanho):
+    def _carregar_fonte(self, chave, caminho, tamanho):
         """
         Carrega uma fonte de um caminho com um tamanho específico e a armazena
         sob uma chave identificadora.
@@ -98,7 +100,7 @@ class GerenciadorDeRecursos:
                  self._carregado_com_sucesso = False # Marca falha grave
 
 
-    def get_font(self, chave):
+    def obter_fonte(self, chave):
         """
         Retorna uma fonte carregada anteriormente pelo seu identificador (chave).
 
@@ -118,9 +120,71 @@ class GerenciadorDeRecursos:
                  print(f"ERRO: Falha no fallback genérico para fonte: {generic_fallback_e}")
                  # Retorna None ou levanta um erro crítico se nenhum fallback funcionar
                  return None # Retorna None como último recurso
+            
+    def carregar_recursos(self):
+        """
+        Carrega todos os recursos do jogo (fontes, imagens, etc.).
+        Este método centraliza todas as chamadas de carregamento.
+        """
+        print("Iniciando carregamento de todos os recursos...")
+
+        # --- Carregar Fontes ---
+        caminho_arquivo_fonte = 'recursos/fontes/Tagesschrift-Regular.ttf'
+        self._carregar_fonte(CHAVE_FONTE_TITULO, caminho_arquivo_fonte, 70)       # Fonte para títulos grandes
+        self._carregar_fonte(CHAVE_FONTE_BOTAO, caminho_arquivo_fonte, 48)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_NOME_CARTAZ, caminho_arquivo_fonte, 20)  # Fonte para nome no cartaz
+        self._carregar_fonte(CHAVE_FONTE_DATA_CARTAZ, caminho_arquivo_fonte, 12)   # Fonte para data/dados no cartaz
+
+        # --- Carregar Imagens de Interface e Fundos ---
+        self._carregar_imagem(CHAVE_TELA_INICIAL, 'recursos/imagens/cenario/tela_inicial.png', escalar_para_tamanho=(LARGURA_TELA, ALTURA_TELA))
+        self._carregar_imagem(CHAVE_LOGO, 'recursos/imagens/interface/logo.png')
+        self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
+        self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
+        self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
+        self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
+
+        # --- Carregar planos de fundo para os mapas do jogo ---
+        self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_campo_costa_oeste-camada_superior.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CAMPO_VILA, 'recursos/imagens/cenario/ilha_campo_vila.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
+        self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
 
 
-    def all_loaded_successfully(self):
+        # --- Carregar Imagens do Jogador para Animação ---
+        self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
+        self._carregar_imagem(SILVIE, 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=300)
+
+        self._carregar_imagem(f'{SHUAN}_em_repouso', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=120)
+        self._carregar_imagem(f'{SHUAN}_caminhando_1', 'recursos/imagens/jogador/Shuan_pose-caminhada-direito.png', escalar_para_altura=120)
+        self._carregar_imagem(f'{SHUAN}_caminhando_2', 'recursos/imagens/jogador/Shuan_pose-caminhada.png', escalar_para_altura=120)
+        self._carregar_imagem(f'{SHUAN}_caminhando_3', 'recursos/imagens/jogador/Shuan_pose-caminhada-esquerdo.png', escalar_para_altura=120)
+
+        self._carregar_imagem(f'{SILVIE}_em_repouso', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=120)
+        self._carregar_imagem(f'{SILVIE}_caminhando_1', 'recursos/imagens/jogador/Silvie_pose-caminhada-direito.png', escalar_para_altura=120)
+        self._carregar_imagem(f'{SILVIE}_caminhando_2', 'recursos/imagens/jogador/Silvie_pose-caminhada.png', escalar_para_altura=120)
+        self._carregar_imagem(f'{SILVIE}_caminhando_3', 'recursos/imagens/jogador/Silvie_pose-caminhada-esquerdo.png', escalar_para_altura=120)
+
+        # --- Carregar Imagens dos Inimigos ---
+        self._carregar_imagem(f"{INIMIGO_LOBO}_0", 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
+        self._carregar_imagem(f"{INIMIGO_LOBO}_1", 'recursos/imagens/inimigos/Lobo_1.png', escalar_para_altura=80)
+        self._carregar_imagem(f"{INIMIGO_LOBO}_2", 'recursos/imagens/inimigos/Lobo_2.png', escalar_para_altura=80)
+        self._carregar_imagem(f"{INIMIGO_CORVO}_0", 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
+        self._carregar_imagem(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
+
+        # --- Carregar Ícone de Interação ---
+        self._carregar_imagem(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_INTERROGACAO, 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_MARCADOR_MAPA_SILVIE, 'recursos/imagens/icones/marcador_mapa_silvie.png', escalar_para_altura=48)
+
+        if not self._tudo_carregado_com_sucesso():
+            print("Recursos críticos falharam ao carregar. Saindo.")
+            pygame.quit()
+            sys.exit()
+
+    def _tudo_carregado_com_sucesso(self):
         """
         Verifica se todos os recursos carregados marcaram sucesso.
         (Nesta versão simples, apenas verifica se a flag _carregado_com_sucesso é True).

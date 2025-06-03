@@ -19,70 +19,7 @@ pygame.display.set_caption("Marventura") # Título da janela do jogo
 # Cria uma única instância do gerenciador de recursos
 gerenciador_recursos = GerenciadorDeRecursos()
 
-# --- Carregar Recursos usando o gerenciador ---
-# Carregar Fontes usando o gerenciador
-caminho_arquivo_fonte = 'recursos/fontes/Tagesschrift-Regular.ttf'
-gerenciador_recursos.load_font(CHAVE_FONTE_TITULO, caminho_arquivo_fonte, 70)       # Fonte para títulos grandes
-gerenciador_recursos.load_font(CHAVE_FONTE_BOTAO, caminho_arquivo_fonte, 48)     # Fonte para botões
-gerenciador_recursos.load_font(CHAVE_FONTE_NOME_CARTAZ, caminho_arquivo_fonte, 20)  # Fonte para nome no cartaz
-gerenciador_recursos.load_font(CHAVE_FONTE_DATA_CARTAZ, caminho_arquivo_fonte, 12)   # Fonte para data/dados no cartaz
-
-# --- Carregar Imagens usando o gerenciador ---
-# Imagem de fundo comum (para menu inicial e tela de arquivos de progresso salvos)
-gerenciador_recursos.load_image(CHAVE_TELA_INICIAL, 'recursos/imagens/cenario/tela_inicial.png', escalar_para_tamanho=(LARGURA_TELA, ALTURA_TELA))
-# Imagem do logo (para a tela inicial)
-gerenciador_recursos.load_image(CHAVE_LOGO, 'recursos/imagens/interface/logo.png')
-
-# --- Carregar Imagens dos Cartazes de Procurado para Slots de Save (Por Tipo de Personagem) ---
-gerenciador_recursos.load_image(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
-gerenciador_recursos.load_image(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
-gerenciador_recursos.load_image(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
-
-# Carregar backgrounds para os mapas do jogo
-# Use as chaves que você definiu para os backgrounds dos mapas em mapa_dados.py
-gerenciador_recursos.load_image(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
-gerenciador_recursos.load_image(CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_campo_costa_oeste-camada_superior.png', escalar_para_altura=ALTURA_TELA)
-gerenciador_recursos.load_image(CHAVE_CENARIO_CAMPO_VILA, 'recursos/imagens/cenario/ilha_campo_vila.png', escalar_para_altura=ALTURA_TELA)
-gerenciador_recursos.load_image(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
-gerenciador_recursos.load_image(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
-gerenciador_recursos.load_image(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
-# Certifique-se de carregar os fundos de TODOS os mapas que você definiu em mapa_dados.py aqui.
-
-
-# --- Carregar Imagens do Jogador para Animação (Para Ambos os Tipos) ---
-gerenciador_recursos.load_image(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
-gerenciador_recursos.load_image(SILVIE, 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=300)
-
-gerenciador_recursos.load_image(f'{SHUAN}_em_repouso', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'{SHUAN}_caminhando_1', 'recursos/imagens/jogador/Shuan_pose-caminhada-direito.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'{SHUAN}_caminhando_2', 'recursos/imagens/jogador/Shuan_pose-caminhada.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'{SHUAN}_caminhando_3', 'recursos/imagens/jogador/Shuan_pose-caminhada-esquerdo.png', escalar_para_altura=120)
-
-gerenciador_recursos.load_image(f'{SILVIE}_em_repouso', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'{SILVIE}_caminhando_1', 'recursos/imagens/jogador/Silvie_pose-caminhada-direito.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'{SILVIE}_caminhando_2', 'recursos/imagens/jogador/Silvie_pose-caminhada.png', escalar_para_altura=120)
-gerenciador_recursos.load_image(f'{SILVIE}_caminhando_3', 'recursos/imagens/jogador/Silvie_pose-caminhada-esquerdo.png', escalar_para_altura=120)
-
-# --- Carregar Imagens dos Inimigos ---
-gerenciador_recursos.load_image(f"{INIMIGO_LOBO}_0", 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
-gerenciador_recursos.load_image(f"{INIMIGO_LOBO}_1", 'recursos/imagens/inimigos/Lobo_1.png', escalar_para_altura=80)
-gerenciador_recursos.load_image(f"{INIMIGO_LOBO}_2", 'recursos/imagens/inimigos/Lobo_2.png', escalar_para_altura=80)
-gerenciador_recursos.load_image(f"{INIMIGO_CORVO}_0", 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
-gerenciador_recursos.load_image(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
-
-# --- Carregar Ícone de Interação ---
-gerenciador_recursos.load_image(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
-gerenciador_recursos.load_image(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
-gerenciador_recursos.load_image(CHAVE_ICONE_INTERROGACAO, 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48)
-
-
-# Verifica se todos os recursos críticos foram carregados com sucesso
-# Em um jogo real, você poderia exibir uma tela de erro e sair graciosamente.
-if not gerenciador_recursos.all_loaded_successfully():
-    print("Recursos críticos falharam ao carregar. Saindo.") # Print traduzido
-    pygame.quit() # Sai do Pygame
-    sys.exit() # Sai do script Python
-
+gerenciador_recursos.carregar_recursos()
 
 # --- Função Principal do Jogo ---
 def executar_jogo():

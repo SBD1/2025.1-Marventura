@@ -37,7 +37,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         self.mapa_data = mapas_data[self.id_mapa]
 
-        self.mapa_fundo_imagem = self.gerenciador_recursos.get_image(self.mapa_data['chave_cenario'])
+        self.mapa_fundo_imagem = self.gerenciador_recursos.obter_imagem(self.mapa_data['chave_cenario'])
         if not self.mapa_fundo_imagem:
             print(f"ERRO: Imagem de cenário '{self.mapa_data['chave_cenario']}' não encontrada para o mapa '{self.id_mapa}'!")
             sys.exit()
@@ -45,7 +45,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- Carregar a camada superior (opcional) ---
         self.camada_superior_imagem = None
         if 'chave_camada_superior' in self.mapa_data:
-            self.camada_superior_imagem = self.gerenciador_recursos.get_image(self.mapa_data['chave_camada_superior'])
+            self.camada_superior_imagem = self.gerenciador_recursos.obter_imagem(self.mapa_data['chave_camada_superior'])
             if not self.camada_superior_imagem:
                 print(f"AVISO: Imagem de camada superior '{self.mapa_data['chave_camada_superior']}' não encontrada para o mapa '{self.id_mapa}'. A camada superior não será exibida.")
 
