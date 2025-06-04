@@ -26,11 +26,27 @@
       repo: 'https://github.com/SBD1/2025.1-Marventura',
       homepage: 'HOME.md',
       coverpage: true,
-      auto2top: true
+      auto2top: true,
+      plugins: [
+        function (hook, vm) {
+          hook.doneEach(function () {
+            const diagramsDetails = document.querySelectorAll('details[open]')
+
+            diagramsDetails.forEach(details => {
+              setTimeout(() => {
+                if (details.open) {
+                  details.removeAttribute('open')
+                }
+              }, 500)
+            })
+          })
+        }
+      ]
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
 
   <script>
     const themeToggle = document.getElementById('theme-toggle')
