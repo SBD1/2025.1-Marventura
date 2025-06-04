@@ -1,0 +1,46 @@
+# Bytecode e cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos temporários de edição
+*.swp
+*.swo
+*.bak
+*~
+
+# Pastas de ambiente virtual
+venv/
+env/
+.venv/
+.env/
+
+# Configurações específicas de IDEs
+.vscode/
+.idea/
+
+# Arquivos de log e temporários
+*.log
+*.tmp
+*.temp
+
+# Testes e coverage
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+pytest_cache/
+
+# Distribuição e build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db

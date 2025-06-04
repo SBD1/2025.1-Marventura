@@ -53,11 +53,41 @@ A equipe do projeto é composta por cinco integrantes dedicados, conforme aprese
 
 
 
-## Para Jogadores
+## 🎮 Para Jogadores
 
-[Adicionar passo-a-passo]
+Para começar a aventura no Marventura, siga os passos abaixo para configurar o jogo no seu sistema.
 
+### Passo 1: Clonar o Repositório
+Antes de tudo, certifique-se de ter o Git instalado e execute o seguinte comando para obter os arquivos do jogo:
 
+```shell
+git clone https://github.com/SBD1/2025.1-Marventura.git
+```
+### Passo 2: Acessar a Pasta do Jogo
+Depois de clonar o repositório, entre na pasta do jogo:
+
+```shell
+cd jogo/
+```
+
+### 🐧 Linux
+Se você estiver no Linux, pode iniciar o jogo diretamente com:
+
+```shell
+make start
+```
+
+Isso garantirá que todas as dependências sejam configuradas corretamente antes de executar o jogo.
+
+### 🖥️ Windows
+No Windows, siga estes comandos para instalar as dependências e iniciar o jogo:
+
+```shell
+pip install -r requisitos.txt
+python main.py
+```
+
+Isso garantirá que todas as bibliotecas necessárias estejam instaladas antes da execução.
 
 ## Para Desenvolvedores
 
@@ -97,3 +127,4 @@ docsify serve ./docs
 | `2.0` | Criação do Github Pages | [Israel Thalles](https://github.com/IsraelThalles) | 15/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 |
 | `2.1` | Adicionando equipe e descrição do projeto | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/04/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 16/04/2025 |
 | `2.2` | Correção de links e imagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/04/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 17/04/2025 |
+| `2.3` | Adição de instruções para jogadores | [Israel Thalles](https://github.com/IsraelThalles) | 14/05/2025 |  |  |
