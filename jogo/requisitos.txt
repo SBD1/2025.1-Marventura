@@ -1,2 +1,3 @@
 pygame
+psycopg2-binary
 auto-py-to-exe
