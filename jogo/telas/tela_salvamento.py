@@ -40,7 +40,7 @@ class TelaSalvamento(TelaModelo):
         },
          {
             'ocupado': True, # Outro slot salvo
-            'id_mapa': ID_MAPA_NEVE_VILA, # Exemplo de salvo no mapa inicial novamente
+            'id_mapa': ID_MAPA_CAMPO_COSTA_LESTE, # Exemplo de salvo no mapa inicial novamente
             'personagem': SILVIE, # Exemplo de personagem diferente
             'data_salva': '06/05/2025 10:15',
             'progresso': '60%',
@@ -131,7 +131,6 @@ class TelaSalvamento(TelaModelo):
                                 coordenada_x=slot_data['coordenada_x'],
                                 coordenada_y=slot_data['coordenada_y'],
                                 olhando_para_direita=slot_data['olhando_para_direita'],
-                                ponto_de_destino='entrada_padrao'
                             )
                         else:
                             print(f"Slot {i+1} vazio. Iniciando novo jogo a partir daqui (ou indo para seleção de personagem).")

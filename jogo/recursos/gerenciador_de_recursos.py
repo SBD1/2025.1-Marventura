@@ -141,12 +141,16 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
-        self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
+        #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
 
         # --- Carregar planos de fundo para os mapas do jogo ---
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_LESTE, 'recursos/imagens/cenario/ilha_campo_costa_leste.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_campo_costa_oeste-camada_superior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_VILA, 'recursos/imagens/cenario/ilha_campo_vila.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_PORTO, 'recursos/imagens/cenario/ilha_cidade_porto.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_CENTRO, 'recursos/imagens/cenario/ilha_cidade_centro.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_PRACA, 'recursos/imagens/cenario/ilha_cidade_praça.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
