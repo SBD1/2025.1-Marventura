@@ -300,4 +300,4 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/05/2025 | - | - |
 | `1.1` | Adicionando as tabelas de receita, espadas, estilingues/arcos e acessórios e atualizando as tabelas antigas com novas informações | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 04/06/2025 | - | - |
-| `1.2` | Adicionando preço de venda para as receitas, raridade para os itens e uma nova tabela para itens de evento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 12/06/2025 |  |  |
+| `1.2` | Adicionando preço de venda para as receitas, raridade para os itens e uma nova tabela para itens de evento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 12/06/2025 | [Diassis](https://github.com/Diaxiz)  | 13/06/2025 |
