@@ -99,8 +99,8 @@ dados_das_ilhas = {
     },
 }
 
-mapas_data = {
-    ID_MAPA_CAMPO_COSTA_OESTE: { # ID do primeiro mapa
+dados_das_salas = {
+    ID_MAPA_CAMPO_COSTA_OESTE: {
         'nome': 'Costa Oeste',
         'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_OESTE, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
         'chave_camada_superior': CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, # Chave do gerenciador de recursos para a camada superior deste mapa
@@ -114,6 +114,7 @@ mapas_data = {
             {'x': 4480, 'y': 0, 'largura': 20, 'altura': 114},
             # Limite inferior do caminho
             {'x': 958, 'y': 361, 'largura': 2338, 'altura': 239},
+            {'x': 3320, 'y': 600, 'largura': 1180, 'altura': 20},
             {'x': 4480, 'y': 356, 'largura': 20, 'altura': 244},
         ],
         'npcs': [
@@ -450,10 +451,18 @@ mapas_data = {
     # Adicione quantos mapas forem necessários
 }
 
-def get_mapa_data(id_mapa):
+def obter_dados_da_sala(id_mapa):
     """
     Retorna os dados de configuração para um mapa específico pelo seu ID.
     :param id_mapa: O ID (string) do mapa desejado.
     :return: Um dicionário contendo os dados do mapa, ou None se o ID do mapa não for encontrado.
     """
-    return mapas_data.get(id_mapa) # O método .get() retorna None se a chave não existe
+    return dados_das_salas.get(id_mapa) # O método .get() retorna None se a chave não existe
+
+def obter_dados_da_ilha(id_ilha):
+    """
+    Retorna os dados de configuração para uma ilha específica pelo seu ID.
+    :param id_ilha: O ID (string) da ilha desejada.
+    :return: Um dicionário contendo os dados da ilha, ou None se o ID da ilha não for encontrado.
+    """
+    return dados_das_ilhas.get(id_ilha) # O método .get() retorna None se a chave não existe

@@ -8,7 +8,7 @@ from entidades import Inimigo
 from entidades import Obstaculo
 from entidades import AreaInteracao
 from utilidades import Camera
-from mapa_dados import mapas_data, dados_das_ilhas, get_ilhas_vizinhas, get_ilha_por_mapa_id, get_mapa_data
+from mapa_dados import dados_das_ilhas, get_ilhas_vizinhas, get_ilha_por_mapa_id, obter_dados_da_sala, obter_dados_da_ilha
 from .tela_modelo import TelaModelo
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
@@ -45,7 +45,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Inicializa a exibição do nome da ilha (chamando o método auxiliar)
         self._marcar_ilha_visitada_e_exibir_nome()
 
-        self.mapa_data = mapas_data[self.id_mapa]
+        self.mapa_data = obter_dados_da_sala(self.id_mapa)
 
         self.mapa_fundo_imagem = self.gerenciador_recursos.obter_imagem(self.mapa_data['chave_cenario'])
         if not self.mapa_fundo_imagem:
@@ -101,14 +101,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         Prioriza um ponto de destino específico do mapa, depois coordenadas de fallback.
         Retorna um dicionário {'x': int, 'y': int, 'olhando_direita': bool}.
         """
-        map_data = get_mapa_data(self.id_mapa)
-        if not map_data:
+        sala_atual = obter_dados_da_sala(self.id_mapa)
+        if not sala_atual:
             print(f"ERRO: Dados para o mapa com ID '{self.id_mapa}' não encontrados. Usando posição padrão.")
             return {'x': 100, 'y': 400, 'olhando_direita': True} # Posição padrão segura
 
         # 1. Tenta usar o ponto de destino se fornecido
         if self.ponto_de_destino:
-            pontos_de_entrada = map_data.get('pontos_de_entrada_no_mapa', {})
+            pontos_de_entrada = sala_atual.get('pontos_de_entrada_no_mapa', {})
             entrada = pontos_de_entrada.get(self.ponto_de_destino)
             if entrada:
                 return {
@@ -128,7 +128,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             }
 
         # 3. Se nenhuma opção acima, retorna o primeiro ponto de entrada do mapa
-        primeiro_ponto = next(iter(map_data.get('pontos_de_entrada_no_mapa', {}).values()), None)
+        primeiro_ponto = next(iter(sala_atual.get('pontos_de_entrada_no_mapa', {}).values()), None)
         if primeiro_ponto:
             return {
                 'x': primeiro_ponto.get('x', 100),
@@ -180,25 +180,28 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         """
         Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
         """
-        ilha_id_atual = get_ilha_por_mapa_id(self.id_mapa)
+        id_ilha_atual = get_ilha_por_mapa_id(self.id_mapa)
         
         nome_ilha = ""
-        if ilha_id_atual and ilha_id_atual in dados_das_ilhas:
-            nome_ilha = dados_das_ilhas[ilha_id_atual]['nome']
+        dados_da_ilha_atual = obter_dados_da_ilha(id_ilha_atual)
+        if id_ilha_atual and dados_da_ilha_atual:
+            nome_ilha = dados_da_ilha_atual['nome']
             # Marca a ilha como visitada
-            dados_das_ilhas[ilha_id_atual]['visitada'] = True
+            dados_das_ilhas[id_ilha_atual]['visitada'] = True
             
-        nome_area_mapa = ""
-        if self.id_mapa in mapas_data and 'nome' in mapas_data[self.id_mapa]:
-            nome_area_mapa = mapas_data[self.id_mapa]['nome']
+        nome_area_atual = ""
+        area_atual = obter_dados_da_sala(self.id_mapa)
+
+        if area_atual and 'nome' in area_atual:
+            nome_area_atual = area_atual['nome']
         else:
             print(f"AVISO: Nome da área não encontrado para o mapa ID: {self.id_mapa}")
 
-        if nome_ilha or nome_area_mapa: # Só cria a exibição se houver algo para mostrar
-            self.exibicao_nome_ilha = _ExibicaoNomeIlha(nome_ilha, nome_area_mapa, self.gerenciador_recursos)
-            print(f"Exibindo Ilha: {nome_ilha}, Área: {nome_area_mapa}")
-            if ilha_id_atual:
-                print(f"(Ilha {nome_ilha} visitada: {dados_das_ilhas[ilha_id_atual]['visitada']})")
+        if nome_ilha or nome_area_atual: # Só cria a exibição se houver algo para mostrar
+            self.exibicao_nome_ilha = _ExibicaoNomeIlha(nome_ilha, nome_area_atual, self.gerenciador_recursos)
+            print(f"Exibindo Ilha: {nome_ilha}, Área: {nome_area_atual}")
+            if id_ilha_atual:
+                print(f"(Ilha {nome_ilha} visitada: {dados_da_ilha_atual['visitada']})")
         else:
             self.exibicao_nome_ilha = None
             print(f"AVISO: Nenhuma informação de ilha ou área para exibir para o mapa ID: {self.id_mapa}")
@@ -461,8 +464,8 @@ class _ExibicaoNomeIlha:
         self.nome_ilha = nome_ilha
         self.nome_area_mapa = nome_area_mapa
 
-        self.fonte_ilha = gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO) # Fonte maior para o nome da ilha
-        self.fonte_area = gerenciador_recursos.obter_fonte(CHAVE_FONTE_NOME_CARTAZ) # Fonte menor para o nome da área
+        self.fonte_ilha = gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO) # Fonte maior para o nome da ilha
+        self.fonte_area = gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO) # Fonte menor para o nome da área
         self.cor = (255, 255, 255) # Branco
 
         self.ativo = True

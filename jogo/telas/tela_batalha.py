@@ -28,8 +28,8 @@ class TelaBatalha(TelaModelo):
              self.imagem_inimigo = pygame.Surface((150, 150))
              self.imagem_inimigo.fill(VERMELHO)
 
-        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
-        self.fonte_botao = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TITULO)
+        self.fonte_botao = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
 
         self.texto_batalha = f"Uma batalha contra um {self.inimigo_tipo}!"
         self.texto_botao = "Fugir (Voltar ao Mapa)"

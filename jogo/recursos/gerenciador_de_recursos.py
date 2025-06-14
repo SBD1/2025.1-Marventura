@@ -113,13 +113,7 @@ class GerenciadorDeRecursos:
             return self._fontes[chave]
         else:
             print(f"AVISO: Fonte '{chave}' não encontrada ou falhou no carregamento. Usando fallback genérico.")
-            # Fallback genérico caso a fonte não tenha sido carregada, a key esteja errada, ou o fallback original falhou
-            try:
-                return pygame.font.SysFont("Arial", 30) # Tenta um fallback genérico com Arial tamanho 30
-            except pygame.error as generic_fallback_e:
-                 print(f"ERRO: Falha no fallback genérico para fonte: {generic_fallback_e}")
-                 # Retorna None ou levanta um erro crítico se nenhum fallback funcionar
-                 return None # Retorna None como último recurso
+            return pygame.font.Font(None, 30)
             
     def carregar_recursos(self):
         """
@@ -129,11 +123,15 @@ class GerenciadorDeRecursos:
         print("Iniciando carregamento de todos os recursos...")
 
         # --- Carregar Fontes ---
-        caminho_arquivo_fonte = 'recursos/fontes/Tagesschrift-Regular.ttf'
-        self._carregar_fonte(CHAVE_FONTE_TITULO, caminho_arquivo_fonte, 70)       # Fonte para títulos grandes
-        self._carregar_fonte(CHAVE_FONTE_BOTAO, caminho_arquivo_fonte, 48)     # Fonte para botões
-        self._carregar_fonte(CHAVE_FONTE_NOME_CARTAZ, caminho_arquivo_fonte, 20)  # Fonte para nome no cartaz
-        self._carregar_fonte(CHAVE_FONTE_DATA_CARTAZ, caminho_arquivo_fonte, 12)   # Fonte para data/dados no cartaz
+        #caminho_arquivo_fonte_coliner = 'recursos/fontes/Coliner-Regular.ttf'
+        caminho_arquivo_fonte_coliner = 'recursos/fontes/Coliner-Bold.ttf'
+        caminho_arquivo_fonte_always = 'recursos/fontes/Always In My Heart.ttf'
+        caminho_arquivo_fonte_playfair = 'recursos/fontes/PlayfairDisplay-Regular.ttf'
+        self._carregar_fonte(CHAVE_FONTE_COLINER_TITULO, caminho_arquivo_fonte_coliner, 70)       # Fonte para títulos grandes
+        self._carregar_fonte(CHAVE_FONTE_COLINER_BOTAO, caminho_arquivo_fonte_coliner, 48)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_COLINER_TEXTO, caminho_arquivo_fonte_coliner, 20)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_PAYFAIR_TEXTO, caminho_arquivo_fonte_playfair, 20)  # Fonte para nome no cartaz
+        self._carregar_fonte(CHAVE_FONTE_HEART_TEXTO, caminho_arquivo_fonte_always, 15)   # Fonte para data/dados no cartaz
 
         # --- Carregar Imagens de Interface e Fundos ---
         self._carregar_imagem(CHAVE_TELA_INICIAL, 'recursos/imagens/cenario/tela_inicial.png', escalar_para_tamanho=(LARGURA_TELA, ALTURA_TELA))

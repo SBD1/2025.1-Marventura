@@ -106,10 +106,11 @@ ID_MAPA_FORTALEZA_LOJA = 'ilha_fortaleza_loja'
 # --- Chaves de recursos ---
 CHAVE_LOGO = 'logo'
 CHAVE_TELA_INICIAL = 'tela_inicial'
-CHAVE_FONTE_TITULO = 'titulo'
-CHAVE_FONTE_BOTAO = 'botao'
-CHAVE_FONTE_NOME_CARTAZ = 'nome_cartaz'
-CHAVE_FONTE_DATA_CARTAZ = 'data_cartaz'
+CHAVE_FONTE_COLINER_TITULO = 'fonte_coliner_titulo'
+CHAVE_FONTE_COLINER_BOTAO = 'fonte_coliner_botao'
+CHAVE_FONTE_COLINER_TEXTO = 'fonte_coliner_texto'
+CHAVE_FONTE_PAYFAIR_TEXTO = 'fonte_payfair_texto'
+CHAVE_FONTE_HEART_TEXTO = 'fonte_heart_texto'
 CHAVE_CARTAZ_PROCURADA = 'cartaz_de_procurada'
 CHAVE_CARTAZ_PROCURADO = 'cartaz_de_procurado'
 CHAVE_CARTAZ_VAZIO = 'cartaz_vazio'
@@ -152,5 +153,5 @@ CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_ilha_6_parte_2'
 CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_ilha_6_parte_3'
 
 # --- Debugging ---
-DEBUG_DESENHAR_CAIXAS_COLISAO = True # (True para exibir, False para ocultar)
+DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão
