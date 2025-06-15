@@ -304,6 +304,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
     def update(self, dt):
         super().update(dt)
 
+        if self.menu_viagem_ativo and self.menu_viagem:
+            return None
+
         # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
         self.jogador.update(dt, self.obstaculos_caminho)
 

@@ -303,21 +303,26 @@ dados_das_salas = {
     ID_MAPA_CIDADE_PORTO: {
         'nome': 'Porto',
         'chave_cenario': CHAVE_CENARIO_CIDADE_PORTO,
-        'obstaculos': [],
+        'chave_camada_superior': CHAVE_CENARIO_CIDADE_PORTO_CAMADA_SUPERIOR,
+        'obstaculos': [
+            {'x': 354, 'y': 390, 'largura': 93, 'altura': 22},
+            {'x': 1413, 'y': 390, 'largura': 93, 'altura': 22},
+            {'x': 2472, 'y': 390, 'largura': 93, 'altura': 22},
+        ],
         'npcs': [],
         'inimigos': [],
         'pontos_de_entrada_no_mapa': {
-            'pier': {'x': 100, 'y': 415, 'olhando_direita': True},
-            'centro': {'x': 800, 'y': 90, 'olhando_direita': False},
+            'pier': {'x': 2470, 'y': 265, 'olhando_direita': False},
+            'centro': {'x': 680, 'y': 175, 'olhando_direita': True},
         },
         'areas_interacao': [
             {
-                'x': 0, 'y': 360, 'largura': 50, 'altura': 150,
+                'x': 2472, 'y': 375, 'largura': 93, 'altura': 67,
                 'tipo_evento': 'embarcar',
                 'dados_evento': {}
             },
             {
-                'x': 740, 'y': 70, 'largura': 200, 'altura': 50,
+                'x': 610, 'y': 185, 'largura': 250, 'altura': 20,
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
                     'id_proximo_mapa': ID_MAPA_CIDADE_CENTRO,
