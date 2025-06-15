@@ -1,5 +1,9 @@
 <!-- docs/_sidebar.md -->
 
+- **História**
+  - [Capítulo 1](historia/capitulo01.md)
+  - [Capítulo 2](historia/capitulo02.md)
+
 - **Módulo 1**
   - [Modelo Entidade-Relacionamento](modelagem/modelo-entidade-relacionamento.md)
   - [Modelo Relacional](modelagem/Modelo-Relacional.md)
