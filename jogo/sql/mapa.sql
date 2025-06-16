@@ -6,14 +6,6 @@ CREATE TABLE mapa (
     total_itenas_chave SMALLINT
 );
 
--- Tabela Sala
-CREATE TABLE sala (
-    id SERIAL PRIMARY KEY,
-    nome CHAR(50),
-    total_salas SMALLINT,
-    mapa_id SMALLINT REFERENCES mapa(id)
-);
-
 -- Tabela Ilhas
 CREATE TABLE ilhas (
     id SERIAL PRIMARY KEY,
@@ -40,11 +32,10 @@ CREATE TABLE corredor_maritmo (
 
 -- Tabela Campo de Batalha
 CREATE TABLE campo_batalha (
-    id SERIAL PRIMARY KEY,
+    sala_id SMALLINT PRIMARY KEY REFERENCES sala(sala_id),
     tipo_terreno CHAR(100),
     qtd_pessoas SMALLINT,
-    tamanho SMALLINT,
-    sala_id SMALLINT REFERENCES sala(id)
+    tamanho SMALLINT
 );
 
 -- Tabela Porto
