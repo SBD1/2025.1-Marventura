@@ -13,6 +13,8 @@ Dando continuidade ao processo de modelagem de dados iniciado com o Modelo Entid
 
 O Modelo Relacional é amplamente utilizado por sua simplicidade, clareza e robustez, permitindo uma representação lógica do banco de dados que é independente da implementação física.
 
+
+
 ## Metodologia
 
 Partindo do Modelo Entidade-Relacionamento (MER) previamente desenvolvido para o projeto Marventura — o qual foi elaborado com base em uma divisão temática e estruturada das entidades e relacionamentos mais relevantes do sistema — foi possível avançar para a construção do Modelo Relacional, mantendo a coerência estrutural e lógica da modelagem de dados.
@@ -22,6 +24,8 @@ Para realizar essa transição, foi adotada a abordagem teórica proposta por C.
 1.  Transformação de entidades em tabelas com seus respectivos atributos e definição da chave primária;
 2.  Conversão de relacionamentos em chaves estrangeiras ou tabelas associativas, de acordo com a cardinalidade;
 3.  Aplicação dos conceitos de normalização, a fim de evitar redundâncias e assegurar a integridade dos dados;
+
+
 
 ## Diagrama Modelo Relacional
 
@@ -40,6 +44,8 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
 
 ---
 
+A **Figura 2** apresenta o Diagrama Relacional de um sistema de jogo, onde o Mapa é a entidade central, organizando todos os cenários. Ele se conecta ao `Mar` (com `Corredor_maritimos`), `Ilhas` (que contêm `Salas` e `Portos`) e indiretamente a entidades como `NPCs`, `Inimigos` e `Habitantes`, por exemplo, consolidando-se como uma importante estrutura que abrange as localizações e interações do jogo.
+
 <details>
   <summary>Figura 2 – Diagrama Relacional do Mapa
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
@@ -55,13 +61,13 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
 
 A **Figura 3** abaixo apresenta o Diagrama Relacional com foco nos itens do inventário. Nela é possível observar que somente as entidades específicas apareceram, pois no *Diagrama Entidade-Relacionamento dos Itens do Inventário* a especialização para essas entidades é total e exclusiva. Note que os relacionamentos também foram modelados para as tabelas auxiliares `IngredienteConsumível`, `IngredienteNãoConsumível`, `EfeitoAcessório` e `EfeitoConsumível`.
 
-<details>
+<details open>
   <summary>Figura 3 – Diagrama Relacional dos Itens do Inventário
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
     <p><strong>Figura 3 – Diagrama Relacional dos Itens do Inventário</strong></p>
-    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-item-v1.1.png">
+    <iframe src="https://viewer.diagrams.net/?lightbox=1&highlight=0000ff&nav=1&title=modelo-relacional-item-v1.1.drawio&dark=0#R%3Cmxfile%3E%3Cdiagram%20name%3D%22P%C3%A1gina-1%22%20id%3D%22z8SUrFOs0pDH7z4ywPko%22%3E7Z1tc5s4EMc%2FTV76JjIGm5dJml57yXXappe7e9UhAcfcYHAxztOnP7ARtpF4kA0SZnemM7UJJo72L%2F12pV3pTLuav%2F4eWovZn4HteGfDc%2Fv1TPtwNhwSgwzj%2F5Irb5sro%2FFkc%2BEpdO30pu2FO%2FfdSS%2Bep1dXru0s926MgsCL3MX%2BxcfA953HaO%2BaFYbBy%2F5t08Db%2F60L68lhLtw9Wh579W%2FXjmabq5PheHv9k%2BM%2BzehvJoa5%2Bcncojenf8lyZtnBy84l7fpMuwqDINq8mr9eOV7SeLRdNp%2F7WPDT7IuFjh%2FV%2BUB0czm3ppM%2FvG%2Fvs5X%2F8%2FPN86%2F7AdFT%2Bzxb3ir9k787j44bWem3jt5oU8R%2FwCJ5GVkPyaXLZWSFUWox7Ty%2BENsgslzfCeMLZP3e86zF0l3fvrkycz371noLVhF9EH13OXVfHfv7xmDJvbHtbuOHJW%2BTh0%2Fjh9%2BlXyb5seW5T378%2BjH%2B85PfeBk6y%2Fi73FrLKL1jFs299OXLzI2cu4X1mHz6JVZqfI1tv7RJn50wcl53LqXt%2BbsTzJ0ofItvoT8l%2BuYjqbgnZmrrl61UhufptdmOTOh9VqrOp%2BzRWwPGL1IbCtlTY%2BxZbsjviSYvZ0Hovifm89Lm3jXu%2Bv2LO%2FcsPxa7ZecuXQbrzr02kut5V4EXJArwA99hRJDcZIfB4ocVPjlRemERuH60bgn9Mv4Xt83V%2BW%2F6mR5%2F16v4Pdm%2Bj%2F8lt4fRVeAvozAWW%2FIMJ7b5i5PY%2FTIKFulDPWdKnx%2BmDZ%2B8fgiiKJinb3YUwqqhor9UiyQVhVZTE1p7mhgxmvh6U6iKuA0i1%2FLiUSCy%2FCdvY8P14GptbcgxNLfp95p71w757hzEDTr11uPjzLVtxz%2BkA1d0iWqT7djIEDRR%2BrBtswk%2FzfLigcy3orhDrXx7ydg9%2B57HSEFnpPA5buzInbqPMZ7CqrFfjjjo2L6593IZ2931n243nzRy6tE7o57XfVvvmJ%2BMGlVTrcc1K6f7j2Rqzu7vtIsLd%2BGvlv6P5%2FGAIFqUooWjtNbQwhUA6zx%2B7CVYytQPCyvclmB9zqQTreZnV9rZxYdnx%2FsaBvbq3bWDUwJLV9TTZ6zwR8IJ66VcT2O%2FpFg%2BGJNSmejUiHTCZVQTEmTYWgBispxAz4HnOeQkUtdzyPrLCQWlJgsNSEFp1iVAeQ8FbcHOT%2BwFpRVjfwddh5ZjUgHxwHMeTNZ5QNg0GKaKw0ZmmFqgCaO%2BJuQMJ47t0ue1TZr69uo%2FacaMDr7ET%2B06Wrqhjj6j5Hr%2BTq6mi58vH%2B6J4bzMbdP9NSCaieRQSo6666lNkIMvASrFXoGiXO2wQFFgdjrvsgXFvZVYEQIpjpYHOFKwAexFOMcMmmqJDEZ01jEd8bkzU4Rj5eG4rTEf48eGvIDSrnLUVCVPEK35AGzsmExUxs867%2BdiZ2mnQN%2BADSH3JitLB%2F6OeAmtTFUeKZsSn0Fv1meo8zgJOpogZppZE2sGM7xJSqmYMRk9AMLLpLa5%2Bo4XqrkivnyyHlzPtS2787OWXVQPOMoQdiIDMaMwmuHNaErFDC3I6vdSWHlfQMoQNvsGzELYsdroM0P4qao6IkMhMrLETBnM4AvA6CEiSqUOCxH8pmAnun64i86n4XVCG31GBHdQGxaPEIgICYjQVYcVdEOEXiGiVOqwEMFvCnYO%2B9vK8qOTmJ7qhELggUJDUKgExUQ5KEZgQAFy3wl%2BU7A5Nd%2BtEDomGtlZoqeYKE67RUy0j4kMCeowUby3SN8wcV7bOr3HBLs29TV01rtIjIOrYL4IO59a1QmdgMMFKZ59QFxIwAVvjwm5q9oTKLjIpuURF4RNmdvi4t7xbcC0EJAJOFoMOamW4Qp3vK0hEqZeR6%2B7ON1evQ5VEKa4teINZL3ldCp2NDbpEWDJjlY%2FYOi7p6CxgeVeUnX58N8RZ0Fe1Y6AcsA5DxpusF6PNofV7YjTRnnhjsZWf0OiDK5yZU1Rsbk6lu4cJR94qBHYtQw0amQFNsqLdzQ2J1fxUCJt3lPDtLusKdi0O9jFOwLa6DNE%2BFnrxSsjyAwJzOhA9U7xLoany4hSrcNiBP9kFnZSHHj1Dm4SUMxP3OdULSOUl%2B%2FA2eYUdzndGp1dJsPyHSGFgCPFCGeg1JJCef3OqLiAq2ekoFpHUgxG7BIX1u8I6AMeJ3DLGKWcUF%2FAM%2BrjnjGlWkdODEbs%2BhQW8BygE3i8wFUKtbxQXsEz6uMqRanWkRcDOvpgBc9RMgGHC52ducydOF%2BOkxw6YNbyZHNJ9KTwuulNLR69g2fv1PMLDkuu1utrpCulPDqevrPbL9Bl0CvO36nLgY74DxKP4sHws7ht8DCeNuNRce4oL%2BrR2RpxxUOJtPhUx%2Fg0O%2FqPjU9hZ1oLaKPPEOGnXBbvbInMkMAMmdU5fAEUL3qeLiJKpQ4LEfymYANU2InWAtroMyL4%2FkTxrpaICAmIkFqMw1cAmDDCqG%2BdHjGC3xTsniGYaC2kEHikwGBCLSmUl%2BQYfYwmSrWOpBgYbDSBidYC%2BoDHCdz5Wi0nlBfkGGC2vjZw6%2BusKcq2voaeaC2gE3C8oKlbyAs1vFBfmDMGc7IO1TryYjAelvACeKK1gEzA4YJgwb9iXigvzCFwKv4JlvzvtAVb85%2FwYmJ%2BtB5C93HNDnICGbbdkAs4cozZNa8va81owQBrdUR1MyB0c3F67g59v8sFnukzgDQfSAhsRgzaVzisWCfrQEcV64gOLscpgk2jB1isM8Zpyqwp2GnKvWIdSgQs2jleSyUehtmsh1HncRLERVdekD%2BtxKri%2FOEV7Ujlz4QtC1c8lEgLXbPOgNCZsHOdsIt2BLTRZ4jws9Uxf0IpM3hFO20xgy%2BAPqZPlEodFiL4TcHGJcCLdjDOKMZn8foHIkICIrhFO3LjiuJk%2FNNlRKnWYTGC3xTsXlRYtCOkEHikKN7zGEkhgxS8oh25pCgOJ%2FtGCjyPM2sKdtkLi3YE9AGPE3jemlpO8Ip2pHKCChEAJ%2FC8tczo7PIUFu0coBNwvDCLlzGRFxJ4wS3akcsLMDnYVOvIi4HJZmBj0Y64TMDhghA2M%2Ffi0VkuE%2BlcaqFbvNCFGddULsPz1HCUAXW3wm8v4ZoMBfKbQDsGh2Vcb%2FvN6ZyPQKgEYOdcE4EO3ne3gQzZ0pu9rOuaLOiIDyEv2VpERODquciQUw%2BI8GksKj0APsoPSSBDgfOaehanbvsDEodwNsGGnXItoo4%2Bo4SfbIi7YKsFh%2FqTEvqIiVKtw6IEvynYsAR40jWGGyUAxcIctZBQf1YC6WVtTrncYXGioC3Y6hzMvBbTCDxe0N%2BJvFDFC%2BUnJhANzNammdyRF3FbsEtgmH8tohCAtMCaTsW0UH5uAtHAVHVmckdabDdSxCzsI5UCkBpY36mWGupPTyAamArPTO5IjbgtOFubYi62uFDgQWPE%2BhvXU8eNAkzJFhSNTjOrRVOyzdZoMGITX9BFaNBFyDrPCWVkj9jqC4gZ2SP0HrZtwXoPexnZGyB03YOQmIktIB54HoVevCyOjJHBGPWJ1zrn%2FE%2BAjKE9ARkzIPR7YNVPeyKCxxqDLTndOCt4hpOoavLhq1H3aL%2F2wldjyFgXXYsGXQujvkg6E74abJo2RNci6xroWhCDLf3E8LUh8QB0KXRkjFLGqA9fDXbaHCRj6s889J8x7Kz5HmPwiMAGVAQPNmM2fv3sP4WO7SaRIAaxotIZjfeD2Mk5Byaa1CB2jEFsqw7GuJEglqeJ9hwMzunjEB2MrGugg0HGFUFs%2FPXjKLbzaVwSHQsB9ZQ4FuNmHYs6j5MiJ4xi1UKGF8VKhgxGsbs9ASETtwVGse2rCBxstHO2VM2xnxxqmnjgngVPgW9519urcTQZfx%2BHUmV7z22wFklisP%2BcKHpLaWStomDfnM6rG%2F2TfPw3PX33b%2Fqw5PWH1903lFSxlcO3f3bf%2FLt9QvJ2%2B7H1O%2Fo5Via0ljtYhY9OmXLoqe8RZV%2FRnfTouqTpSgUWOp4Vuc%2FO3hdpnh%2Bc4%2Bp35ia%2BrEcJDRfahecoBsNJbpKCVzY0kjpJwTmUHv3HBv3HSSOTFDxNtOc%2FTnCSYq9roP9IJhWTFKJQgOdHCqipxI%2BcNOtH1nmcFHnhpIVa6PAmLSRDByctdnsCQidui4pJC5wZP0I98CDDOebyk%2FXgeuUbcmH4moWvY7Ifvo7q7nqRZV00j43svDWMX1s5espsJH6Vm8Vn8uNXKC4EnlS50xYVcWsNAMDzIpo5w7KniXumwNFCoIFzYOwqDhz1aeOmwG4rfduMy8SAddsWbMD6wfI7X4DUDXX0GSXcY1YM3C5DLTiUHzdlmD3ERKnWYVGC2xQ0d2cHElerZffLVDshjj5Dwr%2B9%2FutuevFw89NYuBfkx%2Bz1%2FssAjySszwhGP%2FWxUcgIqadNcRXQl1CiwjrF6u81Irh%2FNrADCRtURp%2F5UJCCy%2FqQEFNwo5vLuTWd%2FOF9e5%2Bt%2FJ%2Bfb55%2F3Q%2BIng6ezWXWph%2F9mkBvq7es1jlffUofsfmq6afaUAF7AoBEFZBdDWSKqFABaUEF5fViu4nYBXrpVia2Rlj3T2bn7rZZaZ%2BrzK%2FX9Y5ZlXXpsLPmtyiq7qxm44P7kWZVWgzTcbPSjZNP0KxsbiqOwfk9SivHYEKf2RmzKvWYlJq1GpiteM0XYWi97dyQThwVOtWDYS7fjB6R9rHuB4ZjPSeUzXdo1vcm7MlLqKQsMOmGlIiZk5JZIaX8B3RDipTYJcGuS6mpYL4zXFA6n3KQF9c9ExzUSUn%2BGCW9vI%2Fm79e1Zrsod62KsAf0dr2HSvMGa%2FuC6lx8vk3V7mLQaZvSc1dPzqgj%2FiLK58iZM9bGWg%2Bm1oOc5wZjTlo%2Ft7Knia0K%2BAZlk%2BvKDQl1bbyy0qO8vxxT6CFcOnacIjhnn%2FayzqO8P2BK1Yg9dWqvyqN00O%2FI6nkr9R3HCqdkOX3Y7HJ6ncdJUJLOeg0ImYOSdBuCTBP1yUdBRmcryBQPJdKSdvX61uo7YXS26qvXKVlNagMeROAuLVWvGPKWDkpZ0ZH5BM7htmjUXIJNtU3H3bIp3Ln%2BapuepkkpZdCkxYuxCmx64Kptbr%2FU3CJs9QeaTgDgS%2B70lg%2BkSS7bkarLubd8q2LaV7FVx%2BpSbw8aSUa5peLJuHwgyd8vZWnZ6H0O%2F3%2Br%2BYL%2BOVb4WFeD%2FEVbZQo8blg5vWQxabCgh1R0x%2BeM34ZBEO3289BazP4MbCe5438%3D%3C%2Fdiagram%3E%3C%2Fmxfile%3E" width="100%" height="500" frameborder="0"></iframe>
     <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
   </div>
 </details>
@@ -102,10 +108,13 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
 
 ---
 
+
+
 ## 📚 Bibliografia
 
 >*   DATE, C. J. **Introdução a Sistemas de Bancos de Dados**. 8. ed. Rio de Janeiro: Campus, 2004.
 >*   SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. **Fundamentos de bases de datos**. 5. ed. Madrid: McGraw-Hill España, 2006.
+
 
 
 ## 📑 Histórico de Versões
@@ -119,4 +128,5 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
 | `2.2` | Adição do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `2.3` | Atualização do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 |
 | `2.4` | Adição do diagrama relacional final | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
-| `2.5` | Normalização do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |  |  |
+| `2.5` | Normalização do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
+| `2.6` | Correção das restrições de chaves do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |  |  |
