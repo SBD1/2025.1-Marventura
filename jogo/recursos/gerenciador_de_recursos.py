@@ -130,10 +130,13 @@ class GerenciadorDeRecursos:
 
         # --- Carregar Fontes ---
         caminho_arquivo_fonte = 'recursos/fontes/Tagesschrift-Regular.ttf'
+        fonte_cherry = 'recursos/fontes/CherryBombOne-Regular.ttf'
         self._carregar_fonte(CHAVE_FONTE_TITULO, caminho_arquivo_fonte, 70)       # Fonte para títulos grandes
         self._carregar_fonte(CHAVE_FONTE_BOTAO, caminho_arquivo_fonte, 48)     # Fonte para botões
         self._carregar_fonte(CHAVE_FONTE_NOME_CARTAZ, caminho_arquivo_fonte, 20)  # Fonte para nome no cartaz
         self._carregar_fonte(CHAVE_FONTE_DATA_CARTAZ, caminho_arquivo_fonte, 12)   # Fonte para data/dados no cartaz
+        self._carregar_fonte(CHAVE_FONTE_CHERRY_TITULO, fonte_cherry, 48)          # Fonte para barra de estado
+        self._carregar_fonte(CHAVE_FONTE_CHERRY_TEXTO, fonte_cherry, 24)           # Fonte para textos gerais
 
         # --- Carregar Imagens de Interface e Fundos ---
         self._carregar_imagem(CHAVE_TELA_INICIAL, 'recursos/imagens/cenario/tela_inicial.png', escalar_para_tamanho=(LARGURA_TELA, ALTURA_TELA))
@@ -141,7 +144,8 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
-        self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
+        #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
+        self._carregar_imagem(CHAVE_BARRA_DE_ESTADO, 'recursos/imagens/interface/barra_de_estado.png')
 
         # --- Carregar planos de fundo para os mapas do jogo ---
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
@@ -151,6 +155,22 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
 
+        # --- Carregar Imagens de Campos de Batalha ---
+        self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS, 'recursos/imagens/cenario/campo_de_batalha_campos.png')
+
+        # --- Carregar Imagens de Ações em Batalhas ---
+        self._carregar_imagem(CHAVE_ACAO_ESTRATEGIAS, 'recursos/imagens/interface/balao_de_estrategias.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_MOCHILA, 'recursos/imagens/interface/balao_de_inventario.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_FRUTA, 'recursos/imagens/interface/balao_de_fruta.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_SOCO_SILVIE, 'recursos/imagens/interface/balao_de_soco_silvie.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_SOCO_SHUAN, 'recursos/imagens/interface/balao_de_soco_shuan.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_ESPADA, 'recursos/imagens/interface/balao_de_espadas.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_PROJETIL, 'recursos/imagens/interface/balao_de_projeteis.png', escalar_para_altura=100)
+
+        # --- Carregar Imagens de Ícones ---
+        self._carregar_imagem(CHAVE_ICONE_CORACAO, 'recursos/imagens/icones/coracao.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_ENERGIA, 'recursos/imagens/icones/energia.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_MOEDA, 'recursos/imagens/icones/moeda.png', escalar_para_altura=48)
 
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
