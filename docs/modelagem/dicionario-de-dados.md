@@ -57,7 +57,7 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 
 ## Convenções
 - **Nomes de campos**: Devem ser escritos em `snake_case`.
-- **Tipo ID:** O tipo de dados "ID" será uma composição única entre o tipo da tabela, com três letras, e um serial, com três dígitos. Exemplo: "ace005" representa o acessório número 5. Para tabelas que não possuírem o atributo tipo, será definido o tipo padrão "out".
+- **Tipo ID:** O tipo de dados "ID" será uma composição única entre o tipo da tabela, com três letras, e um serial, com três dígitos. Exemplo: "ace005" representa o acessório número 5. Para tabelas que não possuírem o atributo tipo, poderá ser utilizado as três primeiras letras do nome da tabela.
 - **Tipo Inteiro:** O tipo de dados "Inteiro" será sempre definido com o tipo `SMALLINT` da linguagem de consulta estruturada (SQL).
 - **Tipo Texto:** O tipo de dados "Texto" sempre possuirá um tamanho fixo especificado, por isso será definido com o tipo `CHAR` da linguagem de consulta estruturada. NÃO SERÁ NECESSÁRIO O USO DO TIPO `VARCHAR` SOB HIPÓTESE ALGUMA.
 - **Tamanhos**: Representam o limite máximo de caracteres ou valores.
@@ -105,7 +105,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"ace"</td>
           <td>-</td>
-          <td>Not NULL / CHECK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -130,9 +130,9 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
           <td>1</td>
-          <td>&gt;= 0, &lt;= 1</td>
+          <td>0 ou 1</td>
           <td>-</td>
-          <td>Default = 0 / Not NULL</td>
+          <td>Default 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
@@ -141,25 +141,25 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>★ (U+2605)</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Default ★ / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
           <td>100</td>
-          <td>a-z, A-Z, ','</td>
+          <td>a-z, A-Z</td>
           <td>-</td>
-          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
           <td>Valor gasto ao comprar o item.</td>
           <td>Inteiro</td>
           <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
+          <td>1 a 999</td>
           <td>-</td>
-          <td>Default = 1 / Not NULL</td>
+          <td>Not NULL</td>
         </tr>
         <tr>
           <td><code>preco_de_venda</code></td>
@@ -215,7 +215,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"arm"</td>
           <td>-</td>
-          <td>Not NULL / CHECK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -240,9 +240,9 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
           <td>1</td>
-          <td>&gt;= 0, &lt;= 1</td>
+          <td>0 ou 1</td>
           <td>-</td>
-          <td>Default = 0 / Not NULL</td>
+          <td>Default 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
@@ -251,25 +251,25 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>★ (U+2605)</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Default ★ / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
           <td>100</td>
-          <td>a-z, A-Z, ','</td>
+          <td>a-z, A-Z</td>
           <td>-</td>
-          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
           <td>Valor gasto ao comprar o item.</td>
           <td>Inteiro</td>
           <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
+          <td>1 a 999</td>
           <td>-</td>
-          <td>Default = 1 / Not NULL</td>
+          <td>Not NULL</td>
         </tr>
         <tr>
           <td><code>preco_de_venda</code></td>
@@ -323,9 +323,9 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
           <td>3</td>
-          <td>"arm"</td>
+          <td>"fru"</td>
           <td>-</td>
-          <td>Not NULL / CHECK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -350,9 +350,9 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
           <td>1</td>
-          <td>&gt;= 0, &lt;= 1</td>
+          <td>0 ou 1</td>
           <td>-</td>
-          <td>Default = 0 / Not NULL</td>
+          <td>Default 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
@@ -361,34 +361,34 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>★ (U+2605)</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Default ★ / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
           <td>100</td>
-          <td>a-z, A-Z, ','</td>
+          <td>a-z, A-Z</td>
           <td>-</td>
-          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
           <td>Valor gasto ao comprar o item.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
-          <td>-</td>
-          <td>Default = 1 / Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>preco_de_venda</code></td>
-          <td>Valor ganhado ao vender o item.</td>
           <td>-</td>
           <td>-</td>
           <td>NULL</td>
           <td>-</td>
           <td>-</td>
+        </tr>
+        <tr>
+          <td><code>preco_de_venda</code></td>
+          <td>Valor ganhado ao vender o item.</td>
+          <td>Inteiro</td>
+          <td>3</td>
+          <td>1 a 999</td>
+          <td>-</td>
+          <td>Not NULL</td>
         </tr>
       </tbody>
     </table>
@@ -435,7 +435,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"con"</td>
           <td>-</td>
-          <td>Not NULL / CHECK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -459,10 +459,10 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>quantidade</code></td>
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
-          <td>2</td>
-          <td>&gt;= 0, &lt;= 99</td>
+          <td>1</td>
+          <td>0 a 99</td>
           <td>-</td>
-          <td>Default = 0 / Not NULL</td>
+          <td>Default 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
@@ -471,34 +471,34 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>★ (U+2605)</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Default ★ / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
           <td>100</td>
-          <td>a-z, A-Z, ','</td>
+          <td>a-z, A-Z</td>
           <td>-</td>
-          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
           <td>Valor gasto ao comprar o item.</td>
           <td>Inteiro</td>
           <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
+          <td>1 a 999</td>
           <td>-</td>
-          <td>Default = 1 / Not NULL</td>
+          <td>Not NULL</td>
         </tr>
         <tr>
           <td><code>preco_de_venda</code></td>
           <td>Valor ganhado ao vender o item.</td>
           <td>Inteiro</td>
           <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
+          <td>1 a 999</td>
           <td>-</td>
-          <td>Default = 1 / Not NULL</td>
+          <td>Not NULL</td>
         </tr>
       </tbody>
     </table>
@@ -545,7 +545,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"ncn"</td>
           <td>-</td>
-          <td>Not NULL / CHECK</td>
+          <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
@@ -569,10 +569,10 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>quantidade</code></td>
           <td>Quantidade de cada item.</td>
           <td>Inteiro</td>
-          <td>2</td>
-          <td>&gt;= 0, &lt;= 99</td>
+          <td>1</td>
+          <td>0 a 99</td>
           <td>-</td>
-          <td>Default = 0 / Not Null</td>
+          <td>Default 0 / Not NULL</td>
         </tr>
         <tr>
           <td><code>raridade</code></td>
@@ -581,34 +581,34 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>★ (U+2605)</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Default ★ / Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
           <td>100</td>
-          <td>a-z, A-Z, ','</td>
+          <td>a-z, A-Z</td>
           <td>-</td>
-          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>preco_de_compra</code></td>
           <td>Valor gasto ao comprar o item.</td>
           <td>Inteiro</td>
           <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
+          <td>1 a 999</td>
           <td>-</td>
-          <td>Default = 1 / Not NULL</td>
+          <td>Not NULL</td>
         </tr>
         <tr>
           <td><code>preco_de_venda</code></td>
           <td>Valor ganhado ao vender o item.</td>
           <td>Inteiro</td>
           <td>3</td>
-          <td>&gt;= 1, &lt;= 999</td>
+          <td>1 a 999</td>
           <td>-</td>
-          <td>Default = 1 / Not NULL</td>
+          <td>Not NULL</td>
         </tr>
       </tbody>
     </table>
@@ -869,7 +869,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -878,7 +878,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -916,7 +916,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -925,7 +925,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -963,7 +963,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -972,7 +972,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -1508,7 +1508,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Identificador de tipo de habitante.</td>
           <td>Texto</td>
           <td>3</td>
-          <td>"hab", "rec", "coz", "ven"</td>
+          <td>"hbt", "rec", "coz", "ven"</td>
           <td>-</td>
           <td>CHECK</td>
         </tr>
@@ -1894,7 +1894,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Identificador de tipo de personagem.</td>
           <td>Texto</td>
           <td>3</td>
-          <td>"hab", "rec", "coz", "ven", "ali", "jog", "lac", "che"</td>
+          <td>"hbt", "rec", "coz", "ven", "ali", "jog", "lac", "che"</td>
           <td>-</td>
           <td>CHECK</td>
         </tr>
@@ -2434,4 +2434,5 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | - | - |
 | `1.5` | Adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.6` | Atualização das tabelas referentes aos itens e adição da tabela "fruta" | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 |
-| `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 |  |  |
+| `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
+| `1.8` | Atualização das restrições e valores permitidos das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |  |  |
