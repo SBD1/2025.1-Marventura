@@ -152,6 +152,51 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.areas_interacao.add(area)
 
 
+    def busca_dados_do_inimigo(self, tipos_inimigos):
+        """
+        Busca os dados de uma lista de tipos de inimigos.
+        :param tipos_inimigos: Uma lista de tipos de inimigos.
+        :return: Uma lista de dicionários com os dados dos inimigos.
+        """
+        dados_dos_inimigos = []
+    
+        for tipo in tipos_inimigos:
+            match tipo:
+                case 'Lobo':
+                    dados_dos_inimigos.append({
+                        'tipo': 'Lobo',
+                        'imagem': 'Lobo_0',
+                        'PV': 15,
+                        'XP': 10,
+                        'dano': 5,
+                        'item': 'Presa Afiada'
+                    })
+                case 'Corvo':
+                    dados_dos_inimigos.append({
+                        'tipo': 'Corvo',
+                        'imagem': 'Corvo_0',
+                        'PV': 10,
+                        'XP': 8,
+                        'dano': 3,
+                        'item': 'Carne de Ave Brava'
+                    })
+                case _:
+                    print(f"Tipo de inimigo desconhecido: {tipo}")
+        
+        return dados_dos_inimigos
+
+    def _montar_ondas(self, sprites_colididos):
+        """
+        Recebe uma lista de sprites (cada um representa um grupo no mapa)
+        e devolve [[dict, dict, dict],  ...]   (1 lista por onda, 3 cópias cada)
+        """
+        ondas = []
+        for sprite in sprites_colididos:          # cada sprite vira uma onda
+            base = self.busca_dados_do_inimigo([sprite.tipo_inimigo])[0]
+            # cópias independentes para PV, XP, etc.
+            ondas.append([base.copy() for _ in range(3)])
+        return ondas
+
     def handle_input(self, evento):
         transicao_info = super().handle_input(evento)
         if transicao_info:
@@ -221,6 +266,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # Atualiza a visibilidade do ícone de interação
         self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
+        self.inimigos_lutando = pygame.sprite.spritecollide(self.jogador, self.inimigos, False)
         self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
 
 
@@ -229,11 +275,12 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         for inimigo in self.inimigos:
             inimigo.update(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
             if inimigo.atingiu_jogador:
-                print(f"Inimigo '{inimigo.tipo_inimigo}' acertou o jogador! Iniciando batalha...")
+                ondas_de_inimigos = self._montar_ondas(self.inimigos_lutando)
+                print(f"self.inimigos: {ondas_de_inimigos}")
                 # Sinaliza para o gerenciador de telas que uma batalha deve começar
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
-                    inimigo_batalha=inimigo.tipo_inimigo,
+                    inimigos_na_batalha=ondas_de_inimigos,
                     jogador_atual_x=self.jogador.mundo_x,
                     jogador_atual_y=self.jogador.mundo_y,
                     jogador_olhando_direita=self.jogador.olhando_direita,
