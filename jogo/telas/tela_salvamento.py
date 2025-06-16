@@ -19,7 +19,7 @@ class TelaSalvamento(TelaModelo):
     _dados_salvamento_estatico = [
         {
             'ocupado': True, # Indica que este slot tem dados salvos
-            'id_mapa': ID_MAPA_CAMPO_COSTA_OESTE, # O ID do mapa onde o jogo foi salvo
+            'id_mapa': ID_MAPA_CAMPO_VILA, # O ID do mapa onde o jogo foi salvo
             'personagem': SHUAN, # O tipo de personagem salvo neste slot
             'data_salva': '05/05/2025 13:02', # Data/hora do último salvamento (para exibição)
             'progresso': '30%', # Exemplo de informação de progresso (opcional)
@@ -40,7 +40,7 @@ class TelaSalvamento(TelaModelo):
         },
          {
             'ocupado': True, # Outro slot salvo
-            'id_mapa': ID_MAPA_NEVE_VILA, # Exemplo de salvo no mapa inicial novamente
+            'id_mapa': ID_MAPA_CAMPO_VILA, # Exemplo de salvo no mapa inicial novamente
             'personagem': SILVIE, # Exemplo de personagem diferente
             'data_salva': '06/05/2025 10:15',
             'progresso': '60%',

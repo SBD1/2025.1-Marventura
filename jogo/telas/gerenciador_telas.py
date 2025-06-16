@@ -57,7 +57,7 @@ class GerenciadorDeTelas:
                             olhando_direita=kwargs.get('olhando_direita'))
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
-                               inimigo_tipo=kwargs.get('inimigo_batalha'),
+                               inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
                                personagem=kwargs.get('personagem'),
                                jogador_x=kwargs.get('jogador_atual_x'),
                                jogador_y=kwargs.get('jogador_atual_y'),

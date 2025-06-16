@@ -67,6 +67,7 @@ class TelaModelo:
         Método auxiliar para desenhar um texto em uma superfície com uma borda simples.
         Pode ser reutilizado por qualquer tela que herde desta base.
         """
+        print(f"Desenhando texto com borda: '{texto}' na posição {posicao_centro} com cor {cor} e borda {cor_borda}")
         # Renderiza a superfície da borda do texto
         superficie_borda = fonte.render(texto, True, cor_borda)
         rect_borda = superficie_borda.get_rect(center=posicao_centro)
