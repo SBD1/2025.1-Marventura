@@ -55,6 +55,15 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 
 
 
+## Convenções
+- **Nomes de campos**: Devem ser escritos em `snake_case`.
+- **Tipo ID:** O tipo de dados "ID" será uma composição única entre o tipo da tabela, com três letras, e um serial, com três dígitos. Exemplo: "ace005" representa o acessório número 5. Para tabelas que não possuírem o atributo tipo, será definido o tipo padrão "out".
+- **Tipo Inteiro:** O tipo de dados "Inteiro" será sempre definido com o tipo `SMALLINT` da linguagem de consulta estruturada (SQL).
+- **Tipo Texto:** O tipo de dados "Texto" sempre possuirá um tamanho fixo especificado, por isso será definido com o tipo `CHAR` da linguagem de consulta estruturada. NÃO SERÁ NECESSÁRIO O USO DO TIPO `VARCHAR` SOB HIPÓTESE ALGUMA.
+- **Tamanhos**: Representam o limite máximo de caracteres ou valores.
+
+
+
 ## Estrutura do Dicionário de Dados
 
 As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
@@ -62,11 +71,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `acessorio`
 
 <details>
-  <summary>Tabela 1 – Dicionário de Dados da Entidade Acessório
+  <summary>Tabela 1 – Dicionário de Dados da Tabela Acessório
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 1 – Dicionário de Dados da Entidade Acessório</strong></p>
+    <p><strong>Tabela 1 – Dicionário de Dados da Tabela Acessório</strong></p>
     <table>
       <thead>
         <tr>
@@ -172,11 +181,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `arma`
 
 <details>
-  <summary>Tabela 2 – Dicionário de Dados da Entidade Arma
+  <summary>Tabela 2 – Dicionário de Dados da Tabela Arma
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 2 – Dicionário de Dados da Entidade Arma</strong></p>
+    <p><strong>Tabela 2 – Dicionário de Dados da Tabela Arma</strong></p>
     <table>
       <thead>
         <tr>
@@ -282,11 +291,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `fruta`
 
 <details>
-  <summary>Tabela 3 – Dicionário de Dados da Entidade Fruta
+  <summary>Tabela 3 – Dicionário de Dados da Tabela Fruta
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 3 – Dicionário de Dados da Entidade Fruta</strong></p>
+    <p><strong>Tabela 3 – Dicionário de Dados da Tabela Fruta</strong></p>
     <table>
       <thead>
         <tr>
@@ -392,11 +401,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `consumivel`
 
 <details>
-  <summary>Tabela 4 – Dicionário de Dados da Entidade Consumivel
+  <summary>Tabela 4 – Dicionário de Dados da Tabela Consumivel
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 4 – Dicionário de Dados da Entidade Consumivel</strong></p>
+    <p><strong>Tabela 4 – Dicionário de Dados da Tabela Consumivel</strong></p>
     <table>
       <thead>
         <tr>
@@ -502,11 +511,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `nao_consumivel`
 
 <details>
-  <summary>Tabela 5 – Dicionário de Dados da Entidade Não-Consumivel
+  <summary>Tabela 5 – Dicionário de Dados da Tabela Não-Consumivel
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 5 – Dicionário de Dados da Entidade Não-Consumivel</strong></p>
+    <p><strong>Tabela 5 – Dicionário de Dados da Tabela Não-Consumivel</strong></p>
     <table>
       <thead>
         <tr>
@@ -612,11 +621,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `receita`
 
 <details>
-  <summary>Tabela 6 – Dicionário de Dados da Entidade Receita
+  <summary>Tabela 6 – Dicionário de Dados da Tabela Receita
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 6 – Dicionário de Dados da Entidade Receita</strong></p>
+    <p><strong>Tabela 6 – Dicionário de Dados da Tabela Receita</strong></p>
     <table>
       <thead>
         <tr>
@@ -659,11 +668,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito`
 
 <details>
-  <summary>Tabela 7 – Dicionário de Dados da Entidade Efeito
+  <summary>Tabela 7 – Dicionário de Dados da Tabela Efeito
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 7 – Dicionário de Dados da Entidade Efeito</strong></p>
+    <p><strong>Tabela 7 – Dicionário de Dados da Tabela Efeito</strong></p>
     <table>
       <thead>
         <tr>
@@ -715,11 +724,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habilidade`
 
 <details>
-  <summary>Tabela 8 – Dicionário de Dados da Entidade Habilidade
+  <summary>Tabela 8 – Dicionário de Dados da Tabela Habilidade
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 8 – Dicionário de Dados da Entidade Habilidade</strong></p>
+    <p><strong>Tabela 8 – Dicionário de Dados da Tabela Habilidade</strong></p>
     <table>
       <thead>
         <tr>
@@ -768,6 +777,15 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Tipo da habilidade.</td>
+          <td>Texto</td>
+          <td>8</td>
+          <td>"fruta", "espada", "soco", "projetil"</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
@@ -968,11 +986,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `mapa`
 
 <details>
-  <summary>Tabela 13 – Dicionário de Dados da Entidade Mapa
+  <summary>Tabela 13 – Dicionário de Dados da Tabela Mapa
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 13 – Dicionário de Dados da Entidade Mapa</strong></p>
+    <p><strong>Tabela 13 – Dicionário de Dados da Tabela Mapa</strong></p>
     <table>
       <thead>
         <tr>
@@ -1016,11 +1034,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `ilha`
 
 <details>
-  <summary>Tabela 14 – Dicionário de Dados da Entidade Ilha
+  <summary>Tabela 14 – Dicionário de Dados da Tabela Ilha
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 14 – Dicionário de Dados da Entidade Ilha</strong></p>
+    <p><strong>Tabela 14 – Dicionário de Dados da Tabela Ilha</strong></p>
     <table>
       <thead>
         <tr>
@@ -1081,11 +1099,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `barco`
 
 <details>
-  <summary>Tabela 15 – Dicionário de Dados da Entidade Barco
+  <summary>Tabela 15 – Dicionário de Dados da Tabela Barco
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <strong>Tabela 15 – Dicionário de Dados da Entidade Barco</strong>
+    <strong>Tabela 15 – Dicionário de Dados da Tabela Barco</strong>
     <table>
       <thead>
         <tr>
@@ -1137,11 +1155,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `sala`
 
 <details>
-  <summary>Tabela 16 – Dicionário de Dados da Entidade Sala
+  <summary>Tabela 16 – Dicionário de Dados da Tabela Sala
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 16 – Dicionário de Dados da Entidade Sala</strong></p>
+    <p><strong>Tabela 16 – Dicionário de Dados da Tabela Sala</strong></p>
     <table>
       <thead>
         <tr>
@@ -1239,6 +1257,24 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>nome</code></td>
+          <td>Nome do jogador.</td>
+          <td>Texto</td>
+          <td>6</td>
+          <td>"Silvie", "Shuan"</td>
+          <td>-</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do jogador.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>energia</code></td>
           <td>Energia do jogador.</td>
           <td>Inteiro</td>
@@ -1284,15 +1320,6 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>CHECK (vida_atual <= vida)</td>
         </tr>
         <tr>
-          <td><code>dano_base</code></td>
-          <td>Dano base do jogador.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0 a 999</td>
-          <td>-</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
           <td><code>experiencia_atual</code></td>
           <td>Experiência atual acumulada pelo jogador.</td>
           <td>Inteiro</td>
@@ -1306,7 +1333,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada X atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1315,7 +1342,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada Y atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1367,6 +1394,24 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>nome</code></td>
+          <td>Nome do Aliado.</td>
+          <td>Texto</td>
+          <td>6</td>
+          <td>"Silvie", "Shuan"</td>
+          <td>-</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do Aliado.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>vida</code></td>
           <td>Vida máxima do aliado.</td>
           <td>Inteiro</td>
@@ -1394,20 +1439,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>CHECK (vida_atual <= vida)</td>
         </tr>
         <tr>
-          <td><code>dano_base</code></td>
-          <td>Dano base do aliado.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0 a 999</td>
-          <td>-</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
           <td><code>coordenada_x</code></td>
           <td>Coordenada X atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1416,7 +1452,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada Y atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1477,6 +1513,24 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>CHECK</td>
         </tr>
         <tr>
+          <td><code>nome</code></td>
+          <td>Nome do habitante.</td>
+          <td>Texto</td>
+          <td>15</td>
+          <td>-a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do habitante.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>especialidade</code></td>
           <td>Tipo de item vendido pelo vendedor.</td>
           <td>Texto</td>
@@ -1490,7 +1544,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada X atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1499,7 +1553,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada Y atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1560,6 +1614,24 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>nome</code></td>
+          <td>Nome do lacaio.</td>
+          <td>Texto</td>
+          <td>15</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do lacaio.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>vida</code></td>
           <td>Vida máxima do lacaio.</td>
           <td>Inteiro</td>
@@ -1578,20 +1650,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>DEFAULT 1</td>
         </tr>
         <tr>
-          <td><code>dano</code></td>
-          <td>Dano base do lacaio.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0 a 999</td>
-          <td>-</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
           <td><code>experiencia</code></td>
           <td>Experiência que o lacaio dá ao jogador ao ser derrotado.</td>
           <td>Inteiro</td>
-          <td>3</td>
-          <td>0 a 999</td>
+          <td>2</td>
+          <td>0 a 30</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1600,7 +1663,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada X atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1609,7 +1672,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada Y atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1670,6 +1733,24 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>nome</code></td>
+          <td>Nome do chefe.</td>
+          <td>Texto</td>
+          <td>15</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Unique / Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição do chefe.</td>
+          <td>Texto</td>
+          <td>100</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>vida</code></td>
           <td>Vida máxima do chefe.</td>
           <td>Inteiro</td>
@@ -1688,20 +1769,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>DEFAULT 1</td>
         </tr>
         <tr>
-          <td><code>dano</code></td>
-          <td>Dano base do chefe.</td>
-          <td>Inteiro</td>
-          <td>3</td>
-          <td>0 a 999</td>
-          <td>-</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
           <td><code>experiencia</code></td>
           <td>Experiência que o chefe dá ao jogador ao ser derrotado.</td>
           <td>Inteiro</td>
-          <td>3</td>
-          <td>0 a 999</td>
+          <td>2</td>
+          <td>0 a 30</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1710,7 +1782,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada X atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1719,7 +1791,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Coordenada Y atual no mapa.</td>
           <td>Inteiro</td>
           <td>4</td>
-          <td>-9999 a 9999</td>
+          <td>0 a 5000</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -1878,7 +1950,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Identificador de tipo de inventário.</td>
           <td>Texto</td>
           <td>3</td>
-          <td>"ger", "eqp"</td>
+          <td>"ger", "kit"</td>
           <td>-</td>
           <td>CHECK</td>
         </tr>
@@ -2236,15 +2308,6 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
-        <tr>
-          <td><code>experiencia_ganha</code></td>
-          <td>Experiência recebida pelo jogador ao vencer uma batalha.</td>
-          <td>Inteiro</td>
-          <td>2</td>
-          <td>&gt;= 5, &lt;= 999</td>
-          <td>-</td>
-          <td>Default = 5 / Not NULL</td>
-        </tr>
       </tbody>
     </table>
     <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
@@ -2352,12 +2415,6 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 
 ---
 
-## Convenções
-- **Nomes de campos**: Devem ser escritos em `snake_case`.
-- **Tipos de dados**: Devem seguir os padrões do banco de dados utilizado.
-  - **Importante:** O tipo de dados "ID" será alfanumérico, composto por três caracteres de 'a' a 'z' e três números de 0 a 9. Ex: "abc000".
-- **Tamanhos**: Representam o limite máximo de caracteres ou valores.
-
 
 
 ## 📚 Bibliografia
@@ -2376,4 +2433,5 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.3` | Adição das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.4` | Atualizando as restrições | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 | - | - |
 | `1.5` | Adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
-| `1.6` | Atualização das tabelas referentes aos itens e adição da tabela "fruta" | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 |  |  |
+| `1.6` | Atualização das tabelas referentes aos itens e adição da tabela "fruta" | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 |
+| `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 |  |  |
