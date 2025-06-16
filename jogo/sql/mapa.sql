@@ -41,17 +41,17 @@ CREATE TABLE campo_batalha (
 -- Tabela Porto
 CREATE TABLE porto (
     id SERIAL PRIMARY KEY,
-    sentidoilha CHAR(50),
+    sentido_ilha CHAR(50),
     capacidade SMALLINT,
     qtde_barcos SMALLINT,
-    campo_batalha_id SMALLINT REFERENCES campo_batalha(id)
+    campo_batalha_id SMALLINT REFERENCES campo_batalha(sala_id)  -- <- ajustar aqui
 );
 
--- Tabela Barco
 CREATE TABLE barco (
     id SERIAL PRIMARY KEY,
-    tipo CHAR(50),
-    nome CHAR(50),
-    melhoria CHAR(100),
+    tipo VARCHAR(50),
+    nome VARCHAR(50),
+    melhoria TEXT,
     porto_id SMALLINT REFERENCES porto(id)
 );
+
