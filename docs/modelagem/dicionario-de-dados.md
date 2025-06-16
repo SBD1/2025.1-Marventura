@@ -1736,8 +1736,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>nome</code></td>
           <td>Nome do chefe.</td>
           <td>Texto</td>
-          <td>15</td>
-          <td>a-z, A-Z</td>
+          <td>28</td>
+          <td>a-z, A-Z, '-'</td>
           <td>-</td>
           <td>Unique / Not NULL</td>
         </tr>
