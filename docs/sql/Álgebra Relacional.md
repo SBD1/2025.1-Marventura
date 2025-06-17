@@ -10,14 +10,14 @@ A Álgebra Relacional é um componente essencial na otimização de consultas de
 
 As operações fundamentais da Álgebra Relacional incluem:
 
-* **Seleção ($\sigma$)**: Filtra tuplas (linhas) de uma relação que satisfazem uma condição.
-* **Projeção ($\pi$)**: Seleciona colunas específicas (atributos) de uma relação, removendo duplicatas nas tuplas resultantes.
-* **União ($\cup$)**: Combina tuplas de duas relações compatíveis (mesmo número e tipo de atributos), removendo duplicatas.
-* **Interseção ($\cap$)**: Retorna tuplas que existem em ambas as relações compatíveis.
-* **Diferença ($-$ )**: Retorna tuplas que existem na primeira relação, mas não na segunda relação compatível.
-* **Produto Cartesiano ($\times$)**: Combina cada tupla de uma relação com cada tupla de outra, formando uma nova relação com todos os atributos de ambas.
-* **Junção Natural ($\Join$)**: Combina tuplas de duas relações com base em atributos comuns de mesmo nome e domínio, eliminando colunas duplicadas.
-* **Renomeação ($\rho$)**: Permite renomear uma relação ou seus atributos.
+* **Seleção**: Filtra tuplas (linhas) de uma relação que satisfazem uma condição.
+* **Projeção**: Seleciona colunas específicas (atributos) de uma relação, removendo duplicatas nas tuplas resultantes.
+* **União**: Combina tuplas de duas relações compatíveis (mesmo número e tipo de atributos), removendo duplicatas.
+* **Interseção**: Retorna tuplas que existem em ambas as relações compatíveis.
+* **Diferença**: Retorna tuplas que existem na primeira relação, mas não na segunda relação compatível.
+* **Produto Cartesiano**: Combina cada tupla de uma relação com cada tupla de outra, formando uma nova relação com todos os atributos de ambas.
+* **Junção Natural**: Combina tuplas de duas relações com base em atributos comuns de mesmo nome e domínio, eliminando colunas duplicadas.
+* **Renomeação**: Permite renomear uma relação ou seus atributos.
 
 Compreender a Álgebra Relacional é crucial para cientistas da computação, arquitetos de banco de dados e qualquer pessoa que precise de um entendimento profundo de como os dados são manipulados em sistemas relacionais.
 
