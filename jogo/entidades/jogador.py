@@ -124,15 +124,15 @@ class Jogador(pygame.sprite.Sprite):
         self.movendo_cima = False
         self.movendo_baixo = False
 
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        if keys[pygame.K_a]:
             self.movendo_esquerda = True
             self.olhando_direita = False # Olhando para a esquerda
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        if keys[pygame.K_d]:
             self.movendo_direita = True
             self.olhando_direita = True # Olhando para a direita
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        if keys[pygame.K_w]:
             self.movendo_cima = True
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        if keys[pygame.K_s]:
             self.movendo_baixo = True
 
     def update(self, dt, obstaculos):

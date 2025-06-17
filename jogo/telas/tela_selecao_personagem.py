@@ -15,8 +15,8 @@ class TelaSelecaoPersonagem(TelaModelo):
         super().__init__(gerenciador_telas, gerenciador_recursos)
 
         # --- Recursos específicos da Tela de Seleção de Personagem ---
-        self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
-        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
+        self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TITULO)
         
         # Imagem de fundo comum para telas de menu
         self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_TELA_INICIAL)
