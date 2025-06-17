@@ -192,3 +192,177 @@ INSERT INTO ingrediente_consumivel (identificador_receita, identificador_consumi
 
 INSERT INTO ingrediente_nao_consumivel (identificador_receita, identificador_nao_consumivel) VALUES
 (1, 42), (6, 38), (10, 20), (10, 36), (15, 12), (16, 35), (16, 38), (17, 35), (30, 35), (31, 12), (32, 38), (34, 35), (37, 36);
+
+INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
+(DEFAULT, 5, 1, 'Poder da Fruta do Eco', 'fruta');
+INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
+(DEFAULT, 15, 0, 'Mordida Feroz', 'soco');
+INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
+(DEFAULT, 10, 2, 'Golpe de Espada', 'espada');
+INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
+(DEFAULT, 8, 1, 'Tiro de Pistola', 'projétil');
+INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
+(DEFAULT, 12, 3, 'Avalanche', 'soco');
+INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
+(DEFAULT, 20, 4, 'Transformacao', 'fruta');
+
+INSERT INTO Ilha (ID, SalaID, TipoSala, Tamanho, Nome, Quantidade_sala, Tipo) VALUES
+(DEFAULT, NULL, NULL, 'Grande', 'Ilha Principal', 3, 'Continente');
+INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
+(DEFAULT, 301, 'Porto', 'Ilha da Cidade', 5, 'Urbana');
+INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
+(DEFAULT, 401, 'Vila', 'Ilha do Norte', 2, 'Gélida');
+INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
+(DEFAULT, 501, 'Campo de Batalha', 'Ilha do Deserto', 3, 'Desértica');
+INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
+(DEFAULT, 701, 'Campo de Batalha', 'Ilha Fantasma', 1, 'Misteriosa');
+INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
+(DEFAULT, 801, 'Campo de Batalha', 'Ilha da Fortaleza', 1, 'Militar');
+
+INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
+(1, 1, 1, 0);
+INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
+(2, 2, 1, 1);
+INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
+(3, 3, 1, 0);
+INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
+(4, 4, 1, 0);
+INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
+(5, 5, 1, 2);
+INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
+(6, 6, 1, 3);
+
+INSERT INTO Jogador (idJogador, idHabilidade, idMapa, IlhaID, Energia, Vida, Nivel, Sorte, VidaAtual, DanoBase, ExperienciaAtual, CoordenadaX, CoordenadaY) VALUES
+(DEFAULT, 1, 1, 1, 100, 100, 1, 0, 100, 10, 0, 0, 0);
+
+INSERT INTO Habitante (identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y) VALUES
+(DEFAULT, 1, 1, 'rec', 'Aldeao', 'Aldeao que acorda o protagonista.', NULL, 10, 5);
+INSERT INTO Habitante (identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y) VALUES
+(DEFAULT, 6, 6, 'coz', 'Medico', 'Medica famosa da vila da neve.', 'curador', 15, 10);
+INSERT INTO Habitante (identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y) VALUES
+(DEFAULT, 5, 5, 'hbt', 'Morador Secreto', 'Morador escondido na ilha fantasma.', NULL, 50, 50);
+
+INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
+(DEFAULT, 2, 1, 1, 'A Fera', 'Animal selvagem que ataca plantacoes.', 10, 10, 150, 5, 20, 50, 'Animal');
+INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
+(DEFAULT, 3, 2, 2, 'Comandante da Marinha', 'Lider corrupto da Marinha na cidade.', 25, 25, 200, 10, 30, 100, 'Humanoide');
+INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
+(DEFAULT, 4, 2, 2, 'Lider Rebelde', 'Lider de um grupo de rebeldes que conhece a irma do protagonista.', 20, 15, 120, 8, 15, 80, 'Humanoide');
+INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
+(DEFAULT, 3, 4, 4, 'Lider Pirata do Deserto', 'Chefao dos piratas no deserto.', 5, 5, 250, 15, 40, 150, 'Humanoide');
+INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
+(DEFAULT, 6, 6, 6, 'Marinheiro Nobre - Forma Final', 'Vilao final com dupla personalidade.', 40, 40, 300, 20, 50, 200, 'Humanoide');
+
+INSERT INTO TipoItem (IdentificadorItem, Tipo) VALUES
+(DEFAULT, 'Fruta');
+
+INSERT INTO Item (ItemID, Nome, Descricao, Tipo) VALUES
+(DEFAULT, 'Fruta Estranha', 'Fruta de gosto horrivel que concede poderes de eco.', 'Fruta');
+
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(201, 'Campo de Batalha', 'Clareira Selvagem', 1, 'Pequeno', 'Floresta', 1);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(202, 'Campo de Batalha', 'Bosque Assombrado', 1, 'Medio', 'Floresta', 1);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(302, 'Campo de Batalha', 'Setor de Registros', 1, 'Pequeno', 'Urbano', 5);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(303, 'Campo de Batalha', 'Praca Central', 1, 'Medio', 'Urbano', 1);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(402, 'Campo de Batalha', 'Trilha Congelada', 1, 'Pequeno', 'Neve', 3);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(403, 'Campo de Batalha', 'Litoral Norte', 1, 'Medio', 'Costa', 10);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(501, 'Campo de Batalha', 'Dunas Arenosas', 1, 'Grande', 'Deserto', 1);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(502, 'Campo de Batalha', 'Ruinas Antigas', 1, 'Pequeno', 'Deserto', 0);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(503, 'Campo de Batalha', 'Oasis da Batalha', 1, 'Medio', 'Deserto', 1);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(701, 'Campo de Batalha', 'Ilha Fantasma', 1, 'Medio', 'Misterioso', 0);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(801, 'Campo de Batalha', 'Fortaleza da Marinha', 1, 'Grande', 'Militar', 10);
+INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
+(802, 'Campo de Batalha', 'Aguas Tempestuosas', 1, 'Enorme', 'Aquatico', 1);
+
+INSERT INTO Vila (SalaID, TipoSala, Nome, TotalSalas, Informacoes) VALUES
+(101, 'Vila', 'Vila Inicial', 1, 'Primeira vila encontrada, amigavel.');
+INSERT INTO Vila (SalaID, TipoSala, Nome, TotalSalas, Informacoes) VALUES
+(401, 'Vila', 'Vilarejo do Norte', 1, 'Vila fria, moradores desconfiados.');
+INSERT INTO Vila (SalaID, TipoSala, Nome, TotalSalas, Informacoes) VALUES
+(601, 'Vila', 'Vila da Neve', 1, 'Vila com medica famosa.');
+
+INSERT INTO Porto (SalaID, TipoSala, Nome, TotalSalas, QtdBarcos, Capacidade, SentidoIlha) VALUES
+(301, 'Porto', 'Porto da Cidade', 1, 5, 100, 'Leste');
+
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 1, 1, 1, 201, 'Campo de Batalha', 2, 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 1, 1, 1, 202, 'Campo de Batalha', 2, 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 2, 2, 1, 301, 'Porto', 2, 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 2, 2, 1, 302, 'Campo de Batalha', 7, 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 2, 2, 1, 303, 'Campo de Batalha', 7, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 3, 3, 1, 402, 'Campo de Batalha', 1, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 3, 3, 1, 403, 'Campo de Batalha', 1, 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 4, 4, 1, 501, 'Campo de Batalha', 1, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 4, 4, 1, 502, 'Campo de Batalha', 1, 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 4, 4, 1, 503, 'Campo de Batalha', 1, 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 5, 5, 1, 701, 'Campo de Batalha', 4, 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 6, 6, 1, 801, 'Campo de Batalha', 1, 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 6, 6, 1, 802, 'Campo de Batalha', 1, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 6, 6, 1, 801, 'Campo de Batalha', 9, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido');
+INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
+(DEFAULT, 6, 6, 1, 801, 'Campo de Batalha', 9, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
+
+INSERT INTO ItemMissão (MissaoID, IdentificadorItem) VALUES
+(12, 11);
+
+INSERT INTO Mar (MarID, Mostro, Obstaculo) VALUES
+(DEFAULT, 'Kraken', 'Corais');
+INSERT INTO Mar (MarID, Mostro, Obstaculo) VALUES
+(DEFAULT, 'Serpente Marinha', 'Redemoinhos');
+
+INSERT INTO Corredor_maritimo (marítimoID, IlhaA, IlhaB) VALUES
+(DEFAULT, 1, 2);
+INSERT INTO Corredor_maritimo (marítimoID, IlhaA, IlhaB) VALUES
+(DEFAULT, 2, 3);
+INSERT INTO Corredor_maritimo (marítimoID, IlhaA, IlhaB) VALUES
+(DEFAULT, 3, 4);
+
+INSERT INTO MapaMar (MapaID, IlhaID, MarID) VALUES
+(1, 1, 1);
+INSERT INTO MapaMar (MapaID, IlhaID, MarID) VALUES
+(2, 2, 2);
+
+INSERT INTO Controller_mar (marítimoID, MarID) VALUES
+(1, 1);
+INSERT INTO Controller_mar (marítimoID, MarID) VALUES
+(2, 2);
+
+INSERT INTO Barco (Tipo, Melhoria, Nome, Nivel) VALUES
+('Canoa', 'Nenhuma', 'Pequena Canoa', 1);
+INSERT INTO Barco (Tipo, Melhoria, Nome, Nivel) VALUES
+('Barco a Vela', 'Vela Reforçada', 'Vento Veloz', 5);
+INSERT INTO Barco (Tipo, Melhoria, Nome, Nivel) VALUES
+('Navio Pirata', 'Canhoes', 'Terror dos Mares', 10);
+
+INSERT INTO BarcoPorto (TipoSala, TipoBarco, SalaID) VALUES
+('Porto', 'Canoa', 301);
+INSERT INTO BarcoPorto (TipoSala, TipoBarco, SalaID) VALUES
+('Porto', 'Barco a Vela', 301);
+
+INSERT INTO Controller_barco (IDBarco, marítimoID) VALUES
+('Canoa', 1);
+INSERT INTO Controller_barco (IDBarco, marítimoID) VALUES
+('Barco a Vela', 2);
