@@ -60,22 +60,23 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 - **Tipo ID:** O tipo de dados "ID" será uma composição única entre o tipo da tabela, com três letras, e um serial, com três dígitos. Exemplo: "ace005" representa o acessório número 5. Para tabelas que não possuírem o atributo tipo, poderá ser utilizado as três primeiras letras do nome da tabela.
 - **Tipo Inteiro:** O tipo de dados "Inteiro" será sempre definido com o tipo `SMALLINT` da linguagem de consulta estruturada (SQL).
 - **Tipo Texto:** O tipo de dados "Texto" sempre possuirá um tamanho fixo especificado, por isso será definido com o tipo `CHAR` da linguagem de consulta estruturada. NÃO SERÁ NECESSÁRIO O USO DO TIPO `VARCHAR` SOB HIPÓTESE ALGUMA.
+- **Tipo Tempo:** O tipo de dados "Tempo" será sempre definido com o tipo `TIMESTAMP` da linguagem de consulta estruturada.
 - **Tamanhos**: Representam o limite máximo de caracteres ou valores.
 
 
 
 ## Estrutura do Dicionário de Dados
 
-As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
+As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
 
 ### Tabela: `acessorio`
 
 <details>
-  <summary>Tabela 1 – Dicionário de Dados da Tabela Acessório
+  <summary>Tabela 2 – Dicionário de Dados da Tabela Acessório
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 1 – Dicionário de Dados da Tabela Acessório</strong></p>
+    <p><strong>Tabela 2 – Dicionário de Dados da Tabela Acessório</strong></p>
     <table>
       <thead>
         <tr>
@@ -181,11 +182,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `arma`
 
 <details>
-  <summary>Tabela 2 – Dicionário de Dados da Tabela Arma
+  <summary>Tabela 3 – Dicionário de Dados da Tabela Arma
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 2 – Dicionário de Dados da Tabela Arma</strong></p>
+    <p><strong>Tabela 3 – Dicionário de Dados da Tabela Arma</strong></p>
     <table>
       <thead>
         <tr>
@@ -291,11 +292,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `fruta`
 
 <details>
-  <summary>Tabela 3 – Dicionário de Dados da Tabela Fruta
+  <summary>Tabela 4 – Dicionário de Dados da Tabela Fruta
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 3 – Dicionário de Dados da Tabela Fruta</strong></p>
+    <p><strong>Tabela 4 – Dicionário de Dados da Tabela Fruta</strong></p>
     <table>
       <thead>
         <tr>
@@ -401,11 +402,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `consumivel`
 
 <details>
-  <summary>Tabela 4 – Dicionário de Dados da Tabela Consumivel
+  <summary>Tabela 5 – Dicionário de Dados da Tabela Consumivel
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 4 – Dicionário de Dados da Tabela Consumivel</strong></p>
+    <p><strong>Tabela 5 – Dicionário de Dados da Tabela Consumivel</strong></p>
     <table>
       <thead>
         <tr>
@@ -511,11 +512,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `nao_consumivel`
 
 <details>
-  <summary>Tabela 5 – Dicionário de Dados da Tabela Não-Consumivel
+  <summary>Tabela 6 – Dicionário de Dados da Tabela Não-Consumivel
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 5 – Dicionário de Dados da Tabela Não-Consumivel</strong></p>
+    <p><strong>Tabela 6 – Dicionário de Dados da Tabela Não-Consumivel</strong></p>
     <table>
       <thead>
         <tr>
@@ -621,11 +622,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `receita`
 
 <details>
-  <summary>Tabela 6 – Dicionário de Dados da Tabela Receita
+  <summary>Tabela 7 – Dicionário de Dados da Tabela Receita
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 6 – Dicionário de Dados da Tabela Receita</strong></p>
+    <p><strong>Tabela 7 – Dicionário de Dados da Tabela Receita</strong></p>
     <table>
       <thead>
         <tr>
@@ -668,11 +669,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito`
 
 <details>
-  <summary>Tabela 7 – Dicionário de Dados da Tabela Efeito
+  <summary>Tabela 8 – Dicionário de Dados da Tabela Efeito
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 7 – Dicionário de Dados da Tabela Efeito</strong></p>
+    <p><strong>Tabela 8 – Dicionário de Dados da Tabela Efeito</strong></p>
     <table>
       <thead>
         <tr>
@@ -724,11 +725,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habilidade`
 
 <details>
-  <summary>Tabela 8 – Dicionário de Dados da Tabela Habilidade
+  <summary>Tabela 9 – Dicionário de Dados da Tabela Habilidade
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 8 – Dicionário de Dados da Tabela Habilidade</strong></p>
+    <p><strong>Tabela 9 – Dicionário de Dados da Tabela Habilidade</strong></p>
     <table>
       <thead>
         <tr>
@@ -798,11 +799,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `ingrediente_consumivel`
 
 <details>
-  <summary>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Consumível
+  <summary>Tabela 10 – Dicionário de Dados da Tabela Ingrediente Consumível
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 9 – Dicionário de Dados da Tabela Ingrediente Consumível</strong></p>
+    <p><strong>Tabela 10 – Dicionário de Dados da Tabela Ingrediente Consumível</strong></p>
     <table>
       <thead>
         <tr>
@@ -845,11 +846,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `ingrediente_nao_consumivel`
 
 <details>
-  <summary>Tabela 10 – Dicionário de Dados da Tabela Ingrediente Não-Consumível
+  <summary>Tabela 11 – Dicionário de Dados da Tabela Ingrediente Não-Consumível
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 10 – Dicionário de Dados da Tabela Ingrediente Não-Consumível</strong></p>
+    <p><strong>Tabela 11 – Dicionário de Dados da Tabela Ingrediente Não-Consumível</strong></p>
     <table>
       <thead>
         <tr>
@@ -892,11 +893,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito_acessorio`
 
 <details>
-  <summary>Tabela 11 – Dicionário de Dados da Tabela Efeito Acessório
+  <summary>Tabela 12 – Dicionário de Dados da Tabela Efeito Acessório
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 11 – Dicionário de Dados da Tabela Efeito Acessório</strong></p>
+    <p><strong>Tabela 12 – Dicionário de Dados da Tabela Efeito Acessório</strong></p>
     <table>
       <thead>
         <tr>
@@ -939,11 +940,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `efeito_consumivel`
 
 <details>
-  <summary>Tabela 12 – Dicionário de Dados da Tabela Efeito Consumível
+  <summary>Tabela 13 – Dicionário de Dados da Tabela Efeito Consumível
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 12 – Dicionário de Dados da Tabela Efeito Consumível</strong></p>
+    <p><strong>Tabela 13 – Dicionário de Dados da Tabela Efeito Consumível</strong></p>
     <table>
       <thead>
         <tr>
@@ -983,14 +984,14 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 
 ---
 
-### Tabela: `mapa`
+### Tabela: `tipo_mapa`
 
 <details>
-  <summary>Tabela 13 – Dicionário de Dados da Tabela Mapa
+  <summary>Tabela 14 – Dicionário de Dados da Tabela Tipo Mapa
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 13 – Dicionário de Dados da Tabela Mapa</strong></p>
+    <p><strong>Tabela 14 – Dicionário de Dados da Tabela Tipo Mapa</strong></p>
     <table>
       <thead>
         <tr>
@@ -1005,7 +1006,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
       </thead>
       <tbody>
         <tr>
-          <td><code>id</code></td>
+          <td><code>id_mapa</code></td>
           <td>Identificador único do mapa.</td>
           <td>ID</td>
           <td>6</td>
@@ -1014,17 +1015,17 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>nome</code></td>
-          <td>Nome do mapa.</td>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo do mapa.</td>
           <td>Texto</td>
-          <td>100</td>
-          <td>a-z, A-Z</td>
-          <td>–</td>
-          <td>Not NULL</td>
+          <td>3</td>
+          <td>"ilh", "mar"</td>
+          <td>-</td>
+          <td>Not NULL, CHECK</td>
         </tr>
       </tbody>
     </table>
-    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
   </div>
 </details>
 
@@ -1034,11 +1035,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `ilha`
 
 <details>
-  <summary>Tabela 14 – Dicionário de Dados da Tabela Ilha
+  <summary>Tabela 15 – Dicionário de Dados da Tabela Ilha
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 14 – Dicionário de Dados da Tabela Ilha</strong></p>
+    <p><strong>Tabela 15 – Dicionário de Dados da Tabela Ilha</strong></p>
     <table>
       <thead>
         <tr>
@@ -1053,8 +1054,129 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
       </thead>
       <tbody>
         <tr>
-          <td><code>id</code></td>
+          <td><code>id_ilha</code></td>
           <td>Identificador único da ilha.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>pier</code></td>
+          <td>Identificador único da área onde está localizado o porto.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da ilha.</td>
+          <td>Texto</td>
+          <td>30</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>visitada</code></td>
+          <td>Indica se a ilha já foi visitada pelo jogador.</td>
+          <td>Boleano</td>
+          <td>1</td>
+          <td>True, False</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `conexao_entre_ilhas`
+
+<details>
+  <summary>Tabela 16 – Dicionário de Dados da Tabela Conexão Entre Ilhas
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <strong>Tabela 16 – Dicionário de Dados da Tabela Conexão Entre Ilhas</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_ilha_origem</code></td>
+          <td>Identificador único da ilha de origem.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_ilha_destino</code></td>
+          <td>Identificador único da ilha de destino.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>bloqueada</code></td>
+          <td>Indica se a rota entre a ilha de origem e de destino está bloqueada.</td>
+          <td>Boleano</td>
+          <td>1</td>
+          <td>True. False</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `area`
+
+<details>
+  <summary>Tabela 17 – Dicionário de Dados da Tabela Área
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 17 – Dicionário de Dados da Tabela Área</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_area</code></td>
+          <td>Identificador único da área.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1062,35 +1184,553 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>nome</code></td>
-          <td>Nome da ilha.</td>
-          <td>Texto</td>
-          <td>100</td>
-          <td>a-z, A-Z</td>
-          <td>–</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>tipo</code></td>
-          <td>Tipo da ilha.</td>
-          <td>Texto</td>
-          <td>15</td>
-          <td>"vulcânica", "deserta", etc.</td>
-          <td>–</td>
+          <td><code>id_ilha</code></td>
+          <td>Identificador único da ilha a qual a área pertence.</td>
+          <td>FK</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>tamanho</code></td>
-          <td>Tamanho da ilha.</td>
-          <td>Inteiro</td>
-          <td>2</td>
-          <td>&ge; 1</td>
-          <td>–</td>
-          <td>Default = 1 / Not NULL</td>
+          <td><code>tipo_area</code></td>
+          <td>Identificador de tipo da área.</td>
+          <td>Texto</td>
+          <td>16</td>
+          <td>"Área de combate", "Área neutra", "Vila", "Porto", "Loja", "Yomotsu Hirasaka"</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da área.</td>
+          <td>Texto</td>
+          <td>30</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>chave_imagem_fundo</code></td>
+          <td>Identificador da imagem de fundo da área.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>a-z, "_"</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>chave_imagem_frente</code></td>
+          <td>Identificador da imagem de frente da área.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>a-z, "_"</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>visitada</code></td>
+          <td>Indica se a área já foi visitada pelo jogador.</td>
+          <td>Boleano</td>
+          <td>1</td>
+          <td>True, False</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
-    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `conexao_entre_areas`
+
+<details>
+  <summary>Tabela 18 – Dicionário de Dados da Tabela Conexão Entre Áreas
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <strong>Tabela 18 – Dicionário de Dados da Tabela Conexão Entre Áreas</strong>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_area_origem</code></td>
+          <td>Identificador único da área de origem.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_area_destino</code></td>
+          <td>Identificador único da área de destino.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK, FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `tipo_elemento_espacial`
+
+<details>
+  <summary>Tabela 19 – Dicionário de Dados da Tabela Tipo Elemento Espacial
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 19 – Dicionário de Dados da Tabela Tipo Elemento Espacial</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_elemento_espacial</code></td>
+          <td>Identificador único do elemento espacial.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo do elemento espacial.</td>
+          <td>FK</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `obstaculo`
+
+<details>
+  <summary>Tabela 20 – Dicionário de Dados da Tabela Obstaculo
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 20 – Dicionário de Dados da Tabela Obstaculo</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_obstaculo</code></td>
+          <td>Identificador único do obstáculo.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_area</code></td>
+          <td>Identificador da área onde o obstáculo está localizado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>chave_imagem</code></td>
+          <td>Identificador da imagem do obstáculo.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>a-z, "_"</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>x</code></td>
+          <td>Coordenada X do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>Coordenada Y do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>largura</code></td>
+          <td>Largura do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>altura</code></td>
+          <td>Altura do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `area_interativa`
+
+<details>
+  <summary>Tabela 21 – Dicionário de Dados da Tabela Area Interativa
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 21 – Dicionário de Dados da Tabela Area Interativa</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_area_interativa</code></td>
+          <td>Identificador único da área interativa.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_area</code></td>
+          <td>Identificador da área onde a área interativa está localizado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_evento</code></td>
+          <td>Identificador do evento acionado pela área interativa.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>chave_imagem</code></td>
+          <td>Identificador da imagem da área interativa.</td>
+          <td>Texto</td>
+          <td>50</td>
+          <td>a-z, "_"</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td><code>x</code></td>
+          <td>Coordenada X do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>Coordenada Y do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>largura</code></td>
+          <td>Largura do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>altura</code></td>
+          <td>Altura do obstáculo.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `evento`
+
+<details>
+  <summary>Tabela 22 – Dicionário de Dados da Tabela Evento
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 22 – Dicionário de Dados da Tabela Evento</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_evento</code></td>
+          <td>Identificador único do evento.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo_evento</code></td>
+          <td>Identificador de tipo do evento.</td>
+          <td>Texto</td>
+          <td>10</td>
+          <td>"embarcar", "investigar", "mudar_area"</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_conexao_ilha</code></td>
+          <td>Identificador da conexão entre duas ilhas. Atributo específico do evento "embarcar".</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_conexao_area</code></td>
+          <td>Identificador da conexão entre duas áreas. Atributo específico do evento "mudar_area".</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>chanceSucesso</code></td>
+          <td>A chace de conseguir ou não um item aleatório. Atributo específico do evento "investigar".</td>
+          <td>Decimal</td>
+          <td>2</td>
+          <td>0.0 a 1.0</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>x</code></td>
+          <td>Coordenada X do ponto de surgimento do jogador. Atributo específico dos eventos "embarcar" e "mudar_area".</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>Coordenada Y do ponto de surgimento do jogador. Atributo específico dos eventos "embarcar" e "mudar_area".</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>orientacao</code></td>
+          <td>Direção para onde jogador está virado. Atributo específico dos eventos "embarcar" e "mudar_area".</td>
+          <td>Texto</td>
+          <td>8</td>
+          <td>"direita", "esquerda"</td>
+          <td>-</td>
+          <td>CHECK / DEFAULT "direita"</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `recompensa_de_exploração`
+
+<details>
+  <summary>Tabela 23 – Dicionário de Dados da Tabela Recompensa De Exploração
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 23 – Dicionário de Dados da Tabela Recompensa De Exploração</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_recompensa</code></td>
+          <td>Identificador único da tentativa de conseguir um item investigando uma área interativa.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_area_interativa</code></td>
+          <td>Identificador da área interativa.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>data_da_tentativa</code></td>
+          <td>A data da última tentativa de conseguir um item em uma área interativa específica.</td>
+          <td>Tempo</td>
+          <td>Tamanho de um <em>timestamp</em></td>
+          <td>Padrão do tipo</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela `mar`
+
+<details>
+  <summary>Tabela 24 – Dicionário de Dados da Tabela Mar
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 24 – Dicionário de Dados da Tabela Mar</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_mar</code></td>
+          <td>Identificador único do mar.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>chave_imagem</code></td>
+          <td>Identificador da imagem de fundo do mar.</td>
+          <td>Texto</td>
+          <td>15</td>
+          <td>a-z, "_"</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
   </div>
 </details>
 
@@ -1099,11 +1739,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela `barco`
 
 <details>
-  <summary>Tabela 15 – Dicionário de Dados da Tabela Barco
+  <summary>Tabela 25 – Dicionário de Dados da Tabela Barco
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <strong>Tabela 15 – Dicionário de Dados da Tabela Barco</strong>
+    <p><strong>Tabela 25 – Dicionário de Dados da Tabela Barco</strong></p>
     <table>
       <thead>
         <tr>
@@ -1118,7 +1758,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
       </thead>
       <tbody>
         <tr>
-          <td><code>id</code></td>
+          <td><code>id_barco</code></td>
           <td>Identificador único do barco.</td>
           <td>ID</td>
           <td>6</td>
@@ -1127,82 +1767,26 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>nome</code></td>
-          <td>Nome do barco.</td>
-          <td>Texto</td>
-          <td>50</td>
-          <td>Letras</td>
-          <td>–</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>velocidade</code></td>
-          <td>Velocidade máxima.</td>
-          <td>Decimal</td>
-          <td>5</td>
-          <td>&gt; 0</td>
-          <td>–</td>
-          <td>Default = 1.0 / Not NULL</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
-  </div>
-</details>
-
----
-
-### Tabela `sala`
-
-<details>
-  <summary>Tabela 16 – Dicionário de Dados da Tabela Sala
-    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
-  </summary>
-  <div align="center">
-    <p><strong>Tabela 16 – Dicionário de Dados da Tabela Sala</strong></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Nome do Atributo</th>
-          <th>Descrição</th>
-          <th>Tipo de Dados</th>
-          <th>Tamanho</th>
-          <th>Valores Permitidos</th>
-          <th>É chave?</th>
-          <th>Outras Restrições</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><code>id</code></td>
-          <td>Identificador único da sala.</td>
+          <td><code>id_mar</code></td>
+          <td>Identificador do mar.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>PK</td>
-          <td>Unique / Not NULL / CHECK</td>
-        </tr>
-        <tr>
-          <td><code>ilha_id</code></td>
-          <td>Ilha onde a sala está.</td>
-          <td>FK</td>
-          <td>6</td>
-          <td>Padrão do tipo ID</td>
           <td>FK</td>
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>tipo</code></td>
-          <td>Tipo da sala.</td>
+          <td><code>tipo_barco</code></td>
+          <td>Identificador de tipo do barco.</td>
           <td>Texto</td>
-          <td>50</td>
-          <td>"normal", "tesouro", etc.</td>
-          <td>–</td>
-          <td>Not NULL / CHECK</td>
+          <td>7</td>
+          <td>"Canoa", "Veleiro", "Navio"</td>
+          <td>-</td>
+          <td>Not NULL</td>
         </tr>
       </tbody>
     </table>
-    <p>Autor: <a href="https://github.com/F1reFinger">Helder Lourenço</a></p>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
   </div>
 </details>
 
@@ -1211,11 +1795,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `jogador`
 
 <details>
-  <summary>Tabela 17 – Dicionário de Dados da Tabela Jogador
+  <summary>Tabela 26 – Dicionário de Dados da Tabela Jogador
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 17 – Dicionário de Dados da Tabela Jogador</strong></p>
+    <p><strong>Tabela 26 – Dicionário de Dados da Tabela Jogador</strong></p>
     <table>
       <thead>
         <tr>
@@ -1248,8 +1832,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>identificador_mapa</code></td>
-          <td>Identificador do mapa atual do jogador.</td>
+          <td><code>identificador_area</code></td>
+          <td>Identificador da área atual do jogador.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1297,7 +1881,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Nível atual do jogador.</td>
           <td>Inteiro</td>
           <td>2</td>
-          <td>1 a 99</td>
+          <td>1 a 60</td>
           <td>-</td>
           <td>DEFAULT 1</td>
         </tr>
@@ -1323,8 +1907,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>experiencia_atual</code></td>
           <td>Experiência atual acumulada pelo jogador.</td>
           <td>Inteiro</td>
-          <td>5</td>
-          <td>0 a 99999</td>
+          <td>3</td>
+          <td>0 a 600</td>
           <td>-</td>
           <td>DEFAULT 0</td>
         </tr>
@@ -1357,11 +1941,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `aliado`
 
 <details>
-  <summary>Tabela 18 – Dicionário de Dados da Tabela Aliado
+  <summary>Tabela 27 – Dicionário de Dados da Tabela Aliado
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 18 – Dicionário de Dados da Tabela Aliado</strong></p>
+    <p><strong>Tabela 27 – Dicionário de Dados da Tabela Aliado</strong></p>
     <table>
       <thead>
         <tr>
@@ -1385,8 +1969,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>identificador_mapa</code></td>
-          <td>Identificador do mapa atual do aliado.</td>
+          <td><code>identificador_area</code></td>
+          <td>Identificador da área atual do aliado.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1425,7 +2009,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Nível atual do aliado.</td>
           <td>Inteiro</td>
           <td>2</td>
-          <td>1 a 99</td>
+          <td>1 a 60</td>
           <td>-</td>
           <td>DEFAULT 1</td>
         </tr>
@@ -1467,11 +2051,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habitante`
 
 <details>
-  <summary>Tabela 19 – Dicionário de Dados da Tabela Habitante
+  <summary>Tabela 28 – Dicionário de Dados da Tabela Habitante
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 19 – Dicionário de Dados da Tabela Habitante</strong></p>
+    <p><strong>Tabela 28 – Dicionário de Dados da Tabela Habitante</strong></p>
     <table>
       <thead>
         <tr>
@@ -1495,8 +2079,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>identificador_mapa</code></td>
-          <td>Identificador do mapa atual do habitante.</td>
+          <td><code>identificador_area</code></td>
+          <td>Identificador da área atual do habitante.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1568,11 +2152,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `lacaio`
 
 <details>
-  <summary>Tabela 20 – Dicionário de Dados da Tabela Lacaio
+  <summary>Tabela 29 – Dicionário de Dados da Tabela Lacaio
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 20 – Dicionário de Dados da Tabela Lacaio</strong></p>
+    <p><strong>Tabela 29 – Dicionário de Dados da Tabela Lacaio</strong></p>
     <table>
       <thead>
         <tr>
@@ -1605,8 +2189,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>identificador_mapa</code></td>
-          <td>Identificador do mapa atual do lacaio.</td>
+          <td><code>identificador_area</code></td>
+          <td>Identificador da área atual do lacaio.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1645,7 +2229,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Nível do lacaio.</td>
           <td>Inteiro</td>
           <td>2</td>
-          <td>1 a 99</td>
+          <td>1 a 60</td>
           <td>-</td>
           <td>DEFAULT 1</td>
         </tr>
@@ -1687,11 +2271,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `chefe`
 
 <details>
-  <summary>Tabela 21 – Dicionário de Dados da Tabela Chefe
+  <summary>Tabela 30 – Dicionário de Dados da Tabela Chefe
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 21 – Dicionário de Dados da Tabela Chefe</strong></p>
+    <p><strong>Tabela 30 – Dicionário de Dados da Tabela Chefe</strong></p>
     <table>
       <thead>
         <tr>
@@ -1724,8 +2308,8 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>identificador_mapa</code></td>
-          <td>Identificador do mapa atual do chefe.</td>
+          <td><code>identificador_area</code></td>
+          <td>Identificador da área atual do chefe.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1764,9 +2348,9 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Nível do chefe.</td>
           <td>Inteiro</td>
           <td>2</td>
-          <td>1 a 99</td>
+          <td>10 a 60</td>
           <td>-</td>
-          <td>DEFAULT 1</td>
+          <td>DEFAULT 10</td>
         </tr>
         <tr>
           <td><code>experiencia</code></td>
@@ -1806,11 +2390,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `instancia_lacaio`
 
 <details>
-  <summary>Tabela 22 – Dicionário de Dados da Tabela Instancia Lacaio
+  <summary>Tabela 31 – Dicionário de Dados da Tabela Instancia Lacaio
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 22 – Dicionário de Dados da Tabela Instancia Lacaio</strong></p>
+    <p><strong>Tabela 31 – Dicionário de Dados da Tabela Instancia Lacaio</strong></p>
     <table>
       <thead>
         <tr>
@@ -1843,6 +2427,15 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>identificador_area</code></td>
+          <td>Identificador da área atual da instância do lacaio.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
           <td><code>vida_atual</code></td>
           <td>Vida atual da instância de lacaio.</td>
           <td>Inteiro</td>
@@ -1862,11 +2455,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `tipo_personagem`
 
 <details>
-  <summary>Tabela 23 – Dicionário de Dados da Tabela Tipo Personagem
+  <summary>Tabela 32 – Dicionário de Dados da Tabela Tipo Personagem
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 23 – Dicionário de Dados da Tabela Tipo Personagem</strong></p>
+    <p><strong>Tabela 32 – Dicionário de Dados da Tabela Tipo Personagem</strong></p>
     <table>
       <thead>
         <tr>
@@ -1896,7 +2489,7 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"hbt", "rec", "coz", "ven", "ali", "jog", "lac", "che"</td>
           <td>-</td>
-          <td>CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
@@ -1909,11 +2502,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `inventario`
 
 <details>
-  <summary>Tabela 24 – Dicionário de Dados da Tabela Inventário
+  <summary>Tabela 33 – Dicionário de Dados da Tabela Inventário
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 24 – Dicionário de Dados da Tabela Inventário</strong></p>
+    <p><strong>Tabela 33 – Dicionário de Dados da Tabela Inventário</strong></p>
     <table>
       <thead>
         <tr>
@@ -1965,11 +2558,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `item_inventario`
 
 <details>
-  <summary>Tabela 25 – Dicionário de Dados da Tabela Item Inventário
+  <summary>Tabela 34 – Dicionário de Dados da Tabela Item Inventário
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 25 – Dicionário de Dados da Tabela Item Inventário</strong></p>
+    <p><strong>Tabela 34 – Dicionário de Dados da Tabela Item Inventário</strong></p>
     <table>
       <thead>
         <tr>
@@ -2012,11 +2605,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `habilidade_aliado`
 
 <details>
-  <summary>Tabela 26 – Dicionário de Dados da Tabela Habilidade Aliado
+  <summary>Tabela 35 – Dicionário de Dados da Tabela Habilidade Aliado
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 26 – Dicionário de Dados da Tabela Habilidade Aliado</strong></p>
+    <p><strong>Tabela 35 – Dicionário de Dados da Tabela Habilidade Aliado</strong></p>
     <table>
       <thead>
         <tr>
@@ -2059,11 +2652,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `batalha_instancia_lacaio`
 
 <details>
-  <summary>Tabela 27 – Dicionário de Dados da Tabela Batalha Instância Lacaio
+  <summary>Tabela 36 – Dicionário de Dados da Tabela Batalha Instância Lacaio
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 27 – Dicionário de Dados da Tabela Batalha Instância Lacaio</strong></p>
+    <p><strong>Tabela 36 – Dicionário de Dados da Tabela Batalha Instância Lacaio</strong></p>
     <table>
       <thead>
         <tr>
@@ -2106,11 +2699,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `receitas_conhecidas`
 
 <details>
-  <summary>Tabela 28 – Dicionário de Dados da Tabela Receitas Conhecidas
+  <summary>Tabela 37 – Dicionário de Dados da Tabela Receitas Conhecidas
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 28 – Dicionário de Dados da Tabela Receitas Conhecidas</strong></p>
+    <p><strong>Tabela 37 – Dicionário de Dados da Tabela Receitas Conhecidas</strong></p>
     <table>
       <thead>
         <tr>
@@ -2153,11 +2746,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `negociacao`
 
 <details>
-  <summary>Tabela 29 – Dicionário de Dados da Tabela Negociação
+  <summary>Tabela 38 – Dicionário de Dados da Tabela Negociação
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 29 – Dicionário de Dados da Tabela Negociação</strong></p>
+    <p><strong>Tabela 38 – Dicionário de Dados da Tabela Negociação</strong></p>
     <table>
       <thead>
         <tr>
@@ -2245,11 +2838,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `batalha`
 
 <details>
-  <summary>Tabela 30 – Dicionário de Dados da Tabela Batalha
+  <summary>Tabela 39 – Dicionário de Dados da Tabela Batalha
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 30 – Dicionário de Dados da Tabela Batalha</strong></p>
+    <p><strong>Tabela 39 – Dicionário de Dados da Tabela Batalha</strong></p>
     <table>
       <thead>
         <tr>
@@ -2317,11 +2910,11 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 ### Tabela: `Missão`
 
 <details>
-  <summary>Tabela 31 – Dicionário de Dados da Tabela Missão
+  <summary>Tabela 40 – Dicionário de Dados da Tabela Missão
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
   </summary>
   <div align="center">
-    <p><strong>Tabela 31 – Dicionário de Dados da Tabela Missão</strong></p>
+    <p><strong>Tabela 40 – Dicionário de Dados da Tabela Missão</strong></p>
     <table>
       <thead>
         <tr>
@@ -2435,4 +3028,5 @@ As tabelas 1 a 31 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.5` | Adição das tabelas referentes a missão | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/05/2025 |
 | `1.6` | Atualização das tabelas referentes aos itens e adição da tabela "fruta" | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 |
 | `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
-| `1.8` | Atualização das restrições e valores permitidos das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |  |  |
+| `1.8` | Atualização das restrições e valores permitidos das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 |
+| `1.9` | Atualização das tabelas referentes ao mapa | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 |
