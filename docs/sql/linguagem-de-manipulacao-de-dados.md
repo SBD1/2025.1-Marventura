@@ -39,7 +39,6 @@ O aprendizado e a utilização da Linguagem de Manipulação de Dados (DML) gera
 # DML - Linguagem de Manipulação de Dados
 
 </CENTER>
----
 
 ```sql
 
@@ -280,6 +279,9 @@ INSERT INTO batalha (identificador_jogador, identificador_chefe) VALUES
 
 INSERT INTO batalha_instancia_lacaio (identificador_batalha, identificador_instancia_lacaio) VALUES
 (1, 1);
+
+```
+
 
 ## 📚 Bibliografia
 
