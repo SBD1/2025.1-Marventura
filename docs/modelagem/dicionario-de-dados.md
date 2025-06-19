@@ -1084,7 +1084,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>visitada</code></td>
           <td>Indica se a ilha já foi visitada pelo jogador.</td>
           <td>Boleano</td>
-          <td>5</td>
+          <td>1</td>
           <td>True, False</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -1140,7 +1140,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>bloqueada</code></td>
           <td>Indica se a rota entre a ilha de origem e de destino está bloqueada.</td>
           <td>Boleano</td>
-          <td>5</td>
+          <td>1</td>
           <td>True. False</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -1232,7 +1232,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>visitada</code></td>
           <td>Indica se a área já foi visitada pelo jogador.</td>
           <td>Boleano</td>
-          <td>5</td>
+          <td>1</td>
           <td>True, False</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -1676,7 +1676,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>data_da_tentativa</code></td>
           <td>A data da última tentativa de conseguir um item em uma área interativa específica.</td>
           <td>Tempo</td>
-          <td>Tamanho de um timestamp</td>
+          <td>Tamanho de um <em>timestamp</em></td>
           <td>Padrão do tipo</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -3029,4 +3029,4 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.6` | Atualização das tabelas referentes aos itens e adição da tabela "fruta" | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 |
 | `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
 | `1.8` | Atualização das restrições e valores permitidos das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 |
-| `1.9` | Atualização das tabelas referentes ao mapa | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 |  |  |
+| `1.9` | Atualização das tabelas referentes ao mapa | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 |
