@@ -6,9 +6,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
   <link id="docsify-theme" rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="stylesheet" href="styles.css">
+
+ 
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
@@ -19,6 +34,7 @@
   </button>
 
   <div id="app"></div>
+
   <script>
     window.$docsify = {
       loadSidebar: true,
@@ -29,25 +45,32 @@
       auto2top: true,
       plugins: [
         function (hook, vm) {
+          
           hook.doneEach(function () {
-            const diagramsDetails = document.querySelectorAll('details[open]')
-
+            const diagramsDetails = document.querySelectorAll('details[open]');
             diagramsDetails.forEach(details => {
               setTimeout(() => {
                 if (details.open) {
-                  details.removeAttribute('open')
+                  details.removeAttribute('open');
                 }
-              }, 500)
-            })
-          })
+              }, 500);
+            });
+
+            
+            if (window.MathJax) {
+              MathJax.typesetPromise();
+            }
+          });
         }
       ]
-    }
+    };
   </script>
-  <!-- Docsify v4 -->
+
+  <!-- Docsify e plugins -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
 
+  <!-- Alternador de tema claro/escuro -->
   <script>
     const themeToggle = document.getElementById('theme-toggle')
     const themeIcon = document.getElementById('theme-icon')
@@ -57,14 +80,12 @@
     themeLink.rel = 'stylesheet'
     document.head.appendChild(themeLink)
 
-    // Função para definir o ícone SVG
     function setIcon(isDark) {
       themeIcon.innerHTML = isDark
         ? `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>` // Lua
         : `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>` // Sol
     }
 
-    // Função para aplicar o tema
     function applyTheme(isDark) {
       themeLink.href = isDark
         ? "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css"
@@ -83,7 +104,6 @@
     const initialIsDark = savedTheme === 'dark'
     applyTheme(initialIsDark)
 
-    // Adiciona o listener para o botão de toggle
     themeToggle.addEventListener('click', () => {
       const currentIsDark = document.body.classList.contains('dark-theme')
       const newIsDark = !currentIsDark
@@ -91,6 +111,5 @@
       localStorage.setItem('docsify-theme', newIsDark ? 'dark' : 'light')
     })
   </script>
-
 </body>
 </html>

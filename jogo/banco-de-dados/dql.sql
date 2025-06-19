@@ -1,167 +1,164 @@
-SELECT identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y
-FROM Habitante
-WHERE identificador_habitante = 2;
+SELECT identificador_item, tipo
+FROM tipo_item;
 
-SELECT identificador_habitante, nome, tipo, especialidade
-FROM Habitante
-WHERE especialidade = 'arm';
+SELECT COUNT(*) AS total_de_tipos
+FROM tipo_item;
 
-SELECT identificador_habitante, nome, tipo, especialidade
-FROM Habitante
-WHERE identificador_mapa = 1 AND IlhaID = 1;
+SELECT nome, valor
+FROM efeito;
 
-SELECT idJogador, idHabilidade, idMapa, IlhaID, Energia, Vida, Nivel, Sorte, VidaAtual, DanoBase, ExperienciaAtual, CoordenadaX, CoordenadaY
-FROM Jogador
-WHERE idJogador = 1;
+SELECT nome, valor
+FROM efeito
+WHERE nome = 'Restaura PV'
+ORDER BY valor DESC
+LIMIT 5;
 
-SELECT Vida, Nivel, DanoBase
-FROM Jogador
-WHERE idJogador = 1;
+SELECT nome, raridade, preco_de_venda, descricao
+FROM consumivel
+WHERE e_fabricavel = TRUE;
 
-SELECT idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo
-FROM Chefe
-WHERE idChefe = 5;
+SELECT nome, preco_de_venda, raridade
+FROM consumivel
+ORDER BY preco_de_venda DESC
+LIMIT 10;
 
-SELECT Nome, Vida, Nivel
-FROM Chefe
-WHERE idChefe = 6;
+SELECT nome, tipo, preco_de_venda, descricao
+FROM nao_consumivel
+WHERE raridade = '★★';
 
-SELECT idChefe, Nome, Nivel
-FROM Chefe
-WHERE TipoInimigo = 'Humanoide';
+SELECT nome, (preco_de_venda - preco_de_compra) AS margem_de_lucro
+FROM nao_consumivel
+WHERE preco_de_compra > 0
+ORDER BY margem_de_lucro DESC;
 
-SELECT MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome
-FROM Missão
-WHERE MissaoID = 12;
+SELECT nome, dano
+FROM habilidade
+WHERE custo = 0;
 
-SELECT MissaoID, Nome, Descricao
-FROM Missão
-WHERE Nome LIKE '%Fera%';
+SELECT nome, dano, custo, (dano::decimal / custo) AS eficiencia
+FROM habilidade
+WHERE custo > 0
+ORDER BY eficiencia DESC;
 
-SELECT m.MissaoID, m.Nome, h.nome AS NomeRecrutador
-FROM Missão m
-JOIN Habitante h ON m.idRecrutador = h.identificador_habitante
-WHERE h.identificador_habitante = 2;
+SELECT 'Consumível' AS tipo_ingrediente, ing_c.nome AS nome_ingrediente
+FROM receita r
+JOIN ingrediente_consumivel ic ON r.identificador_receita = ic.identificador_receita
+JOIN consumivel ing_c ON ic.identificador_consumivel = ing_c.identificador_consumivel
+WHERE r.identificador_receita = 3
 
-SELECT m.Nome AS NomeMissao, m.Descricao, c.Nome AS NomeRecrutadorChefe
-FROM Missão m
-JOIN Chefe c ON m.idRecrutador = c.idChefe
-WHERE m.idRecrutador IN (7, 9);
+UNION ALL
 
-SELECT m.Nome AS NomeMissao, m.Descricao, cb.Nome AS NomeLocal
-FROM Missão m
-JOIN Campo_de_batalha cb ON m.SalaID = cb.SalaID AND m.TipoSala = cb.TipoSala
-WHERE m.TipoSala = 'Campo de Batalha';
+SELECT 'Não-Consumível' AS tipo_ingrediente, ing_nc.nome AS nome_ingrediente
+FROM receita r
+JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
+JOIN nao_consumivel ing_nc ON inc.identificador_nao_consumivel = ing_nc.identificador_nao_consumivel
+WHERE r.identificador_receita = 3;
 
-SELECT SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos
-FROM Campo_de_batalha
-WHERE SalaID = 201;
+SELECT
+    r.identificador_receita,
+    c.nome AS item_produzido
+FROM receita r
+JOIN consumivel c ON r.consumivel_produzido = c.identificador_consumivel
+JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
+WHERE inc.identificador_nao_consumivel = 8;
 
-SELECT SalaID, Nome, Tipo, QtdInimigos
-FROM Campo_de_batalha
-WHERE Tipo = 'Floresta';
+SELECT sala_id, tipo_terreno, tamanho 
+FROM campo_batalha 
+WHERE tipo_terreno = 'Floresta';
 
-SELECT SalaID, TipoSala, Nome, TotalSalas, Informacoes
-FROM Vila
-WHERE SalaID = 101;
+SELECT i.id AS id_da_ilha
+FROM ilha i
+JOIN mapa m ON i.id = m.id_ilha
+WHERE m.id_mapa = 1;
 
-SELECT Nome, Informacoes
-FROM Vila;
+SELECT j.nome AS nome_jogador, m.id_mapa, m.id_ilha
+FROM jogador j
+JOIN mapa m ON j.id_mapa_pk = m.id_mapa_pk
+WHERE j.id_jogador = 1;
 
-SELECT SalaID, TipoSala, Nome, TotalSalas, QtdBarcos, Capacidade, SentidoIlha
-FROM Porto
-WHERE SalaID = 301;
+SELECT a.nome AS nome_aliado, h.nome AS nome_habilidade, h.dano, h.custo
+FROM habilidade_aliado ha
+JOIN aliado a ON ha.id_aliado = a.id_aliado
+JOIN habilidade h ON ha.id_habilidade = h.id_habilidade
+WHERE a.nome = 'Shuan';
 
-SELECT Nome, QtdBarcos, Capacidade
-FROM Porto
-WHERE QtdBarcos > 3;
+SELECT nome, 'Chefe' as tipo FROM chefe WHERE id_mapa_pk = 1
+UNION ALL
+SELECT nome, 'Lacaio' as tipo FROM lacaio WHERE id_mapa_pk = 1
+UNION ALL
+SELECT nome, 'Aliado' as tipo FROM aliado WHERE id_mapa_pk = 1
+UNION ALL
+SELECT nome, 'Habitante' as tipo FROM habitante WHERE id_mapa_pk = 1;
 
-SELECT ItemID, Nome, Descricao, Tipo
-FROM Item
-WHERE ItemID = 11;
+SELECT nome, vida, nivel
+FROM chefe
+ORDER BY vida DESC
+LIMIT 1;
 
-SELECT Nome, Descricao
-FROM Item
-WHERE Tipo = 'Fruta';
+SELECT 
+    b.identificador_batalha, 
+    j.nome AS nome_jogador, 
+    c.nome AS nome_chefe
+FROM batalha b
+JOIN jogador j ON b.identificador_jogador = j.id_jogador
+JOIN chefe c ON b.identificador_chefe = c.id_chefe;
 
-SELECT im.MissaoID, ti.Tipo AS TipoItem, i.Nome AS NomeItem, i.Descricao AS DescricaoItem
-FROM ItemMissão im
-JOIN Item i ON im.IdentificadorItem = i.ItemID
-JOIN TipoItem ti ON i.Tipo = ti.Tipo
-WHERE im.MissaoID = 12;
+SELECT l.nome AS nome_lacaio
+FROM batalha_instancia_lacaio bil
+JOIN instancia_lacaio il ON bil.identificador_instancia_lacaio = il.id_instancia_lacaio
+JOIN lacaio l ON il.identificador_lacaio = l.id_lacaio
+WHERE bil.identificador_batalha = 1;
 
-SELECT im.MissaoID, m.Nome AS NomeMissao, m.Descricao AS DescricaoMissao
-FROM ItemMissão im
-JOIN Missão m ON im.MissaoID = m.MissaoID
-WHERE im.IdentificadorItem = 11;
+SELECT m.nome, m.descricao
+FROM missao m
+WHERE m.id_recrutador = 1;
 
+SELECT m.nome AS nome_missao, ti.tipo AS tipo_item_necessario
+FROM missao m
+JOIN ItemMissao im ON m.missao_id = im.missao_id
+JOIN tipo_item ti ON im.identificador_item = ti.identificador_item
+WHERE ti.tipo = 'Fruta';
 
-SELECT MarID, Mostro, Obstaculo
-FROM Mar
-WHERE MarID = 1;
+SELECT 
+    n.identificador_negociacao,
+    n.tipo,
+    ti.tipo AS tipo_de_item,
+    n.quantidade,
+    n.preco_final,
+    v.nome AS nome_vendedor
+FROM negociacao n
+JOIN habitante v ON n.identificador_vendedor = v.identificador_habitante
+JOIN tipo_item ti ON n.identificador_item = ti.identificador_item
+WHERE n.identificador_jogador = 1;
 
-SELECT MarID, Mostro
-FROM Mar
-WHERE Mostro LIKE '%Serpente%';
+SELECT
+    inv.id_inventario,
+    j.nome AS dono_do_inventario,
+    ti.tipo AS tipo_de_item_no_inventario
+FROM ItemInventario ii
+JOIN Inventario inv ON ii.id_inventario = inv.id_inventario
+JOIN jogador j ON inv.id_jogador = j.id_jogador
+JOIN tipo_item ti ON ii.identificador_item = ti.identificador_item
+WHERE j.id_jogador = 1;
 
+SELECT 
+    ilha_a.id AS id_origem, 
+    ilha_b.id AS id_destino
+FROM corredor_maritimo cm
+JOIN ilha ilha_a ON cm.ilha_a = ilha_a.id
+JOIN ilha ilha_b ON cm.ilha_b = ilha_b.id
+WHERE cm.ilha_a = 1;
 
-SELECT marítimoID, IlhaA, IlhaB
-FROM Corredor_maritimo
-WHERE marítimoID = 1;
+SELECT 
+    cm.ilha_a, 
+    cm.ilha_b, 
+    m.monstro, 
+    m.obstaculo
+FROM controlador_mar ctm
+JOIN mar m ON ctm.mar_id = m.mar_id
+JOIN corredor_maritimo cm ON ctm.maritimo_id = cm.maritimo_id;
 
-SELECT c.marítimoID, ia.Nome AS NomeIlhaA, ib.Nome AS NomeIlhaB
-FROM Corredor_maritimo c
-JOIN Ilha ia ON c.IlhaA = ia.ID
-JOIN Ilha ib ON c.IlhaB = ib.ID
-WHERE c.marítimoID = 1;
-
-
-SELECT MapaID, IlhaID, MarID
-FROM MapaMar
-WHERE MapaID = 1 AND IlhaID = 1;
-
-SELECT mm.MapaID, mm.IlhaID, m.Nome AS NomeMapa, i.Nome AS NomeIlha, mar.Mostro
-FROM MapaMar mm
-JOIN Mapa m ON mm.MapaID = m.MapaID AND mm.IlhaID = m.IlhaID
-JOIN Ilha i ON m.IlhaID = i.ID
-JOIN Mar mar ON mm.MarID = mar.MarID
-WHERE mm.MarID = 1;
-
-SELECT marítimoID, MarID
-FROM Controller_mar
-WHERE marítimoID = 1;
-
-SELECT cm.marítimoID, cm.MarID, cor.IlhaA, mar.Mostro
-FROM Controller_mar cm
-JOIN Corredor_maritimo cor ON cm.marítimoID = cor.marítimoID
-JOIN Mar mar ON cm.MarID = mar.MarID
-WHERE cm.marítimoID = 1;
-
-SELECT Tipo, Melhoria, Nome, Nivel
-FROM Barco
-WHERE Tipo = 'Canoa';
-
-SELECT Tipo, Nome, Nivel
-FROM Barco
-WHERE Nivel > 5;
-
-SELECT TipoSala, TipoBarco, SalaID
-FROM BarcoPorto
-WHERE SalaID = 301;
-
-SELECT bp.TipoSala, bp.SalaID, p.Nome AS NomePorto, b.Nome AS NomeBarco, b.Nivel AS NivelBarco
-FROM BarcoPorto bp
-JOIN Porto p ON bp.TipoSala = p.TipoSala AND bp.SalaID = p.SalaID
-JOIN Barco b ON bp.TipoBarco = b.Tipo
-WHERE bp.TipoBarco = 'Canoa';
-
-
-SELECT IDBarco, marítimoID
-FROM Controller_barco
-WHERE IDBarco = 'Canoa';
-
-SELECT cb.IDBarco, cb.marítimoID, b.Nome AS NomeBarco, cm.IlhaA AS CorredorIlhaA
-FROM Controller_barco cb
-JOIN Barco b ON cb.IDBarco = b.Tipo
-JOIN Corredor_maritimo cm ON cb.marítimoID = cm.marítimoID
-WHERE cb.IDBarco = 'Canoa';
+SELECT b.nome, b.tipo, b.melhoria
+FROM barco_porto bp
+JOIN barco b ON bp.barco_id = b.id
+WHERE bp.sala_id = 16;

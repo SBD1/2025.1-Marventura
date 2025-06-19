@@ -1,368 +1,240 @@
-INSERT INTO efeito (nome, valor) VALUES
-('Restaura PE', 2),
-('Restaura PV', 2),
-('Restaura PV', 1),
-('Restaura PE', 1),
-('Restaura PV', 1),
-('Restaura PE', 2),
-('Restaura PV', 1),
-('Aumenta Ataque', 2),
-('Restaura PV', 1),
-('Restaura PE', 2),
-('Restaura PV', 3),
-('Restaura PE', 3),
-('Aumenta Ataque', 3),
-('Restaura PV', -1),
-('Aumenta Ataque', 2),
-('Restaura PV', 2),
-('Restaura PE', 2),
-('Restaura PV', 4),
-('Restaura PE', 1),
-('Aumenta Ataque', 2),
-('Restaura PE', 3),
-('Restaura PV', 2),
-('Aumenta Ataque', 3),
-('Restaura PV', 2),
-('Restaura PE', 3),
-('Restaura PV', 1),
-('Restaura PV', -2),
-('Aumenta Ataque', 3),
-('Restaura PV', 2),
-('Restaura PE', 3),
-('Restaura PE', 5),
-('Restaura PV', 4),
-('Restaura PE', 2),
-('Restaura PV', 5),
-('Restaura PE', 5),
-('Restaura PV', 3),
-('Aumenta Ataque', 3),
-('Restaura PV', 7),
-('Restaura PE', 1),
-('Restaura PV', 3),
-('Reduz Ataque', -2),
-('Restaura PV', 5),
-('Restaura PE', 3),
-('Aumenta Ataque', 5),
-('Aumenta Sorte', 2),
-('Aumenta Sorte', 1),
-('Aumenta Sorte', 4),
-('Aumenta Sorte', 1),
-('Aumenta Sorte', 3),
-('Aumenta Sorte', 2),
-('Restaura PE', 6),
-('Restaura PV', 6),
-('Restaura PV', 4),
-('Aumenta Ataque', 4),
-('Restaura PV', 2),
-('Aumenta Ataque', 4),
-('Restaura PE', 4),
-('Restaura PV', 1),
-('Restaura PE', 5),
-('Restaura PV', 1),
-('Restaura PE', 5),
-('Restaura PV', 3),
-('Restaura PE', 1),
-('Aumenta Ataque', 3),
-('Restaura PE', -1),
-('Aumenta Ataque', 3),
-('Restaura PE', 3),
-('Aumenta Ataque', 1),
-('Aumenta Sorte', 3),
-('Aumenta Sorte', 1),
-('Restaura PV', 2),
-('Restaura PV', 1);
 
+INSERT INTO habilidade (nome, dano, custo) VALUES
+('Poder da Fruta do Eco', 5, 1),
+('Mordida Feroz', 15, 0),
+('Golpe de Espada', 10, 2),
+('Tiro de Pistola', 8, 1),
+('Avalanche', 12, 3),
+('Transformacao', 20, 4);
 
+INSERT INTO tipo_personagem (tipo) VALUES
+('Jogador'),
+('Chefe'),
+('Lacaio'),
+('Aliado'),
+('Habitante');
 
-INSERT INTO nao_consumivel (identificador_nao_consumivel, nome, tipo, quantidade, raridade, preco_de_compra, preco_de_venda) VALUES
-(8, 'Presa de Lobo', 'ncn', NULL, '★★', NULL, 15),
-(12, 'Farinha Misteriosa', 'ncn', NULL, '★', 10, 5),
-(13, 'ButterCream de Fuligem', 'ncn', NULL, '★★', 20, 8),
-(16, 'Medalha de Marinheiro', 'ncn', NULL, '★★', NULL, 20),
-(20, 'Pérola Cantante', 'ncn', NULL, '★★', 30, 17),
-(23, 'Pedaço de Tecido Rasgado', 'ncn', NULL, '★', NULL, 8),
-(31, 'Faixa de Pirata Estorricado', 'ncn', NULL, '★', NULL, 10),
-(35, 'Sombra Engarrafada', 'ncn', NULL, '★★', NULL, 17),
-(36, 'Açúcar Estranho', 'ncn', NULL, '★', 5, 2),
-(38, 'Essência de Névoa Doce', 'ncn', NULL, '★★', 10, 4),
-(42, 'Peixe Saltitante', 'ncn', NULL, '★', NULL, 11),
-(48, 'Chapéu de Marinheiro', 'ncn', NULL, '★★', NULL, 15);
+INSERT INTO tipo_item (tipo) VALUES
+('Fruta'),
+('Arma'),
+('Consumivel'),
+('NaoConsumivel'),
+('Acessorio');
 
+-- =========== Inserções em Efeitos, Itens e Receitas (Dados Detalhados) ===========
 
+INSERT INTO efeito (identificador_efeito, nome, valor) VALUES
+(1, 'Restaura PE', 2), (2, 'Restaura PV', 2), (3, 'Restaura PV', 1), (4, 'Restaura PE', 1), (5, 'Restaura PV', 1),
+(6, 'Restaura PE', 2), (7, 'Restaura PV', 1), (8, 'Aumenta Ataque', 2), (9, 'Restaura PV', 1), (10, 'Restaura PE', 2),
+(11, 'Restaura PV', 3), (12, 'Restaura PE', 3), (13, 'Aumenta Ataque', 3), (14, 'Restaura PV', -1), (15, 'Aumenta Ataque', 2),
+(16, 'Restaura PV', 2), (17, 'Restaura PE', 2), (18, 'Restaura PV', 4), (19, 'Restaura PE', 1), (20, 'Aumenta Ataque', 2),
+(21, 'Restaura PE', 3), (22, 'Restaura PV', 2), (23, 'Aumenta Ataque', 3), (24, 'Restaura PV', 2), (25, 'Restaura PE', 3),
+(26, 'Restaura PV', 1), (27, 'Restaura PV', -2), (28, 'Aumenta Ataque', 3), (29, 'Restaura PV', 2), (30, 'Restaura PE', 3),
+(31, 'Restaura PE', 5), (32, 'Restaura PV', 4), (33, 'Restaura PE', 2), (34, 'Restaura PV', 5), (35, 'Restaura PE', 5),
+(36, 'Restaura PV', 3), (37, 'Aumenta Ataque', 3), (38, 'Restaura PV', 7), (39, 'Restaura PE', 1), (40, 'Restaura PV', 3),
+(41, 'Reduz Ataque', -2), (42, 'Restaura PV', 5), (43, 'Restaura PE', 3), (44, 'Aumenta Ataque', 5), (45, 'Aumenta Sorte', 2),
+(46, 'Aumenta Sorte', 1), (47, 'Aumenta Sorte', 4), (48, 'Aumenta Sorte', 1), (49, 'Aumenta Sorte', 3), (50, 'Aumenta Sorte', 2),
+(51, 'Restaura PE', 6), (52, 'Restaura PV', 6), (53, 'Restaura PV', 4), (54, 'Aumenta Ataque', 4), (55, 'Restaura PV', 2),
+(56, 'Aumenta Ataque', 4), (57, 'Restaura PE', 4), (58, 'Restaura PV', 1), (59, 'Restaura PE', 5), (60, 'Restaura PV', 1),
+(61, 'Restaura PE', 5), (62, 'Restaura PV', 3), (63, 'Restaura PE', 1), (64, 'Aumenta Ataque', 3), (65, 'Restaura PE', -1),
+(66, 'Aumenta Ataque', 3), (67, 'Restaura PE', 3), (68, 'Aumenta Ataque', 1), (69, 'Aumenta Sorte', 3), (70, 'Aumenta Sorte', 1),
+(71, 'Restaura PV', 2), (72, 'Restaura PV', 1);
 
-INSERT INTO consumivel
-    (identificador_consumivel, nome, tipo, quantidade, raridade,
-     preco_de_compra, preco_de_venda, e_fabricavel)
-VALUES
-(1,   'Fruta do Mar Azul',              'con', NULL, '★',  NULL,  5, 0),
-(2,   'Fruta do Mar Vermelha',          'con', NULL, '★',  NULL,  5, 0),
-(3,   'Folha de Hortelã',               'con', NULL, '★',  NULL,  5, 0),
-(4,   'Abóbora Redonduda',              'con', NULL, '★',     15,  6, 0),
-(5,   'Arroz do Planalto',              'con', NULL, '★',     10,  5, 0),
-(6,   'Ovo dos Campos',                 'con', NULL, '★',     10,  5, 0),
-(7,   'Carne de Ave Brava',             'con', NULL, '★',  NULL,  7, 0),
-(9,   'Maçã Lustrosa',                  'con', NULL, '★',  NULL,  7, 0),
-(10,  'Repolho Redondo',                'con', NULL, '★',  NULL,  5, 0),
-(11,  'Alga Fresca',                    'con', NULL, '★',  NULL,  6, 0),
-(14,  'Chá Enlatado',                   'con', NULL, '★',     15,  6, 0),
-(15,  'Doce Amassado',                  'con', NULL, '★',  NULL,  2, 0),
-(17,  'Noz Crocante',                   'con', NULL, '★',  NULL,  2, 0),
-(18,  'Ervas Aromáticas',               'con', NULL, '★',  NULL,  3, 0),
-(19,  'Neve Mágica',                    'con', NULL, '★★', NULL, 12, 0),
-(21,  'Leite de Cabra Alpina',          'con', NULL, '★',     10,  6, 0),
-(22,  'Chocolate Amargo',               'con', NULL, '★',     15,  8, 0),
-(24,  'Lamento Gelado',                 'con', NULL, '★★', NULL, 12, 0),
-(25,  'Fruta Cítrica do Oeste',         'con', NULL, '★',  NULL,  4, 0),
-(26,  'Côco do Oásis',                  'con', NULL, '★',  NULL,  7, 0),
-(27,  'Areia Mineral',                  'con', NULL, '★★', NULL, 10, 0),
-(28,  'Carne do Deserto',               'con', NULL, '★★',    20,  8, 0),
-(29,  'Geleia de Cacto Doce',           'con', NULL, '★★',    11,  6, 0),
-(30,  'Suco Refrescante Solar',         'con', NULL, '★',      7,  4, 0),
-(32,  'Fragmento de Miragem',           'con', NULL, '★★', NULL, 12, 0),
-(33,  'Cogumelo Risonho',               'con', NULL, '★',  NULL,  9, 0),
-(34,  'Fruta Fluorescente',             'con', NULL, '★',  NULL,  7, 0),
-(37,  'Doce Fantasmal',                 'con', NULL, '★',     13,  5, 0),
-(39,  'Asa de Morcego Noturno',         'con', NULL, '★',  NULL,  9, 0),
-(40,  'Presa Venenosa',                 'con', NULL, '★',  NULL,  7, 0),
-(41,  'Amendoim Crocante',              'con', NULL, '★',  NULL,  3, 0),
-(43,  'Pepino de Salmoura',             'con', NULL, '★',  NULL,  5, 0),
-(44,  'Ração de Soldado',               'con', NULL, '★★',    10,  4, 0),
-(45,  'Café Turbinado',                 'con', NULL, '★',      8,  3, 0),
-(46,  'Carne de Rei dos Mares',         'con', NULL, '★★★',   40, 19, 0),
-(47,  'Rosquinha Mordida',              'con', NULL, '★',  NULL,  3, 0),
-(101, 'Sushi Enrolado',                 'con', NULL, '★★', NULL, 15, 1),
-(102, 'Chá de Algas',                   'con', NULL, '★',  NULL, 10, 1),
-(103, 'Pastel de Fruta do Diabo',       'con', NULL, '★★', NULL, 18, 1),
-(104, 'Caldo da Vovó Yuba',             'con', NULL, '★★', NULL, 22, 1),
-(105, 'Tônico de Areia',                'con', NULL, '★★', NULL, 16, 1),
-(106, 'Chá Gelado de Neve',             'con', NULL, '★★', NULL, 15, 1),
-(107, 'Receita Secreta do Capitão',     'con', NULL, '★★★', NULL, 27, 1),
-(108, 'Carne Grelhada',                 'con', NULL, '★★', NULL, 18, 1),
-(109, 'Pérola Caramelizada',            'con', NULL, '★★', NULL, 13, 1),
-(110, 'Pérola da Lua de Inverno',       'con', NULL, '★★★', NULL, 24, 1),
-(111, 'Pérola do Sol Escaldante',       'con', NULL, '★★★', NULL, 24, 1),
-(112, 'Gelado de Algas',                'con', NULL, '★',  NULL, 15, 1),
-(113, 'Omurice de Arroz',               'con', NULL, '★★', NULL, 15, 1),
-(114, 'Bolo do Campo',                  'con', NULL, '★★', NULL, 14, 1),
-(115, 'Bombom Nebuloso',                'con', NULL, '★★', NULL, 12, 1),
-(116, 'Arroz dos Sete Mares',           'con', NULL, '★',  NULL,  9, 1),
-(117, 'Doce da Ilha',                   'con', NULL, '★★', NULL, 12, 1),
-(118, 'Omelete dos 4 Ventos',           'con', NULL, '★★', NULL, 13, 1),
-(119, 'Frango Assado Estaladiço',       'con', NULL, '★',  NULL, 10, 1),
-(120, 'Sopa da Guarda Noturna',         'con', NULL, '★',  NULL,  6, 1),
-(121, 'Doce de Duna Dourada',           'con', NULL, '★★', NULL, 16, 1),
-(122, 'Bife do Abismo',                 'con', NULL, '★★★', NULL, 35, 1),
-(123, 'Sashimi do Fim do Mundo',        'con', NULL, '★★★', NULL, 35, 1),
-(124, 'Torta do Marujo Feliz',          'con', NULL, '★',  NULL, 10, 1),
-(125, 'Doce Assombrado',                'con', NULL, '★★', NULL, 12, 1),
-(126, 'Curry do Capitão Covarde',       'con', NULL, '★★', NULL, 13, 1),
-(127, 'Elixir Sombrio',                 'con', NULL, '★★', NULL, 18, 1),
-(128, 'Poção do Dente Torto',           'con', NULL, '★★', NULL, 18, 1),
-(129, 'Cookie de Chocolate',            'con', NULL, '★',  NULL, 14, 1),
-(130, 'Leite Condensado Alpino',        'con', NULL, '★',  NULL, 11, 1),
-(131, 'Doce do Silêncio Eterno',        'con', NULL, '★★', NULL, 17, 1),
-(132, 'Cacto‑Pop Geladinho',            'con', NULL, '★★', NULL, 16, 1),
-(133, 'Esfera da Miragem',              'con', NULL, '★★', NULL, 17, 1),
-(134, 'Amendoins Torrados',             'con', NULL, '★',  NULL,  5, 1),
-(135, 'Pickles Pirata',                 'con', NULL, '★',  NULL, 10, 1),
-(136, 'Frankenprato',                   'con', NULL, '★',  NULL,  5, 1);
+INSERT INTO nao_consumivel (identificador_nao_consumivel, tipo, nome, descricao, quantidade, raridade, local_encontrado, preco_de_compra, preco_de_venda) VALUES
+(8, 'ncn', 'Presa de Lobo', 'Uma presa afiada de um lobo selvagem, usada em artesanato.', 1, '★★', 'Campos', 0, 15),
+(12, 'ncn', 'Farinha Misteriosa', 'Um pó fino e branco de origem desconhecida.', 1, '★', 'Cidade', 10, 5),
+(13, 'ncn', 'ButterCream de Fuligem', 'Uma pasta escura e fuliginosa, estranhamente cremosa.', 1, '★★', 'Cidade', 20, 8),
+(16, 'ncn', 'Medalha de Marinheiro', 'Uma medalha de bronze um pouco gasta, símbolo de bravura.', 1, '★★', 'Fortaleza da Marinha', 0, 20),
+(20, 'ncn', 'Pérola Cantante', 'Uma pérola que emite uma melodia suave quando segurada.', 1, '★★', 'Ilha Assombrada', 30, 17),
+(23, 'ncn', 'Pedaço de Tecido Rasgado', 'Fragmento de uma bandeira ou vela, marcado pelo tempo.', 1, '★', 'Campos', 0, 8),
+(31, 'ncn', 'Faixa de Pirata Estorricado', 'A faixa de um pirata que sobreviveu a uma grande explosão.', 1, '★', 'Deserto', 0, 10),
+(35, 'ncn', 'Sombra Engarrafada', 'Um frasco contendo uma sombra que se move lentamente.', 1, '★★', 'Ilha Assombrada', 0, 17),
+(36, 'ncn', 'Açúcar Estranho', 'Cristais de açúcar que mudam de cor lentamente.', 1, '★', 'Ilha Assombrada', 5, 2),
+(38, 'ncn', 'Essência de Névoa Doce', 'Um líquido que cheira a chuva e doces.', 1, '★★', 'Ilha Assombrada', 10, 4),
+(42, 'ncn', 'Peixe Saltitante', 'Um peixe que continua a saltitar mesmo fora dágua.', 1, '★', 'Campos', 0, 11),
+(48, 'ncn', 'Chapéu de Marinheiro', 'Um quepe de marinheiro, surpreendentemente limpo.', 1, '★★', 'Fortaleza da Marinha', 0, 15);
 
-
+INSERT INTO consumivel (identificador_consumivel, tipo, nome, descricao, quantidade, raridade, local_encontrado, preco_de_compra, preco_de_venda, e_fabricavel) VALUES
+(1, 'con', 'Fruta do Mar Azul', 'Uma fruta de cor vibrante com um sabor salgado do mar.', 1, '★', 'Campos', 0, 5, false),
+(2, 'con', 'Fruta do Mar Vermelha', 'Uma fruta suculenta e vermelha, comum em planícies.', 1, '★', 'Campos', 0, 5, false),
+(3, 'con', 'Folha de Hortelã', 'Uma folha refrescante que revigora o espírito.', 1, '★', 'Campos', 0, 5, false),
+(4, 'con', 'Abóbora Redonduda', 'Uma abóbora nutritiva, base de muitas receitas.', 1, '★', 'Campos', 15, 6, false),
+(5, 'con', 'Arroz do Planalto', 'Grãos de arroz cultivados nas terras altas e férteis.', 1, '★', 'Campos', 10, 5, false),
+(6, 'con', 'Ovo dos Campos', 'Um ovo fresco, pego de ninhos nos campos abertos.', 1, '★', 'Campos', 10, 5, false),
+(7, 'con', 'Carne de Ave Brava', 'Carne de uma ave selvagem, um pouco dura mas saborosa.', 1, '★', 'Campos', 0, 7, false),
+(9, 'con', 'Maçã Lustrosa', 'Uma maçã tão polida que parece uma joia.', 1, '★', 'Campos', 0, 7, false),
+(10, 'con', 'Repolho Redondo', 'Um repolho comum, ingrediente básico para sopas.', 1, '★', 'Campos', 0, 5, false),
+(11, 'con', 'Alga Fresca', 'Algas colhidas na costa, com cheiro de mar.', 1, '★', 'Campos', 0, 6, false),
+(14, 'con', 'Chá Enlatado', 'Uma bebida popular na cidade, para uma pausa rápida.', 1, '★', 'Cidade', 15, 6, false),
+(15, 'con', 'Doce Amassado', 'Um doce simples que sobreviveu a uma longa viagem.', 1, '★', 'Cidade', 0, 2, false),
+(17, 'con', 'Noz Crocante', 'Uma noz dura que exige esforço para abrir.', 1, '★', 'Campos', 0, 2, false),
+(18, 'con', 'Ervas Aromáticas', 'Um punhado de ervas que perfumam qualquer prato.', 1, '★', 'Campos', 0, 3, false),
+(19, 'con', 'Neve Mágica', 'Um punhado de neve que nunca derrete e brilha suavemente.', 1, '★★', 'Neve', 0, 12, false),
+(21, 'con', 'Leite de Cabra Alpina', 'Leite cremoso de cabras que vivem nas montanhas de neve.', 1, '★', 'Neve', 10, 6, false),
+(22, 'con', 'Chocolate Amargo', 'Um chocolate intenso, preferido pelos habitantes da neve.', 1, '★', 'Neve', 15, 8, false),
+(24, 'con', 'Lamento Gelado', 'Um cristal de gelo que emite um som melancólico.', 1, '★★', 'Neve', 0, 12, false),
+(25, 'con', 'Fruta Cítrica do Oeste', 'Uma fruta azeda que cresce nos limites do deserto.', 1, '★', 'Deserto', 0, 4, false),
+(26, 'con', 'Côco do Oásis', 'Um côco cheio de água fresca, um tesouro no deserto.', 1, '★', 'Deserto', 0, 7, false),
+(27, 'con', 'Areia Mineral', 'Grãos de areia com propriedades nutritivas incomuns.', 1, '★★', 'Deserto', 0, 10, false),
+(28, 'con', 'Carne do Deserto', 'Carne seca e resistente de uma criatura do deserto.', 1, '★★', 'Deserto', 20, 8, false),
+(29, 'con', 'Geleia de Cacto Doce', 'Uma geleia feita da polpa de um cacto raro.', 1, '★★', 'Deserto', 11, 6, false),
+(30, 'con', 'Suco Refrescante Solar', 'Um suco que parece conter a luz do sol.', 1, '★', 'Deserto', 7, 4, false),
+(32, 'con', 'Fragmento de Miragem', 'Um pedaço de luz solidificada que distorce o ar ao redor.', 1, '★★', 'Deserto', 0, 12, false),
+(33, 'con', 'Cogumelo Risonho', 'Um cogumelo que parece sorrir para quem o encontra.', 1, '★', 'Ilha Assombrada', 0, 9, false),
+(34, 'con', 'Fruta Fluorescente', 'Uma fruta que brilha no escuro com uma luz azulada.', 1, '★', 'Ilha Assombrada', 0, 7, false),
+(37, 'con', 'Doce Fantasmal', 'Um doce translúcido com um sabor etéreo.', 1, '★', 'Ilha Assombrada', 13, 5, false),
+(39, 'con', 'Asa de Morcego Noturno', 'A asa de um morcego que habita as cavernas da ilha.', 1, '★', 'Ilha Assombrada', 0, 9, false),
+(40, 'con', 'Presa Venenosa', 'Uma presa oca que ainda contém vestígios de veneno.', 1, '★', 'Ilha Assombrada', 0, 7, false),
+(41, 'con', 'Amendoim Crocante', 'Um lanche simples, mas satisfatório.', 1, '★', 'Cidade', 0, 3, false),
+(43, 'con', 'Pepino de Salmoura', 'Um pepino conservado em salmoura, com sabor forte.', 1, '★', 'Cidade', 0, 5, false),
+(44, 'con', 'Ração de Soldado', 'Comida compacta e durável, parte do suprimento da Marinha.', 1, '★★', 'Fortaleza da Marinha', 10, 4, false),
+(45, 'con', 'Café Turbinado', 'Um café forte que mantém os marinheiros acordados por dias.', 1, '★', 'Fortaleza da Marinha', 8, 3, false),
+(46, 'con', 'Carne de Rei dos Mares', 'Um pedaço raro e delicioso da carne de uma besta marinha.', 1, '★★★', 'Fortaleza da Marinha', 40, 19, false),
+(47, 'con', 'Rosquinha Mordida', 'Uma rosquinha com uma única e suspeita marca de mordida.', 1, '★', 'Cidade', 0, 3, false),
+(101, 'con', 'Sushi Enrolado', 'Um prato delicado feito com peixe e alga.', 1, '★★', 'Cidade', 0, 15, true),
+(102, 'con', 'Chá de Algas', 'Um chá quente com um sabor distinto do mar.', 1, '★', 'Campos', 0, 10, true),
+(103, 'con', 'Pastel de Fruta do Diabo', 'Um pastel perigoso com um recheio imprevisível.', 1, '★★', 'Ilha Assombrada', 0, 18, true),
+(104, 'con', 'Caldo da Vovó Yuba', 'Um caldo reconfortante que cura corpo e alma.', 1, '★★', 'Deserto', 0, 22, true),
+(105, 'con', 'Tônico de Areia', 'Uma bebida revigorante feita com minerais do deserto.', 1, '★★', 'Deserto', 0, 16, true),
+(106, 'con', 'Chá Gelado de Neve', 'Um chá feito com neve mágica, extremamente refrescante.', 1, '★★', 'Neve', 0, 15, true),
+(107, 'con', 'Receita Secreta do Capitão', 'Uma refeição lendária com poder imenso.', 1, '★★★', 'Fortaleza da Marinha', 0, 27, true),
+(108, 'con', 'Carne Grelhada', 'Um pedaço de carne perfeitamente grelhado.', 1, '★★', 'Campos', 0, 18, true),
+(109, 'con', 'Pérola Caramelizada', 'Uma pérola comestível coberta por uma casca de açúcar.', 1, '★★', 'Cidade', 0, 13, true),
+(110, 'con', 'Pérola da Lua de Inverno', 'Uma iguaria rara feita apenas durante o inverno.', 1, '★★★', 'Neve', 0, 24, true),
+(111, 'con', 'Pérola do Sol Escaldante', 'Uma iguaria rara encontrada apenas no auge do verão.', 1, '★★★', 'Deserto', 0, 24, true),
+(112, 'con', 'Gelado de Algas', 'Uma sobremesa fria com um toque salgado.', 1, '★', 'Campos', 0, 15, true),
+(113, 'con', 'Omurice de Arroz', 'Arroz frito envolto em uma omelete macia.', 1, '★★', 'Cidade', 0, 15, true),
+(114, 'con', 'Bolo do Campo', 'Um bolo simples feito com ingredientes frescos dos campos.', 1, '★★', 'Campos', 0, 14, true),
+(115, 'con', 'Bombom Nebuloso', 'Um bombom que libera uma pequena névoa ao ser mordido.', 1, '★★', 'Ilha Assombrada', 0, 12, true),
+(116, 'con', 'Arroz dos Sete Mares', 'Um prato de arroz com ingredientes de várias partes do mundo.', 1, '★', 'Cidade', 0, 9, true),
+(117, 'con', 'Doce da Ilha', 'Um doce tropical feito com frutas exóticas.', 1, '★★', 'Campos', 0, 12, true),
+(118, 'con', 'Omelete dos 4 Ventos', 'Uma omelete fofa com ervas de todas as direções.', 1, '★★', 'Campos', 0, 13, true),
+(119, 'con', 'Frango Assado Estaladiço', 'Frango assado com uma pele perfeitamente crocante.', 1, '★', 'Cidade', 0, 10, true),
+(120, 'con', 'Sopa da Guarda Noturna', 'Uma sopa simples para aquecer as noites frias.', 1, '★', 'Neve', 0, 6, true),
+(121, 'con', 'Doce de Duna Dourada', 'Um doce feito com açúcar caramelizado e areia mineral.', 1, '★★', 'Deserto', 0, 16, true),
+(122, 'con', 'Bife do Abismo', 'Carne de uma criatura das profundezas, de sabor intenso.', 1, '★★★', 'Fortaleza da Marinha', 0, 35, true),
+(123, 'con', 'Sashimi do Fim do Mundo', 'Fatias de um peixe lendário que vive nos confins do oceano.', 1, '★★★', 'Fortaleza da Marinha', 0, 35, true),
+(124, 'con', 'Torta do Marujo Feliz', 'Uma torta simples que eleva o moral de qualquer um.', 1, '★', 'Cidade', 0, 10, true),
+(125, 'con', 'Doce Assombrado', 'Um doce que parece sussurrar segredos quando você come.', 1, '★★', 'Ilha Assombrada', 0, 12, true),
+(126, 'con', 'Curry do Capitão Covarde', 'Um curry picante que te dá coragem (ou desespero).', 1, '★★', 'Fortaleza da Marinha', 0, 13, true),
+(127, 'con', 'Elixir Sombrio', 'Uma poção borbulhante de origem duvidosa.', 1, '★★', 'Ilha Assombrada', 0, 18, true),
+(128, 'con', 'Poção do Dente Torto', 'Uma poção que fortalece os dentes, ou os entorta.', 1, '★★', 'Ilha Assombrada', 0, 18, true),
+(129, 'con', 'Cookie de Chocolate', 'Um cookie clássico, perfeito com um copo de leite.', 1, '★', 'Cidade', 0, 14, true),
+(130, 'con', 'Leite Condensado Alpino', 'Leite condensado feito com o melhor leite das montanhas.', 1, '★', 'Neve', 0, 11, true),
+(131, 'con', 'Doce do Silêncio Eterno', 'Um doce que, dizem, silencia até os pensamentos mais altos.', 1, '★★', 'Ilha Assombrada', 0, 17, true),
+(132, 'con', 'Cacto‑Pop Geladinho', 'Um picolé refrescante feito de cacto.', 1, '★★', 'Deserto', 0, 16, true),
+(133, 'con', 'Esfera da Miragem', 'Uma sobremesa gelatinosa que parece uma miragem distante.', 1, '★★', 'Deserto', 0, 17, true),
+(134, 'con', 'Amendoins Torrados', 'Amendoins salgados e torrados, um lanche viciante.', 1, '★', 'Cidade', 0, 5, true),
+(135, 'con', 'Pickles Pirata', 'Conserva de pepino com um toque de rum.', 1, '★', 'Cidade', 0, 10, true),
+(136, 'con', 'Frankenprato', 'Uma mistura bizarra de ingredientes que surpreendentemente é comestível.', 1, '★', 'Ilha Assombrada', 0, 5, true);
 
 INSERT INTO efeito_consumivel (identificador_consumivel, identificador_efeito) VALUES
-(1, 1), (2, 2), (3, 3), (9, 4), (10, 5), (11, 6), (14, 7), (15, 8), (17, 2), (18, 9), (19, 10), (21, 11), (22, 12), (24, NULL),
-(25, 13), (26, 14), (27, 11), (28, 15), (29, 16), (30, 17), (32, NULL),
-(33, 18), (34, 19), (37, 20), (39, NULL), (40, NULL), (41, 21), (43, 22), (44, 23), (45, 24), (46, 25), (47, 56),
-(101, 26), (102, 27), (103, 28), (104, 29), (105, 30), (106, 31), (107, 32), (108, 33), (109, 34), (110, 35), (111, 36), (112, 37), (113, 38), (114, 39), (115, 40), (116, 41), (117, 42), (118, 43), (119, 33), (120, 44), (121, 45), (122, 46), (123, 47), (124, 39), (125, 12), (126, 31), (127, 48), (128, 49), (129, 50), (130, 51), (131, 52), (132, 53), (133, 54), (134, 55), (135, 40), (136, 8);
+(1, 1), (2, 2), (3, 3), (9, 4), (10, 5), (11, 6), (14, 7), (15, 8), (17, 2), (18, 9), (19, 10), (21, 11), (22, 12), (25, 13),
+(26, 14), (27, 11), (28, 15), (29, 16), (30, 17), (33, 18), (34, 19), (37, 20), (41, 21), (43, 22), (44, 23), (45, 24),
+(46, 25), (47, 56), (101, 26), (102, 27), (103, 28), (104, 29), (105, 30), (106, 31), (107, 32), (108, 33), (109, 34),
+(110, 35), (111, 36), (112, 37), (113, 38), (114, 39), (115, 40), (116, 41), (117, 42), (118, 43), (119, 33), (120, 44),
+(121, 45), (122, 46), (123, 47), (124, 39), (125, 12), (126, 31), (127, 48), (128, 49), (129, 50), (130, 51), (131, 52),
+(132, 53), (133, 54), (134, 55), (135, 40), (136, 8);
 
 INSERT INTO receita (identificador_receita, consumivel_produzido) VALUES
-(1, 101), (2, 102), (3, 103), (4, 104), (5, 104), (6, 105), (7, 106), (8, 107), (9, 108), (10, 109),
-(11, 110), (12, 111), (13, 112), (14, 113), (15, 114), (16, 115), (17, 115), (18, 116), (19, 116), (20, 116),
-(21, 116), (22, 117), (23, 118), (24, 118), (25, 119), (26, 120), (27, 120), (28, 121), (29, 122), (30, 123),
-(31, 124), (32, 125), (33, 126), (34, 127), (35, 128), (36, 129), (37, 130), (38, 131), (39, 132), (40, 133),
-(41, 134), (42, 135), (43, 136);
+(1, 101), (2, 102), (3, 103), (4, 104), (5, 104), (6, 105), (7, 106), (8, 107), (9, 108), (10, 109), (11, 110),
+(12, 111), (13, 112), (14, 113), (15, 114), (16, 115), (17, 115), (18, 116), (19, 116), (20, 116), (21, 116),
+(22, 117), (23, 118), (24, 118), (25, 119), (26, 120), (27, 120), (28, 121), (29, 122), (30, 123), (31, 124),
+(32, 125), (33, 126), (34, 127), (35, 128), (36, 129), (37, 130), (38, 131), (39, 132), (40, 133), (41, 134),
+(42, 135), (43, 136);
 
 INSERT INTO ingrediente_consumivel (identificador_receita, identificador_consumivel) VALUES
 (1, 11), (2, 11), (3, 2), (3, 28), (4, 28), (4, 18), (5, 28), (5, 3), (6, 27), (7, 19), (7, 3), (8, 101), (8, 104), (9, 28),
-(11, 109), (11, 19), (12, 109), (12, 19), (13, 11), (13, 19), (14, 5), (14, 6), (15, 6), (17, 22), (18, 5), (18, 1), (19, 5), (19, 2),
-(20, 5), (20, 25), (21, 5), (21, 34), (22, 26), (22, 25), (23, 6), (23, 3), (24, 6), (24, 18), (25, 7), (25, 18),
-(26, 10), (26, 11), (27, 10), (27, 7), (28, 27), (28, 26), (29, 46), (29, 24), (30, 46), (31, 4), (32, 4),
-(33, 4), (33, 28), (34, 39), (35, 40), (35, 30), (36, 17), (36, 22), (37, 21), (38, 24), (38, 19),
-(39, 29), (39, 25), (40, 32), (40, 27), (41, 41), (42, 43), (42, 28);
+(11, 109), (11, 19), (12, 109), (12, 19), (13, 11), (13, 19), (14, 5), (14, 6), (15, 6), (17, 22), (18, 5), (18, 1), (19, 5),
+(19, 2), (20, 5), (20, 25), (21, 5), (21, 34), (22, 26), (22, 25), (23, 6), (23, 3), (24, 6), (24, 18), (25, 7), (25, 18),
+(26, 10), (26, 11), (27, 10), (27, 7), (28, 27), (28, 26), (29, 46), (29, 24), (30, 46), (31, 4), (32, 4), (33, 4),
+(33, 28), (34, 39), (35, 40), (35, 30), (36, 17), (36, 22), (37, 21), (38, 24), (38, 19), (39, 29), (39, 25), (40, 32),
+(40, 27), (41, 41), (42, 43), (42, 28);
 
 INSERT INTO ingrediente_nao_consumivel (identificador_receita, identificador_nao_consumivel) VALUES
 (1, 42), (6, 38), (10, 20), (10, 36), (15, 12), (16, 35), (16, 38), (17, 35), (30, 35), (31, 12), (32, 38), (34, 35), (37, 36);
 
-INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
-(DEFAULT, 5, 1, 'Poder da Fruta do Eco', 'fruta');
-INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
-(DEFAULT, 15, 0, 'Mordida Feroz', 'soco');
-INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
-(DEFAULT, 10, 2, 'Golpe de Espada', 'espada');
-INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
-(DEFAULT, 8, 1, 'Tiro de Pistola', 'projétil');
-INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
-(DEFAULT, 12, 3, 'Avalanche', 'soco');
-INSERT INTO Habilidade (identificador_habilidade, dano, custo, nome, tipo) VALUES
-(DEFAULT, 20, 4, 'Transformacao', 'fruta');
+-- =========== Inserções no Restante das Tabelas ===========
+INSERT INTO campo_batalha (tipo_terreno, qtd_de_pessoas, tamanho) VALUES
+('Floresta', 1, 'Pequeno'), ('Floresta', 1, 'Medio'), ('Urbano', 5, 'Pequeno'), ('Urbano', 1, 'Medio'),
+('Neve', 3, 'Pequeno'), ('Costa', 10, 'Medio'), ('Deserto', 1, 'Grande'), ('Deserto', 0, 'Pequeno'),
+('Deserto', 1, 'Medio'), ('Misterioso', 0, 'Medio'), ('Militar', 10, 'Grande'), ('Aquatico', 1, 'Enorme');
 
-INSERT INTO Ilha (ID, SalaID, TipoSala, Tamanho, Nome, Quantidade_sala, Tipo) VALUES
-(DEFAULT, NULL, NULL, 'Grande', 'Ilha Principal', 3, 'Continente');
-INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
-(DEFAULT, 301, 'Porto', 'Ilha da Cidade', 5, 'Urbana');
-INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
-(DEFAULT, 401, 'Vila', 'Ilha do Norte', 2, 'Gélida');
-INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
-(DEFAULT, 501, 'Campo de Batalha', 'Ilha do Deserto', 3, 'Desértica');
-INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
-(DEFAULT, 701, 'Campo de Batalha', 'Ilha Fantasma', 1, 'Misteriosa');
-INSERT INTO Ilha (ID, SalaID, TipoSala, Nome, Quantidade_sala, Tipo) VALUES
-(DEFAULT, 801, 'Campo de Batalha', 'Ilha da Fortaleza', 1, 'Militar');
+INSERT INTO vila (total_salas, informacoes) VALUES
+(1, 'Primeira vila encontrada, amigavel.'),
+(1, 'Vila fria, moradores desconfiados.'),
+(1, 'Vila com medica famosa.');
 
-INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
-(1, 1, 1, 0);
-INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
-(2, 2, 1, 1);
-INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
-(3, 3, 1, 0);
-INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
-(4, 4, 1, 0);
-INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
-(5, 5, 1, 2);
-INSERT INTO Mapa (MapaID, IlhaID, TotalIlhas, TotalItensChave) VALUES
-(6, 6, 1, 3);
+INSERT INTO porto (qtd_barcos, capacidade, sendo_ilha) VALUES
+(5, 100, FALSE);
 
-INSERT INTO Jogador (idJogador, idHabilidade, idMapa, IlhaID, Energia, Vida, Nivel, Sorte, VidaAtual, DanoBase, ExperienciaAtual, CoordenadaX, CoordenadaY) VALUES
-(DEFAULT, 1, 1, 1, 100, 100, 1, 0, 100, 10, 0, 0, 0);
+INSERT INTO ilha (sala_id) VALUES
+(13), (16), (14), (7), (10), (11);
 
-INSERT INTO Habitante (identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y) VALUES
-(DEFAULT, 1, 1, 'rec', 'Aldeao', 'Aldeao que acorda o protagonista.', NULL, 10, 5);
-INSERT INTO Habitante (identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y) VALUES
-(DEFAULT, 6, 6, 'coz', 'Medico', 'Medica famosa da vila da neve.', 'curador', 15, 10);
-INSERT INTO Habitante (identificador_habitante, identificador_mapa, IlhaID, tipo, nome, descricao, especialidade, coordenada_x, coordenada_y) VALUES
-(DEFAULT, 5, 5, 'hbt', 'Morador Secreto', 'Morador escondido na ilha fantasma.', NULL, 50, 50);
+INSERT INTO mapa (id_mapa, id_ilha) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6);
 
-INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
-(DEFAULT, 2, 1, 1, 'A Fera', 'Animal selvagem que ataca plantacoes.', 10, 10, 150, 5, 20, 50, 'Animal');
-INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
-(DEFAULT, 3, 2, 2, 'Comandante da Marinha', 'Lider corrupto da Marinha na cidade.', 25, 25, 200, 10, 30, 100, 'Humanoide');
-INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
-(DEFAULT, 4, 2, 2, 'Lider Rebelde', 'Lider de um grupo de rebeldes que conhece a irma do protagonista.', 20, 15, 120, 8, 15, 80, 'Humanoide');
-INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
-(DEFAULT, 3, 4, 4, 'Lider Pirata do Deserto', 'Chefao dos piratas no deserto.', 5, 5, 250, 15, 40, 150, 'Humanoide');
-INSERT INTO Chefe (idChefe, idHabilidade, idMapa, IlhaID, Nome, Descrição, CoordenadaX, CoordenadaY, Vida, Nivel, DanoBase, Experiencia, TipoInimigo) VALUES
-(DEFAULT, 6, 6, 6, 'Marinheiro Nobre - Forma Final', 'Vilao final com dupla personalidade.', 40, 40, 300, 20, 50, 200, 'Humanoide');
+INSERT INTO jogador (id_personagem, id_habilidade, id_mapa_pk, nome, dano_base, coordenada_x, coordenada_y) VALUES
+(1, 1, 1, 'Protagonista', 10, 0, 0);
 
-INSERT INTO TipoItem (IdentificadorItem, Tipo) VALUES
-(DEFAULT, 'Fruta');
+INSERT INTO habitante (id_mapa_pk, nome, tipo, descricao, especialidade, coordenada_x, coordenada_y) VALUES
+(1, 'Aldeao', 'rec', 'Aldeao que acorda o protagonista.', NULL, 10, 5),
+(6, 'Medico', 'coz', 'Medica famosa da vila da neve.', NULL, 15, 10),
+(5, 'Morador Secreto', 'hbt', 'Morador escondido na ilha fantasma.', NULL, 50, 50);
 
-INSERT INTO Item (ItemID, Nome, Descricao, Tipo) VALUES
-(DEFAULT, 'Fruta Estranha', 'Fruta de gosto horrivel que concede poderes de eco.', 'Fruta');
+INSERT INTO chefe (id_habilidade, id_mapa_pk, nome, dano, vida, nivel, experiencia, coordenada_x, coordenada_y) VALUES
+(2, 1, 'A Fera', 20, 150, 5, 50, 10, 10),
+(3, 2, 'Comandante da Marinha', 30, 200, 10, 100, 25, 25),
+(4, 2, 'Lider Rebelde', 15, 120, 8, 80, 20, 15),
+(3, 4, 'Lider Pirata do Deserto', 40, 250, 15, 150, 5, 5),
+(6, 6, 'Marinheiro Nobre - Final', 50, 300, 20, 200, 40, 40);
 
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(201, 'Campo de Batalha', 'Clareira Selvagem', 1, 'Pequeno', 'Floresta', 1);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(202, 'Campo de Batalha', 'Bosque Assombrado', 1, 'Medio', 'Floresta', 1);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(302, 'Campo de Batalha', 'Setor de Registros', 1, 'Pequeno', 'Urbano', 5);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(303, 'Campo de Batalha', 'Praca Central', 1, 'Medio', 'Urbano', 1);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(402, 'Campo de Batalha', 'Trilha Congelada', 1, 'Pequeno', 'Neve', 3);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(403, 'Campo de Batalha', 'Litoral Norte', 1, 'Medio', 'Costa', 10);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(501, 'Campo de Batalha', 'Dunas Arenosas', 1, 'Grande', 'Deserto', 1);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(502, 'Campo de Batalha', 'Ruinas Antigas', 1, 'Pequeno', 'Deserto', 0);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(503, 'Campo de Batalha', 'Oasis da Batalha', 1, 'Medio', 'Deserto', 1);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(701, 'Campo de Batalha', 'Ilha Fantasma', 1, 'Medio', 'Misterioso', 0);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(801, 'Campo de Batalha', 'Fortaleza da Marinha', 1, 'Grande', 'Militar', 10);
-INSERT INTO Campo_de_batalha (SalaID, TipoSala, Nome, TotalSalas, Tamanho, Tipo, QtdInimigos) VALUES
-(802, 'Campo de Batalha', 'Aguas Tempestuosas', 1, 'Enorme', 'Aquatico', 1);
+INSERT INTO lacaio (id_habilidade, id_mapa_pk, nome, dano, vida, nivel, experiencia, coordenada_x, coordenada_y) VALUES
+(2, 1, 'Lobo Selvagem', 8, 50, 2, 10, 12, 12),
+(4, 2, 'Soldado Marinha', 10, 60, 3, 15, 30, 30);
 
-INSERT INTO Vila (SalaID, TipoSala, Nome, TotalSalas, Informacoes) VALUES
-(101, 'Vila', 'Vila Inicial', 1, 'Primeira vila encontrada, amigavel.');
-INSERT INTO Vila (SalaID, TipoSala, Nome, TotalSalas, Informacoes) VALUES
-(401, 'Vila', 'Vilarejo do Norte', 1, 'Vila fria, moradores desconfiados.');
-INSERT INTO Vila (SalaID, TipoSala, Nome, TotalSalas, Informacoes) VALUES
-(601, 'Vila', 'Vila da Neve', 1, 'Vila com medica famosa.');
+INSERT INTO instancia_lacaio (identificador_lacaio, vida_atual) VALUES
+(1, 50),
+(2, 60);
 
-INSERT INTO Porto (SalaID, TipoSala, Nome, TotalSalas, QtdBarcos, Capacidade, SentidoIlha) VALUES
-(301, 'Porto', 'Porto da Cidade', 1, 5, 100, 'Leste');
+INSERT INTO aliado (id_mapa_pk, nome, descricao, vida, nivel, dano_base) VALUES
+(3, 'Shuan', 'Aliado caçador do vilarejo do norte.', 120, 7, 15),
+(5, 'Silvie', 'Lider dos moradores da ilha fantasma.', 150, 9, 20);
 
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 1, 1, 1, 201, 'Campo de Batalha', 2, 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 1, 1, 1, 202, 'Campo de Batalha', 2, 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 2, 2, 1, 301, 'Porto', 2, 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 2, 2, 1, 302, 'Campo de Batalha', 7, 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 2, 2, 1, 303, 'Campo de Batalha', 7, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 3, 3, 1, 402, 'Campo de Batalha', 1, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 3, 3, 1, 403, 'Campo de Batalha', 1, 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 4, 4, 1, 501, 'Campo de Batalha', 1, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 4, 4, 1, 502, 'Campo de Batalha', 1, 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 4, 4, 1, 503, 'Campo de Batalha', 1, 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 5, 5, 1, 701, 'Campo de Batalha', 4, 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 6, 6, 1, 801, 'Campo de Batalha', 1, 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 6, 6, 1, 802, 'Campo de Batalha', 1, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 6, 6, 1, 801, 'Campo de Batalha', 9, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido');
-INSERT INTO Missão (MissaoID, MapaID, IlhaID, idLogador, SalaID, TipoSala, idRecrutador, Descricao, Nome) VALUES
-(DEFAULT, 6, 6, 1, 801, 'Campo de Batalha', 9, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
+INSERT INTO habilidade_aliado (id_aliado, id_habilidade) VALUES
+(1, 5);
 
-INSERT INTO ItemMissão (MissaoID, IdentificadorItem) VALUES
-(12, 11);
+INSERT INTO missao (nome, descricao, id_mapa_pk, id_jogador, id_recrutador, tipo_sala, sala_id) VALUES
+('Animal Selvagem', 'Derrotar o animal selvagem que atacou o protagonista.', 1, 1, 1, 'campo_batalha', 1),
+('A Fera da Vila', 'Enfrentar a fera das plantacoes.', 1, 1, 1, 'campo_batalha', 2),
+('Vendedor Agressao', 'Salvar o vendedor de frutas.', 2, 1, 1, 'porto', 16),
+('Infiltracao Prisao', 'Invadir registros da prisao.', 2, 1, 3, 'campo_batalha', 3),
+('Comandante da Marinha', 'Lutar contra o comandante da Marinha.', 2, 1, 3, 'campo_batalha', 4),
+('Ataque de Lobos', 'Lutar contra lobos no caminho.', 3, 1, 1, 'campo_batalha', 5),
+('Defesa do Vilarejo', 'Defender vilarejo de piratas.', 3, 1, 1, 'campo_batalha', 6),
+('Verme da Areia', 'Lutar contra o verme no deserto.', 4, 1, 1, 'campo_batalha', 7),
+('Estrategia do Deserto', 'Diminuir piratas no deserto.', 4, 1, 1, 'campo_batalha', 8),
+('Lider Pirata do Deserto', 'Derrotar lider pirata.', 4, 1, 1, 'campo_batalha', 9),
+('Treinamento Secreto', 'Passar por treinamento e coletar materiais.', 5, 1, 3, 'campo_batalha', 10),
+('Favores na Fortaleza', 'Realizar favores para os marinheiros.', 6, 1, 1, 'campo_batalha', 11),
+('Besta Marinha', 'Derrotar besta marinha.', 6, 1, 1, 'campo_batalha', 12),
+('Marinheiro Nobre - Hibrido', 'Lutar contra Marinheiro Nobre hibrido.', 6, 1, 5, 'campo_batalha', 11),
+('Marinheiro Nobre - Final', 'Luta final contra Marinheiro Nobre completo.', 6, 1, 5, 'campo_batalha', 11);
 
-INSERT INTO Mar (MarID, Mostro, Obstaculo) VALUES
-(DEFAULT, 'Kraken', 'Corais');
-INSERT INTO Mar (MarID, Mostro, Obstaculo) VALUES
-(DEFAULT, 'Serpente Marinha', 'Redemoinhos');
+INSERT INTO negociacao (identificador_item, identificador_jogador, identificador_vendedor, quantidade, preco_final, tipo) VALUES
+(3, 1, 1, 5, 250.00, 'compra');
 
-INSERT INTO Corredor_maritimo (marítimoID, IlhaA, IlhaB) VALUES
-(DEFAULT, 1, 2);
-INSERT INTO Corredor_maritimo (marítimoID, IlhaA, IlhaB) VALUES
-(DEFAULT, 2, 3);
-INSERT INTO Corredor_maritimo (marítimoID, IlhaA, IlhaB) VALUES
-(DEFAULT, 3, 4);
+INSERT INTO Inventario (id_jogador, nome) VALUES
+(1, 'Bolsa de Itens');
 
-INSERT INTO MapaMar (MapaID, IlhaID, MarID) VALUES
-(1, 1, 1);
-INSERT INTO MapaMar (MapaID, IlhaID, MarID) VALUES
-(2, 2, 2);
-
-INSERT INTO Controller_mar (marítimoID, MarID) VALUES
+INSERT INTO ItemInventario (id_inventario, identificador_item) VALUES
 (1, 1);
-INSERT INTO Controller_mar (marítimoID, MarID) VALUES
-(2, 2);
 
-INSERT INTO Barco (Tipo, Melhoria, Nome, Nivel) VALUES
-('Canoa', 'Nenhuma', 'Pequena Canoa', 1);
-INSERT INTO Barco (Tipo, Melhoria, Nome, Nivel) VALUES
-('Barco a Vela', 'Vela Reforçada', 'Vento Veloz', 5);
-INSERT INTO Barco (Tipo, Melhoria, Nome, Nivel) VALUES
-('Navio Pirata', 'Canhoes', 'Terror dos Mares', 10);
+INSERT INTO ItemMissao (missao_id, identificador_item) VALUES
+(1, 1);
 
-INSERT INTO BarcoPorto (TipoSala, TipoBarco, SalaID) VALUES
-('Porto', 'Canoa', 301);
-INSERT INTO BarcoPorto (TipoSala, TipoBarco, SalaID) VALUES
-('Porto', 'Barco a Vela', 301);
+INSERT INTO batalha (identificador_jogador, identificador_chefe) VALUES
+(1, 1);
 
-INSERT INTO Controller_barco (IDBarco, marítimoID) VALUES
-('Canoa', 1);
-INSERT INTO Controller_barco (IDBarco, marítimoID) VALUES
-('Barco a Vela', 2);
+INSERT INTO batalha_instancia_lacaio (identificador_batalha, identificador_instancia_lacaio) VALUES
+(1, 1);
