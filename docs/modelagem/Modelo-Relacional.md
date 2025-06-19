@@ -130,4 +130,4 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
 | `2.4` | Adição do diagrama relacional final | [Pablo Serra](https://github.com/Pabloserrapxx) | 02/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
 | `2.5` | Normalização do diagrama dos Personagens | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
 | `2.6` | Correção das restrições de chaves do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 17/06/2025 |
-| `2.7` | Atualização do diagrama do Mapa | [Israel Thalles](https://github.com/IsraelThalles) | 17/06/2025 |  |  |
+| `2.7` | Atualização do diagrama do Mapa | [Israel Thalles](https://github.com/IsraelThalles) | 17/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 |
