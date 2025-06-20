@@ -2088,15 +2088,6 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>tipo</code></td>
-          <td>Identificador de tipo de habitante.</td>
-          <td>Texto</td>
-          <td>3</td>
-          <td>"hbt", "rec", "coz", "ven"</td>
-          <td>-</td>
-          <td>CHECK</td>
-        </tr>
-        <tr>
           <td><code>nome</code></td>
           <td>Nome do habitante.</td>
           <td>Texto</td>
@@ -2487,7 +2478,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Identificador de tipo de personagem.</td>
           <td>Texto</td>
           <td>3</td>
-          <td>"hbt", "rec", "coz", "ven", "ali", "jog", "lac", "che"</td>
+          <td>"hbt", "rct", "coz", "ven", "ali", "jog", "lac", "che"</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
         </tr>
@@ -2535,11 +2526,11 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>PK, FK</td>
+          <td>FK</td>
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>tipo</code></td>
+          <td><code>tipo_inventario</code></td>
           <td>Identificador de tipo de inventário.</td>
           <td>Texto</td>
           <td>3</td>
@@ -2582,7 +2573,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -2591,7 +2582,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -2629,7 +2620,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -2638,7 +2629,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -2676,7 +2667,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -2685,7 +2676,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -2723,7 +2714,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -2732,7 +2723,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -2780,7 +2771,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>identificador_jogador</code></td>
@@ -2789,7 +2780,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>identificador_vendedor</code></td>
@@ -2798,7 +2789,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>quantidade</code></td>
@@ -2819,7 +2810,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Default = 1 / Not NULL</td>
         </tr>
         <tr>
-          <td><code>tipo</code></td>
+          <td><code>tipo_negociacao</code></td>
           <td>Identificador de tipo de negociação.</td>
           <td>Texto</td>
           <td>6</td>
@@ -2872,7 +2863,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>identificador_jogador</code></td>
@@ -2881,7 +2872,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>identificador_chefe</code></td>
@@ -2890,16 +2881,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>6</td>
           <td>Padrão do tipo ID</td>
           <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
-        </tr>
-        <tr>
-          <td><code>identificador_instancia_lacaio</code></td>
-          <td>Identificador único da instância de lacaio.</td>
-          <td>ID</td>
-          <td>6</td>
-          <td>Padrão do tipo ID</td>
-          <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
@@ -3030,3 +3012,4 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
 | `1.8` | Atualização das restrições e valores permitidos das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 |
 | `1.9` | Atualização das tabelas referentes ao mapa | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 |
+| `1.11` | Atualização do dicionário dos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 17/06/2025 |  |  |
