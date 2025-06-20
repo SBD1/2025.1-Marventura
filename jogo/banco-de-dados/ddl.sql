@@ -157,3 +157,146 @@ CREATE TRIGGER atribui_id_habilidade
 BEFORE INSERT ON habilidade
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE TipoMapa (
+    id_mapa ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ilh', 'mar'))
+);
+
+CREATE TRIGGER atribui_id_tipomapa
+BEFORE INSERT ON TipoMapa
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Mar (
+    id_mar ID PRIMARY KEY,
+    chave_imagem CHAR(15) NOT NULL
+);
+
+CREATE TRIGGER atribui_id_mar
+BEFORE INSERT ON Mar
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Barco (
+    id_barco ID PRIMARY KEY,
+    id_mar ID NOT NULL REFERENCES Mar(id_mar),
+    tipo CHAR(10) NOT NULL CHECK (tipo IN ('Canoa', 'Veleiro', 'Navio'))
+);
+
+CREATE TRIGGER atribui_id_barco
+BEFORE INSERT ON Barco
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Ilha (
+    id_ilha ID PRIMARY KEY,
+    id_mapa ID NOT NULL REFERENCES TipoMapa(id_mapa),
+    nome CHAR(30),
+    visitada BOOLEAN
+);
+
+CREATE TRIGGER atribui_id_ilha
+BEFORE INSERT ON Ilha
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE ConexaoEntreIlhas (
+    id_ilha_origem ID NOT NULL REFERENCES Ilha(id_ilha),
+    id_ilha_destino ID NOT NULL REFERENCES Ilha(id_ilha),
+    bloqueada BOOLEAN,
+    PRIMARY KEY (id_ilha_origem, id_ilha_destino)
+);
+
+CREATE TABLE Area (
+    id_area ID PRIMARY KEY,
+    id_ilha ID NOT NULL REFERENCES Ilha(id_ilha),
+    nome CHAR(30),
+    tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
+    chave_imagem_fundo CHAR(50),
+    chave_imagem_frente CHAR(50),
+    visitada BOOLEAN
+);
+
+CREATE TRIGGER atribui_id_area
+BEFORE INSERT ON Area
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE ConexaoEntreAreas (
+    id_area_origem ID NOT NULL REFERENCES Area(id_area),
+    id_area_destino ID NOT NULL REFERENCES Area(id_area),
+    PRIMARY KEY (id_area_origem, id_area_destino)
+);
+
+CREATE TABLE Evento (
+    id_evento ID PRIMARY KEY,
+    id_ilha_origem ID,
+    id_ilha_destino ID,
+    id_area_origem ID,
+    id_area_destino ID,
+    tipo_evento CHAR(12) NOT NULL CHECK (tipo_evento IN ('embarcar', 'investigar', 'mudar_area')),
+    ponto_geracao_x SMALLINT,
+    ponto_geracao_y SMALLINT,
+    orientacao CHAR(8) CHECK (orientacao IN ('esquerda', 'direita')),
+    chance_sucesso DECIMAL,
+    FOREIGN KEY (id_ilha_origem, id_ilha_destino) REFERENCES ConexaoEntreIlhas(id_ilha_origem, id_ilha_destino),
+    FOREIGN KEY (id_area_origem, id_area_destino) REFERENCES ConexaoEntreAreas(id_area_origem, id_area_destino)
+);
+
+CREATE TRIGGER atribui_id_evento
+BEFORE INSERT ON Evento
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE TipoElementoEspacial (
+    id_elemento_espacial ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('are', 'obs'))
+);
+
+CREATE TRIGGER atribui_id_tipoelementoespacial
+BEFORE INSERT ON TipoElementoEspacial
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Obstaculo (
+    id_obstaculo ID PRIMARY KEY,
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    chave_imagem CHAR(50),
+    x SMALLINT,
+    y SMALLINT,
+    largura SMALLINT,
+    altura SMALLINT
+);
+
+CREATE TRIGGER atribui_id_obstaculo
+BEFORE INSERT ON Obstaculo
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE AreaInterativa (
+    id_area_interativa ID PRIMARY KEY,
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    id_evento ID NOT NULL REFERENCES Evento(id_evento),
+    chave_imagem CHAR(50),
+    x SMALLINT,
+    y SMALLINT,
+    largura SMALLINT,
+    altura SMALLINT
+);
+
+CREATE TRIGGER atribui_id_areainterativa
+BEFORE INSERT ON AreaInterativa
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE RecompensaDeExploracao (
+    id_recompensa ID PRIMARY KEY,
+    id_area_interativa ID NOT NULL REFERENCES AreaInterativa(id_area_interativa),
+    data_da_tentativa TIMESTAMP
+);
+
+CREATE TRIGGER atribui_id_recompensadeexploracao
+BEFORE INSERT ON RecompensaDeExploracao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
