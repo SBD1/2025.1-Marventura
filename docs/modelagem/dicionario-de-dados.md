@@ -1390,11 +1390,11 @@ As tabelas 1 a 41 a seguir representam o dicionário de dados do jogo **Marventu
         <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo do elemento espacial.</td>
-          <td>FK</td>
-          <td>6</td>
-          <td>Padrão do tipo ID</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"are", "obs", "cam"</td>
           <td>-</td>
-          <td>Not NULL</td>
+          <td>Not NULL / CHECK</td>
         </tr>
       </tbody>
     </table>
