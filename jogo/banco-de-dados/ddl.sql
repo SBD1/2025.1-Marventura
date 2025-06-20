@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
 CREATE TABLE tipo_item (
     identificador_item ID PRIMARY KEY,
     tipo CHAR(3) NOT NULL CHECK (Tipo IN ('ace', 'arm', 'fru', 'con', 'ncn'))
@@ -236,10 +238,10 @@ CREATE TABLE Evento (
     id_area_origem ID,
     id_area_destino ID,
     tipo_evento CHAR(12) NOT NULL CHECK (tipo_evento IN ('embarcar', 'investigar', 'mudar_area')),
-    ponto_geracao_x SMALLINT,
-    ponto_geracao_y SMALLINT,
+    ponto_geracao_x SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    ponto_geracao_y SMALLINT CHECK (ponto_geracao_y BETWEEN 0 AND 5000),
     orientacao CHAR(8) CHECK (orientacao IN ('esquerda', 'direita')),
-    chance_sucesso DECIMAL,
+    chance_sucesso DECIMAL CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
     FOREIGN KEY (id_ilha_origem, id_ilha_destino) REFERENCES ConexaoEntreIlhas(id_ilha_origem, id_ilha_destino),
     FOREIGN KEY (id_area_origem, id_area_destino) REFERENCES ConexaoEntreAreas(id_area_origem, id_area_destino)
 );
@@ -263,10 +265,10 @@ CREATE TABLE Obstaculo (
     id_obstaculo ID PRIMARY KEY,
     id_area ID NOT NULL REFERENCES Area(id_area),
     chave_imagem CHAR(50),
-    x SMALLINT,
-    y SMALLINT,
-    largura SMALLINT,
-    altura SMALLINT
+    x SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000)
 );
 
 CREATE TRIGGER atribui_id_obstaculo
@@ -279,10 +281,10 @@ CREATE TABLE AreaInterativa (
     id_area ID NOT NULL REFERENCES Area(id_area),
     id_evento ID NOT NULL REFERENCES Evento(id_evento),
     chave_imagem CHAR(50),
-    x SMALLINT,
-    y SMALLINT,
-    largura SMALLINT,
-    altura SMALLINT
+    x SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000)
 );
 
 CREATE TRIGGER atribui_id_areainterativa
@@ -293,10 +295,192 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE RecompensaDeExploracao (
     id_recompensa ID PRIMARY KEY,
     id_area_interativa ID NOT NULL REFERENCES AreaInterativa(id_area_interativa),
-    data_da_tentativa TIMESTAMP
+    data_da_tentativa TIMESTAMPTZ NOT NULL DEFAULT now(),
+    EXCLUDE USING GIST (
+        id_area_interativa WITH =,
+        tstzrange(data_da_tentativa, data_da_tentativa + interval '5 minutes') WITH &&
+    )
 );
 
 CREATE TRIGGER atribui_id_recompensadeexploracao
 BEFORE INSERT ON RecompensaDeExploracao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE TipoPersonagem (
+    id_personagem ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('hbt', 'rct', 'coz', 'ven', 'ali', 'jog', 'lac', 'che'))
+);
+
+CREATE TRIGGER atribui_id_tipopersonagem
+BEFORE INSERT ON TipoPersonagem
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Jogador (
+    id_jogador ID PRIMARY KEY,
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    energia SMALLINT,
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    sorte SMALLINT,
+    vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
+    experiencia_atual SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 600)
+);
+
+CREATE TRIGGER atribui_id_jogador
+BEFORE INSERT ON Jogador
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Aliado (
+    id_aliado ID PRIMARY KEY,
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida)
+);
+
+CREATE TRIGGER atribui_id_aliado
+BEFORE INSERT ON Aliado
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Chefe (
+    id_chefe ID PRIMARY KEY,
+    id_habilidade ID NOT NULL REFERENCES Habilidade(identificador_habilidade),
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    nome CHAR(28),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 10 AND 60),
+    experiencia SMALLINT
+);
+
+CREATE TRIGGER atribui_id_chefe
+BEFORE INSERT ON Chefe
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Lacaio (
+    id_lacaio ID PRIMARY KEY,
+    id_habilidade ID NOT NULL REFERENCES Habilidade(identificador_habilidade),
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    nome CHAR(15),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT,
+    nivel SMALLINT CHECK ( nivel BETWEEN 0 AND 60),
+    experiencia SMALLINT
+);
+
+CREATE TRIGGER atribui_id_lacaio
+BEFORE INSERT ON Lacaio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Habitante (
+    id_habitante ID PRIMARY KEY,
+    id_area ID NOT NULL REFERENCES Area(id_area),
+    nome CHAR(15),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    especialidade char(3) NOT NULL CHECK (especialidade IN ('arm', 'ace', 'com')),
+);
+
+CREATE TRIGGER atribui_id_habitante
+BEFORE INSERT ON Habitante
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE InstanciaLacaio (
+    id_instancia_lacaio ID PRIMARY KEY,
+    id_lacaio ID NOT NULL REFERENCES Lacaio(id_lacaio),
+    id_area ID NOT NULL,
+    vida_atual SMALLINT
+);
+
+CREATE TRIGGER atribui_id_instancialacaio
+BEFORE INSERT ON InstanciaLacaio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE Batalha (
+    id_batalha ID PRIMARY KEY,
+    id_jogador ID NOT NULL REFERENCES Jogador(id_jogador),
+    id_aliado ID NOT NULL REFERENCES Aliado(id_aliado),
+    id_chefe ID NOT NULL REFERENCES Chefe(id_chefe)
+);
+
+CREATE TRIGGER atribui_id_batalha
+BEFORE INSERT ON Batalha
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE BatalhaInstanciaLacaio (
+    id_batalha ID NOT NULL REFERENCES Batalha(id_batalha),
+    id_instancia_lacaio ID NOT NULL REFERENCES InstanciaLacaio(id_instancia_lacaio),
+    PRIMARY KEY (id_batalha, id_instancia_lacaio)
+);
+
+CREATE TABLE HabilidadeJogador (
+    id_jogador ID NOT NULL REFERENCES Jogador(id_jogador),
+    id_habilidade ID NOT NULL REFERENCES Habilidade(identificador_habilidade),
+    PRIMARY KEY (id_jogador, id_habilidade)
+);
+
+CREATE TABLE HabilidadeAliado (
+    id_aliado ID NOT NULL REFERENCES Aliado(id_aliado),
+    id_habilidade ID NOT NULL REFERENCES Habilidade(identificador_habilidade),
+    PRIMARY KEY (id_aliado, id_habilidade)
+);
+
+CREATE TABLE ReceitasConhecidas (
+    id_jogador ID NOT NULL REFERENCES Jogador(id_jogador),
+    id_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    PRIMARY KEY (id_jogador, id_receita)
+);
+
+CREATE TABLE Inventario (
+    id_inventario ID PRIMARY KEY,
+    id_personagem ID NOT NULL REFERENCES TipoPersonagem(id_personagem),
+    tipo_inventario CHAR(3) NOT NULL CHECK (tipo_inventario IN ('ger', 'kit'))
+);
+
+CREATE TRIGGER atribui_id_inventario
+BEFORE INSERT ON Inventario
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE ItemInventario (
+    id_inventario ID NOT NULL REFERENCES Inventario(id_inventario),
+    id_item ID NOT NULL REFERENCES tipo_item(identificador_item),
+    PRIMARY KEY (id_inventario, id_item)
+);
+
+CREATE TABLE Negociacao (
+    id_negociacao ID PRIMARY KEY,
+    id_item ID NOT NULL REFERENCES tipo_item(identificador_item),
+    id_jogador ID NOT NULL REFERENCES Jogador(id_jogador),
+    id_vendedor ID NOT NULL REFERENCES Habitante(id_habitante),
+    quantidade SMALLINT CHECK (quantidade BETWEEN 0 AND 99),
+    preco_final SMALLINT,
+    tipo_negociacao CHAR(6) NOT NULL CHECK (tipo_negociacao IN ('compra', 'venda'))
+);
+
+CREATE TRIGGER atribui_id_negociacao
+BEFORE INSERT ON Negociacao
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
