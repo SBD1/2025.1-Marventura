@@ -1137,15 +1137,6 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>pier</code></td>
-          <td>Identificador único da área onde está localizado o porto.</td>
-          <td>ID</td>
-          <td>6</td>
-          <td>Padrão do tipo ID</td>
-          <td>FK</td>
-          <td>Unique / Not NULL / CHECK</td>
-        </tr>
-        <tr>
           <td><code>nome</code></td>
           <td>Nome da ilha.</td>
           <td>Texto</td>
