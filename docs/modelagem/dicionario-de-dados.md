@@ -67,7 +67,7 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 
 ## Estrutura do Dicionário de Dados
 
-As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
+As tabelas 1 a 41 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
 
 ### Tabela: `tipo_item`
 
@@ -1637,8 +1637,8 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>id_conexao_ilha</code></td>
-          <td>Identificador da conexão entre duas ilhas. Atributo específico do evento "embarcar".</td>
+          <td><code>id_conexao_ilha_origem</code></td>
+          <td>Identificador da ilha de origem. Atributo específico do evento "embarcar".</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -1646,8 +1646,26 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>id_conexao_area</code></td>
-          <td>Identificador da conexão entre duas áreas. Atributo específico do evento "mudar_area".</td>
+          <td><code>id_conexao_ilha_destino</code></td>
+          <td>Identificador da ilha de destino. Atributo específico do evento "embarcar".</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_conexao_area_origem</code></td>
+          <td>Identificador da área de origem. Atributo específico do evento "mudar_area".</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_conexao_area_destino</code></td>
+          <td>Identificador da área de destino. Atributo específico do evento "mudar_area".</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -2954,7 +2972,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
   </div>
 </details>
 
-### Tabela: `Missão`
+### Tabela: `missao`
 
 <details>
   <summary>Tabela 40 – Dicionário de Dados da Tabela Missão
@@ -2976,7 +2994,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
       </thead>
       <tbody>
         <tr>
-          <td><code>MissãoID</code></td>
+          <td><code>id_missao</code></td>
           <td>Identificador único da missão.</td>
           <td>ID</td>
           <td></td>
@@ -2985,7 +3003,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / Unique / CHECK</td>
         </tr>
         <tr>
-          <td><code>MapaID</code></td>
+          <td><code>id_mapa</code></td>
           <td>Identificador único do mapa onde a missão ocorre.</td>
           <td>ID</td>
           <td></td>
@@ -2994,7 +3012,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>idJogador</code></td>
+          <td><code>id_jogador</code></td>
           <td>Identificador único do jogador associado à missão.</td>
           <td>ID</td>
           <td></td>
@@ -3003,8 +3021,8 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
         <tr>
-          <td><code>SalaID</code></td>
-          <td>Identificador único da sala ou instância onde a missão está ativa.</td>
+          <td><code>id_area</code></td>
+          <td>Identificador único da área ou instância onde a missão está ativa.</td>
           <td>ID</td>
           <td></td>
           <td>IDs da tabela Sala</td>
@@ -3012,16 +3030,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL / CHECK</td>
         </tr>
          <tr>
-          <td><code>TipoSala</code></td>
-          <td>Identificador do tipo de sala relacionado à missão.</td>
-          <td>ID</td>
-          <td></td>
-          <td>IDs da tabela TipoSala</td>
-          <td>FK</td>
-          <td>Not NULL / CHECK</td>
-        </tr>
-         <tr>
-          <td><code>idRecrutador</code></td>
+          <td><code>id_recrutador</code></td>
           <td>Identificador único do NPC ou entidade que ofereceu a missão.</td>
           <td>ID</td>
           <td></td>
@@ -3039,7 +3048,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Not NULL</td>
         </tr>
          <tr>
-          <td><code>Nome</code></td>
+          <td><code>nome</code></td>
           <td>Nome ou título curto da missão.</td>
           <td>Texto</td>
           <td>100</td>
@@ -3055,6 +3064,97 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
 
 ---
 
+### Tabela `caminho`
+
+<details>
+  <summary>Tabela 41 – Dicionário de Dados da Tabela Caminho
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 41 – Dicionário de Dados da Tabela Caminho</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_caminho</code></td>
+          <td>Identificador único do caminho.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_area</code></td>
+          <td>Identificador da área onde o caminho está localizado.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo_terreno</code></td>
+          <td>Identificador de tipo de terreno do caminho.</td>
+          <td>Texto</td>
+          <td>6</td>
+          <td>"normal", "neve", "arena"</td>
+          <td>-</td>
+          <td>CHECK / DEFAULT "normal"</td>
+        </tr>
+        <tr>
+          <td><code>x</code></td>
+          <td>Coordenada X do caminho.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>Coordenada Y do caminho.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>largura</code></td>
+          <td>Largura do caminho.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>altura</code></td>
+          <td>Altura do caminho.</td>
+          <td>Inteiro</td>
+          <td>4</td>
+          <td>0 a 5000</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/IsraelThalles">Israel Thalles</a>.</p>
+  </div>
+</details>
+
+---
 
 
 ## 📚 Bibliografia
