@@ -69,6 +69,53 @@ A adoção dessa metodologia possibilitou a construção de um dicionário de da
 
 As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventura**, abrangendo todas as entidades e atributos definidos no modelo relacional.
 
+### Tabela: `tipo_item`
+
+<details>
+  <summary>Tabela 1 – Dicionário de Dados da Tabela TipoItem
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+  </summary>
+  <div align="center">
+    <p><strong>Tabela 1 – Dicionário de Dados da Tabela TipoItem</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>identificador_item</code></td>
+          <td>Identificador único do item.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Identificador de tipo de item.</td>
+          <td>Texto</td>
+          <td>3</td>
+          <td>"ace", "arm", "fru", "con", "ncn"</td>
+          <td>-</td>
+          <td>Not NULL / CHECK</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/MatheusHenrickSantos">Matheus Henrick</a>.</p>
+  </div>
+</details>
+
+---
+
 ### Tabela: `acessorio`
 
 <details>
@@ -106,13 +153,13 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"ace"</td>
           <td>-</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
           <td>Nome do acessório.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>50</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -121,7 +168,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>descricao</code></td>
           <td>Descrição do acessório.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>150</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -148,7 +195,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>25</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -210,19 +257,28 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Chave estrangeira que identifica a habilidade da arma.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
           <td>3</td>
           <td>"arm"</td>
           <td>-</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
           <td>Nome da arma.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>50</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -231,7 +287,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>descricao</code></td>
           <td>Descrição da arma.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>150</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -258,7 +314,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>25</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -320,19 +376,28 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>identificador_habilidade</code></td>
+          <td>Chave estrangeira que identifica a habilidade da fruta.</td>
+          <td>ID</td>
+          <td>6</td>
+          <td>Padrão do tipo ID</td>
+          <td>FK</td>
+          <td>Unique / Not NULL / CHECK</td>
+        </tr>
+        <tr>
           <td><code>tipo</code></td>
           <td>Identificador de tipo de item.</td>
           <td>Texto</td>
           <td>3</td>
           <td>"fru"</td>
           <td>-</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
           <td>Nome da fruta.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>50</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -341,7 +406,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>descricao</code></td>
           <td>Descrição da fruta.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>150</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -368,7 +433,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>25</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -436,13 +501,13 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"con"</td>
           <td>-</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
           <td>Nome do consumivel.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>50</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -451,7 +516,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>descricao</code></td>
           <td>Descrição do consumível.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>150</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -478,7 +543,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>25</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -546,13 +611,13 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>3</td>
           <td>"ncn"</td>
           <td>-</td>
-          <td>Unique / Not NULL / CHECK</td>
+          <td>Not NULL / CHECK</td>
         </tr>
         <tr>
           <td><code>nome</code></td>
           <td>Nome do Não-Consumivel.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>50</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -561,7 +626,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>descricao</code></td>
           <td>Descrição do não-consumível.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>150</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -588,7 +653,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>local_encontrado</code></td>
           <td>Local onde é possível encontrar o item.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>25</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL / CHECK</td>
@@ -651,7 +716,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
         </tr>
         <tr>
           <td><code>consumivel_produzido</code></td>
-          <td>Identificador único do consumível gerado por essa receita.</td>
+          <td>Chave estrangeira que identifica o consumível gerado pela receita.</td>
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
@@ -700,7 +765,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td><code>nome</code></td>
           <td>Nome do efeito.</td>
           <td>Texto</td>
-          <td>100</td>
+          <td>25</td>
           <td>a-z, A-Z</td>
           <td>-</td>
           <td>Not NULL</td>
@@ -753,11 +818,29 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
+          <td><code>nome</code></td>
+          <td>Nome da habilidade.</td>
+          <td>Texto</td>
+          <td>25</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>descricao</code></td>
+          <td>Descrição da habilidade.</td>
+          <td>Texto</td>
+          <td>150</td>
+          <td>a-z, A-Z</td>
+          <td>-</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
           <td><code>dano</code></td>
           <td>Dano causado pela habilidade.</td>
           <td>Inteiro</td>
           <td>2</td>
-          <td>&gt;= 0, &lt;= 15</td>
+          <td>1 a 15</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -766,16 +849,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>Custo para usar a habilidade.</td>
           <td>Inteiro</td>
           <td>2</td>
-          <td>&gt;= 0, &lt;= 4</td>
-          <td>-</td>
-          <td>Not NULL</td>
-        </tr>
-        <tr>
-          <td><code>nome</code></td>
-          <td>Nome da habilidade.</td>
-          <td>Texto</td>
-          <td>100</td>
-          <td>a-z, A-Z</td>
+          <td>0 a 4</td>
           <td>-</td>
           <td>Not NULL</td>
         </tr>
@@ -823,7 +897,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
         <tr>
@@ -832,7 +906,7 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
           <td>ID</td>
           <td>6</td>
           <td>Padrão do tipo ID</td>
-          <td>FK</td>
+          <td>PK, FK</td>
           <td>Unique / Not NULL / CHECK</td>
         </tr>
       </tbody>
@@ -3030,3 +3104,4 @@ As tabelas 1 a 40 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.7` | Atualização da seção de convenções e das tabelas referentes aos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 15/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 |
 | `1.8` | Atualização das restrições e valores permitidos das tabelas referentes aos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 16/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 |
 | `1.9` | Atualização das tabelas referentes ao mapa | [Israel Thalles](https://github.com/IsraelThalles) | 18/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 |
+| `1.10` | Atualização dos valores dos atributos das tabelas referentes aos itens e criação da tabela TipoItem | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 |  |  |
