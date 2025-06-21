@@ -1,5 +1,3 @@
-CREATE EXTENSION IF NOT EXISTS btree_gist;
-
 CREATE TABLE tipo_item (
     identificador_item ID PRIMARY KEY,
     tipo CHAR(3) NOT NULL CHECK (Tipo IN ('ace', 'arm', 'fru', 'con', 'ncn'))
@@ -19,6 +17,20 @@ CREATE TABLE acessorio (
 
 CREATE TRIGGER atribui_id_acessorio
 BEFORE INSERT ON acessorio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE habilidade (
+    identificador_habilidade ID PRIMARY KEY,
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'fruta')),
+    dano SMALLINT NOT NULL,
+    custo SMALLINT NOT NULL
+);
+
+CREATE TRIGGER atribui_id_habilidade
+BEFORE INSERT ON habilidade
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
@@ -142,23 +154,9 @@ CREATE TABLE efeito_consumivel (
     identificador_efeito ID,
     identificador_consumivel ID,
     PRIMARY KEY (identificador_efeito, identificador_consumivel),
-    FOREIGN KEY (identificador_efeito) REFERENCES efeito(identificador_efeito)
-    FOREIGN KEY (identificador_consumivel) REFERENCES consumivel(identificador_consumivel),
+    FOREIGN KEY (identificador_efeito) REFERENCES efeito(identificador_efeito),
+    FOREIGN KEY (identificador_consumivel) REFERENCES consumivel(identificador_consumivel)
 );
-
-CREATE TABLE habilidade (
-    identificador_habilidade ID PRIMARY KEY,
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(150) NOT NULL,
-    tipo_de_ataque CHAR(10) NOT NULL CHECK (Tipo IN ('soco', 'espada', 'estilingue', 'fruta')),
-    dano SMALLINT NOT NULL,
-    custo SMALLINT NOT NULL
-);
-
-CREATE TRIGGER atribui_id_habilidade
-BEFORE INSERT ON habilidade
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE tipo_mapa (
     identificador_mapa ID PRIMARY KEY,
@@ -171,14 +169,9 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE mar (
-    identificador_mar ID PRIMARY KEY,
+    identificador_mar ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
     chave_imagem CHAR(15) NOT NULL CHECK (chave_imagem ~ '^[a-z_]+$')
 );
-
-CREATE TRIGGER atribui_id_mar
-BEFORE INSERT ON mar
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE barco (
     identificador_barco ID PRIMARY KEY,
@@ -192,16 +185,10 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE ilha (
-    identificador_ilha ID PRIMARY KEY,
-    identificador_mapa ID NOT NULL REFERENCES tipo_mapa(identificador_mapa),
+    identificador_ilha ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
     nome CHAR(30) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     visitada BOOLEAN
 );
-
-CREATE TRIGGER atribui_id_ilha
-BEFORE INSERT ON ilha
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE conexao_entre_ilhas (
     identificador_ilha_origem ID NOT NULL REFERENCES ilha(identificador_ilha),
@@ -262,7 +249,7 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE obstaculo (
-    identificador_obstaculo ID PRIMARY KEY,
+    identificador_obstaculo ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
     x SMALLINT CHECK (x BETWEEN 0 AND 5000),
@@ -271,13 +258,8 @@ CREATE TABLE obstaculo (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
 );
 
-CREATE TRIGGER atribui_id_obstaculo
-BEFORE INSERT ON obstaculo
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE area_interativa (
-    identificador_area_interativa ID PRIMARY KEY,
+    identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_evento ID NOT NULL REFERENCES evento(identificador_evento),
     chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
@@ -287,13 +269,8 @@ CREATE TABLE area_interativa (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
 );
 
-CREATE TRIGGER atribui_id_area_interativa
-BEFORE INSERT ON area_interativa
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE caminho (
-    identificador_caminho ID PRIMARY KEY,
+    identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     tipo_terreno CHAR(6) DEFAULT 'normal' CHECK (tipo_terreno IN ('normal', 'neve', 'arena')),
     x SMALLINT CHECK (x BETWEEN 0 AND 5000),
@@ -302,19 +279,10 @@ CREATE TABLE caminho (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
 );
 
-CREATE TRIGGER atribui_id_caminho
-BEFORE INSERT ON caminho
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE recompensa_de_exploracao (
     identificador_recompensa ID PRIMARY KEY,
     identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
-    data_da_tentativa TIMESTAMPTZ NOT NULL DEFAULT now(),
-    EXCLUDE USING GIST (
-        identificador_area_interativa WITH =,
-        tstzrange(data_da_tentativa, data_da_tentativa + interval '5 minutes') WITH &&
-    )
+    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER atribui_id_recompensa_de_exploracao
@@ -333,12 +301,12 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE jogador (
-    identificador_jogador ID PRIMARY KEY,
+    identificador_jogador ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
-    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     energia SMALLINT,
     vida SMALLINT,
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
@@ -347,13 +315,8 @@ CREATE TABLE jogador (
     experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600)
 );
 
-CREATE TRIGGER atribui_id_jogador
-BEFORE INSERT ON jogador
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE aliado (
-    identificador_aliado ID PRIMARY KEY,
+    identificador_aliado ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
@@ -364,13 +327,8 @@ CREATE TABLE aliado (
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida)
 );
 
-CREATE TRIGGER atribui_id_aliado
-BEFORE INSERT ON aliado
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE chefe (
-    identificador_chefe ID PRIMARY KEY,
+    identificador_chefe ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(28) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
@@ -382,53 +340,33 @@ CREATE TABLE chefe (
     experiencia SMALLINT
 );
 
-CREATE TRIGGER atribui_id_chefe
-BEFORE INSERT ON chefe
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE lacaio (
-    identificador_lacaio ID PRIMARY KEY,
+    identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
-    identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(15) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
-    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
-    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     vida SMALLINT,
     nivel SMALLINT CHECK ( nivel BETWEEN 0 AND 60),
     experiencia SMALLINT
 );
 
-CREATE TRIGGER atribui_id_lacaio
-BEFORE INSERT ON lacaio
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE habitante (
-    identificador_habitante ID PRIMARY KEY,
+    identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(15) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
-    tipo CHAR(3) NOT NULL CHECK (tipo IN ('hbt', 'rct', 'coz', 'ven')),
-    CHECK (
-        tipo <> 'ven' OR especialidade IS NOT NULL
-    )
 );
-
-CREATE TRIGGER atribui_id_habitante
-BEFORE INSERT ON habitante
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE instancia_lacaio (
     identificador_instancia_lacaio ID PRIMARY KEY,
     identificador_lacaio ID NOT NULL REFERENCES lacaio(identificador_lacaio),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    vida_atual SMALLINT
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida_atual SMALLINT,
 );
 
 CREATE TRIGGER atribui_id_instancia_lacaio
@@ -449,27 +387,35 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE batalha_instancia_lacaio (
-    identificador_batalha ID NOT NULL REFERENCES batalha(identificador_batalha),
-    identificador_instancia_lacaio ID NOT NULL REFERENCES instancia_lacaio(identificador_instancia_lacaio),
-    PRIMARY KEY (identificador_batalha, identificador_instancia_lacaio)
+    identificador_batalha ID,
+    identificador_instancia_lacaio ID,
+    PRIMARY KEY (identificador_batalha, identificador_instancia_lacaio),
+    FOREIGN KEY (identificador_batalha) REFERENCES batalha(identificador_batalha),
+    FOREIGN KEY (identificador_instancia_lacaio) REFERENCES instancia_lacaio(identificador_instancia_lacaio)
 );
 
 CREATE TABLE habilidade_jogador (
-    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
-    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
-    PRIMARY KEY (identificador_jogador, identificador_habilidade)
+    identificador_jogador ID,
+    identificador_habilidade ID,
+    PRIMARY KEY (identificador_jogador, identificador_habilidade),
+    FOREIGN KEY (identificador_jogador) REFERENCES jogador(identificador_jogador),
+    FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(identificador_habilidade)
 );
 
 CREATE TABLE habilidade_aliado (
-    identificador_aliado ID NOT NULL REFERENCES aliado(identificador_aliado),
-    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
-    PRIMARY KEY (identificador_aliado, identificador_habilidade)
+    identificador_aliado ID,
+    identificador_habilidade ID,
+    PRIMARY KEY (identificador_aliado, identificador_habilidade),
+    FOREIGN KEY (identificador_aliado) REFERENCES aliado(identificador_aliado),
+    FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(identificador_habilidade)
 );
 
 CREATE TABLE receitas_conhecidas (
-    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
-    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
-    PRIMARY KEY (identificador_jogador, identificador_receita)
+    identificador_jogador ID,
+    identificador_receita ID,
+    PRIMARY KEY (identificador_jogador, identificador_receita),
+    FOREIGN KEY (identificador_jogador) REFERENCES jogador(identificador_jogador),
+    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita)
 );
 
 CREATE TABLE inventario (
@@ -484,9 +430,11 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE item_inventario (
-    identificador_inventario ID NOT NULL REFERENCES inventario(identificador_inventario),
-    identificador_item ID NOT NULL REFERENCES tipo_item(identificador_item),
-    PRIMARY KEY (identificador_inventario, identificador_item)
+    identificador_inventario ID,
+    identificador_item ID,
+    PRIMARY KEY (identificador_inventario, identificador_item),
+    FOREIGN KEY (identificador_inventario) REFERENCES inventario(identificador_inventario),
+    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
 );
 
 CREATE TABLE negociacao (
