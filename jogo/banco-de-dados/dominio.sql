@@ -23,14 +23,14 @@ DECLARE
     nome_da_sequencia   text;      -- nome da sequência gerada on-the-fly
     numero_serial       bigint;    -- próximo número da sequência
 BEGIN
-    /* 2.1 ─ Bloqueia inserção manual ********************************************/
+    /* 2.1 ─ Bloqueia inserção manual ------------------------------------------*/
     IF NEW.id IS NOT NULL THEN
         RAISE EXCEPTION 
             'A coluna "id" é gerada automaticamente; não forneça valor manualmente.';
     END IF;
 
     /* 2.2 ─ obtém o prefixo ---------------------------------------------------*/
-    prefixo := lower(NEW.tipo);       -- tenta coluna “tipo”
+    prefixo := lower( to_jsonb(NEW)->>'tipo' );       -- tenta coluna “tipo”
     IF prefixo IS NULL THEN
         prefixo := lower( substr(TG_TABLE_NAME, 1, 3) );  -- 3 letras da tabela
     END IF;
