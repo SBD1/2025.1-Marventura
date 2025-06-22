@@ -6,6 +6,7 @@ from utilidades.constantes import *
 from entidades import Jogador
 from entidades import Inimigo
 from entidades import Obstaculo
+from entidades import Caminho
 from entidades import AreaInteracao
 from utilidades import Camera
 from mapa_dados import dados_das_ilhas, get_ilhas_vizinhas, get_ilha_por_mapa_id, obter_dados_da_sala, obter_dados_da_ilha
@@ -90,6 +91,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # --- Variáveis para rastrear áreas de interação ativas ---
         self.areas_interacao_colididas = [] # Lista das áreas de interação onde o jogador está colidindo
+        self.caminhos = []
 
         self._carregar_entidades_dos_dados_do_mapa()
 
@@ -155,7 +157,28 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.obstaculos_caminho.add(obstaculo)
             self.obstaculos_visao.add(obstaculo)
 
+        for caminho_data in self.mapa_data.get('caminhos', []):
+            caminho = Caminho(caminho_data['x'], caminho_data['y'],
+                            caminho_data['largura'], caminho_data['altura'],
+                            caminho_data['tipo_terreno'])
+            self.caminhos.append(caminho)
+
+        # <-- PASSO 1: Encontrar e armazenar o caminho da 'arena' -->
+        caminho_arena = None 
+        for caminho in self.caminhos:
+            if caminho.tipo_terreno == 'arena':
+                caminho_arena = caminho
+                print("Caminho da 'arena' encontrado e definido para os inimigos.") # (Opcional) Log para depuração
+                break
+
+        # Alerta caso o caminho não seja encontrado (boa prática)
+        if not caminho_arena:
+            print("AVISO: Nenhum caminho do tipo 'arena' foi encontrado no mapa. Os inimigos não terão contêiner.")
+
+
+        # Carrega os inimigos, agora passando o caminho da arena
         for inimigo_data in self.mapa_data.get('inimigos', []):
+            # <-- PASSO 2: Adicionar o parâmetro 'caminho_container' -->
             novo_inimigo = Inimigo(
                 self.gerenciador_recursos,
                 inimigo_data['x'], inimigo_data['y'],
@@ -165,6 +188,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 inimigo_data['alcance_visao'],
                 inimigo_data['angulo_visao_graus'],
                 inimigo_data['tempo_reacao_ms'],
+                caminho_container=caminho_arena, # Passa o caminho encontrado
                 alcance_ataque=inimigo_data.get('alcance_ataque', DISTANCIA_ATAQUE_INIMIGO),
                 duracao_ataque_ms=inimigo_data.get('duracao_ataque_ms', DURACAO_ATAQUE_INIMIGO_MS)
             )
@@ -175,6 +199,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                  area_data['largura'], area_data['altura'],
                                  area_data['tipo_evento'], area_data['dados_evento'])
             self.areas_interacao.add(area)
+
+
 
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
@@ -308,7 +334,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             return None
 
         # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
-        self.jogador.update(dt, self.obstaculos_caminho)
+        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
 
         # Lógica de clamping do jogador para não sair dos limites do mundo
         largura_mundo_atual = self.mapa_fundo_imagem.get_width()
@@ -376,6 +402,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- Desenhar a camada superior (se existir) ---
         if self.camada_superior_imagem:
             tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
+
+        for caminho in self.caminhos:
+            caminho.desenhar(tela, self.camera.rect.x)
 
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
             for area in self.areas_interacao:
