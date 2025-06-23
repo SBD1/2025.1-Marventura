@@ -24,9 +24,58 @@ DECLARE
     numero_serial       bigint;    -- próximo número da sequência
 BEGIN
     /* 2.1 ─ Bloqueia inserção manual ------------------------------------------*/
-    IF NEW.id IS NOT NULL THEN
-        RAISE EXCEPTION 
-            'A coluna "id" é gerada automaticamente; não forneça valor manualmente.';
+    IF TG_TABLE_NAME = 'habilidade' THEN
+        IF NEW.identificador_habilidade IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_habilidade" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'receita' THEN
+        IF NEW.identificador_receita IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_receita" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'efeito' THEN
+        IF NEW.identificador_efeito IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_efeito" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'tipo_mapa' THEN
+        IF NEW.identificador_mapa IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_mapa" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'area' THEN
+        IF NEW.identificador_area IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_area" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'evento' THEN
+        IF NEW.identificador_evento IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_evento" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'tipo_elemento_espacial' THEN
+        IF NEW.identificador_elemento_espacial IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_elemento_espacial" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'recompensa_de_exploracao' THEN
+        IF NEW.identificador_recompensa IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_recompensa" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'tipo_personagem' THEN
+        IF NEW.identificador_personagem IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_personagem" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'instancia_lacaio' THEN
+        IF NEW.identificador_instancia_lacaio IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_instancia_lacaio" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'batalha' THEN
+        IF NEW.identificador_batalha IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_batalha" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'inventario' THEN
+        IF NEW.identificador_inventario IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_inventario" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'negociacao' THEN
+        IF NEW.identificador_negociacao IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_negociacao" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
     END IF;
 
     /* 2.2 ─ obtém o prefixo ---------------------------------------------------*/
@@ -54,7 +103,34 @@ BEGIN
     EXECUTE format('SELECT nextval(%L)', nome_da_sequencia) INTO numero_serial;
 
     /* 2.6 ─ Monta o ID --------------------------------------------------------*/
-    NEW.id := prefixo || lpad(numero_serial::text, 3, '0');   -- ex.: ace001
+    IF TG_TABLE_NAME = 'habilidade' THEN
+        NEW.identificador_habilidade := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'receita' THEN
+        NEW.identificador_receita := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'efeito' THEN
+        NEW.identificador_efeito := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'tipo_mapa' THEN
+        NEW.identificador_mapa := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'area' THEN
+        NEW.identificador_area := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'evento' THEN
+        NEW.identificador_evento := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'tipo_elemento_espacial' THEN
+        NEW.identificador_elemento_espacial := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'recompensa_de_exploracao' THEN
+        NEW.identificador_recompensa := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'tipo_personagem' THEN
+        NEW.identificador_personagem := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'instancia_lacaio' THEN
+        NEW.identificador_instancia_lacaio := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'batalha' THEN
+        NEW.identificador_batalha := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'inventario' THEN
+        NEW.identificador_inventario := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'negociacao' THEN
+        NEW.identificador_negociacao := prefixo || lpad(numero_serial::text, 3, '0');
+    END IF;
+
 
     RETURN NEW;
 END;

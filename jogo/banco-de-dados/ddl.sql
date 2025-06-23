@@ -132,6 +132,11 @@ CREATE TABLE mar (
     chave_imagem CHAR(15) NOT NULL CHECK (chave_imagem ~ '^[a-z_]+$')
 );
 
+CREATE TRIGGER atribui_id_mar
+BEFORE INSERT ON mar
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_mapa();
+
 CREATE TABLE barco (
     identificador_barco ID PRIMARY KEY,
     identificador_mar ID NOT NULL REFERENCES mar(identificador_mar),
@@ -145,9 +150,14 @@ EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE ilha (
     identificador_ilha ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
-    nome CHAR(30) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    visitada BOOLEAN
+    nome CHAR(30) CHECK (nome ~ '^[0-9a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
+    visitada BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+CREATE TRIGGER atribui_id_ilha
+BEFORE INSERT ON ilha
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_mapa();
 
 CREATE TABLE conexao_entre_ilhas (
     identificador_ilha_origem ID NOT NULL REFERENCES ilha(identificador_ilha),
@@ -161,8 +171,8 @@ CREATE TABLE area (
     identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
     nome CHAR(30) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
-    chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z_]+$'),
-    chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z_]+$'),
+    chave_imagem_fundo CHAR(50) CHECK (BTRIM(chave_imagem_fundo) ~ '^[a-z_]+$'),
+    chave_imagem_frente CHAR(50) CHECK (BTRIM(chave_imagem_frente) ~ '^[a-z_]+$'),
     visitada BOOLEAN
 );
 
@@ -199,7 +209,7 @@ EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE tipo_elemento_espacial (
     identificador_elemento_espacial ID PRIMARY KEY,
-    tipo CHAR(3) NOT NULL CHECK (tipo IN ('are', 'obs', 'cam'))
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ari', 'obs', 'cam'))
 );
 
 CREATE TRIGGER atribui_id_tipo_elemento_espacial
@@ -217,6 +227,11 @@ CREATE TABLE obstaculo (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
 );
 
+CREATE TRIGGER atribui_id_obstaculo
+BEFORE INSERT ON obstaculo
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
 CREATE TABLE area_interativa (
     identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
@@ -228,6 +243,11 @@ CREATE TABLE area_interativa (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
 );
 
+CREATE TRIGGER atribui_id_area_interativa
+BEFORE INSERT ON area_interativa
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
 CREATE TABLE caminho (
     identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
@@ -237,6 +257,11 @@ CREATE TABLE caminho (
     largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
 );
+
+CREATE TRIGGER atribui_id_caminho
+BEFORE INSERT ON caminho
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 
 CREATE TABLE recompensa_de_exploracao (
     identificador_recompensa ID PRIMARY KEY,
@@ -274,6 +299,11 @@ CREATE TABLE jogador (
     experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600)
 );
 
+CREATE TRIGGER atribui_id_jogador
+BEFORE INSERT ON jogador
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
 CREATE TABLE aliado (
     identificador_aliado ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
@@ -285,6 +315,11 @@ CREATE TABLE aliado (
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida)
 );
+
+CREATE TRIGGER atribui_id_aliado
+BEFORE INSERT ON aliado
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 CREATE TABLE chefe (
     identificador_chefe ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
@@ -299,6 +334,11 @@ CREATE TABLE chefe (
     experiencia SMALLINT
 );
 
+CREATE TRIGGER atribui_id_chefe
+BEFORE INSERT ON chefe
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
 CREATE TABLE lacaio (
     identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
@@ -309,15 +349,26 @@ CREATE TABLE lacaio (
     experiencia SMALLINT
 );
 
+CREATE TRIGGER atribui_id_lacaio
+BEFORE INSERT ON lacaio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
 CREATE TABLE habitante (
     identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(15) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
+    tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
+    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com'))
 );
+
+CREATE TRIGGER atribui_id_habitante
+BEFORE INSERT ON aliado
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 CREATE TABLE instancia_lacaio (
     identificador_instancia_lacaio ID PRIMARY KEY,
@@ -325,7 +376,7 @@ CREATE TABLE instancia_lacaio (
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    vida_atual SMALLINT,
+    vida_atual SMALLINT
 );
 
 CREATE TRIGGER atribui_id_instancia_lacaio
