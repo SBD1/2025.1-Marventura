@@ -192,3 +192,44 @@ INSERT INTO ingrediente_consumivel (identificador_receita, identificador_consumi
 
 INSERT INTO ingrediente_nao_consumivel (identificador_receita, identificador_nao_consumivel) VALUES
 (1, 42), (6, 38), (10, 20), (10, 36), (15, 12), (16, 35), (16, 38), (17, 35), (30, 35), (31, 12), (32, 38), (34, 35), (37, 36);
+
+INSERT INTO ilha
+	(nome, visitada)
+VALUES
+	('Ilha de Borabóia', FALSE),
+	('Cidade de Lurien', FALSE),
+	('Ilha Glacial de Frimora', FALSE),
+	('Cactuaraquara', FALSE),
+	('Nublária', FALSE),
+	('Quartel Naval D-57', FALSE);
+
+SELECT * FROM ilha;
+
+INSERT INTO area
+	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente, visitada)
+VALUES
+	('ilh001', 'Costa Oeste', 'Área de combate', 'cenario_boraboia_oeste', 'cenario_boraboia_oeste_camada_superior', FALSE),
+	('ilh001', 'Vila', 'Vila', 'cenario_boraboia_vila', null, FALSE),
+	('ilh001', 'Porto', 'Porto', 'cenario_boraboia_leste', null, FALSE),
+	('ilh001', 'Loja', 'Loja', 'loja_interior', null, FALSE);
+
+SELECT * FROM area;
+
+INSERT INTO caminho
+    (identificador_area, tipo_terreno, x, y, largura, altura)
+VALUES
+    ('are001', 'arena', 3329, 0, 1144, 600),
+    ('are001', 'normal', 4473, 197, 36, 180),
+    ('are001', 'normal', 826, 216, 2503, 154),
+    ('are001', 'normal', 826, 370, 150, 230),
+    ('are001', 'normal', 339, 438, 487, 162),
+    ('are002', 'normal', 0, 445, 3540, 155),
+    ('are002', 'normal', 1728, 412, 174, 33),
+    ('are003', 'normal', 0, 236, 1360, 156),
+    ('are003', 'arena', 1360, 33, 1226, 567),
+    ('are003', 'normal', 2586, 230, 827, 145),
+    ('are003', 'normal', 3413, 230, 481, 370),
+    ('are003', 'normal', 3894, 313, 361, 158);
+
+SELECT * FROM caminho;
+ 
