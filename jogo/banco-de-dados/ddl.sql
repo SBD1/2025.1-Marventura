@@ -291,10 +291,10 @@ CREATE TABLE jogador (
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    energia SMALLINT,
-    vida SMALLINT,
+    energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
+    vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
-    sorte SMALLINT,
+    sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
     experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600)
 );
@@ -311,7 +311,7 @@ CREATE TABLE aliado (
     descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    vida SMALLINT,
+    vida SMALLINT  CHECK (vida BETWEEN 10 AND 70),
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida)
 );
