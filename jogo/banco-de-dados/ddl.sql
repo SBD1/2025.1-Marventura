@@ -461,3 +461,25 @@ CREATE TRIGGER atribui_id_negociacao
 BEFORE INSERT ON negociacao
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE missao (
+    identificador_missao ID PRIMARY KEY,
+    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador), 
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_recrutador ID NOT NULL REFERENCES habitante(identificador_habitante), 
+    descricao CHAR(100) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
+    nome CHAR(50) NOT NULL CHECK (nome ~ '^[0-9a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$')
+);
+
+CREATE TRIGGER atribui_id_missao
+BEFORE INSERT ON missao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE item_missao (
+    identificador_missao ID,
+    identificador_item ID,
+    PRIMARY KEY (identificador_missao, identificador_item),
+    FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_inventario),
+    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
+);
