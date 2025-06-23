@@ -203,8 +203,6 @@ VALUES
 	('Nublária', FALSE),
 	('Quartel Naval D-57', FALSE);
 
-SELECT * FROM ilha;
-
 INSERT INTO area
 	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente, visitada)
 VALUES
@@ -239,8 +237,6 @@ VALUES
 	('ilh006', 'Cozinha', 'Loja', 'cozinha_interior', null, FALSE);
     
 
-SELECT * FROM area;
-
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
 VALUES
@@ -257,5 +253,31 @@ VALUES
     ('are003', 'normal', 3413, 230, 481, 370),
     ('are003', 'normal', 3894, 313, 361, 158);
 
-SELECT * FROM caminho;
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y)
+VALUES
+    ('are001', 'Aldeão', 'rct', 0, 0)
+    ('are007', 'Cidadão', 'rct', 0, 0),
+    ('are012', 'Oficial dos Revolucionários', 'rct', 0, 0),
+    ('are014', 'Chefe da vila', 'rct', 0, 0),
+    ('are019', 'Chefe do vilarejo', 'rct', 0, 0),
+    ('are026', 'Marinheiro', 'rct', 0, 0)
  
+INSERT INTO missao
+    (identificador_jogador, identificador_area, identificador_recrutador, descricao, nome)
+VALUES
+    ('jog001', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
+    ('jog001', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
+    ('jog001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
+    ('jog001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
+    ('jog001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha');),
+    ('jog001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
+    ('jog001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo');),
+    ('jog001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
+    ('jog001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
+    ('jog001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
+    ('jog001', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
+    ('jog001', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
+    ('jog001', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
+    ('jog001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
+    ('jog001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
