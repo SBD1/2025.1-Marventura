@@ -211,7 +211,33 @@ VALUES
 	('ilh001', 'Costa Oeste', 'Área de combate', 'cenario_boraboia_oeste', 'cenario_boraboia_oeste_camada_superior', FALSE),
 	('ilh001', 'Vila', 'Vila', 'cenario_boraboia_vila', null, FALSE),
 	('ilh001', 'Porto', 'Porto', 'cenario_boraboia_leste', null, FALSE),
-	('ilh001', 'Loja', 'Loja', 'loja_interior', null, FALSE);
+	('ilh001', 'Loja', 'Loja', 'loja_interior', null, FALSE),
+	('ilh001', 'Casa', 'Vila', 'cenario_boraboia_casa', null, FALSE),
+	('ilh001', 'Sótão', 'Vila', 'cenario_boraboia_sótão', null, FALSE),
+	('ilh002', 'Porto', 'Porto', 'cenario_lurien_porto', 'cenario_lurien_porto_camada_superior', FALSE),
+	('ilh002', 'Centro', 'Área neutra', 'cenario_lurien_centro', null, FALSE),
+	('ilh002', 'Praça de execução', 'Área de combate', 'cenario_lurien_praca', null, FALSE),
+	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null, FALSE),
+	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null, FALSE),
+	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null, FALSE),
+	('ilh003', 'Porto', 'Área neutra', 'cenario_frimora_porto', null, FALSE),
+	('ilh003', 'Vila', 'Vila', 'cenario_frimora_vila', null, FALSE),
+	('ilh003', 'Colina', 'Área de combate', 'cenario_frimora_colina', null, FALSE),
+	('ilh003', 'Cozinha', 'Loja', 'cozinha_interior', null, FALSE),
+	('ilh004', 'Dunas', 'Porto', 'cenario_cactuaraquara_dunas', null, FALSE),
+	('ilh004', 'Vila', 'Vila', 'cenario_cactuaraquara_vila', null, FALSE),
+	('ilh004', 'Oásis', 'Área de combate', 'cenario_cactuaraquara_oasis', null, FALSE),
+	('ilh004', 'Loja', 'Loja', 'loja_interior', null, FALSE),
+	('ilh005', 'Porto', 'Porto', 'cenario_nublaria_porto', null, FALSE),
+	('ilh005', 'Vilarejo', 'Vila', 'cenario_nublaria_vila', null, FALSE),
+	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null, FALSE),
+	('ilh005', 'Loja', 'Loja', 'loja_interior', null, FALSE),
+	('ilh006', 'Porto', 'Porto', 'cenario_quartel_porto', null, FALSE),
+	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null, FALSE),
+	('ilh006', 'Escritório', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE),
+	('ilh006', 'Loja', 'Loja', 'loja_interior', null, FALSE),
+	('ilh006', 'Cozinha', 'Loja', 'cozinha_interior', null, FALSE);
+    
 
 SELECT * FROM area;
 
