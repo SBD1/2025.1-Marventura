@@ -74,6 +74,7 @@ INIMIGO_LOBO = 'Lobo'
 INIMIGO_CORVO = 'Corvo'
 
 # --- Identificadores de Mapas ---
+ID_MAPA_OCEANO = 'oceano'
 ID_MAPA_CAMPO_COSTA_OESTE = 'ilha_campo_costa_oeste'
 ID_MAPA_CAMPO_VILA = 'ilha_campo_vila'
 ID_MAPA_CAMPO_LOJA = 'ilha_campo_loja'
@@ -93,9 +94,13 @@ CHAVE_CARTAZ_VAZIO = 'cartaz_vazio'
 CHAVE_ICONE_INTERACAO = 'icone_interacao'
 CHAVE_ICONE_ALERTA = 'icone_alerta'
 CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
+CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
+CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
 
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
+
+CHAVE_CENARIO_OCEANO = 'cenario_oceano'
 
 CHAVE_CENARIO_CAMPO_COSTA_OESTE = 'cenario_ilha_1_parte_1'
 CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR = 'cenario_ilha_1_parte_1-camada_superior'
