@@ -467,7 +467,7 @@ CREATE TABLE missao (
     identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador), 
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_recrutador ID NOT NULL REFERENCES habitante(identificador_habitante), 
-    descricao CHAR(100) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
+    descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
     nome CHAR(50) NOT NULL CHECK (nome ~ '^[0-9a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$')
 );
 
