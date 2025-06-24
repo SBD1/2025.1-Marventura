@@ -275,6 +275,30 @@ VALUES
     ('are027', 'are029', TRUE),
     ('are027', 'are030', TRUE);
 
+-- Insere eventos de embarcar
+INSERT INTO evento
+    (identificador_ilha_origem, identificador_ilha_destino, tipo_evento, ponto_geracao_x, ponto_geracao_y, orientacao)
+VALUES
+    ('ilh001', 'ilh002', 'embarcar', 2470, 265, 'esquerda'),
+    ('ilh002', 'ilh001', 'embarcar', 4160, 280, 'esquerda'),
+    ('ilh002', 'ilh003', 'embarcar', 100, 415, 'direita'),
+    ('ilh003', 'ilh002', 'embarcar', 2470, 265, 'esquerda');
+
+-- Insere eventos de mudar_area
+INSERT INTO evento
+    (identificador_area_origem, identificador_area_destino, tipo_evento, ponto_geracao_x, ponto_geracao_y, orientacao)
+VALUES
+    ('are001', 'are002', 'mudar_area', 100, 370, 'direita'),
+    ('are002', 'are001', 'mudar_area', 4373, 174, 'esquerda'),
+    ('are002', 'are004', 'mudar_area', 100, 275, 'direita'),
+    ('are004', 'are002', 'mudar_area', 1716, 300, 'esquerda'),
+    ('are002', 'are003', 'mudar_area', 50, 190, 'direita'),
+    ('are003', 'are002', 'mudar_area', 3361, 370, 'esquerda'),
+    ('are007', 'are008', 'mudar_area', 100, 415, 'direita'),
+    ('are008', 'are007', 'mudar_area', 680, 175, 'esquerda'),
+    ('are008', 'are009', 'mudar_area', 100, 415, 'direita'),
+    ('are009', 'are008', 'mudar_area', 1570, 460, 'esquerda'),
+
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
 VALUES
