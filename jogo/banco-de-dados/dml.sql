@@ -324,14 +324,14 @@ VALUES
 
 
 -- Insere eventos de embarcar
-INSERT INTO evento
-    (identificador_ilha_origem, identificador_ilha_destino, tipo_evento, ponto_geracao_x,
+/*INSERT INTO evento
+    (identificador_conexao_ilha_a, identificador_conexao_ilha_b, tipo_evento, ponto_geracao_x,
     ponto_geracao_y, orientacao)
 VALUES
     ('ilh001', 'ilh002', 'embarcar', 2470, 265, 'esquerda'),
-    ('ilh002', 'ilh001', 'embarcar', 4160, 280, 'esquerda'),
+    ('ilh001', 'ilh002', 'embarcar', 4160, 280, 'esquerda'),
     ('ilh002', 'ilh003', 'embarcar', 100, 415, 'direita'),
-    ('ilh003', 'ilh002', 'embarcar', 2470, 265, 'esquerda');
+    ('ilh002', 'ilh003', 'embarcar', 2470, 265, 'esquerda');*/
 
 
 
@@ -349,7 +349,25 @@ VALUES
     ('are007', 'are008', 'mudar_area', 100, 415, 'direita'),
     ('are008', 'are007', 'mudar_area', 680, 175, 'esquerda'),
     ('are008', 'are009', 'mudar_area', 100, 415, 'direita'),
-    ('are009', 'are008', 'mudar_area', 1570, 460, 'esquerda'),
+    ('are009', 'are008', 'mudar_area', 1570, 460, 'esquerda');
+
+
+
+INSERT INTO area_interativa
+    (identificador_area ID, identificador_evento ID, x, y, largura, altura)
+VALUES
+    ('are001', 'eve005', 4473, 187, 30, 180),
+    ('are002', 'eve006', 0, 360, 50, 150),
+    ('are002', 'eve007', 1716, 300, 200, 40),
+    ('are004', 'eve008', 0, 300, 50, 270),
+    ('are002', 'eve009', 3490, 360, 50, 150),
+    ('are003', 'eve010', 0, 200, 50, 150),
+    --('are003', 'eve001', 4205, 313, 50, 158),
+    ('are007', 'eve011', 610, 185, 250, 20),
+    --('are007', 'eve002', 2472, 375, 93, 67),
+    ('are008', 'eve012', 0, 480, 50, 150),
+    ('are008', 'eve013', 1656, 484, 50, 150),
+    ('are009', 'eve014', 0, 500, 50, 85);
 
 
 
