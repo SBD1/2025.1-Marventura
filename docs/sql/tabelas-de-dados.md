@@ -34,7 +34,7 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 
 | Nome do Item | Descrição | Efeito | Como é obtido | É usado em receita? | Raridade | Preço de venda |
 | ------------ | --------- | :----: | ------------- | :-----------------: | :------: | :------------: |
-| **Maçã Lustrosa** | Brilha tanto que você se vê nela. Tão docinha quanto promessas de marinheiro. | Cura +3 <br> Energia +1 | Mapa | Sim | ★ | $7 |
+| **Maçã Lustrosa** | Brilha tanto que você se vê nela. Tão docinha quanto promessas de marinheiro. | Cura +3 / Energia +1 | Mapa | Sim | ★ | $7 |
 | **Repolho Redondo** | Enrola mais que muito pirata mentiroso. Cru ou cozido, sempre útil. | Energia +2 | Mapa | Sim | ★ | $5 |
 | **Alga Fresca** | Parece nojenta, mas dizem que é cheia de nutrientes. Piratas fitness adoram. | Energia +2 / Ataque +1 | Mapa | Sim | ★ | $6 |
 
@@ -80,7 +80,7 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 
 | Nome do Item | Descrição | Efeito | Como é obtido | É usado em receita? | Raridade | Preço de venda |
 | ------------ | --------- | :----: | ------------- | :-----------------: | :------: | :------------: |
-| **Fruta Cítrica do Oeste** | Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida. | -1 PV / +2 ATQ | Mapa | Sim | ★ | $4 |
+| **Fruta Cítrica do Oeste** | Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida. | Ataque +2 / Eletrificado | Mapa | Sim | ★ | $4 |
 | **Côco do Oásis** | Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros. | Cura +3 / Energia +4 | Mapa | Sim | ★ | $7 |
 | **Areia Mineral** | Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante. | Energia +5 / Queimadura | Mapa | Sim | ★★ | $10 |
 
@@ -236,8 +236,8 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 | **Corte de Areia** | Uma lâmina fina, feita para deslizar no calor escaldante do deserto. Melhor usar antes que enferruje. | Sangramento | ★ | $55 |
 | **Gume de Coral** | Forjada com pedaços de coral duro. Linda, mas cuidado com lascas! | Envenenado | ★★ | $80 |
 | **Espada Fantasma** | Você jura que ela está na sua mão, mas às vezes… ela desaparece. | Cegueira | ★★ | $90 |
-| **Lâmina da Brisa** | Tão leve que quase voa sozinha. Ideal para quem gosta de parecer estiloso enquanto luta. | Congelado | ★★★ | $105 |
-| **Lâmina Sussurrante** | Dizem que ela corta o ar tão silenciosamente que até o vento pede licença. | Sangramento | ★★★ | $110 |
+| **Lâmina da Brisa** | Tão leve que quase voa sozinha. Ideal para quem gosta de parecer estiloso enquanto luta. | Sangramento | ★★ | $105 |
+| **Lâmina Sussurrante** | Dizem que ela corta o ar tão silenciosamente que até o vento pede licença. | Congelado | ★★ | $110 |
 | **Katana do Sushi Supremo** | Corta peixe tão bem que o próprio mar fica com inveja. Também serve pra vilões, se estiverem quietos o suficiente. | Queimadura | ★★★ | $140 |
 | **Katana da Vovó Yuba** | Ela usava pra cortar carne, peixe e argumentos. Respeito e corte limpo em cada golpe. | Queimadura | ★★★ | $150 |
 | **Katana do Capitão Caído** | Roubada de um lendário capitão samurai que confundiu o oceano com arrozal. Ainda tem cheiro de saquê. | Tontura | ★★★ | $165 |
