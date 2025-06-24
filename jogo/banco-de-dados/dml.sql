@@ -61,11 +61,6 @@ VALUES
     ('Energia Máxima', 8),
     ('Energia Máxima', 9),
     ('Energia Máxima', 10),
-    ('Energia Máxima', 11),
-    ('Energia Máxima', 12),
-    ('Energia Máxima', 13),
-    ('Energia Máxima', 14),
-    ('Energia Máxima', 15),
     ('Sorte', 1),
     ('Sorte', 2),
     ('Sorte', 3),
@@ -88,7 +83,8 @@ VALUES
     ('Tontura', 0),
     ('Tontura', 1),
     ('Cegueira', 0),
-    ('Cegueira', 1);
+    ('Cegueira', 1),
+    ('Purificação', NULL);
 
 
 
@@ -126,7 +122,7 @@ VALUES
     ('Estilingue Crocante', 'Feito com casca de noz e muita teimosia. Dizem que acerta melhor se estiver com fome.', '★', 'est', 'Loja de Estilingues e Arcos', 45),
     ('Arco de Liana', 'Um arco feito com cipós flexíveis e muita criatividade. Tensão máxima, estilo selvagem.', '★★', 'arc', 'Loja de Estilingues e Arcos', 65),
     ('Atira-Coco', 'Não é elegante, mas já derrubou mais de um pirata. Lançar cocos exige força… e coragem.', '★★', 'est', 'Loja de Estilingues e Arcos', 70),
-    ('Arco do Oásis', 'Suave e silencioso como uma brisa no deserto. Ideal para acertar antes de ser visto.', '★★★', 'arc', 'Loja de Estilingues e Arcos', 110),
+    ('Arco do Oásis', 'Suave e silencioso como uma brisa no deserto. Ideal para acertar antes de ser visto.', '★★★', 'arc', 'Loja de Estilingues e Arcos', 125),
     ('Estilingue de Batalha Naval', 'Usado por um pirata que confundia navios com alvos de treino. Deu certo… até certo ponto.', '★★★', 'est', 'Loja de Estilingues e Arcos', 125);
 
 
@@ -134,7 +130,7 @@ VALUES
 INSERT INTO fruta
     (nome, descricao, raridade, local_encontrado)
 VALUES
-    ('Mimi Mimi no Mi: Fruta do Eco', 'Uma fruta rara, de cor chamativa e com um aroma meio doce, meio… enxerido. Quem a come desenvolve habilidades sonoras peculiares — perfeitas para quem adora ouvir, repetir e, claro, se meter onde não foi chamado.', '★★★', 'Missão')
+    ('Mimi Mimi no Mi: Fruta do Eco', 'Uma fruta rara, de cor chamativa e com um aroma meio doce, meio… enxerido. Quem a come desenvolve habilidades sonoras peculiares — perfeitas para quem adora ouvir, repetir e, claro, se meter onde não foi chamado.', '★★★', 'Missão');
 
 
 
@@ -146,7 +142,7 @@ VALUES
     ('Arroz do Planalto', 'Grãos branquinhos que dançam quando caem na panela. Base de quase tudo!', '★', 'Ilha de Borabóia', 10, 5),
     ('Ovo dos Campos', 'Um ovo fresquinho, coletado de aves que vivem soltas pelos campos. Dá vontade de fritar, mas também pode virar algo mais sofisticado.', '★', 'Ilha de Borabóia', 10, 5),
     ('Carne de Ave Brava', 'Um pedaço de ave com gosto de aventura. Cozinhe bem ou corra risco de bicadas!', '★', 'Ilha de Borabóia', NULL, 7),
-    ('Presa de Lobo', 'Um dente afiado arrancado de um lobo valente. Não é comestível, mas é estiloso.', '★★', 'lha de Borabóia', NULL, 15),
+    ('Presa de Lobo', 'Um dente afiado arrancado de um lobo valente. Não é comestível, mas é estiloso.', '★★', 'Ilha de Borabóia', NULL, 15),
     ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 10, 5),
     ('ButterCream de Fuligem', 'O preferido dos confeiteiros da cidade, feito com um toque especial de cana-de-açúcar e... partículas do ar local.', '★★', 'Cidade de Lurien', NULL, 15),
     ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 20, 8),
@@ -162,6 +158,7 @@ VALUES
     ('Asa de Morcego Noturno', 'Negra como a meia-noite sem lua. Serve para receitas, poções e decoração gótica.', '★', 'Nublária', NULL, 9),
     ('Presa Venenosa', 'Brilha com um verde nada confiável. Cuide para não furar o dedo ao manusear.', '★', 'Nublária', NULL,  7),
     ('Peixe Saltitante', 'Ainda parece se mexer! Ideal para grelhar, cozinhar ou assustar aprendizes.', '★', 'Quartel Naval D-57', NULL, 11),
+    ('Pepino de Salmoura', 'Conservado com tanto sal que chega a arrepiar a alma. Dizem que dura uma década.', '★', 'Quartel Naval D-57', NULL, 5),
     ('Chapéu de Marinheiro', 'Simboliza status, disciplina e... bom, é só um chapéu suado. Não comestível.', '★★', 'Quartel Naval D-57', NULL, 15);
 
 
@@ -184,7 +181,7 @@ VALUES
     ('Leite de Cabra Alpina', 'Quentinho, cremoso e nutritivo. Perfeito para combater o frio e o mau humor.', '★', 'Ilha Glacial de Frimora', 10, 6, FALSE),
     ('Chocolate Amargo', 'Amargo como a vida no gelo. Derrete o cansaço e o coração congelado.', '★', 'Ilha Glacial de Frimora', 15, 8, FALSE),
     ('Fruta Cítrica do Oeste', 'Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida.', '★', 'Cactuaraquara', NULL, 4, FALSE),
-    ('Côco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara' NULL, 7, FALSE),
+    ('Côco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara', NULL, 7, FALSE),
     ('Areia Mineral', 'Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante.', '★★', 'Cactuaraquara', NULL, 10, FALSE),
     ('Carne do Deserto', 'Picante o suficiente pra te fazer cuspir fogo. +1 em coragem depois de comer.', '★★', 'Cactuaraquara',  20, 8, FALSE),
     ('Geleia de Cacto Doce', 'Um docinho raro feito do néctar de um cacto bem zangado. Cuidadosamente colhida!', '★★', 'Cactuaraquara', 11, 6, FALSE),
@@ -193,46 +190,45 @@ VALUES
     ('Fruta Fluorescente', 'Brilha no escuro! Alguns dizem que tem alma própria.', '★', 'Nublária', NULL, 7, FALSE),
     ('Doce Fantasmal', 'Derrete na língua e deixa um leve arrepio na espinha. Doces espíritos aprovariam.', '★', 'Nublária', 13, 5, FALSE),
     ('Ração de Soldado', 'Embalada à vácuo e sem gosto. Mas dá energia e fortalece o espírito patriótico.', '★★', 'Quartel Naval D-57', NULL, 10, FALSE),
-    ('Pepino de Salmoura', 'Conservado com tanto sal que chega a arrepiar a alma. Dizem que dura uma década.', '★', 'Quartel Naval D-57', NULL, 5, FALSE),
     ('Biscoito de Gengibre', 'Na ala dos oficiais, um confeiteiro reformado da Marinha mantém a tradição de assar biscoitos para “manter a moral da tropa”. Só não conte pros recrutas — é só pros superiores.', '★★', 'Quartel Naval D-57', 12, 7, FALSE),
     ('Café Turbinado', 'Tão forte que acorda até os mortos e os marinheiros de plantão.', '★', 'Quartel Naval D-57',     8, 3, FALSE),
     ('Carne de Rei dos Mares', 'Gigantesca, rara e cara. Cheia de proteína e orgulho militar.', '★★★', 'Quartel Naval D-57', 40, 19, FALSE),
     ('Rosquinha Mordida', 'Quem mordeu e largou? Ainda tá boa. Restaura pouco, mas serve como prova de negligência.', '★', 'Quartel Naval D-57', NULL, 3, FALSE),
-    ('Sushi Enrolado', 'Enrolado com carinho e peixe saltitante! Um lanche leve, mas cheio de sabor.', '★★', 'Receita', NULL, 15, TRUE),
-    ('Chá de Algas', 'Um gole desse chá marinho e você sente até as ondas te abraçando por dentro.', '★', 'Receita',  NULL, 10, TRUE),
-    ('Pastel de Fruta do Diabo', 'Ardido e adocicado, um quitute perigoso para os mais ousados.', '★★', 'Receita', NULL, 18, TRUE),
-    ('Caldo da Vovó Yuba', 'Uma sopa tão boa que parece que te dá um abraço. Feita com amor... e pimenta!', '★★', 'Receita', NULL, 22, TRUE),
-    ('Tônico de Areia', 'Tem gosto de areia? Sim. Funciona? Mais do que você imagina!', '★★', 'Receita', NULL, 16, TRUE),
-    ('Chá Gelado de Neve', 'Refrescante até congelar os pensamentos. A escolha perfeita pra esfriar os ânimos.', '★★', 'Receita', NULL, 15, TRUE),
-    ('Receita Secreta do Capitão', 'Uma mistura poderosa e misteriosa, só os verdadeiros líderes se atrevem a provar.', '★★★', 'Receita', NULL, 27, TRUE),
-    ('Carne Grelhada', 'Crocante por fora, suculenta por dentro. Perfeita para qualquer fogueira.', '★★', 'Receita', NULL, 18, TRUE),
-    ('Pérola Caramelizada', 'Crocante, mágica e doce. Dizem que revive até o humor de um pirata carrancudo.', '★★', 'Receita', NULL, 13, TRUE),
-    ('Pérola da Lua de Inverno', 'Um doce etéreo que brilha como a luz da lua sobre a neve. Quem o come sente o universo piscando para si — e os dados da vida rolando a seu favor.', '★★★', 'Receita', NULL, 24, TRUE),
-    ('Pérola do Sol Escaldante', 'Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável.', '★★★', 'Receita', NULL, 24, TRUE),
-    ('Gelado de Algas', 'Uma sobremesa geladinha com gosto do mar e um toque de frescor sobrenatural.', '★', 'Receita',  NULL, 15, TRUE),
-    ('Omurice de Arroz', 'Receita tradicional dos viajantes do campo, famosa por causar nostalgia e fome ao mesmo tempo.', '★★', 'Receita', NULL, 15, TRUE),
-    ('Bolo do Campo', 'Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura!', '★★', 'Receita', NULL, 14, TRUE),
-    ('Bombom Nebuloso', 'Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra).', '★★', 'Receita', NULL, 12, TRUE),
-    ('Arroz dos Sete Mares', 'Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte.', '★', 'Receita', NULL, 9, TRUE),
-    ('Doce da Ilha', 'Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto.', '★★', 'Receita', NULL, 12, TRUE),
-    ('Omelete dos 4 Ventos', 'Leve e fofa, com o sabor do campo e a brisa das planícies.', '★★', 'Receita', NULL, 13, TRUE),
-    ('Frango Assado Estaladiço', 'Crocante por fora, macio por dentro. Tão bom que até o corvo queria roubar.', '★', 'Receita', NULL, 10, TRUE),
-    ('Sopa da Guarda Noturna', 'Revigorante e quentinha, ideal para noites frias e perseguições por becos.', '★', 'Receita', NULL, 6, TRUE),
-    ('Doce de Duna Dourada', 'Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos.', '★★', 'Receita', NULL, 16, TRUE),
-    ('Bife do Abismo', 'Um corte suculento direto das profundezas do mar. Tão macio que derrete na boca, mas tão forte que faz os músculos tremerem.', '★★★', 'Receita', NULL, 35, TRUE),
-    ('Sashimi do Fim do Mundo', 'Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor.', '★★★', 'Receita', NULL, 35, TRUE),
-    ('Torta do Marujo Feliz', 'Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação.', '★', 'Receita',  NULL, 10, TRUE),
-    ('Doce Assombrado', 'Não se sabe se o sabor é bom ou se é só a maldição agindo. Textura perfeita... demais até.', '★★', 'Receita', NULL, 12, TRUE),
-    ('Curry do Capitão Covarde', 'O cheiro é intenso, o sabor é duvidoso, mas nenhum pirata consegue parar de comer.', '★★', 'Receita', NULL, 13, TRUE),
-    ('Elixir Sombrio', 'Bebida proibida sussurrada em tavernas assombradas. Quem é que vai querer beber isso...?', '★★', 'Receita', NULL, 18, TRUE),
-    ('Poção do Dente Torto', 'Um gole é suficiente para se sentir... diferente. Tem certeza que isso não é veneno?', '★★', 'Receita', NULL, 18, TRUE),
-    ('Cookie de Chocolate', 'Crocante por fora, macia por dentro. Derrete na boca como a neve da infância.', '★', 'Receita', NULL, 14, TRUE),
-    ('Leite Condensado Alpino', 'Um creme docinho e suave.', '★', 'Receita',  NULL, 11, TRUE),
-    ('Chocolate Quente', 'Um gole e você sente como se tivesse abraçado um urso de cachecol... que acabou de sair do banho e decidiu virar seu terapeuta de plantão.', '★★', 'Receita',  NULL, 15, TRUE),
-    ('Doce do Silêncio Eterno', 'Um doce que ecoa sussurros antigos. Quem come diz sentir a presença dos que partiram.', '★★', 'Receita', NULL, 17, TRUE),
-    ('Cacto-Pop Geladinho', 'Uma explosão refrescante e pegajosa! Perfeito para os dias escaldantes no deserto.', '★★', 'Receita', NULL, 16, TRUE),
-    ('Esfera da Miragem', 'Parece sólida, mas será que é? Um doce ilusório que desorienta quem o encara por muito tempo.', '★★', 'Receita', NULL, 17, TRUE),
-    ('Pickles Pirata', 'Um prato inusitado e ousado. Os piratas juram que melhora a mira (e o hálito!).', '★', 'Receita', NULL, 10, TRUE),
-    ('Frankenprato', 'Uma aberração culinária nascida da mistura de ingredientes incompatíveis. Não parece comida... mas tecnicamente é.', '★', 'Receita', NULL, 5, TRUE);
+    ('Sushi Enrolado', 'Enrolado com carinho e peixe saltitante! Um lanche leve, mas cheio de sabor.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Chá de Algas', 'Um gole desse chá marinho e você sente até as ondas te abraçando por dentro.', '★', 'Cozinha',  NULL, 10, TRUE),
+    ('Pastel de Fruta do Diabo', 'Ardido e adocicado, um quitute perigoso para os mais ousados.', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Caldo da Vovó Yuba', 'Uma sopa tão boa que parece que te dá um abraço. Feita com amor... e pimenta!', '★★', 'Cozinha', NULL, 22, TRUE),
+    ('Tônico de Areia', 'Tem gosto de areia? Sim. Funciona? Mais do que você imagina!', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Chá Gelado de Neve', 'Refrescante até congelar os pensamentos. A escolha perfeita pra esfriar os ânimos.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Receita Secreta do Capitão', 'Uma mistura poderosa e misteriosa, só os verdadeiros líderes se atrevem a provar.', '★★★', 'Cozinha', NULL, 27, TRUE),
+    ('Carne Grelhada', 'Crocante por fora, suculenta por dentro. Perfeita para qualquer fogueira.', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Pérola Caramelizada', 'Crocante, mágica e doce. Dizem que revive até o humor de um pirata carrancudo.', '★★', 'Cozinha', NULL, 13, TRUE),
+    ('Pérola da Lua de Inverno', 'Um doce etéreo que brilha como a luz da lua sobre a neve. Quem o come sente o universo piscando para si — e os dados da vida rolando a seu favor.', '★★★', 'Cozinha', NULL, 24, TRUE),
+    ('Pérola do Sol Escaldante', 'Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável.', '★★★', 'Cozinha', NULL, 24, TRUE),
+    ('Gelado de Algas', 'Uma sobremesa geladinha com gosto do mar e um toque de frescor sobrenatural.', '★', 'Cozinha',  NULL, 15, TRUE),
+    ('Omurice de Arroz', 'Receita tradicional dos viajantes do campo, famosa por causar nostalgia e fome ao mesmo tempo.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Bolo do Campo', 'Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura!', '★★', 'Cozinha', NULL, 14, TRUE),
+    ('Bombom Nebuloso', 'Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra).', '★★', 'Cozinha', NULL, 12, TRUE),
+    ('Arroz dos Sete Mares', 'Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte.', '★', 'Cozinha', NULL, 9, TRUE),
+    ('Doce da Ilha', 'Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto.', '★★', 'Cozinha', NULL, 12, TRUE),
+    ('Omelete dos 4 Ventos', 'Leve e fofa, com o sabor do campo e a brisa das planícies.', '★★', 'Cozinha', NULL, 13, TRUE),
+    ('Frango Assado Estaladiço', 'Crocante por fora, macio por dentro. Tão bom que até o corvo queria roubar.', '★', 'Cozinha', NULL, 10, TRUE),
+    ('Sopa da Guarda Noturna', 'Revigorante e quentinha, ideal para noites frias e perseguições por becos.', '★', 'Cozinha', NULL, 6, TRUE),
+    ('Doce de Duna Dourada', 'Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos.', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Bife do Abismo', 'Um corte suculento direto das profundezas do mar. Tão macio que derrete na boca, mas tão forte que faz os músculos tremerem.', '★★★', 'Cozinha', NULL, 35, TRUE),
+    ('Sashimi do Fim do Mundo', 'Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor.', '★★★', 'Cozinha', NULL, 35, TRUE),
+    ('Torta do Marujo Feliz', 'Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação.', '★', 'Cozinha',  NULL, 10, TRUE),
+    ('Doce Assombrado', 'Não se sabe se o sabor é bom ou se é só a maldição agindo. Textura perfeita... demais até.', '★★', 'Cozinha', NULL, 12, TRUE),
+    ('Curry do Capitão Covarde', 'O cheiro é intenso, o sabor é duvidoso, mas nenhum pirata consegue parar de comer.', '★★', 'Cozinha', NULL, 13, TRUE),
+    ('Elixir Sombrio', 'Bebida proibida sussurrada em tavernas assombradas. Quem é que vai querer beber isso...?', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Poção do Dente Torto', 'Um gole é suficiente para se sentir... diferente. Tem certeza que isso não é veneno?', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Cookie de Chocolate', 'Crocante por fora, macia por dentro. Derrete na boca como a neve da infância.', '★', 'Cozinha', NULL, 14, TRUE),
+    ('Leite Condensado Alpino', 'Um creme docinho e suave.', '★', 'Cozinha',  NULL, 11, TRUE),
+    ('Chocolate Quente', 'Um gole e você sente como se tivesse abraçado um urso de cachecol... que acabou de sair do banho e decidiu virar seu terapeuta de plantão.', '★★', 'Cozinha',  NULL, 15, TRUE),
+    ('Doce do Silêncio Eterno', 'Um doce que ecoa sussurros antigos. Quem come diz sentir a presença dos que partiram.', '★★', 'Cozinha', NULL, 17, TRUE),
+    ('Cacto-Pop Geladinho', 'Uma explosão refrescante e pegajosa! Perfeito para os dias escaldantes no deserto.', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Esfera da Miragem', 'Parece sólida, mas será que é? Um doce ilusório que desorienta quem o encara por muito tempo.', '★★', 'Cozinha', NULL, 17, TRUE),
+    ('Pickles Pirata', 'Um prato inusitado e ousado. Os piratas juram que melhora a mira (e o hálito!).', '★', 'Cozinha', NULL, 10, TRUE),
+    ('Frankenprato', 'Uma aberração culinária nascida da mistura de ingredientes incompatíveis. Não parece comida... mas tecnicamente é.', '★', 'Cozinha', NULL, 5, TRUE);
 
 
