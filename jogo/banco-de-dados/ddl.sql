@@ -22,42 +22,43 @@ CREATE TABLE arma (
     identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
     nome CHAR(50) NOT NULL CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     descricao CHAR(150) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    quantidade SMALLINT NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(4) NOT NULL CHECK (local_encontrado IN ('Loja')),
-    preco_de_compra SMALLINT NOT NULL
+    tipo_arma CHAR(3) NOT NULL CHECK (tipo_arma IN ('esp', 'est', 'arc')),
+    local_encontrado CHAR(27) NOT NULL CHECK (local_encontrado IN ('Loja de Espadas', 'Loja de Estilingues e Arcos')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
 );
 
 CREATE TABLE fruta (
     identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
     nome CHAR(50) NOT NULL CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    descricao CHAR(150) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    quantidade SMALLINT NOT NULL,
+    descricao CHAR(222) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Missão', 'Evento')),
-    preco_de_venda SMALLINT NOT NULL
+    preco_de_venda SMALLINT CHECK (preco_de_venda IS NULL OR preco_de_venda BETWEEN 1 AND 999)
 );
 
 CREATE TABLE acessorio (
     identificador_acessorio ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     descricao CHAR(150) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    quantidade SMALLINT NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
-    preco_de_compra SMALLINT NOT NULL
+    local_encontrado CHAR(18) NOT NULL CHECK (local_encontrado IN ('Loja de Acessórios')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
 );
 
 CREATE TABLE consumivel (
     identificador_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    descricao CHAR(150) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    quantidade SMALLINT NOT NULL,
+    descricao CHAR(200) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
-    preco_de_compra SMALLINT,
-    preco_de_venda SMALLINT NOT NULL,
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
     e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
 );
 
@@ -65,11 +66,11 @@ CREATE TABLE nao_consumivel (
     identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
     descricao CHAR(150) NOT NULL CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    quantidade SMALLINT NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
-    preco_de_compra SMALLINT,
-    preco_de_venda SMALLINT NOT NULL
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
 );
 
 CREATE TABLE receita (
@@ -96,8 +97,24 @@ CREATE TABLE ingrediente_nao_consumivel (
 
 CREATE TABLE efeito (
     identificador_efeito ID PRIMARY KEY,
-    nome CHAR(25) NOT NULL CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    valor SMALLINT NOT NULL
+    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    valor SMALLINT CHECK (
+        (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
+        (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
+        (nome = 'Vida Máxima' AND valor BETWEEN 1 AND 15) OR
+        (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
+        (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
+        (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
+        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Purificação' AND valor IS NULL)
+    )
 );
 
 CREATE TRIGGER atribui_id_efeito
