@@ -12,45 +12,36 @@ DECLARE
     v_tipo_val  CHAR(3);
 BEGIN
 
-    /* 1 ─ Bloqueia inserção manual ------------------------------------------*/
+    /* 1 ─ Bloqueia inserção manual e determina o valor do "tipo" ------------*/
     IF TG_TABLE_NAME = 'jogador' THEN
         IF NEW.identificador_jogador IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_jogador" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo_val := 'jog';
     ELSIF TG_TABLE_NAME = 'aliado' THEN
         IF NEW.identificador_aliado IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_aliado" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo_val := 'ali';
     ELSIF TG_TABLE_NAME = 'chefe' THEN
         IF NEW.identificador_chefe IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_chefe" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo_val := 'che';
     ELSIF TG_TABLE_NAME = 'lacaio' THEN
         IF NEW.identificador_lacaio IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_lacaio" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo_val := 'lac';
     ELSIF TG_TABLE_NAME = 'habitante' THEN
         IF NEW.identificador_habitante IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_habitante" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    END IF;
-
-
-    /* 2 ─ Determina o valor do "tipo" com base na tabela onde o trigger foi disparado */
-    IF TG_TABLE_NAME = 'jogador' THEN
-        v_tipo_val := 'jog';
-    ELSIF TG_TABLE_NAME = 'aliado' THEN
-        v_tipo_val := 'ali';
-    ELSIF TG_TABLE_NAME = 'chefe' THEN
-        v_tipo_val := 'che';
-    ELSIF TG_TABLE_NAME = 'lacaio' THEN
-        v_tipo_val := 'lac';
-    ELSIF TG_TABLE_NAME = 'habitante' THEN
         v_tipo_val := lower( to_jsonb(NEW)->>'tipo_habitante' );
     ELSE
         -- Isso é uma proteção caso o trigger seja acidentalmente anexado a outra tabela
@@ -58,13 +49,13 @@ BEGIN
     END IF;
 
 
-    /* 3 ─ Insere na tabela 'tipo_personagem' e captura o ID gerado pelo trigger de tipo_pessoa */
-    INSERT INTO tipo_elemento_espacial (tipo)
+    /* 2 ─ Insere na tabela 'tipo_personagem' e captura o ID gerado pelo trigger de tipo_pessoa */
+    INSERT INTO tipo_personagem (tipo)
     VALUES (v_tipo)
-    RETURNING identificador_elemento_espacial INTO v_new_id;
+    RETURNING identificador_personagem INTO v_new_id;
 
 
-    /* 4 ─ Atribui o ID gerado à nova linha da tabela filha */
+    /* 3 ─ Atribui o ID gerado à nova linha da tabela filha */
     IF TG_TABLE_NAME = 'jogador' THEN
         NEW.identificador_jogador := v_new_id;
     ELSIF TG_TABLE_NAME = 'aliado' THEN
@@ -101,44 +92,37 @@ DECLARE
     v_tipo     CHAR(3);
 BEGIN
 
-    -- 1. Bloqueia inserções manuais nos identificadores
+    -- 1. Bloqueia inserções manuais nos identificadores e determina o valor do "tipo"
     IF TG_TABLE_NAME = 'caminho' THEN
         IF NEW.identificador_caminho IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_caminho" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo := 'cam';
     ELSIF TG_TABLE_NAME = 'obstaculo' THEN
         IF NEW.identificador_obstaculo IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_obstaculo" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo := 'obs';
     ELSIF TG_TABLE_NAME = 'area_interativa' THEN
         IF NEW.identificador_area_interativa IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_area_interativa" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    END IF;
-
-
-    -- 2. Determina o tipo com base na tabela
-    IF TG_TABLE_NAME = 'caminho' THEN
-        v_tipo := 'cam';
-    ELSIF TG_TABLE_NAME = 'obstaculo' THEN
-        v_tipo := 'obs';
-    ELSIF TG_TABLE_NAME = 'area_interativa' THEN
         v_tipo := 'ari';
     ELSE
         RAISE EXCEPTION 'Trigger usada em tabela incorreta: %', TG_TABLE_NAME;
     END IF;
 
 
-    -- 3. Insere na tabela tipo_elemento_espacial e obtém o ID
+    -- 2. Insere na tabela tipo_elemento_espacial e obtém o ID
     INSERT INTO tipo_elemento_espacial (tipo)
     VALUES (v_tipo)
     RETURNING identificador_elemento_espacial INTO v_new_id;
 
 
-    -- 4. Atribui o ID gerado à nova linha da tabela filha
+    -- 3. Atribui o ID gerado à nova linha da tabela filha
     IF TG_TABLE_NAME = 'caminho' THEN
         NEW.identificador_caminho := v_new_id;
     ELSIF TG_TABLE_NAME = 'obstaculo' THEN
@@ -170,37 +154,32 @@ DECLARE
     v_new_id   ID;
     v_tipo     CHAR(3);
 BEGIN
-    -- 1. Bloqueia inserções manuais nos identificadores
+
+    -- 1. Bloqueia inserções manuais nos identificadores e determina o valor do "tipo"
     IF TG_TABLE_NAME = 'ilha' THEN
         IF NEW.identificador_ilha IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_ilha" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+        v_tipo := 'ilh';
     ELSIF TG_TABLE_NAME = 'mar' THEN
         IF NEW.identificador_mar IS NOT NULL THEN
             RAISE EXCEPTION
                 'A coluna "identificador_mar" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    END IF;
-
-
-    -- 2. Define o tipo com base na tabela alvo
-    IF TG_TABLE_NAME = 'ilha' THEN
-        v_tipo := 'ilh';
-    ELSIF TG_TABLE_NAME = 'mar' THEN
         v_tipo := 'mar';
     ELSE
         RAISE EXCEPTION 'Trigger usada em tabela não esperada: %', TG_TABLE_NAME;
     END IF;
 
 
-    -- 3. Insere entrada em tipo_mapa e obtém ID
+    -- 2. Insere entrada em tipo_mapa e obtém ID
     INSERT INTO tipo_mapa (tipo)
     VALUES (v_tipo)
     RETURNING identificador_mapa INTO v_new_id;
 
 
-    -- 4. Atribui o ID gerado à nova linha
+    -- 3. Atribui o ID gerado à nova linha
     IF TG_TABLE_NAME = 'ilha' THEN
         NEW.identificador_ilha := v_new_id;
     ELSIF TG_TABLE_NAME = 'mar' THEN
@@ -214,3 +193,76 @@ $$;
 COMMENT ON FUNCTION public.gerar_id_tabelas_mapa() IS
 'Usada como BEFORE INSERT nas tabelas ilha e mar.
 Gera ID automaticamente inserindo entrada em tipo_elemento_espacial e atribui ao NEW.identificador_{nome_da_tabela}';
+
+
+
+CREATE FUNCTION public.gerar_id_tabelas_item()
+RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+    novo_id   ID;
+    tipo     CHAR(3);
+BEGIN
+    -- 1. Bloqueia inserções manuais nos identificadores
+    IF TG_TABLE_NAME = 'acessorio' THEN
+        IF NEW.identificador_acessorio IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_acessorio" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'ace';
+    ELSIF TG_TABLE_NAME = 'arma' THEN
+        IF NEW.identificador_arma IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_arma" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'arm';
+    ELSIF TG_TABLE_NAME = 'fruta' THEN
+        IF NEW.identificador_fruta IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_fruta" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'fru';
+    ELSIF TG_TABLE_NAME = 'consumivel' THEN
+        IF NEW.identificador_consumivel IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_consumivel" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'con';
+    ELSIF TG_TABLE_NAME = 'nao_consumivel' THEN
+        IF NEW.identificador_nao_consumivel IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_nao_consumivel" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'ncn';
+    ELSE
+        RAISE EXCEPTION 'Trigger usada em tabela não esperada: %', TG_TABLE_NAME;
+    END IF;
+
+
+
+    -- 3. Insere entrada em tipo_item e obtém ID
+    INSERT INTO tipo_item (tipo)
+    VALUES (tipo)
+    RETURNING identificador_item INTO novo_id;
+
+
+    -- 4. Atribui o ID gerado à nova linha
+    IF TG_TABLE_NAME = 'acessorio' THEN
+        NEW.identificador_acessorio := novo_id;
+    ELSIF TG_TABLE_NAME = 'arma' THEN
+        NEW.identificador_arma := novo_id;
+    ELSIF TG_TABLE_NAME = 'fruta' THEN
+        NEW.identificador_fruta := novo_id;
+    ELSIF TG_TABLE_NAME = 'consumivel' THEN
+        NEW.identificador_consumivel := novo_id;
+    ELSIF TG_TABLE_NAME = 'nao_consumivel' THEN
+        NEW.identificador_nao_consumivel := novo_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+COMMENT ON FUNCTION public.gerar_id_tabelas_item() IS
+'Usada como BEFORE INSERT nas tabelas acessorio, arma, fruta, consumivel e nao_consumivel.
+Gera ID automaticamente inserindo entrada em tipo_item e atribui ao NEW.identificador_{nome_da_tabela}';
