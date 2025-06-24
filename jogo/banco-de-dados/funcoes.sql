@@ -214,3 +214,74 @@ $$;
 COMMENT ON FUNCTION public.gerar_id_tabelas_mapa() IS
 'Usada como BEFORE INSERT nas tabelas ilha e mar.
 Gera ID automaticamente inserindo entrada em tipo_elemento_espacial e atribui ao NEW.identificador_{nome_da_tabela}';
+
+
+
+CREATE FUNCTION public.gerar_id_tabelas_item()
+RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE
+    novo_id   ID;
+    tipo     CHAR(3);
+BEGIN
+    -- 1. Bloqueia inserções manuais nos identificadores
+    IF TG_TABLE_NAME = 'acessorio' THEN
+        IF NEW.identificador_acessorio IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_acessorio" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'ace';
+    ELSIF TG_TABLE_NAME = 'arma' THEN
+        IF NEW.identificador_arma IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_arma" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'arm';
+    ELSIF TG_TABLE_NAME = 'fruta' THEN
+        IF NEW.identificador_fruta IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_fruta" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'fru';
+    ELSIF TG_TABLE_NAME = 'consumivel' THEN
+        IF NEW.identificador_consumivel IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_consumivel" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'con';
+    ELSIF TG_TABLE_NAME = 'nao_consumivel' THEN
+        IF NEW.identificador_nao_consumivel IS NOT NULL THEN
+            RAISE EXCEPTION
+                'A coluna "identificador_nao_consumivel" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+        tipo := 'ncn';
+    END IF;
+
+
+
+    -- 3. Insere entrada em tipo_item e obtém ID
+    INSERT INTO tipo_item (tipo)
+    VALUES (tipo)
+    RETURNING identificador_item INTO novo_id;
+
+
+    -- 4. Atribui o ID gerado à nova linha
+    IF TG_TABLE_NAME = 'acessorio' THEN
+        NEW.identificador_acessorio := novo_id;
+    ELSIF TG_TABLE_NAME = 'arma' THEN
+        NEW.identificador_arma := novo_id;
+    ELSIF TG_TABLE_NAME = 'fruta' THEN
+        NEW.identificador_fruta := novo_id;
+    ELSIF TG_TABLE_NAME = 'consumivel' THEN
+        NEW.identificador_consumivel := novo_id;
+    ELSIF TG_TABLE_NAME = 'nao_consumivel' THEN
+        NEW.identificador_nao_consumivel := novo_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+COMMENT ON FUNCTION public.gerar_id_tabelas_item() IS
+'Usada como BEFORE INSERT nas tabelas acessorio, arma, fruta, consumivel e nao_consumivel.
+Gera ID automaticamente inserindo entrada em tipo_item e atribui ao NEW.identificador_{nome_da_tabela}';
