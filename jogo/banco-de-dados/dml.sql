@@ -289,7 +289,16 @@ VALUES
     ('are003', 'arena', 1360, 33, 1226, 567),
     ('are003', 'normal', 2586, 230, 827, 145),
     ('are003', 'normal', 3413, 230, 481, 370),
-    ('are003', 'normal', 3894, 313, 361, 158);
+    ('are003', 'normal', 3894, 313, 361, 158),
+    ('are007', 'normal', 111, 309, 2589, 107),
+    ('are007', 'normal', 580, 270, 290, 39),
+    ('are008', 'normal', 0, 498, 1682, 102),
+    ('are008', 'normal', 1539, 403, 143, 95),
+    ('are009', 'normal', 0, 483, 764, 117),
+    ('are009', 'arena', 764, 203, 1036, 397),
+    ('are014', 'normal', 0, 407, 3540, 193),
+    ('are014', 'neve', 0, 407, 3540, 74),
+    ('are014', 'neve', 0, 571, 3540, 29);
 
 INSERT INTO habitante
     (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y)
