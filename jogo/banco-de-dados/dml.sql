@@ -196,12 +196,23 @@ INSERT INTO ingrediente_nao_consumivel (identificador_receita, identificador_nao
 INSERT INTO ilha
 	(nome, visitada)
 VALUES
-	('Ilha de Borabóia', FALSE),
-	('Cidade de Lurien', FALSE),
-	('Ilha Glacial de Frimora', FALSE),
-	('Cactuaraquara', FALSE),
-	('Nublária', FALSE),
-	('Quartel Naval D-57', FALSE);
+	('Ilha de Borabóia', FALSE), -- → ilh001
+	('Cidade de Lurien', FALSE), -- → ilh002
+	('Ilha Glacial de Frimora', FALSE), -- → ilh003
+	('Cactuaraquara', FALSE), -- → ilh004
+	('Nublária', FALSE), -- → ilh005
+	('Quartel Naval D-57', FALSE); -- → ilh006
+
+INSERT INTO conexao_entre_ilhas
+    (ilha_a, ilha_b, bloqueada)
+VALUES
+    ('ilh001', 'ilh002', TRUE),
+    ('ilh001', 'ilh004', TRUE),
+    ('ilh002', 'ilh003', TRUE),
+    ('ilh002', 'ilh006', TRUE),
+    ('ilh003', 'ilh004', TRUE),
+    ('ilh003', 'ilh005', TRUE),
+    ('ilh005', 'ilh006', TRUE);
 
 INSERT INTO area
 	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente, visitada)
@@ -236,6 +247,33 @@ VALUES
 	('ilh006', 'Escritório do Vice-Almirante', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE), -- → are028
 	('ilh006', 'Loja da Marinha', 'Loja', 'loja_interior', null, FALSE), -- → are029
 	('ilh006', 'Cozinha do Capitão', 'Loja', 'cozinha_interior', null, FALSE); -- → are030
+
+INSERT INTO conexao_entre_areas
+    (area_a, area_b, bloqueada)
+VALUES
+    ('are001', 'are002', TRUE),
+    ('are002', 'are003', TRUE),
+    ('are002', 'are004', TRUE),
+    ('are002', 'are005', TRUE),
+    ('are005', 'are006', TRUE),
+    ('are007', 'are008', TRUE),
+    ('are008', 'are009', TRUE),
+    ('are008', 'are010', TRUE),
+    ('are009', 'are012', TRUE),
+    ('are010', 'are011', TRUE),
+    ('are013', 'are014', TRUE),
+    ('are014', 'are015', TRUE),
+    ('are014', 'are016', TRUE),
+    ('are017', 'are018', TRUE),
+    ('are018', 'are019', TRUE),
+    ('are018', 'are020', TRUE),
+    ('are021', 'are022', TRUE),
+    ('are022', 'are023', TRUE),
+    ('are022', 'are024', TRUE),
+    ('are026', 'are027', TRUE),
+    ('are027', 'are028', TRUE),
+    ('are027', 'are029', TRUE),
+    ('are027', 'are030', TRUE);
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)

@@ -160,8 +160,8 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_mapa();
 
 CREATE TABLE conexao_entre_ilhas (
-    identificador_ilha_origem ID NOT NULL REFERENCES ilha(identificador_ilha),
-    identificador_ilha_destino ID NOT NULL REFERENCES ilha(identificador_ilha),
+    identificador_ilha_a ID NOT NULL REFERENCES ilha(identificador_ilha),
+    identificador_ilha_b ID NOT NULL REFERENCES ilha(identificador_ilha),
     bloqueada BOOLEAN,
     PRIMARY KEY (identificador_ilha_origem, identificador_ilha_destino)
 );
@@ -182,8 +182,8 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE conexao_entre_areas (
-    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
-    identificador_area_destino ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_a ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_b ID NOT NULL REFERENCES area(identificador_area),
     PRIMARY KEY (identificador_area_origem, identificador_area_destino)
 );
 
