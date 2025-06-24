@@ -169,7 +169,7 @@ CREATE TABLE conexao_entre_ilhas (
 CREATE TABLE area (
     identificador_area ID PRIMARY KEY,
     identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
-    nome CHAR(30) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
+    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z \\-áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+$'),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
     chave_imagem_fundo CHAR(50) CHECK (BTRIM(chave_imagem_fundo) ~ '^[a-z_]+$'),
     chave_imagem_frente CHAR(50) CHECK (BTRIM(chave_imagem_frente) ~ '^[a-z_]+$'),
@@ -288,7 +288,7 @@ CREATE TABLE jogador (
     identificador_jogador ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
-    descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
+    descricao CHAR(250) CHECK (descricao ~ '^[a-zA-Z \\-áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ!?,.]+$'),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
@@ -357,8 +357,8 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 CREATE TABLE habitante (
     identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    nome CHAR(15) CHECK (nome ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$'),
-    descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
+    nome CHAR(27) CHECK (nome ~ '^[a-zA-Z \\-áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+$'),
+    descricao CHAR(100) CHECK (descricao ~ '^[a-zA-Z \\-áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ!?,.]+$'),
     tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
@@ -366,7 +366,7 @@ CREATE TABLE habitante (
 );
 
 CREATE TRIGGER atribui_id_habitante
-BEFORE INSERT ON aliado
+BEFORE INSERT ON habitante
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 

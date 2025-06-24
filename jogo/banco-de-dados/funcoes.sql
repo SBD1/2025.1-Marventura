@@ -59,9 +59,9 @@ BEGIN
 
 
     /* 3 ─ Insere na tabela 'tipo_personagem' e captura o ID gerado pelo trigger de tipo_pessoa */
-    INSERT INTO tipo_elemento_espacial (tipo)
+    INSERT INTO tipo_personagem (tipo)
     VALUES (v_tipo)
-    RETURNING identificador_elemento_espacial INTO v_new_id;
+    RETURNING identificador_personagem INTO v_new_id;
 
 
     /* 4 ─ Atribui o ID gerado à nova linha da tabela filha */
