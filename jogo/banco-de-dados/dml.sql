@@ -203,43 +203,39 @@ VALUES
 	('Nublária', FALSE),
 	('Quartel Naval D-57', FALSE);
 
-SELECT * FROM ilha;
-
 INSERT INTO area
 	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente, visitada)
 VALUES
-	('ilh001', 'Costa Oeste', 'Área de combate', 'cenario_boraboia_oeste', 'cenario_boraboia_oeste_camada_superior', FALSE),
-	('ilh001', 'Vila', 'Vila', 'cenario_boraboia_vila', null, FALSE),
-	('ilh001', 'Porto', 'Porto', 'cenario_boraboia_leste', null, FALSE),
-	('ilh001', 'Loja', 'Loja', 'loja_interior', null, FALSE),
-	('ilh001', 'Casa', 'Vila', 'cenario_boraboia_casa', null, FALSE),
-	('ilh001', 'Sótão', 'Vila', 'cenario_boraboia_sótão', null, FALSE),
-	('ilh002', 'Porto', 'Porto', 'cenario_lurien_porto', 'cenario_lurien_porto_camada_superior', FALSE),
-	('ilh002', 'Centro', 'Área neutra', 'cenario_lurien_centro', null, FALSE),
-	('ilh002', 'Praça de execução', 'Área de combate', 'cenario_lurien_praca', null, FALSE),
-	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null, FALSE),
-	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null, FALSE),
-	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null, FALSE),
-	('ilh003', 'Porto', 'Área neutra', 'cenario_frimora_porto', null, FALSE),
-	('ilh003', 'Vila', 'Vila', 'cenario_frimora_vila', null, FALSE),
-	('ilh003', 'Colina', 'Área de combate', 'cenario_frimora_colina', null, FALSE),
-	('ilh003', 'Cozinha', 'Loja', 'cozinha_interior', null, FALSE),
-	('ilh004', 'Dunas', 'Porto', 'cenario_cactuaraquara_dunas', null, FALSE),
-	('ilh004', 'Vila', 'Vila', 'cenario_cactuaraquara_vila', null, FALSE),
-	('ilh004', 'Oásis', 'Área de combate', 'cenario_cactuaraquara_oasis', null, FALSE),
-	('ilh004', 'Loja', 'Loja', 'loja_interior', null, FALSE),
-	('ilh005', 'Porto', 'Porto', 'cenario_nublaria_porto', null, FALSE),
-	('ilh005', 'Vilarejo', 'Vila', 'cenario_nublaria_vila', null, FALSE),
-	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null, FALSE),
-	('ilh005', 'Loja', 'Loja', 'loja_interior', null, FALSE),
-	('ilh006', 'Porto', 'Porto', 'cenario_quartel_porto', null, FALSE),
-	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null, FALSE),
-	('ilh006', 'Escritório', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE),
-	('ilh006', 'Loja', 'Loja', 'loja_interior', null, FALSE),
-	('ilh006', 'Cozinha', 'Loja', 'cozinha_interior', null, FALSE);
-    
-
-SELECT * FROM area;
+	('ilh001', 'Pastos do Sol Dourado', 'Área de combate', 'cenario_boraboia_pastos', 'cenario_boraboia_pastos_camada_superior', FALSE), -- → are001
+	('ilh001', 'Vilarejo de Borabóia', 'Vila', 'cenario_boraboia_vila', null, FALSE), -- → are002
+	('ilh001', 'Vale Verdejante', 'Porto', 'cenario_boraboia_vale', null, FALSE), -- → are003
+	('ilh001', 'Loja de Borabóia', 'Loja', 'loja_interior', null, FALSE), -- → are004
+	('ilh001', 'Casa', 'Vila', 'cenario_boraboia_casa', null, FALSE), -- → are005
+	('ilh001', 'Sótão', 'Vila', 'cenario_boraboia_sotao', null, FALSE), -- → are006
+	('ilh002', 'Porto de Lurien', 'Porto', 'cenario_lurien_porto', 'cenario_lurien_porto_camada_superior', FALSE), -- → are007
+	('ilh002', 'Centro', 'Área neutra', 'cenario_lurien_centro', null, FALSE), -- → are008
+	('ilh002', 'Praça de execução', 'Área de combate', 'cenario_lurien_praca', null, FALSE), -- → are009
+	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null, FALSE), -- → are010
+	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null, FALSE), -- → are011
+	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null, FALSE), -- → are012
+	('ilh003', 'Porto de Frimora', 'Área neutra', 'cenario_frimora_porto', null, FALSE), -- → are013
+	('ilh003', 'Vila de Frimora', 'Vila', 'cenario_frimora_vila', null, FALSE), -- → are014
+	('ilh003', 'Montanha da Cabra Congelada', 'Área de combate', 'cenario_frimora_montanha', null, FALSE), -- → are015
+	('ilh003', 'Cozinha da Vovó Yuba', 'Loja', 'cozinha_interior', null, FALSE), -- → are016
+	('ilh004', 'Duna Braba', 'Porto', 'cenario_cactuaraquara_duna', null, FALSE), -- → are017
+	('ilh004', 'Cidadela de Cactuaraquara', 'Vila', 'cenario_cactuaraquara_cidadela', null, FALSE), -- → are018
+	('ilh004', 'Oásis de Ramtak', 'Área de combate', 'cenario_cactuaraquara_oasis', null, FALSE), -- → are019
+	('ilh004', 'Loja de Cactuaraquara', 'Loja', 'loja_interior', null, FALSE), -- → are020
+	('ilh005', 'Penumbra dos Ossudos', 'Porto', 'cenario_nublaria_penumbra', null, FALSE), -- → are021
+	('ilh005', 'Acampamento de Nublária', 'Vila', 'cenario_nublaria_acampamento', null, FALSE), -- → are022
+	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null, FALSE), -- → are023
+	('ilh005', 'Loja de Nublária', 'Loja', 'loja_interior', null, FALSE), -- → are024
+    ('ilh005', 'Yomotsu Hirasaka', 'Yomotsu Hirasaka', null, null) -- → are025
+	('ilh006', 'Porto da Égide', 'Porto', 'cenario_quartel_porto', null, FALSE), -- → are026
+	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null, FALSE), -- → are027
+	('ilh006', 'Escritório do Vice-Almirante', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE), -- → are028
+	('ilh006', 'Loja da Marinha', 'Loja', 'loja_interior', null, FALSE), -- → are029
+	('ilh006', 'Cozinha do Capitão', 'Loja', 'cozinha_interior', null, FALSE); -- → are030
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
@@ -257,5 +253,20 @@ VALUES
     ('are003', 'normal', 3413, 230, 481, 370),
     ('are003', 'normal', 3894, 313, 361, 158);
 
-SELECT * FROM caminho;
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y)
+VALUES
+    ('are001', 'Aldeão', 'Habitante da Ilha de Borabóia', 'rct', 0, 0),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 290, 300),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 615, 330),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1650, 340),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2775, 345),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2870, 345),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1000, 450),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 915, 323),
+    ('are007', 'Cidadão', 'Costuma vender frutas no porto da Cidade de Lurien', 'rct', 0, 0),
+    ('are012', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0),
+    ('are014', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0),
+    ('are019', 'Chefe do vilarejo', 'Chefe do vilarejo de Cactuaraquara', 'rct', 0, 0),
+    ('are027', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0);
  
