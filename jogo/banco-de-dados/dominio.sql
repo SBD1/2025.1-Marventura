@@ -76,6 +76,10 @@ BEGIN
         IF NEW.identificador_negociacao IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_negociacao" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+    ELSIF TG_TABLE_NAME = 'tipo_item' THEN
+        IF NEW.identificador_item IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_item" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
     END IF;
 
     /* 2.2 ─ obtém o prefixo ---------------------------------------------------*/
@@ -129,6 +133,8 @@ BEGIN
         NEW.identificador_inventario := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'negociacao' THEN
         NEW.identificador_negociacao := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'tipo_item' THEN
+        NEW.identificador_item := prefixo || lpad(numero_serial::text, 3, '0');
     END IF;
 
 
