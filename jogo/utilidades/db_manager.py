@@ -1,13 +1,17 @@
 
-import psycopg2
 import os
+from dotenv import load_dotenv
+import psycopg
 
-# Constantes de conexão (idealmente de um arquivo de configuração separado)
-DB_HOST = "localhost"
-DB_NAME = "Marventura"
-DB_USER = "postgres"
-DB_PASSWORD = "Saiyaman" # Use a senha correta
-DB_PORT = "5432"
+# Carrega as variáveis de ambiente do arquivo .env
+load_dotenv()
+
+# Constantes de conexão lidas das variáveis de ambiente
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PORT = os.getenv("DB_PORT")
 
 class DBManager:
     """
@@ -27,16 +31,16 @@ class DBManager:
     def _conectar(self):
         """Tenta estabelecer e retornar uma conexão com o banco de dados PostgreSQL."""
         try:
-            self.conn = psycopg2.connect(
+            self.conn = psycopg.connect(
                 host=DB_HOST,
-                database=DB_NAME,
+                dbname=DB_NAME,
                 user=DB_USER,
                 password=DB_PASSWORD,
                 port=DB_PORT
             )
             self.cursor = self.conn.cursor()
             print("DBManager: Conexão com o PostgreSQL estabelecida.")
-        except psycopg2.OperationalError as e:
+        except psycopg.OperationalError as e:
             print(f"DBManager ERRO: Não foi possível conectar ao banco de dados: {e}")
             self.conn = None
             self.cursor = None
@@ -72,7 +76,7 @@ class DBManager:
             else:
                 self.conn.commit()
                 return True
-        except psycopg2.Error as e:
+        except psycopg.Error as e:
             self.conn.rollback()
             print(f"DBManager ERRO ao executar query '{query}': {e}")
             return False
