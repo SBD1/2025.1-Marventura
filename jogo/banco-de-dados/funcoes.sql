@@ -51,7 +51,7 @@ BEGIN
 
     /* 2 ─ Insere na tabela 'tipo_personagem' e captura o ID gerado pelo trigger de tipo_pessoa */
     INSERT INTO tipo_personagem (tipo)
-    VALUES (v_tipo)
+    VALUES (v_tipo_val)
     RETURNING identificador_personagem INTO v_new_id;
 
 

@@ -8,6 +8,33 @@ BEFORE INSERT ON tipo_item
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
+CREATE TABLE efeito (
+    identificador_efeito ID PRIMARY KEY,
+    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    valor SMALLINT CHECK (
+        (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
+        (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
+        (nome = 'Vida Máxima' AND valor BETWEEN 1 AND 15) OR
+        (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
+        (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
+        (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
+        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Purificação' AND valor IS NULL)
+    )
+);
+
+CREATE TRIGGER atribui_id_efeito
+BEFORE INSERT ON efeito
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
 CREATE TABLE habilidade (
     identificador_habilidade ID PRIMARY KEY,
     identificador_efeito ID REFERENCES efeito(identificador_efeito),
@@ -15,7 +42,7 @@ CREATE TABLE habilidade (
     descricao CHAR(150) NOT NULL,
     tipo_de_habilidade CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'fruta')),
     tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('fila', 'alvo_chao', 'terrestre', 'alvo_livre', 'todos')),
-    dano SMALLINT NOT NULL,
+    dano SMALLINT NOT NULL, -- Dano_Total = Dano × (1 + (nível_jogador / Escala)) × Multiplicador_Área × Multiplicador_Raridade
     custo SMALLINT NOT NULL
 );
 
@@ -127,33 +154,6 @@ CREATE TABLE ingrediente_nao_consumivel (
     PRIMARY KEY (identificador_receita, identificador_nao_consumivel)
 );
 
-CREATE TABLE efeito (
-    identificador_efeito ID PRIMARY KEY,
-    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
-    valor SMALLINT CHECK (
-        (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
-        (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
-        (nome = 'Vida Máxima' AND valor BETWEEN 1 AND 15) OR
-        (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
-        (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
-        (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
-        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Purificação' AND valor IS NULL)
-    )
-);
-
-CREATE TRIGGER atribui_id_efeito
-BEFORE INSERT ON efeito
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE efeito_acessorio (
     identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
     identificador_acessorio ID NOT NULL REFERENCES acessorio(identificador_acessorio),
@@ -212,13 +212,13 @@ CREATE TABLE conexao_entre_ilhas (
     identificador_ilha_a ID NOT NULL REFERENCES ilha(identificador_ilha),
     identificador_ilha_b ID NOT NULL REFERENCES ilha(identificador_ilha),
     bloqueada BOOLEAN,
-    PRIMARY KEY (identificador_ilha_origem, identificador_ilha_destino)
+    PRIMARY KEY (identificador_ilha_a, identificador_ilha_b)
 );
 
 CREATE TABLE area (
     identificador_area ID PRIMARY KEY,
     identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
-    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z \\-áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ]+$'),
+    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\\-]+$'),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
     chave_imagem_fundo CHAR(50) CHECK (BTRIM(chave_imagem_fundo) ~ '^[a-z_]+$'),
     chave_imagem_frente CHAR(50) CHECK (BTRIM(chave_imagem_frente) ~ '^[a-z_]+$'),
@@ -233,7 +233,7 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE conexao_entre_areas (
     identificador_area_a ID NOT NULL REFERENCES area(identificador_area),
     identificador_area_b ID NOT NULL REFERENCES area(identificador_area),
-    PRIMARY KEY (identificador_area_origem, identificador_area_destino)
+    PRIMARY KEY (identificador_area_a, identificador_area_b)
 );
 
 CREATE TABLE evento (
@@ -247,8 +247,8 @@ CREATE TABLE evento (
     ponto_geracao_y SMALLINT CHECK (ponto_geracao_y BETWEEN 0 AND 5000),
     orientacao CHAR(8) CHECK (orientacao IN ('esquerda', 'direita')),
     chance_sucesso DECIMAL CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
-    FOREIGN KEY (identificador_ilha_origem, identificador_ilha_destino) REFERENCES conexao_entre_ilhas(identificador_ilha_origem, identificador_ilha_destino),
-    FOREIGN KEY (identificador_area_origem, identificador_area_destino) REFERENCES conexao_entre_areas(identificador_area_origem, identificador_area_destino)
+    FOREIGN KEY (identificador_ilha_origem, identificador_ilha_destino) REFERENCES conexao_entre_ilhas(identificador_ilha_a, identificador_ilha_b),
+    FOREIGN KEY (identificador_area_origem, identificador_area_destino) REFERENCES conexao_entre_areas(identificador_area_a, identificador_area_b)
 );
 
 CREATE TRIGGER atribui_id_evento
@@ -391,7 +391,7 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 CREATE TABLE lacaio (
     identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
-    nome CHAR(15),
+    nome CHAR(20),
     descricao CHAR(100),
     vida SMALLINT,
     nivel SMALLINT CHECK ( nivel BETWEEN 0 AND 60),
@@ -529,6 +529,6 @@ CREATE TABLE item_missao (
     identificador_missao ID,
     identificador_item ID,
     PRIMARY KEY (identificador_missao, identificador_item),
-    FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_inventario),
+    FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
 );
