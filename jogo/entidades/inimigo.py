@@ -7,7 +7,7 @@ from utilidades.constantes import *
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_inimigo,
                  velocidade_caminhada, velocidade_corrida, alcance_visao, angulo_visao_graus,
-                 tempo_reacao_ms, cor_fallback=VERMELHO,
+                 tempo_reacao_ms, caminho_container,
                  alcance_ataque=DISTANCIA_ATAQUE_INIMIGO, duracao_ataque_ms=DURACAO_ATAQUE_INIMIGO_MS):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
@@ -18,7 +18,7 @@ class Inimigo(pygame.sprite.Sprite):
         self.alcance_visao = alcance_visao
         self.angulo_visao = math.radians(angulo_visao_graus)
         self.tempo_reacao_ms = tempo_reacao_ms
-        self.cor_fallback = cor_fallback
+        self.caminho_container = caminho_container
 
         self.imagens_animacao = {}
         self.carregar_animacoes(tipo_inimigo)
@@ -31,7 +31,7 @@ class Inimigo(pygame.sprite.Sprite):
         if not self.image:
             print(f"AVISO: Imagens de animação para '{tipo_inimigo}' não encontradas. Usando fallback.")
             self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
-            self.image.fill(self.cor_fallback)
+            self.image.fill(VERMELHO)
 
         self.rect = self.image.get_rect(topleft=(x_inicial, y_inicial))
         self.mundo_x = x_inicial
@@ -87,7 +87,7 @@ class Inimigo(pygame.sprite.Sprite):
         else:
             # Fallback se o frame atual não for encontrado (nunca deveria acontecer se as imagens forem carregadas corretamente)
             self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
-            self.image.fill(self.cor_fallback)
+            self.image.fill(VERMELHO)
 
     def update(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
         self.atingiu_jogador = False
@@ -131,12 +131,26 @@ class Inimigo(pygame.sprite.Sprite):
         else: # Sem alvo identificado
             self.timer_reacao = 0
             if self.estado != ESTADO_INIMIGO_RECARGA:
-                self.estado = ESTADO_INIMIGO_MOVENDO # <-- Volta para se mover (patrulhar)
-                self._patrulhar(dt, obstaculos_caminho)
+                # Se o estado não for recarga, patrulha
+                if self.caminho_container: # Só patrulha se tiver um caminho definido
+                    self.estado = ESTADO_INIMIGO_MOVENDO
+                    self._patrulhar(dt, obstaculos_caminho)
+                else:
+                    self.estado = ESTADO_INIMIGO_PARADO # Fica parado se não tiver onde patrulhar
 
-        self._atualiza_animacao(dt) # Atualiza a animação com base no estado de movimento
 
+        # Primeiro, atualiza o rect com base nas coordenadas do mundo calculadas
         self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
+
+        # NOVO: Aplica o clamp para confinar o inimigo ao seu caminho
+        if self.caminho_container:
+            self.rect.clamp_ip(self.caminho_container)
+            # Re-sincroniza as coordenadas de mundo com a posição do rect após o clamp
+            self.mundo_x = float(self.rect.x)
+            self.mundo_y = float(self.rect.y)
+
+        # Atualiza a animação com base no estado de movimento
+        self._atualiza_animacao(dt)
 
     def _patrulhar(self, dt, obstaculos):
         if self.tempo_patrulha_restante <= 0:
@@ -274,6 +288,34 @@ class Inimigo(pygame.sprite.Sprite):
 
 
     def draw(self, tela, camera_x):
+        # --- Desenha o campo de visão do inimigo ---
+        centro_x = self.mundo_x - camera_x + self.rect.width // 2
+        centro_y = self.mundo_y + self.rect.height // 2
+        origem = pygame.math.Vector2(centro_x, centro_y)
+    
+        # Desenha o cone de visão como um polígono (visualmente mais fácil)
+        raio = self.alcance_visao
+        angulo_base = 0 if self.olhando_direita else math.pi  # 0 rad = direita, π rad = esquerda
+
+        angulo_inicio = angulo_base - self.angulo_visao / 2
+        angulo_fim = angulo_base + self.angulo_visao / 2
+
+        # Gera pontos do cone
+        num_pontos = 20  # mais pontos = cone mais liso
+        pontos_cone = [origem]
+        for i in range(num_pontos + 1):
+            t = i / num_pontos
+            angulo = angulo_inicio + (angulo_fim - angulo_inicio) * t
+            ponto = origem + pygame.math.Vector2(math.cos(angulo), math.sin(angulo)) * raio
+            pontos_cone.append(ponto)
+
+        # Desenha o cone como polígono semi-transparente
+        superficie = pygame.Surface(tela.get_size(), pygame.SRCALPHA)
+        pygame.draw.polygon(superficie, (255, 0, 0, 100), pontos_cone)
+        tela.blit(superficie, (0, 0))
+
+
+        # --- Desenha o inimigo ---
         tela.blit(self.image, (self.mundo_x - camera_x, self.mundo_y))
 
         icone = None
@@ -289,28 +331,7 @@ class Inimigo(pygame.sprite.Sprite):
 
 
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
-            centro_x = self.mundo_x - camera_x + self.rect.width // 2
-            centro_y = self.mundo_y + self.rect.height // 2
-            origem = pygame.math.Vector2(centro_x, centro_y)
-
             # Desenha o alcance circular
             pygame.draw.circle(tela, (255, 255, 0), (int(centro_x), int(centro_y)), self.alcance_visao, 1)
-
-            # Desenha o cone de visão como um polígono (visualmente mais fácil)
-            raio = self.alcance_visao
-            angulo_base = 0 if self.olhando_direita else math.pi  # 0 rad = direita, π rad = esquerda
-
-            angulo_inicio = angulo_base - self.angulo_visao / 2
-            angulo_fim = angulo_base + self.angulo_visao / 2
-
-            # Gera pontos do cone
-            num_pontos = 20  # mais pontos = cone mais liso
-            pontos_cone = [origem]
-            for i in range(num_pontos + 1):
-                t = i / num_pontos
-                angulo = angulo_inicio + (angulo_fim - angulo_inicio) * t
-                ponto = origem + pygame.math.Vector2(math.cos(angulo), math.sin(angulo)) * raio
-                pontos_cone.append(ponto)
-
-            # Desenha o cone como polígono semi-transparente
-            pygame.draw.polygon(tela, (0, 255, 0, 100), pontos_cone, 1)
+            pygame.draw.polygon(tela, (0, 255, 0), pontos_cone, 1)
+            
