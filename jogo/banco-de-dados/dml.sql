@@ -246,7 +246,7 @@ VALUES
 
 
 INSERT INTO conexao_entre_ilhas
-    (ilha_a, ilha_b, bloqueada)
+    (identificador_ilha_a, identificador_ilha_b, bloqueada)
 VALUES
     ('ilh001', 'ilh002', TRUE),
     ('ilh001', 'ilh004', TRUE),
@@ -285,7 +285,7 @@ VALUES
 	('ilh005', 'Acampamento de Nublária', 'Vila', 'cenario_nublaria_acampamento', null, FALSE), -- → are022
 	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null, FALSE), -- → are023
 	('ilh005', 'Loja de Nublária', 'Loja', 'loja_interior', null, FALSE), -- → are024
-    ('ilh005', 'Yomotsu Hirasaka', 'Yomotsu Hirasaka', null, null) -- → are025
+    ('ilh005', 'Yomotsu Hirasaka', 'Yomotsu Hirasaka', null, null, FALSE), -- → are025
 	('ilh006', 'Porto da Égide', 'Porto', 'cenario_quartel_porto', null, FALSE), -- → are026
 	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null, FALSE), -- → are027
 	('ilh006', 'Escritório do Vice-Almirante', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE), -- → are028
@@ -295,31 +295,31 @@ VALUES
 
 
 INSERT INTO conexao_entre_areas
-    (area_a, area_b, bloqueada)
+    (identificador_area_a, identificador_area_b)
 VALUES
-    ('are001', 'are002', TRUE),
-    ('are002', 'are003', TRUE),
-    ('are002', 'are004', TRUE),
-    ('are002', 'are005', TRUE),
-    ('are005', 'are006', TRUE),
-    ('are007', 'are008', TRUE),
-    ('are008', 'are009', TRUE),
-    ('are008', 'are010', TRUE),
-    ('are009', 'are012', TRUE),
-    ('are010', 'are011', TRUE),
-    ('are013', 'are014', TRUE),
-    ('are014', 'are015', TRUE),
-    ('are014', 'are016', TRUE),
-    ('are017', 'are018', TRUE),
-    ('are018', 'are019', TRUE),
-    ('are018', 'are020', TRUE),
-    ('are021', 'are022', TRUE),
-    ('are022', 'are023', TRUE),
-    ('are022', 'are024', TRUE),
-    ('are026', 'are027', TRUE),
-    ('are027', 'are028', TRUE),
-    ('are027', 'are029', TRUE),
-    ('are027', 'are030', TRUE);
+    ('are001', 'are002'),
+    ('are002', 'are003'),
+    ('are002', 'are004'),
+    ('are002', 'are005'),
+    ('are005', 'are006'),
+    ('are007', 'are008'),
+    ('are008', 'are009'),
+    ('are008', 'are010'),
+    ('are009', 'are012'),
+    ('are010', 'are011'),
+    ('are013', 'are014'),
+    ('are014', 'are015'),
+    ('are014', 'are016'),
+    ('are017', 'are018'),
+    ('are018', 'are019'),
+    ('are018', 'are020'),
+    ('are021', 'are022'),
+    ('are022', 'are023'),
+    ('are022', 'are024'),
+    ('are026', 'are027'),
+    ('are027', 'are028'),
+    ('are027', 'are029'),
+    ('are027', 'are030');
 
 
 
@@ -341,33 +341,33 @@ INSERT INTO evento
     ponto_geracao_y, orientacao)
 VALUES
     ('are001', 'are002', 'mudar_area', 100, 370, 'direita'),
-    ('are002', 'are001', 'mudar_area', 4373, 174, 'esquerda'),
+    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'),
     ('are002', 'are004', 'mudar_area', 100, 275, 'direita'),
-    ('are004', 'are002', 'mudar_area', 1716, 300, 'esquerda'),
+    ('are002', 'are004', 'mudar_area', 1716, 300, 'esquerda'),
     ('are002', 'are003', 'mudar_area', 50, 190, 'direita'),
-    ('are003', 'are002', 'mudar_area', 3361, 370, 'esquerda'),
+    ('are002', 'are003', 'mudar_area', 3361, 370, 'esquerda'),
     ('are007', 'are008', 'mudar_area', 100, 415, 'direita'),
-    ('are008', 'are007', 'mudar_area', 680, 175, 'esquerda'),
+    ('are007', 'are008', 'mudar_area', 680, 175, 'esquerda'),
     ('are008', 'are009', 'mudar_area', 100, 415, 'direita'),
-    ('are009', 'are008', 'mudar_area', 1570, 460, 'esquerda');
+    ('are008', 'are009', 'mudar_area', 1570, 460, 'esquerda');
 
 
 
 INSERT INTO area_interativa
-    (identificador_area ID, identificador_evento ID, x, y, largura, altura)
+    (identificador_area, identificador_evento, x, y, largura, altura)
 VALUES
-    ('are001', 'eve005', 4473, 187, 30, 180),
-    ('are002', 'eve006', 0, 360, 50, 150),
-    ('are002', 'eve007', 1716, 300, 200, 40),
-    ('are004', 'eve008', 0, 300, 50, 270),
-    ('are002', 'eve009', 3490, 360, 50, 150),
-    ('are003', 'eve010', 0, 200, 50, 150),
+    ('are001', 'eve001', 4473, 187, 30, 180),
+    ('are002', 'eve002', 0, 360, 50, 150),
+    ('are002', 'eve003', 1716, 300, 200, 40),
+    ('are004', 'eve004', 0, 300, 50, 270),
+    ('are002', 'eve005', 3490, 360, 50, 150),
+    ('are003', 'eve006', 0, 200, 50, 150),
     --('are003', 'eve001', 4205, 313, 50, 158),
-    ('are007', 'eve011', 610, 185, 250, 20),
+    ('are007', 'eve007', 610, 185, 250, 20),
     --('are007', 'eve002', 2472, 375, 93, 67),
-    ('are008', 'eve012', 0, 480, 50, 150),
-    ('are008', 'eve013', 1656, 484, 50, 150),
-    ('are009', 'eve014', 0, 500, 50, 85);
+    ('are008', 'eve008', 0, 480, 50, 150),
+    ('are008', 'eve009', 1656, 484, 50, 150),
+    ('are009', 'eve010', 0, 500, 50, 85);
 
 
 
@@ -417,6 +417,58 @@ VALUES
 
 
 
+INSERT INTO jogador
+    (identificador_area, nome, descricao, coordenada_x, coordenada_y,
+    energia, vida, nivel, sorte, vida_atual, experiencia_atual)
+VALUES
+    ('are001', 'Silvie', 'Cheios de sonhos, coragem e um apetite por aventura (e por comida também), eles partem rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
+    1950, 140, 5, 10, 0, 1, 10, 0)
+
+
+
+INSERT INTO lacaio
+    (nome, descricao, vida, nivel, experiencia)
+VALUES
+    ('Corvo',	'Um bico afiado e uma risada sarcástica. Costuma roubar frutas e orgulho.', 5, 3, 10), -- lac001
+    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 7, 7, 10), -- lac002
+    ('Brutamontes',	'Grande, mal-humorado e com um gosto inusitado por doces.', 12, 12, 15), -- lac003
+    ('Marinheiro Corrupto',	'Usa o uniforme da Marinha, mas segue as ordens do bolso.', 17, 17, 17), -- lac004
+    ('Pirata Congelado',	'Foi soterrado pela neve... e agora está de volta para esfriar os ânimos.', 22, 22, 22), -- lac005
+    ('Alma Soterrada',	'Um espírito inquieto com voz gelada e olhos que brilham no escuro.', 27, 27, 27), -- lac006
+    ('Pirata do Deserto',	'Armado com espadas enferrujadas e piadas secas como o clima.', 32, 32, 32), -- lac007
+    ('Pirata Iludido',	'Perdeu o rumo e parte da sanidade nas miragens. Ainda acha que está no mar.', 37, 37, 37), -- lac008
+    ('Morcego',	'Só aparece no escuro. Detesta luz e adora cabelo desgrenhado.', 30, 42, 42), -- lac009
+    ('Aranha',	'Anda silenciosa e deixa rastros de teia e calafrios por onde passa.', 35, 47, 47), -- lac010
+    ('Marinheiro',	'Cansado, mal pago, mas ainda tenta manter a postura.', 52, 52, 52), -- lac011
+    ('Oficial da Marinha',	'Sabe gritar "atenção!" melhor do que lutar, mas impõe respeito.', 57, 57, 57); -- lac012
+
+
+
+INSERT INTO instancia_lacaio
+    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, vida_atual)
+VALUES
+    ('lac001', 'are001', 3430, 55, 5),
+    ('lac001', 'are001', 4273, 412, 5),
+    ('lac001', 'are001', 3935, 208, 5),
+    ('lac001', 'are001', 3600, 427, 5),
+    ('lac002', 'are002', 1500, 125, 7),
+    ('lac002', 'are002', 1900, 400, 7),
+    ('lac002', 'are002', 2360, 210, 7);
+
+
+
+INSERT INTO chefe
+    (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia)
+VALUES
+    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 15, 10, 20),
+    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 25, 20, 30),
+    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 35, 30, 40),
+    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 45, 40, 50),
+    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 60, 50, 60),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70);
+
+
+
 INSERT INTO missao
     (identificador_jogador, identificador_area, identificador_recrutador, descricao, nome)
 VALUES
@@ -424,9 +476,9 @@ VALUES
     ('jog001', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
     ('jog001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
     ('jog001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    ('jog001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha');),
+    ('jog001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
     ('jog001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    ('jog001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo');),
+    ('jog001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
     ('jog001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
     ('jog001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
     ('jog001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
@@ -436,4 +488,3 @@ VALUES
     ('jog001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
     ('jog001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
 
-    
