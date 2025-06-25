@@ -4,9 +4,9 @@ import os
 
 # Constantes de conexão (idealmente de um arquivo de configuração separado)
 DB_HOST = "localhost"
-DB_NAME = "marventura"
+DB_NAME = "Marventura"
 DB_USER = "postgres"
-DB_PASSWORD = "Abacaxi741*" # Use a senha correta
+DB_PASSWORD = "Saiyaman" # Use a senha correta
 DB_PORT = "5432"
 
 class DBManager:
@@ -265,6 +265,14 @@ class DBManager:
             WHERE id_mapa = %s;
         """
         return self.executar_query(query, (id_mapa,), fetchone=True)
+    
+    def buscar_caminhos_da_area(self, area):
+        consulta = """
+            SELECT tipo_terreno, x, y, largura, altura
+                FROM caminho
+                WHERE identificador_area = %s;
+            """
+        return self.executar_query(consulta, (area,), fetchall=True)
     
     def buscar_info_sala(self, tipo_sala, sala_id):
         """
