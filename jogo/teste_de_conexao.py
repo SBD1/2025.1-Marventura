@@ -1,13 +1,7 @@
 # main.py
 
-# from recursos import GerenciadorDeRecursos # Comentado
-# from telas import GerenciadorDeTelas # Comentado
-from entidades.db_manager import DBManager # Mantido: Para a lógica do banco de dados
+from utilidades import DBManager
 
-# --- A parte de inicialização do Pygame e recursos gráficos foi comentada no gerenciador_de_recursos.py ---
-# Aqui, apenas instanciamos o GerenciadorDeRecursos e chamamos um método que agora só imprime uma mensagem.
-# gerenciador_recursos = GerenciadorDeRecursos()
-# gerenciador_recursos.carregar_recursos()
 
 # --- Gerenciador de Banco de Dados ---
 db_manager = DBManager() # Isso vai tentar conectar ao banco de dados
@@ -17,8 +11,12 @@ def testar_db_operacoes():
     print("\n--- INICIANDO TESTES DO BANCO DE DADOS ---")
     db = DBManager() # Pega a instância Singleton (que já tentou conectar)
 
+    area = 'are002'
+    print(f"\n--- Teste: Buscar caminhos da área '{area}' ---")
+    print(db.buscar_caminhos_da_area(area))
+    print("\n")
     # 1. Testar buscar jogador
-    print("\n--- Teste: Buscar Jogador (ID 1) ---")
+    """print("\n--- Teste: Buscar Jogador (ID 1) ---")
     jogador_data = db.buscar_jogador(1)
     if jogador_data:
         print(f"Jogador encontrado: ID={jogador_data[0]}, Nome={jogador_data[1]}, Nível={jogador_data[4]}, Vida={jogador_data[3]}")
@@ -306,7 +304,7 @@ def testar_db_operacoes():
             print(f"  - Inventário ID: {inc[0]}, Item Tipo ID: {inc[1]} (Sem tipo correspondente)")
     else:
         print("Nenhuma inconsistência encontrada no Inventário.")
-
+"""
 
     print("\n--- TESTES DO BANCO DE DADOS CONCLUÍDOS ---")
     db.fechar_conexao() # Fechar a conexão com o banco de dados
