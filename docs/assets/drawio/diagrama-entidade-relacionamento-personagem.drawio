@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0" version="27.1.6">
   <diagram id="7o4wIIwqFHXamwNt6cy-" name="DER">
-    <mxGraphModel dx="681" dy="384" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1257" dy="709" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -543,7 +543,8 @@
             <mxPoint x="997.5999999999999" y="681.0500000000001" as="sourcePoint" />
             <mxPoint x="1909.9999999999995" y="660.03" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="1910" y="710.03" />
+              <mxPoint x="1110" y="730" />
+              <mxPoint x="1910" y="730" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -578,7 +579,7 @@
           <mxGeometry x="950" y="980.03" width="50" height="20" as="geometry" />
         </mxCell>
         <mxCell id="0MJt2eRNw_CXRJBBftsy-29" value="Participa" style="shape=rhombus;perimeter=rhombusPerimeter;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
-          <mxGeometry x="990" y="680.03" width="120" height="60" as="geometry" />
+          <mxGeometry x="990" y="700.03" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="CJODAC-TiqODcYQurngz-5" value="&lt;span style=&quot;border-bottom: 1px dotted&quot;&gt;IdentificadorInventário&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;align=left;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="1415" y="330.03" width="50" height="20" as="geometry" />
@@ -736,6 +737,15 @@
         </mxCell>
         <mxCell id="YVIuIqT3p8OtGFtafJHv-16" value="Estado" style="ellipse;whiteSpace=wrap;html=1;align=center;aspect=fixed;labelPosition=center;verticalLabelPosition=middle;verticalAlign=middle;fontStyle=0" vertex="1" parent="1">
           <mxGeometry x="715" y="890.03" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YVIuIqT3p8OtGFtafJHv-17" value="MoedasTotais" style="ellipse;whiteSpace=wrap;html=1;align=right;aspect=fixed;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="740" y="600.03" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YVIuIqT3p8OtGFtafJHv-18" value="MoedasTotais" style="ellipse;whiteSpace=wrap;html=1;align=right;aspect=fixed;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="290" y="540.03" width="50" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YVIuIqT3p8OtGFtafJHv-19" value="MoedasTotais" style="ellipse;whiteSpace=wrap;html=1;align=left;aspect=fixed;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1555" y="700.03" width="50" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
