@@ -36,9 +36,9 @@ BEGIN
         IF NEW.identificador_efeito IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_efeito" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    ELSIF TG_TABLE_NAME = 'tipo_mapa' THEN
-        IF NEW.identificador_mapa IS NOT NULL THEN
-            RAISE EXCEPTION 'A coluna "identificador_mapa" é gerada automaticamente; não forneça valor manualmente.';
+    ELSIF TG_TABLE_NAME = 'ilha' THEN
+        IF NEW.identificador_ilha IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_ilha" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
     ELSIF TG_TABLE_NAME = 'area' THEN
         IF NEW.identificador_area IS NOT NULL THEN
@@ -117,8 +117,8 @@ BEGIN
         NEW.identificador_receita := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'efeito' THEN
         NEW.identificador_efeito := prefixo || lpad(numero_serial::text, 3, '0');
-    ELSIF TG_TABLE_NAME = 'tipo_mapa' THEN
-        NEW.identificador_mapa := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'ilha' THEN
+        NEW.identificador_ilha := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'area' THEN
         NEW.identificador_area := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'evento' THEN

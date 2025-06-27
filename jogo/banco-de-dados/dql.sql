@@ -1,10 +1,13 @@
 SELECT receita.identificador_receita AS Receita, consumivel.nome AS Nome
 FROM receita JOIN consumivel ON receita.consumivel_produzido = consumivel.identificador_consumivel
 
+
 -- Buscar informações básicas do jogador
 SELECT * FROM jogador;
 
+
 -- Buscar inventário do jogador
+
 
 -- Buscar os dados da ilha atual do jogador
 SELECT * FROM ilha
@@ -16,6 +19,7 @@ SELECT * FROM ilha
 		        WHERE identificador_jogador = 'jog001'
 		    )
 	);
+
 
 -- Buscar informações da área atual
 SELECT
@@ -31,6 +35,7 @@ FROM area
         WHERE identificador_jogador = 'jog001'
     );
 
+
 -- Buscar caminhos da área atual
 SELECT tipo_terreno, x, y, largura, altura
     FROM caminho
@@ -40,12 +45,14 @@ SELECT tipo_terreno, x, y, largura, altura
         WHERE identificador_jogador = 'jog001'
     );
 
+
 -- Buscar inimigos comuns da área atual
 SELECT 
     il.identificador_instancia_lacaio,
     il.coordenada_x,
     il.coordenada_y,
     il.vida_atual,
+	il.moedas_totais,
 
     l.identificador_lacaio,
     l.nome AS nome_lacaio,
@@ -54,33 +61,41 @@ SELECT
     l.nivel,
     l.experiencia,
 
+    h.identificador_habilidade,
     h.nome AS nome_habilidade,
     h.dano,
-    h.tipo_de_habilidade,
     h.tipo_de_ataque,
+    h.tipo_de_alvo,
 
     ti.identificador_item,
     ti.tipo AS tipo_item,
 
-    consumivel.nome AS nome_consumivel,
-    nao_consumivel.nome AS nome_nao_consumivel
+    consumivel.nome AS consumivel_saqueavel,
+    nao_consumivel.nome AS nao_consumivel_saqueavel
+
 FROM instancia_lacaio il
-    JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
-    LEFT JOIN habilidade h ON l.identificador_habilidade = h.identificador_habilidade
+JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
 
-    LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio
-    LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
-    LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+-- Habilidades do lacaio (1 ou mais)
+LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identificador_lacaio
+LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
 
-    -- subtipos possíveis do item
-    LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
-    LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+-- Inventário geral do lacaio
+LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'ger'
+LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
+LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
 
-    WHERE il.identificador_area = (
-        SELECT identificador_area
-        FROM jogador
-        WHERE identificador_jogador = 'jog001'
-    );
+-- Subtipos possíveis do item
+LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
+LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+
+-- Restrição pela área atual do jogador
+WHERE il.identificador_area = (
+    SELECT identificador_area
+    FROM jogador
+    WHERE identificador_jogador = 'jog001'
+);
+
 
 -- Buscar todas as áreas que se conectam com a área atual
 SELECT a.*
@@ -108,31 +123,19 @@ JOIN area a
 
 -- Buscar todas as áreas interativas da área atual
 SELECT
-	a.x,
-	a.y,
-	a.largura,
-	a.altura,
-	
-	e.tipo_evento,
-	e.ponto_geracao_x,
-    e.ponto_geracao_y,
-	e.orientacao,
-	
-	d.identificador_area AS area_destino
-FROM area_interativa a
-JOIN evento e
-	ON a.identificador_evento = e.identificador_evento
-JOIN area d
-	ON d.identificador_area = 
-	    CASE
-	        WHEN e.identificador_area_a = a.identificador_area THEN e.identificador_area_b
-	        ELSE e.identificador_area_a
-	    END
-	WHERE a.identificador_area = (
-        SELECT identificador_area
-        FROM jogador
-        WHERE identificador_jogador = 'jog001'
-    );
+    ai.identificador_area_interativa,
+    TRIM(ai.chave_imagem) AS chave_imagem,
+    ai.x,
+    ai.y,
+    ai.largura,
+    ai.altura
+FROM area_interativa ai
+WHERE ai.identificador_area = (
+    SELECT identificador_area
+    FROM jogador
+    WHERE identificador_jogador = 'jog001'
+);
+
 
 -- Buscar todas as ilhas que se conectam com a ilha atual
 SELECT i.*

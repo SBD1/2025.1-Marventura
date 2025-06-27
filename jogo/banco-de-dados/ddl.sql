@@ -371,7 +371,8 @@ CREATE TABLE jogador (
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
     sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
-    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600)
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
 CREATE TRIGGER atribui_id_jogador
@@ -398,7 +399,6 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 CREATE TABLE chefe (
     identificador_chefe ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
-    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(28),
     descricao CHAR(100),
@@ -406,7 +406,8 @@ CREATE TABLE chefe (
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     vida SMALLINT,
     nivel SMALLINT CHECK (nivel BETWEEN 10 AND 60),
-    experiencia SMALLINT
+    experiencia SMALLINT,
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
 CREATE TRIGGER atribui_id_chefe
@@ -416,11 +417,10 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 CREATE TABLE lacaio (
     identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
-    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
     nome CHAR(20),
     descricao CHAR(100),
     vida SMALLINT,
-    nivel SMALLINT CHECK ( nivel BETWEEN 0 AND 60),
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
     experiencia SMALLINT,
     tempo_reacao SMALLINT
 );
@@ -438,7 +438,8 @@ CREATE TABLE habitante (
     tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com'))
+    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
 CREATE TRIGGER atribui_id_habitante
@@ -452,7 +453,8 @@ CREATE TABLE instancia_lacaio (
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    vida_atual SMALLINT
+    vida_atual SMALLINT,
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
 CREATE TRIGGER atribui_id_instancia_lacaio
@@ -529,9 +531,9 @@ CREATE TABLE missao (
     identificador_missao ID PRIMARY KEY,
     identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador), 
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    identificador_recrutador ID NOT NULL REFERENCES habitante(identificador_habitante), 
-    descricao CHAR(100) CHECK (descricao ~ '^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-!?,.]+$'),
-    nome CHAR(50) NOT NULL CHECK (nome ~ '^[0-9a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ \\-]+$')
+    identificador_recrutador ID REFERENCES habitante(identificador_habitante), 
+    descricao CHAR(100),
+    nome CHAR(50) NOT NULL
 );
 
 CREATE TRIGGER atribui_id_missao

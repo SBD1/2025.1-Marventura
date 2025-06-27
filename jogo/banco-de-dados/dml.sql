@@ -785,20 +785,18 @@ VALUES
 
 
 INSERT INTO area_interativa
-    (identificador_area, identificador_evento, x, y, largura, altura)
+    (identificador_area, x, y, largura, altura)
 VALUES
-    ('are001', 'eve001', 4473, 187, 30, 180),
-    ('are002', 'eve002', 0, 360, 50, 150),
-    ('are002', 'eve003', 1716, 300, 200, 40),
-    ('are004', 'eve004', 0, 300, 50, 270),
-    ('are002', 'eve005', 3490, 360, 50, 150),
-    ('are003', 'eve006', 0, 200, 50, 150),
-    --('are003', 'eve001', 4205, 313, 50, 158),
-    ('are007', 'eve007', 610, 185, 250, 20),
-    --('are007', 'eve002', 2472, 375, 93, 67),
-    ('are008', 'eve008', 0, 480, 50, 150),
-    ('are008', 'eve009', 1656, 484, 50, 150),
-    ('are009', 'eve010', 0, 500, 50, 85);
+    ('are001', 4473, 187, 30, 180),
+    ('are002', 0, 360, 50, 150),
+    ('are002', 1716, 300, 200, 40),
+    ('are004', 0, 300, 50, 270),
+    ('are002', 3490, 360, 50, 150),
+    ('are003', 0, 200, 50, 150),
+    ('are007', 610, 185, 250, 20),
+    ('are008', 0, 480, 50, 150),
+    ('are008', 1656, 484, 50, 150),
+    ('are009', 0, 500, 50, 85);
 
 
 INSERT INTO area_interativa_evento
@@ -843,30 +841,30 @@ VALUES
 
 
 INSERT INTO habitante
-    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y)
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais)
 VALUES
-    ('are001', 'Aldeão', 'Habitante da Ilha de Borabóia', 'rct', 0, 0),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 290, 300),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 615, 330),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1650, 340),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2775, 345),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2870, 345),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1000, 450),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 915, 323),
-    ('are007', 'Cidadão', 'Costuma vender frutas no porto da Cidade de Lurien', 'rct', 0, 0),
-    ('are012', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0),
-    ('are014', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0),
-    ('are019', 'Chefe do vilarejo', 'Chefe do vilarejo de Cactuaraquara', 'rct', 0, 0),
-    ('are027', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0);
+    ('are001', 'Aldeão', 'Habitante da Ilha de Borabóia', 'rct', 0, 0, 15),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 290, 300, 16),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 615, 330, 14),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1650, 340, 17),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2775, 345, 20),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2870, 345, 10),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1000, 450, 13),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 915, 323, 14),
+    ('are007', 'Cidadão', 'Costuma vender frutas no porto da Cidade de Lurien', 'rct', 0, 0, 50),
+    ('are012', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0, 75),
+    ('are014', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0, 40),
+    ('are019', 'Chefe do vilarejo', 'Chefe do vilarejo de Cactuaraquara', 'rct', 0, 0, 30),
+    ('are027', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0, 70);
 
 
 
 INSERT INTO jogador
     (identificador_area, nome, descricao, coordenada_x, coordenada_y,
-    energia, vida, nivel, sorte, vida_atual, experiencia_atual)
+    energia, vida, nivel, sorte, vida_atual, experiencia_atual, moedas_totais)
 VALUES
     ('are001', 'Silvie', 'Cheia de sonhos, coragem e um apetite por aventura (e por comida também), ela parte rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
-    1950, 140, 5, 10, 0, 1, 10, 0);
+    1950, 140, 5, 10, 0, 1, 10, 0, 0);
 
 
 
@@ -889,29 +887,29 @@ VALUES
 
 
 INSERT INTO instancia_lacaio
-    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, vida_atual)
+    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, vida_atual, moedas_totais)
 VALUES
-    ('lac001', 'are001', 3430, 55, 5),
-    ('lac001', 'are001', 4273, 412, 5),
-    ('lac001', 'are001', 3935, 208, 5),
-    ('lac001', 'are001', 3600, 427, 5),
-    ('lac002', 'are003', 1500, 125, 7),
-    ('lac002', 'are003', 1900, 400, 7),
-    ('lac002', 'are003', 2360, 210, 7);
+    ('lac001', 'are001', 3430, 55, 5, 0),
+    ('lac001', 'are001', 4273, 412, 5, 0),
+    ('lac001', 'are001', 3935, 208, 5, 0),
+    ('lac001', 'are001', 3600, 427, 5, 0),
+    ('lac002', 'are003', 1500, 125, 7, 0),
+    ('lac002', 'are003', 1900, 400, 7, 0),
+    ('lac002', 'are003', 2360, 210, 7, 0);
 
 
 
 INSERT INTO chefe
-    (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia)
+    (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia, moedas_totais)
 VALUES
-    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 14, 10, 20),
-    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 22, 20, 30),
-    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 31, 30, 40),
-    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 41, 40, 50),
-    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 52, 50, 60),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 70),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 70);
+    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 14, 10, 20, 0),
+    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 22, 20, 30, 100),
+    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 31, 30, 40, 30),
+    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 41, 40, 50, 50),
+    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 52, 50, 60, 0),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 70, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 70, 200);
 
 
 
