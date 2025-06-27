@@ -10,24 +10,6 @@ EXECUTE FUNCTION public.gerar_id();
 
 
 
-CREATE TABLE habilidade (
-    identificador_habilidade ID PRIMARY KEY,
-    identificador_efeito ID REFERENCES efeito(identificador_efeito),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(200) NOT NULL,
-    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'arco', 'fruta')),
-    tipo_de_alvo CHAR(15) NOT NULL CHECK (tipo_de_ataque IN ('fila', 'alvo_terrestre', 'terrestre', 'alvo_livre', 'area')),
-    dano SMALLINT NOT NULL,
-    custo SMALLINT DEFAULT 0
-);
-
-CREATE TRIGGER atribui_id_habilidade
-BEFORE INSERT ON habilidade
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-
-
 CREATE TABLE arma (
     identificador_arma ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
@@ -60,20 +42,6 @@ CREATE TRIGGER atribui_id_fruta
 BEFORE INSERT ON fruta
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_item();
-
-
-
-CREATE TABLE habilidade_arma (
-    identificador_habilidade NOT NULL REFERENCES habilidade(identificador_habilidade),
-    identificador_arma NOT NULL REFERENCES arma (identificador_arma),
-    PRIMARY KEY (identificador_habilidade, identificador_arma)
-);
-
-CREATE TABLE habilidade_fruta (
-    identificador_habilidade NOT NULL REFERENCES habilidade(identificador_habilidade),
-    identificador_fruta NOT NULL REFERENCES fruta (identificador_fruta),
-    PRIMARY KEY (identificador_habilidade, identificador_fruta)
-);
 
 
 
@@ -196,6 +164,38 @@ CREATE TABLE efeito_consumivel (
     identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
     identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
     PRIMARY KEY (identificador_efeito, identificador_consumivel)
+);
+
+
+
+CREATE TABLE habilidade (
+    identificador_habilidade ID PRIMARY KEY,
+    identificador_efeito ID REFERENCES efeito(identificador_efeito),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'arco', 'fruta')),
+    tipo_de_alvo CHAR(15) NOT NULL CHECK (tipo_de_alvo IN ('fila', 'alvo_terrestre', 'terrestre', 'alvo_livre', 'area')),
+    dano SMALLINT NOT NULL,
+    custo SMALLINT DEFAULT 0
+);
+
+CREATE TRIGGER atribui_id_habilidade
+BEFORE INSERT ON habilidade
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE habilidade_arma (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_arma ID NOT NULL REFERENCES arma (identificador_arma),
+    PRIMARY KEY (identificador_habilidade, identificador_arma)
+);
+
+CREATE TABLE habilidade_fruta (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_fruta ID NOT NULL REFERENCES fruta (identificador_fruta),
+    PRIMARY KEY (identificador_habilidade, identificador_fruta)
 );
 
 
