@@ -2,6 +2,7 @@
 import os
 from dotenv import load_dotenv
 import psycopg
+from psycopg.rows import namedtuple_row
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -36,7 +37,8 @@ class DBManager:
                 dbname=DB_NAME,
                 user=DB_USER,
                 password=DB_PASSWORD,
-                port=DB_PORT
+                port=DB_PORT,
+                row_factory=namedtuple_row
             )
             self.cursor = self.conn.cursor()
             print("DBManager: Conexão com o PostgreSQL estabelecida.")
@@ -88,14 +90,20 @@ class DBManager:
         """Busca os dados de um jogador pelo ID."""
         query = """
             SELECT
-                j.id_jogador, j.nome, j.energia, j.vida, j.nivel, j.sorte,
-                j.vida_atual, j.dano_base, j.experiencia_atual, j.coordenada_x, j.coordenada_y,
-                tp.tipo AS tipo_personagem, h.nome AS habilidade_principal, m.total_ilhas AS mapa_atual
-            FROM jogador j
-            LEFT JOIN tipo_personagem tp ON j.id_personagem = tp.id_personagem
-            LEFT JOIN habilidade h ON j.id_habilidade = h.id_habilidade
-            LEFT JOIN mapa m ON j.id_mapa = m.id_mapa
-            WHERE j.id_jogador = %s;
+                identificador_jogador,
+                identificador_area,
+                nome,
+                TRIM(descricao) AS descricao,
+                coordenada_x,
+                coordenada_y,
+                energia,
+                vida,
+                nivel,
+                sorte,
+                vida_atual,
+                experiencia_atual
+            FROM jogador
+            WHERE identificador_jogador = %s;
         """
         return self.executar_query(query, (id_jogador,), fetchone=True)
 
@@ -222,6 +230,50 @@ class DBManager:
         """
         return self.executar_query(query, (id_lacaio,), fetchone=True)
     
+    def buscar_lacaios_por_area(self, identificador_area):
+        """
+        Busca todos os lacaios em uma área específica.
+        """
+        consulta = """
+            SELECT  il.identificador_instancia_lacaio,
+                    il.coordenada_x AS x,
+                    il.coordenada_y AS y,
+                    il.vida_atual,
+
+                    l.identificador_lacaio,
+                    TRIM(l.nome) AS nome_lacaio,
+                    TRIM(l.descricao) AS descricao_lacaio,
+                    l.vida AS vida_total,
+                    l.nivel,
+                    l.experiencia,
+                    l.tempo_reacao,
+
+                    h.nome AS nome_habilidade,
+                    h.dano,
+                    h.tipo_de_habilidade,
+                    h.tipo_de_ataque,
+
+                    ti.identificador_item,
+                    ti.tipo AS tipo_item,
+
+                    consumivel.nome AS nome_consumivel,
+                    nao_consumivel.nome AS nome_nao_consumivel
+
+                FROM instancia_lacaio il
+                JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
+                LEFT JOIN habilidade h ON l.identificador_habilidade = h.identificador_habilidade
+
+                LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio
+                LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
+                LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+
+                -- subtipos possíveis do item
+                LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
+                LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+
+                WHERE il.identificador_area = %s;
+        """
+        return self.executar_query(consulta, (identificador_area,), fetchall=True)
     def buscar_chefe(self, id_chefe):
         """
         Ver atributos de um chefe específico.
@@ -258,55 +310,78 @@ class DBManager:
     # Métodos de Operações com Locais (Mapas, Ilhas, Salas)
     # ===============================================
 
-    def buscar_info_mapa(self, id_mapa):
+    def buscar_info_ilha(self, id_ilha):
         """
         Ver (nome, descrição, motim) de uma prisão X. (Adaptado para Mapa)
-        Seu schema não tem prisao, mas tem mapa.
         """
         query = """
-            SELECT id_mapa, total_ilhas, total_item_chave
-            FROM mapa
-            WHERE id_mapa = %s;
-        """
-        return self.executar_query(query, (id_mapa,), fetchone=True)
+            SELECT
+                identificador_ilha,
+                TRIM(nome) AS nome,
+                visitada
+            FROM ilha WHERE identificador_ilha = %s;
+            """
+        return self.executar_query(query, (id_ilha,), fetchone=True)
     
     def buscar_caminhos_da_area(self, area):
         consulta = """
-            SELECT tipo_terreno, x, y, largura, altura
+            SELECT TRIM(tipo_terreno) AS tipo_terreno, x, y, largura, altura
                 FROM caminho
                 WHERE identificador_area = %s;
             """
         return self.executar_query(consulta, (area,), fetchall=True)
+
+    def buscar_obstaculos_da_area(self, area):
+        consulta = """
+            SELECT *
+                FROM obstaculo
+                WHERE identificador_area = %s;
+            """
+        return self.executar_query(consulta, (area,), fetchall=True)
     
-    def buscar_info_sala(self, tipo_sala, sala_id):
+    def buscar_info_area(self, id_area):
         """
-        Busca informações de uma sala específica com base no tipo.
-        Isso é um exemplo de como lidar com a FK polimórfica da Missão, mas para leitura direta.
+        Busca informações de uma sala específica
         """
-        if tipo_sala == 'campo_batalha':
-            query = "SELECT * FROM campo_batalha WHERE sala_id = %s;"
-        elif tipo_sala == 'porto':
-            query = "SELECT * FROM porto WHERE sala_id = %s;"
-        elif tipo_sala == 'vila':
-            query = "SELECT * FROM vila WHERE sala_id = %s;"
-        else:
-            print(f"Tipo de sala desconhecido: {tipo_sala}")
-            return None
-        return self.executar_query(query, (sala_id,), fetchone=True)
+        query = """
+            SELECT
+                identificador_area,
+                identificador_ilha,
+                TRIM(nome) AS nome,
+                TRIM(tipo_area) AS tipo_area,
+                TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+                TRIM(chave_imagem_frente) AS chave_imagem_frente,
+                visitada
+            FROM area
+            WHERE identificador_area = %s;
+        """
+        return self.executar_query(query, (id_area,), fetchone=True)
+    
+    def buscar_areas_interativas_da_area(self, id_area):
+        """
+        Busca todos os elementos espaciaias do tipo "Área interativa" na área atual.
+        """
+        consulta = """
+            SELECT *
+            FROM area_interativa
+            WHERE identificador_area = %s;
+        """
+        return self.executar_query(consulta, (id_area,), fetchall=True)
 
     def buscar_conexoes_ilha(self, id_ilha_origem):
         """
         Ver todas as conexões de um lugar X. (Adaptado para Ilhas via corredor_maritimo)
         """
         query = """
-            SELECT
-                cm.maritimo_id,
-                ia.nome AS ilha_origem_nome,
-                ib.nome AS ilha_destino_nome
-            FROM corredor_maritimo cm
-            JOIN ilha ia ON cm.ilha_a = ia.id
-            JOIN ilha ib ON cm.ilha_b = ib.id
-            WHERE cm.ilha_a = %s OR cm.ilha_b = %s;
+            SELECT i.identificador_ilha, TRIM(i.nome) AS nome_ilha, i.visitada
+                FROM conexao_entre_ilhas c
+                JOIN ilha i ON i.identificador_ilha = 
+                    CASE
+                        WHEN c.identificador_ilha_a = %s THEN c.identificador_ilha_b
+                        ELSE c.identificador_ilha_a
+                    END
+                WHERE %s IN (c.identificador_ilha_a, c.identificador_ilha_b);
+
         """
         return self.executar_query(query, (id_ilha_origem, id_ilha_origem), fetchall=True)
 

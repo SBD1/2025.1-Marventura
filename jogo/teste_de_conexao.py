@@ -11,18 +11,34 @@ def testar_db_operacoes():
     print("\n--- INICIANDO TESTES DO BANCO DE DADOS ---")
     db = DBManager() # Pega a instância Singleton (que já tentou conectar)
 
-    area = 'are002'
-    print(f"\n--- Teste: Buscar caminhos da área '{area}' ---")
-    print(db.buscar_caminhos_da_area(area))
-    print("\n")
+    jogador = 'jog001'
     # 1. Testar buscar jogador
-    """print("\n--- Teste: Buscar Jogador (ID 1) ---")
-    jogador_data = db.buscar_jogador(1)
+    print(f"\n--- Teste: Buscar Jogador (ID {jogador}) ---")
+    jogador_data = db.buscar_jogador(jogador)
     if jogador_data:
-        print(f"Jogador encontrado: ID={jogador_data[0]}, Nome={jogador_data[1]}, Nível={jogador_data[4]}, Vida={jogador_data[3]}")
+        print(f"Jogador encontrado: {jogador_data}")
     else:
-        print("Jogador com ID 1 não encontrado.")
+        print("Jogador com ID jog001 não encontrado.")
 
+    print(f"\n--- Teste: Buscar informações básicas da área '{jogador_data.identificador_area}' ---\n")
+    area_atual = db.buscar_info_area(jogador_data.identificador_area)
+    print(f"Informações da área: {area_atual}\n")
+
+    print(f"\n--- Teste: Buscar caminhos da área '{jogador_data.identificador_area}' ---\n")
+    caminhos = db.buscar_caminhos_da_area(jogador_data.identificador_area)
+    print(f"Caminhos encontrados: {caminhos}\n")
+
+    print(f"\n--- Teste: Buscar inimigos na área '{jogador_data.identificador_area}' ---\n")
+
+    if any(caminho.tipo_terreno == 'arena' for caminho in caminhos):
+        inimigos = db.buscar_lacaios_por_area(jogador_data.identificador_area)
+    else:
+        inimigos = []
+
+    print(f"Inimigos encontrados: {inimigos}\n")
+
+    
+    """
     # 2. Testar atualizar jogador
     print("\n--- Teste: Atualizar Jogador (ID 1) ---")
     if jogador_data:

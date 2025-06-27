@@ -323,33 +323,35 @@ VALUES
 
 
 
--- Insere eventos de embarcar
-/*INSERT INTO evento
-    (identificador_conexao_ilha_a, identificador_conexao_ilha_b, tipo_evento, ponto_geracao_x,
-    ponto_geracao_y, orientacao)
-VALUES
-    ('ilh001', 'ilh002', 'embarcar', 2470, 265, 'esquerda'),
-    ('ilh001', 'ilh002', 'embarcar', 4160, 280, 'esquerda'),
-    ('ilh002', 'ilh003', 'embarcar', 100, 415, 'direita'),
-    ('ilh002', 'ilh003', 'embarcar', 2470, 265, 'esquerda');*/
-
-
-
 -- Insere eventos de mudar_area
 INSERT INTO evento
-    (identificador_area_origem, identificador_area_destino, tipo_evento, ponto_geracao_x,
+    (identificador_area_a, identificador_area_b, tipo_evento, ponto_geracao_x,
     ponto_geracao_y, orientacao)
 VALUES
-    ('are001', 'are002', 'mudar_area', 100, 370, 'direita'),
-    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'),
-    ('are002', 'are004', 'mudar_area', 100, 275, 'direita'),
-    ('are002', 'are004', 'mudar_area', 1716, 300, 'esquerda'),
-    ('are002', 'are003', 'mudar_area', 50, 190, 'direita'),
-    ('are002', 'are003', 'mudar_area', 3361, 370, 'esquerda'),
-    ('are007', 'are008', 'mudar_area', 100, 415, 'direita'),
-    ('are007', 'are008', 'mudar_area', 680, 175, 'esquerda'),
-    ('are008', 'are009', 'mudar_area', 100, 415, 'direita'),
-    ('are008', 'are009', 'mudar_area', 1570, 460, 'esquerda');
+    ('are001', 'are002', 'mudar_area', 100, 370, 'direita'), -- are001 → are002
+    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'), -- are002 → are002
+    ('are002', 'are004', 'mudar_area', 100, 275, 'direita'), -- are002 → are004
+    ('are002', 'are004', 'mudar_area', 1781, 312, 'esquerda'), -- are004 → are002
+    ('are002', 'are003', 'mudar_area', 50, 190, 'direita'), -- are002 → are003
+    ('are002', 'are003', 'mudar_area', 3361, 370, 'esquerda'), -- are003 → are002
+    ('are007', 'are008', 'mudar_area', 100, 415, 'direita'), -- are007 → are008
+    ('are007', 'are008', 'mudar_area', 680, 175, 'esquerda'), -- are008 → are007
+    ('are008', 'are009', 'mudar_area', 100, 415, 'direita'), -- are008 → are009
+    ('are008', 'are009', 'mudar_area', 1570, 460, 'esquerda'); -- are009 → are008
+
+
+
+-- Insere eventos de embarcar
+INSERT INTO evento
+    (identificador_porto_destino, tipo_evento, ponto_geracao_x,
+    ponto_geracao_y, orientacao)
+VALUES
+    ('are003', 'embarcar', 2470, 265, 'esquerda'),
+    ('are007', 'embarcar', 4160, 280, 'esquerda'),
+    ('are013', 'embarcar', 100, 415, 'direita'),
+    ('are017', 'embarcar', 2470, 265, 'direita'),
+    ('are021', 'embarcar', 2470, 265, 'direita'),
+    ('are026', 'embarcar', 2470, 265, 'direita');
 
 
 
@@ -370,6 +372,21 @@ VALUES
     ('are009', 'eve010', 0, 500, 50, 85);
 
 
+INSERT INTO area_interativa_evento
+    (identificador_area_interativa, identificador_evento)
+VALUES
+    ('ari001', 'eve001'),
+    ('ari002', 'eve002'),
+    ('ari002', 'eve003'),
+    ('ari004', 'eve004'),
+    ('ari002', 'eve005'),
+    ('ari003', 'eve006'),
+    --('ire003', 'eve00),
+    ('ari007', 'eve007'),
+    --('ire007', 'eve00),
+    ('ari008', 'eve008'),
+    ('ari008', 'eve009'),
+    ('ari009', 'eve010'),
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
@@ -427,20 +444,20 @@ VALUES
 
 
 INSERT INTO lacaio
-    (nome, descricao, vida, nivel, experiencia)
+    (nome, descricao, vida, nivel, experiencia, tempo_reacao)
 VALUES
-    ('Corvo',	'Um bico afiado e uma risada sarcástica. Costuma roubar frutas e orgulho.', 5, 3, 10), -- lac001
-    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 7, 7, 10), -- lac002
-    ('Brutamontes',	'Grande, mal-humorado e com um gosto inusitado por doces.', 12, 12, 15), -- lac003
-    ('Marinheiro Corrupto',	'Usa o uniforme da Marinha, mas segue as ordens do bolso.', 17, 17, 17), -- lac004
-    ('Pirata Congelado',	'Foi soterrado pela neve... e agora está de volta para esfriar os ânimos.', 22, 22, 22), -- lac005
-    ('Alma Soterrada',	'Um espírito inquieto com voz gelada e olhos que brilham no escuro.', 27, 27, 27), -- lac006
-    ('Pirata do Deserto',	'Armado com espadas enferrujadas e piadas secas como o clima.', 32, 32, 32), -- lac007
-    ('Pirata Iludido',	'Perdeu o rumo e parte da sanidade nas miragens. Ainda acha que está no mar.', 37, 37, 37), -- lac008
-    ('Morcego',	'Só aparece no escuro. Detesta luz e adora cabelo desgrenhado.', 30, 42, 42), -- lac009
-    ('Aranha',	'Anda silenciosa e deixa rastros de teia e calafrios por onde passa.', 35, 47, 47), -- lac010
-    ('Marinheiro',	'Cansado, mal pago, mas ainda tenta manter a postura.', 52, 52, 52), -- lac011
-    ('Oficial da Marinha',	'Sabe gritar "atenção!" melhor do que lutar, mas impõe respeito.', 57, 57, 57); -- lac012
+    ('Corvo',	'Um bico afiado e uma risada sarcástica. Costuma roubar frutas e orgulho.', 8, 1, 10, 750), -- lac001 vida=8(1+0.05*nível)^(1.5)
+    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 7, 11, 10, 1200), -- lac002
+    ('Brutamontes',	'Grande, mal-humorado e com um gosto inusitado por doces.', 16, 12, 15, 900), -- lac003
+    ('Marinheiro Corrupto',	'Usa o uniforme da Marinha, mas segue as ordens do bolso.', 20, 17, 17, 900), -- lac004
+    ('Pirata Congelado',	'Foi soterrado pela neve... e agora está de volta para esfriar os ânimos.', 24, 22, 22, 900), -- lac005
+    ('Alma Soterrada',	'Um espírito inquieto com voz gelada e olhos que brilham no escuro.', 28, 27, 27, 900), -- lac006
+    ('Pirata do Deserto',	'Armado com espadas enferrujadas e piadas secas como o clima.', 33, 32, 32, 900), -- lac007
+    ('Pirata Iludido',	'Perdeu o rumo e parte da sanidade nas miragens. Ainda acha que está no mar.', 38, 37, 37, 900), -- lac008
+    ('Morcego',	'Só aparece no escuro. Detesta luz e adora cabelo desgrenhado.', 43, 42, 42, 900), -- lac009
+    ('Aranha',	'Anda silenciosa e deixa rastros de teia e calafrios por onde passa.', 49, 47, 47, 900), -- lac010
+    ('Marinheiro',	'Cansado, mal pago, mas ainda tenta manter a postura.', 54, 52, 52, 900), -- lac011
+    ('Oficial da Marinha',	'Sabe gritar "atenção!" melhor do que lutar, mas impõe respeito.', 60, 57, 57, 900); -- lac012
 
 
 
@@ -451,21 +468,23 @@ VALUES
     ('lac001', 'are001', 4273, 412, 5),
     ('lac001', 'are001', 3935, 208, 5),
     ('lac001', 'are001', 3600, 427, 5),
-    ('lac002', 'are002', 1500, 125, 7),
-    ('lac002', 'are002', 1900, 400, 7),
-    ('lac002', 'are002', 2360, 210, 7);
+    ('lac002', 'are003', 1500, 125, 7),
+    ('lac002', 'are003', 1900, 400, 7),
+    ('lac002', 'are003', 2360, 210, 7);
 
 
 
 INSERT INTO chefe
     (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia)
 VALUES
-    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 15, 10, 20),
-    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 25, 20, 30),
-    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 35, 30, 40),
-    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 45, 40, 50),
-    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 60, 50, 60),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70);
+    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 14, 10, 20),
+    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 22, 20, 30),
+    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 31, 30, 40),
+    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 41, 40, 50),
+    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 52, 50, 60),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 70),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 70);
 
 
 

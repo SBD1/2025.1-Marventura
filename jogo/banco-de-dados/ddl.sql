@@ -220,8 +220,8 @@ CREATE TABLE area (
     identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
     nome CHAR(30) CHECK (nome ~ '^[a-zA-Z áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\\-]+$'),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
-    chave_imagem_fundo CHAR(50) CHECK (BTRIM(chave_imagem_fundo) ~ '^[a-z_]+$'),
-    chave_imagem_frente CHAR(50) CHECK (BTRIM(chave_imagem_frente) ~ '^[a-z_]+$'),
+    chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z _]+$'),
+    chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z _]+$'),
     visitada BOOLEAN
 );
 
@@ -238,17 +238,35 @@ CREATE TABLE conexao_entre_areas (
 
 CREATE TABLE evento (
     identificador_evento ID PRIMARY KEY,
-    identificador_ilha_origem ID,
-    identificador_ilha_destino ID,
-    identificador_area_origem ID,
-    identificador_area_destino ID,
-    tipo_evento CHAR(12) NOT NULL CHECK (tipo_evento IN ('embarcar', 'investigar', 'mudar_area')),
+    
+    -- Campos de uso geral
+    tipo_evento CHAR(10) NOT NULL CHECK (
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
+    ),
+    
+    -- Para tipo_evento = 'mudar_area'
+    identificador_area_a ID REFERENCES area(identificador_area),
+    identificador_area_b ID REFERENCES area(identificador_area),
     ponto_geracao_x SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
     ponto_geracao_y SMALLINT CHECK (ponto_geracao_y BETWEEN 0 AND 5000),
     orientacao CHAR(8) CHECK (orientacao IN ('esquerda', 'direita')),
+
+    -- Para tipo_evento = 'embarcar'
+    identificador_porto_destino ID REFERENCES area(identificador_area),
+
+    -- Para tipo_evento = 'investigar'
     chance_sucesso DECIMAL CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
-    FOREIGN KEY (identificador_ilha_origem, identificador_ilha_destino) REFERENCES conexao_entre_ilhas(identificador_ilha_a, identificador_ilha_b),
-    FOREIGN KEY (identificador_area_origem, identificador_area_destino) REFERENCES conexao_entre_areas(identificador_area_a, identificador_area_b)
+
+    -- Regras de integridade condicional: ver CHECK abaixo
+    CHECK (
+        (tipo_evento = 'mudar_area' AND identificador_area_a IS NOT NULL AND identificador_area_b IS NOT NULL
+         AND ponto_geracao_x IS NOT NULL AND ponto_geracao_y IS NOT NULL AND orientacao IS NOT NULL)
+        OR
+        (tipo_evento = 'embarcar' AND identificador_porto_destino IS NOT NULL
+         AND ponto_geracao_x IS NOT NULL AND ponto_geracao_y IS NOT NULL AND orientacao IS NOT NULL)
+        OR
+        (tipo_evento = 'investigar' AND chance_sucesso IS NOT NULL)
+    )
 );
 
 CREATE TRIGGER atribui_id_evento
@@ -284,7 +302,6 @@ EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 CREATE TABLE area_interativa (
     identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    identificador_evento ID NOT NULL REFERENCES evento(identificador_evento),
     chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
     x SMALLINT CHECK (x BETWEEN 0 AND 5000),
     y SMALLINT CHECK (y BETWEEN 0 AND 5000),
@@ -296,6 +313,12 @@ CREATE TRIGGER atribui_id_area_interativa
 BEFORE INSERT ON area_interativa
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+CREATE TABLE area_interativa_evento (
+    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
+    identificador_evento ID NOT NULL REFERENCES evento(identificador_evento),
+    PRIMARY KEY (identificador_area_interativa, identificador_evento)
+);
 
 CREATE TABLE caminho (
     identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
@@ -395,7 +418,8 @@ CREATE TABLE lacaio (
     descricao CHAR(100),
     vida SMALLINT,
     nivel SMALLINT CHECK ( nivel BETWEEN 0 AND 60),
-    experiencia SMALLINT
+    experiencia SMALLINT,
+    tempo_reacao SMALLINT
 );
 
 CREATE TRIGGER atribui_id_lacaio
