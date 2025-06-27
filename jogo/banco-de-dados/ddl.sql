@@ -467,7 +467,7 @@ CREATE TABLE barco (
     tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
     nome CHAR(30) NOT NULL,
     descricao CHAR (150) NOT NULL,
-    estado CHAR () NOT NULL CHECK (estado IN ('bloquedo', 'adquirido', 'destruido'))
+    estado CHAR (9) NOT NULL CHECK (estado IN ('bloquedo', 'adquirido', 'destruido'))
 );
 
 CREATE TRIGGER atribui_id_barco
