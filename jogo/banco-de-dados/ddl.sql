@@ -201,7 +201,7 @@ CREATE TABLE habilidade_fruta (
 
 
 CREATE TABLE ilha (
-    identificador_ilha ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
+    identificador_ilha ID PRIMARY KEY,
     nome CHAR(30) CHECK (nome IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     visitada BOOLEAN NOT NULL DEFAULT FALSE
 );
