@@ -381,12 +381,10 @@ VALUES
     ('ari004', 'eve004'),
     ('ari002', 'eve005'),
     ('ari003', 'eve006'),
-    --('ire003', 'eve00),
     ('ari007', 'eve007'),
-    --('ire007', 'eve00),
     ('ari008', 'eve008'),
     ('ari008', 'eve009'),
-    ('ari009', 'eve010'),
+    ('ari009', 'eve010');
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
@@ -438,8 +436,8 @@ INSERT INTO jogador
     (identificador_area, nome, descricao, coordenada_x, coordenada_y,
     energia, vida, nivel, sorte, vida_atual, experiencia_atual)
 VALUES
-    ('are001', 'Silvie', 'Cheios de sonhos, coragem e um apetite por aventura (e por comida também), eles partem rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
-    1950, 140, 5, 10, 0, 1, 10, 0)
+    ('are001', 'Silvie', 'Cheia de sonhos, coragem e um apetite por aventura (e por comida também), ela parte rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
+    1950, 140, 5, 10, 0, 1, 10, 0);
 
 
 

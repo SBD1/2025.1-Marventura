@@ -166,37 +166,6 @@ CREATE TABLE efeito_consumivel (
     PRIMARY KEY (identificador_efeito, identificador_consumivel)
 );
 
-CREATE TABLE tipo_mapa (
-    identificador_mapa ID PRIMARY KEY,
-    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ilh', 'mar'))
-);
-
-CREATE TRIGGER atribui_id_tipo_mapa
-BEFORE INSERT ON tipo_mapa
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-CREATE TABLE mar (
-    identificador_mar ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
-    chave_imagem CHAR(15) NOT NULL CHECK (chave_imagem ~ '^[a-z_]+$')
-);
-
-CREATE TRIGGER atribui_id_mar
-BEFORE INSERT ON mar
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_mapa();
-
-CREATE TABLE barco (
-    identificador_barco ID PRIMARY KEY,
-    identificador_mar ID NOT NULL REFERENCES mar(identificador_mar),
-    tipo CHAR(10) NOT NULL CHECK (tipo IN ('Canoa', 'Veleiro', 'Navio'))
-);
-
-CREATE TRIGGER atribui_id_barco
-BEFORE INSERT ON barco
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
 CREATE TABLE ilha (
     identificador_ilha ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
     nome CHAR(30) CHECK (nome IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
@@ -206,7 +175,7 @@ CREATE TABLE ilha (
 CREATE TRIGGER atribui_id_ilha
 BEFORE INSERT ON ilha
 FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_mapa();
+EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE conexao_entre_ilhas (
     identificador_ilha_a ID NOT NULL REFERENCES ilha(identificador_ilha),
@@ -457,39 +426,26 @@ BEFORE INSERT ON instancia_lacaio
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
-CREATE TABLE batalha (
-    identificador_batalha ID PRIMARY KEY,
+
+CREATE TABLE barco (
+    identificador_barco ID PRIMARY KEY,
     identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
-    identificador_aliado ID NOT NULL REFERENCES aliado(identificador_aliado),
-    identificador_chefe ID NOT NULL REFERENCES chefe(identificador_chefe)
+    tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
+    nome CHAR(30) NOT NULL,
+    descricao CHAR (150) NOT NULL,
+    estado CHAR () NOT NULL CHECK (estado IN ('bloquedo', 'adquirido', 'destruido'))
 );
 
-CREATE TRIGGER atribui_id_batalha
-BEFORE INSERT ON batalha
+CREATE TRIGGER atribui_id_barco
+BEFORE INSERT ON barco
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
-CREATE TABLE batalha_instancia_lacaio (
-    identificador_batalha ID,
-    identificador_instancia_lacaio ID,
-    PRIMARY KEY (identificador_batalha, identificador_instancia_lacaio),
-    FOREIGN KEY (identificador_batalha) REFERENCES batalha(identificador_batalha),
-    FOREIGN KEY (identificador_instancia_lacaio) REFERENCES instancia_lacaio(identificador_instancia_lacaio)
-);
-
-CREATE TABLE habilidade_jogador (
-    identificador_jogador ID,
+CREATE TABLE habilidade_personagem (
+    identificador_personagem ID,
     identificador_habilidade ID,
-    PRIMARY KEY (identificador_jogador, identificador_habilidade),
-    FOREIGN KEY (identificador_jogador) REFERENCES jogador(identificador_jogador),
-    FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(identificador_habilidade)
-);
-
-CREATE TABLE habilidade_aliado (
-    identificador_aliado ID,
-    identificador_habilidade ID,
-    PRIMARY KEY (identificador_aliado, identificador_habilidade),
-    FOREIGN KEY (identificador_aliado) REFERENCES aliado(identificador_aliado),
+    PRIMARY KEY (identificador_personagem, identificador_habilidade),
+    FOREIGN KEY (identificador_personagem) REFERENCES tipo_personagem(identificador_personagem),
     FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(identificador_habilidade)
 );
 
