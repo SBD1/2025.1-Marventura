@@ -8,6 +8,123 @@ BEFORE INSERT ON tipo_item
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
+
+
+CREATE TABLE arma (
+    identificador_arma ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    tipo_arma CHAR(3) NOT NULL CHECK (tipo_arma IN ('esp', 'est', 'arc')),
+    local_encontrado CHAR(27) NOT NULL CHECK (local_encontrado IN ('Loja de Espadas', 'Loja de Estilingues e Arcos')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_arma
+BEFORE INSERT ON arma
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE fruta (
+    identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(222) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Missão', 'Evento')),
+    preco_de_venda SMALLINT CHECK (preco_de_venda IS NULL OR preco_de_venda BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_fruta
+BEFORE INSERT ON fruta
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE acessorio (
+    identificador_acessorio ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(18) NOT NULL CHECK (local_encontrado IN ('Loja de Acessórios')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_acessorio
+BEFORE INSERT ON acessorio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE consumivel (
+    identificador_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
+);
+
+CREATE TRIGGER atribui_id_consumivel
+BEFORE INSERT ON consumivel
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE nao_consumivel (
+    identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_nao_consumivel
+BEFORE INSERT ON nao_consumivel
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE receita (
+    identificador_receita ID PRIMARY KEY,
+    consumivel_produzido ID NOT NULL REFERENCES consumivel(identificador_consumivel)
+);
+
+CREATE TRIGGER atribui_id_receita
+BEFORE INSERT ON receita
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE ingrediente_consumivel (
+    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
+    PRIMARY KEY (identificador_receita, identificador_consumivel)
+);
+
+CREATE TABLE ingrediente_nao_consumivel (
+    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    identificador_nao_consumivel ID NOT NULL REFERENCES nao_consumivel(identificador_nao_consumivel),
+    PRIMARY KEY (identificador_receita, identificador_nao_consumivel)
+);
+
+
+
 CREATE TABLE efeito (
     identificador_efeito ID PRIMARY KEY,
     nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
@@ -35,124 +152,7 @@ BEFORE INSERT ON efeito
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
-CREATE TABLE habilidade (
-    identificador_habilidade ID PRIMARY KEY,
-    identificador_efeito ID REFERENCES efeito(identificador_efeito),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(150) NOT NULL,
-    tipo_de_habilidade CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'fruta')),
-    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('fila', 'alvo_chao', 'terrestre', 'alvo_livre', 'todos')),
-    dano SMALLINT NOT NULL, -- Dano_Total = Dano × (1 + (nível_jogador / Escala)) × Multiplicador_Área × Multiplicador_Raridade
-    custo SMALLINT NOT NULL
-);
 
-CREATE TRIGGER atribui_id_habilidade
-BEFORE INSERT ON habilidade
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-CREATE TABLE arma (
-    identificador_arma ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
-    identificador_habilidade ID REFERENCES habilidade(identificador_habilidade),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(150) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
-    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    tipo_arma CHAR(3) NOT NULL CHECK (tipo_arma IN ('esp', 'est', 'arc')),
-    local_encontrado CHAR(27) NOT NULL CHECK (local_encontrado IN ('Loja de Espadas', 'Loja de Estilingues e Arcos')),
-    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
-);
-
-CREATE TRIGGER atribui_id_arma
-BEFORE INSERT ON arma
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_item();
-
-CREATE TABLE fruta (
-    identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
-    identificador_habilidade ID REFERENCES habilidade(identificador_habilidade),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(222) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
-    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Missão', 'Evento')),
-    preco_de_venda SMALLINT CHECK (preco_de_venda IS NULL OR preco_de_venda BETWEEN 1 AND 999)
-);
-
-CREATE TRIGGER atribui_id_fruta
-BEFORE INSERT ON fruta
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_item();
-
-CREATE TABLE acessorio (
-    identificador_acessorio ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(150) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
-    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(18) NOT NULL CHECK (local_encontrado IN ('Loja de Acessórios')),
-    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
-);
-
-CREATE TRIGGER atribui_id_acessorio
-BEFORE INSERT ON acessorio
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_item();
-
-CREATE TABLE consumivel (
-    identificador_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(200) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
-    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
-    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
-    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
-    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
-);
-
-CREATE TRIGGER atribui_id_consumivel
-BEFORE INSERT ON consumivel
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_item();
-
-CREATE TABLE nao_consumivel (
-    identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
-    nome CHAR(50) NOT NULL,
-    descricao CHAR(150) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
-    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
-    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
-    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
-);
-
-CREATE TRIGGER atribui_id_nao_consumivel
-BEFORE INSERT ON nao_consumivel
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_item();
-
-CREATE TABLE receita (
-    identificador_receita ID PRIMARY KEY,
-    consumivel_produzido ID NOT NULL REFERENCES consumivel(identificador_consumivel)
-);
-
-CREATE TRIGGER atribui_id_receita
-BEFORE INSERT ON receita
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-CREATE TABLE ingrediente_consumivel (
-    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
-    identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
-    PRIMARY KEY (identificador_receita, identificador_consumivel)
-);
-
-CREATE TABLE ingrediente_nao_consumivel (
-    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
-    identificador_nao_consumivel ID NOT NULL REFERENCES nao_consumivel(identificador_nao_consumivel),
-    PRIMARY KEY (identificador_receita, identificador_nao_consumivel)
-);
 
 CREATE TABLE efeito_acessorio (
     identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
@@ -165,6 +165,40 @@ CREATE TABLE efeito_consumivel (
     identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
     PRIMARY KEY (identificador_efeito, identificador_consumivel)
 );
+
+
+
+CREATE TABLE habilidade (
+    identificador_habilidade ID PRIMARY KEY,
+    identificador_efeito ID REFERENCES efeito(identificador_efeito),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'arco', 'fruta')),
+    tipo_de_alvo CHAR(15) NOT NULL CHECK (tipo_de_alvo IN ('fila', 'alvo_terrestre', 'terrestre', 'alvo_livre', 'area')),
+    dano SMALLINT NOT NULL,
+    custo SMALLINT DEFAULT 0
+);
+
+CREATE TRIGGER atribui_id_habilidade
+BEFORE INSERT ON habilidade
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE habilidade_arma (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_arma ID NOT NULL REFERENCES arma (identificador_arma),
+    PRIMARY KEY (identificador_habilidade, identificador_arma)
+);
+
+CREATE TABLE habilidade_fruta (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_fruta ID NOT NULL REFERENCES fruta (identificador_fruta),
+    PRIMARY KEY (identificador_habilidade, identificador_fruta)
+);
+
+
 
 CREATE TABLE ilha (
     identificador_ilha ID PRIMARY KEY REFERENCES tipo_mapa(identificador_mapa),
