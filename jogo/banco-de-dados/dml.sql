@@ -758,7 +758,7 @@ INSERT INTO evento
     ponto_geracao_y, orientacao)
 VALUES
     ('are001', 'are002', 'mudar_area', 100, 370, 'direita'), -- are001 → are002
-    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'), -- are002 → are002
+    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'), -- are002 → are001
     ('are002', 'are004', 'mudar_area', 100, 275, 'direita'), -- are002 → are004
     ('are002', 'are004', 'mudar_area', 1781, 312, 'esquerda'), -- are004 → are002
     ('are002', 'are003', 'mudar_area', 50, 190, 'direita'), -- are002 → are003
@@ -775,8 +775,8 @@ INSERT INTO evento
     (identificador_porto_destino, tipo_evento, ponto_geracao_x,
     ponto_geracao_y, orientacao)
 VALUES
-    ('are003', 'embarcar', 2470, 265, 'esquerda'),
-    ('are007', 'embarcar', 4160, 280, 'esquerda'),
+    ('are003', 'embarcar', 4160, 280, 'esquerda'),
+    ('are007', 'embarcar', 2470, 265, 'esquerda'),
     ('are013', 'embarcar', 100, 415, 'direita'),
     ('are017', 'embarcar', 2470, 265, 'direita'),
     ('are021', 'embarcar', 2470, 265, 'direita'),
@@ -785,18 +785,20 @@ VALUES
 
 
 INSERT INTO area_interativa
-    (identificador_area, x, y, largura, altura)
+    (identificador_area, x, y, largura, altura, tipo_evento)
 VALUES
-    ('are001', 4473, 187, 30, 180),
-    ('are002', 0, 360, 50, 150),
-    ('are002', 1716, 300, 200, 40),
-    ('are004', 0, 300, 50, 270),
-    ('are002', 3490, 360, 50, 150),
-    ('are003', 0, 200, 50, 150),
-    ('are007', 610, 185, 250, 20),
-    ('are008', 0, 480, 50, 150),
-    ('are008', 1656, 484, 50, 150),
-    ('are009', 0, 500, 50, 85);
+    ('are001', 4473, 187, 30, 180, 'mudar_area'), -- → vila
+    ('are002', 0, 360, 50, 150, 'mudar_area'), -- → pastos
+    ('are002', 1716, 300, 200, 40, 'mudar_area'), -- → loja
+    ('are002', 3490, 360, 50, 150, 'mudar_area'), -- → vale
+    ('are003', 0, 200, 50, 150, 'mudar_area'), -- → vila
+    ('are003', 4205, 313, 50, 158, 'embarcar'), -- → navegar
+    ('are004', 0, 300, 50, 270, 'mudar_area'), -- → sair da loja
+    ('are007', 610, 185, 250, 20, 'mudar_area'), -- → centro
+    ('are007', 2472, 375, 93, 67, 'embarcar'), -- → navegar
+    ('are008', 0, 480, 50, 150, 'mudar_area'), -- → porto
+    ('are008', 1656, 484, 50, 150, 'mudar_area'), -- → praça
+    ('are009', 0, 500, 50, 85, 'mudar_area'); -- → centro
 
 
 INSERT INTO area_interativa_evento
@@ -804,14 +806,17 @@ INSERT INTO area_interativa_evento
 VALUES
     ('ari001', 'eve001'),
     ('ari002', 'eve002'),
-    ('ari002', 'eve003'),
-    ('ari004', 'eve004'),
-    ('ari002', 'eve005'),
-    ('ari003', 'eve006'),
-    ('ari007', 'eve007'),
-    ('ari008', 'eve008'),
-    ('ari008', 'eve009'),
-    ('ari009', 'eve010');
+    ('ari003', 'eve003'),
+    ('ari004', 'eve005'),
+    ('ari005', 'eve006'),
+    ('ari006', 'eve012'),
+    ('ari006', 'eve014'),
+    ('ari007', 'eve004'),
+    ('ari008', 'eve007'),
+    ('ari009', 'eve011'),
+    ('ari010', 'eve008'),
+    ('ari011', 'eve009'),
+    ('ari012', 'eve010');
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)

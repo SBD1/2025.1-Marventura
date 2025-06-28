@@ -51,8 +51,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Inicializa a exibição do nome da ilha (chamando o método auxiliar)
         self._marcar_ilha_visitada_e_exibir_nome()
 
-        print(f"Imagem de fundo: ({self.dados_da_area.chave_imagem_fundo})")
-
         self.mapa_fundo_imagem = self.gerenciador_recursos.obter_imagem(self.dados_da_area.chave_imagem_fundo)
 
         # --- Carregar a camada superior (opcional) ---
@@ -143,19 +141,22 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
         for area_data in areas_interativas:
-            mudar_area, navegar, investigar = None, None, None
             if area_data.tipo_evento == 'mudar_area':
-                mudar_area = {
-                                'x': area_data.ponto_geracao_x,
-                                'y': area_data.ponto_geracao_y,
-                                'orientacao': area_data.orientacao,
-                                'destino': area_data.area_destino
-                            }
+                evento_acionado = self.banco_de_dados.buscar_eventos_mudar_area(area_data.identificador_area_interativa)
 
-            area = AreaInteracao(area_data.x, area_data.y,
+                area = AreaInteracao(area_data.x, area_data.y,
                                  area_data.largura, area_data.altura,
                                  area_data.tipo_evento,
-                                 mudar_area=mudar_area)
+                                 mudar_area=evento_acionado)
+                
+            if area_data.tipo_evento == 'embarcar':
+                evento_acionado = self.banco_de_dados.buscar_eventos_embarcar(area_data.identificador_area_interativa)
+
+                area = AreaInteracao(area_data.x, area_data.y,
+                                    area_data.largura, area_data.altura,
+                                    area_data.tipo_evento,
+                                    navegar_para=evento_acionado)
+
             self.areas_interacao.add(area)
 
 
@@ -165,10 +166,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
         """
         # db.marcar_ilha_como_visitada(self.dados_da_ilha.identificador_ilha)
-        print("\n----------------------")
-        print(self.dados_da_ilha)
-        print(self.dados_da_area)
-        print("\n----------------------")
 
         if self.dados_da_ilha.nome or self.dados_da_area.nome: # Só cria a exibição se houver algo para mostrar
             self.exibicao_nome_ilha = _ExibicaoNomeIlha(self.dados_da_ilha.nome, self.dados_da_area.nome, self.gerenciador_recursos)
@@ -195,30 +192,38 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     return None # Consome o evento
                 else: # Uma ilha foi selecionada
                     ilha_selecionada = resultado_menu
-                    print(f"Viajando para: {ilha_selecionada}")
+                    print(f"Viajando para: {ilha_selecionada.nome}")
 
-                    id_proxima_ilha = None
-                    for ilha_id, dados_ilha in dados_das_ilhas.items():
-                        if dados_ilha['nome'] == ilha_selecionada:
-                            id_proxima_ilha = ilha_id
-                            break
+                    if ilha_selecionada:
+                        porto_destino = self.banco_de_dados.buscar_porto_por_ilha(ilha_selecionada.identificador_ilha)
 
-                    if id_proxima_ilha:
-                        mapa_destino = None
-                        if id_proxima_ilha in dados_das_ilhas and 'areas' in dados_das_ilhas[id_proxima_ilha]:
-                            mapa_destino = dados_das_ilhas[id_proxima_ilha]['pier']
-
-                        if mapa_destino:
+                        if porto_destino:
                             self.menu_viagem_ativo = False
                             self.menu_viagem = None # Limpa a instância do menu
-                            return {'estado': CHAVE_TRANSICAO_MAPA,
-                                    'id_mapa': mapa_destino,
-                                    'ponto_de_destino': 'pier',
-                                    'personagem': self.jogador.nome}
+                            id_area = porto_destino.identificador_area
+
+                            evento = next(
+                                (row for row in self.evento_selecionado if row.identificador_porto_destino == id_area),
+                                None  # valor padrão caso não encontre
+                            )
+
+                            ponto_geracao_jogador = (
+                                evento.ponto_geracao_x,
+                                evento.ponto_geracao_y,
+                                evento.orientacao
+                            )
+                            return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
+                                'id_mapa': id_area,
+                                'ponto_de_destino': None,
+                                'personagem': self.jogador.nome,
+                                'dados_da_area': porto_destino,
+                                'dados_da_ilha': ilha_selecionada,
+                                'jogador': self.informacoes_jogador,
+                                'ponto_geracao_jogador': ponto_geracao_jogador}
                         else:
-                            print(f"AVISO: Não foi possível determinar o mapa de destino para a ilha '{ilha_selecionada}'.")
+                            print(f"AVISO: Não foi possível determinar o mapa de destino para a ilha '{ilha_selecionada.nome}'.")
                     else:
-                        print(f"AVISO: ID da ilha não encontrado para o nome '{ilha_selecionada}'.")
+                        print(f"AVISO: ID da ilha não encontrado para o nome '{ilha_selecionada.nome}'.")
             return None # Consome o evento, não processa o input do jogador normal
 
 
@@ -235,15 +240,15 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 
                 for area in areas_colidindo_agora:
                     if area.tipo_evento == 'mudar_area':
-                        print(f"Detectou interação para mudar mapa para {area.ir_para_area['destino']}")
-                        proxima_area = self.banco_de_dados.buscar_info_area(area.ir_para_area['destino'])
+                        print(f"Detectou interação para mudar mapa para {area.ir_para_area.area_destino}")
+                        proxima_area = self.banco_de_dados.buscar_info_area(area.ir_para_area.area_destino)
                         ponto_geracao_jogador = (
-                            area.ir_para_area['x'],
-                            area.ir_para_area['y'],
-                            area.ir_para_area['orientacao']
+                            area.ir_para_area.ponto_geracao_x,
+                            area.ir_para_area.ponto_geracao_y,
+                            area.ir_para_area.orientacao
                         )
                         return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
-                                'id_mapa': area.ir_para_area['destino'],
+                                'id_mapa': area.ir_para_area.area_destino,
                                 'ponto_de_destino': None,
                                 'personagem': self.jogador.nome,
                                 'dados_da_area': proxima_area,
@@ -255,6 +260,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             print('Embarcando na viagem...')
                             self.ilhas_vizinhas = self.banco_de_dados.buscar_conexoes_ilha(self.dados_da_area.identificador_ilha)
 
+                            self.evento_selecionado = area.navegar_para # Armazena as opções de destino do evento de embarcar
                             self.menu_viagem = _MenuViagemFlutuante(self.ilhas_vizinhas)
                             self.menu_viagem_ativo = True
                             return None # Consome o evento
@@ -403,7 +409,7 @@ class _MenuViagemFlutuante:
                 self.indice_selecionado = (self.indice_selecionado + 1) % len(self.opcoes)
             elif evento.key == pygame.K_RETURN:
                 if self.opcoes:
-                    return self.opcoes[self.indice_selecionado].identificador_ilha  # Retorna o ID da ilha
+                    return self.opcoes[self.indice_selecionado]  # Retorna o ID da ilha
                 return None
             elif evento.key == pygame.K_ESCAPE:
                 return "cancelar"
@@ -431,7 +437,7 @@ class _MenuViagemFlutuante:
 
         y_offset = pos_y_menu + 20
         for i, opcao in enumerate(self.opcoes):
-            nome_ilha = opcao.nome_ilha  # Usa o nome da ilha para exibir
+            nome_ilha = opcao.nome  # Usa o nome da ilha para exibir
             cor_texto = self.cor_texto_selecionado if i == self.indice_selecionado else self.cor_texto_normal
             texto_renderizado = self.fonte_menu.render(nome_ilha, True, cor_texto)
 

@@ -235,43 +235,50 @@ class DBManager:
         Busca todos os lacaios em uma área específica.
         """
         consulta = """
-            SELECT  il.identificador_instancia_lacaio,
-                    il.coordenada_x AS x,
-                    il.coordenada_y AS y,
-                    il.vida_atual,
+            SELECT 
+                il.identificador_instancia_lacaio,
+                il.coordenada_x AS x,
+                il.coordenada_y AS y,
+                il.vida_atual,
+                il.moedas_totais,
 
-                    l.identificador_lacaio,
-                    TRIM(l.nome) AS nome_lacaio,
-                    TRIM(l.descricao) AS descricao_lacaio,
-                    l.vida AS vida_total,
-                    l.nivel,
-                    l.experiencia,
-                    l.tempo_reacao,
+                l.identificador_lacaio,
+                TRIM(l.nome) AS nome_lacaio,
+                TRIM(l.descricao) AS descricao_lacaio,
+                l.vida AS vida_total,
+                l.nivel,
+                l.experiencia,
 
-                    h.nome AS nome_habilidade,
-                    h.dano,
-                    h.tipo_de_habilidade,
-                    h.tipo_de_ataque,
+                h.identificador_habilidade,
+                h.nome AS nome_habilidade,
+                h.dano,
+                h.tipo_de_ataque,
+                h.tipo_de_alvo,
 
-                    ti.identificador_item,
-                    ti.tipo AS tipo_item,
+                ti.identificador_item,
+                ti.tipo AS tipo_item,
 
-                    consumivel.nome AS nome_consumivel,
-                    nao_consumivel.nome AS nome_nao_consumivel
+                consumivel.nome AS consumivel_saqueavel,
+                nao_consumivel.nome AS nao_consumivel_saqueavel
 
-                FROM instancia_lacaio il
-                JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
-                LEFT JOIN habilidade h ON l.identificador_habilidade = h.identificador_habilidade
+            FROM instancia_lacaio il
+            JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
 
-                LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio
-                LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
-                LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+            -- Habilidades do lacaio (1 ou mais)
+            LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identificador_lacaio
+            LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
 
-                -- subtipos possíveis do item
-                LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
-                LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+            -- Inventário geral do lacaio
+            LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'ger'
+            LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
+            LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
 
-                WHERE il.identificador_area = %s;
+            -- Subtipos possíveis do item
+            LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
+            LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+
+            -- Restrição pela área atual do jogador
+            WHERE il.identificador_area = %s;
         """
         return self.executar_query(consulta, (identificador_area,), fetchall=True)
     def buscar_chefe(self, id_chefe):
@@ -357,23 +364,102 @@ class DBManager:
         """
         return self.executar_query(query, (id_area,), fetchone=True)
     
+    def buscar_porto_por_ilha(self, id_ilha):
+        """
+        Busca informações de uma sala específica que é o porto da ilha
+        """
+        query = """
+            SELECT
+                identificador_area,
+                identificador_ilha,
+                TRIM(nome) AS nome,
+                TRIM(tipo_area) AS tipo_area,
+                TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+                TRIM(chave_imagem_frente) AS chave_imagem_frente,
+                visitada
+            FROM area
+            WHERE identificador_ilha = %s AND tipo_area = 'Porto';
+        """
+        return self.executar_query(query, (id_ilha,), fetchone=True)
+    
     def buscar_areas_interativas_da_area(self, id_area):
         """
         Busca todos os elementos espaciaias do tipo "Área interativa" na área atual.
         """
         consulta = """
-            SELECT *
+            SELECT
+                identificador_area_interativa,
+                identificador_area,
+                TRIM(chave_imagem) AS chave_imagem,
+                x,
+                y,
+                largura,
+                altura,
+                TRIM(tipo_evento) AS tipo_evento
             FROM area_interativa
             WHERE identificador_area = %s;
         """
         return self.executar_query(consulta, (id_area,), fetchall=True)
+    
+    def buscar_eventos_embarcar(self, id_area_interativa):
+        """
+        Busca todos os eventos embarcar acionados por uma área interativa específica.
+        """
+        consulta = """
+            SELECT
+                e.identificador_evento,
+                TRIM(e.tipo_evento) AS tipo_evento,
+
+                -- Campos para embarcar
+                e.identificador_porto_destino,
+
+                -- Campos comuns
+                e.ponto_geracao_x,
+                e.ponto_geracao_y,
+                TRIM(e.orientacao) AS orientacao
+
+
+            FROM area_interativa_evento aie
+            JOIN evento e ON e.identificador_evento = aie.identificador_evento
+            WHERE aie.identificador_area_interativa = %s;
+        """
+        return self.executar_query(consulta, (id_area_interativa,), fetchall=True)
+    
+    def buscar_eventos_mudar_area(self, id_area_interativa):
+        """
+        Busca o evento mudar_area acionado por uma área interativa específica.
+        """
+        consulta = """
+            SELECT
+                e.identificador_evento,
+                TRIM(e.tipo_evento) AS tipo_evento,
+                e.ponto_geracao_x,
+                e.ponto_geracao_y,
+                TRIM(e.orientacao) AS orientacao,
+
+                a_dest.identificador_area AS area_destino
+
+            FROM area_interativa_evento aie
+            JOIN evento e ON e.identificador_evento = aie.identificador_evento
+            JOIN area_interativa ai ON ai.identificador_area_interativa = aie.identificador_area_interativa
+
+            -- Detecta a área de destino real com base na área da área_interativa
+            JOIN area a_dest ON a_dest.identificador_area = 
+                CASE
+                    WHEN e.identificador_area_a = ai.identificador_area THEN e.identificador_area_b
+                    ELSE e.identificador_area_a
+                END
+
+            WHERE aie.identificador_area_interativa = %s;
+        """
+        return self.executar_query(consulta, (id_area_interativa,), fetchone=True)
 
     def buscar_conexoes_ilha(self, id_ilha_origem):
         """
         Ver todas as conexões de um lugar X. (Adaptado para Ilhas via corredor_maritimo)
         """
         query = """
-            SELECT i.identificador_ilha, TRIM(i.nome) AS nome_ilha, i.visitada
+            SELECT i.identificador_ilha, TRIM(i.nome) AS nome, i.visitada
                 FROM conexao_entre_ilhas c
                 JOIN ilha i ON i.identificador_ilha = 
                     CASE

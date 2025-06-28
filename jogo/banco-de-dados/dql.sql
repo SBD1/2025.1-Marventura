@@ -146,3 +146,15 @@ JOIN ilha i ON i.identificador_ilha =
         ELSE c.identificador_ilha_a
     END
 WHERE 'ilh001' IN (c.identificador_ilha_a, c.identificador_ilha_b);
+
+-- Buscar o porto de uma ilha específica
+SELECT
+	identificador_area,
+	identificador_ilha,
+	TRIM(nome) AS nome,
+	TRIM(tipo_area) AS tipo_area,
+	TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+	TRIM(chave_imagem_frente) AS chave_imagem_frente,
+	visitada
+FROM area
+WHERE identificador_ilha = 'ilh001' AND tipo_area = 'Porto';

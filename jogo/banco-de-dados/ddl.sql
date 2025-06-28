@@ -309,7 +309,10 @@ CREATE TABLE area_interativa (
     x SMALLINT CHECK (x BETWEEN 0 AND 5000),
     y SMALLINT CHECK (y BETWEEN 0 AND 5000),
     largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
-    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
+    tipo_evento CHAR(10) NOT NULL CHECK (
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
+    )
 );
 
 CREATE TRIGGER atribui_id_area_interativa
