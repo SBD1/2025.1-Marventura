@@ -8,7 +8,6 @@ from telas import TelaSelecaoPersonagem
 from telas import TelaJogo
 from telas import TelaBatalha
 from utilidades.constantes import *
-from utilidades import carregar_dados_do_progresso
 
 class GerenciadorDeTelas:
     """
@@ -45,7 +44,7 @@ class GerenciadorDeTelas:
                             personagem=kwargs.get('personagem'),
                             ponto_de_destino='novo_jogo')
         elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
-            jogador, ilha, area = carregar_dados_do_progresso('jog001', self.gerenciador_banco_de_dados)
+            jogador, ilha, area = self.gerenciador_banco_de_dados.carregar_dados_do_progresso('jog001')
 
                     
             posicao_jogador = (
@@ -56,7 +55,6 @@ class GerenciadorDeTelas:
 
             return TelaJogo(self, self.gerenciador_recursos,
                             gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
-                            id_mapa_atual=kwargs.get('id_mapa'),
                             dados_da_area=area,
                             dados_da_ilha=ilha,
                             jogador=jogador,
@@ -64,7 +62,6 @@ class GerenciadorDeTelas:
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
             return TelaJogo(self, self.gerenciador_recursos,
                             gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
-                            id_mapa_atual=kwargs.get('id_mapa'),
                             dados_da_area=kwargs.get('dados_da_area'),
                             dados_da_ilha=kwargs.get('dados_da_ilha'),
                             jogador=kwargs.get('jogador'),

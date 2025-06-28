@@ -9,7 +9,6 @@ from entidades import Obstaculo
 from entidades import Caminho
 from entidades import AreaInteracao
 from utilidades import Camera
-from mapa_dados import dados_das_ilhas, get_ilhas_vizinhas
 from .tela_modelo import TelaModelo
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
@@ -27,13 +26,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
     def __init__(self, gerenciador_telas, gerenciador_recursos, dados_da_ilha, dados_da_area,
-                 gerenciador_banco_de_dados, id_mapa_atual, jogador, ponto_geracao_jogador,
-                 ponto_de_destino = None, coordenada_x = None, coordenada_y = None, olhando_direita = None):
+                 gerenciador_banco_de_dados, jogador, ponto_geracao_jogador):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
-
-        self.id_mapa = id_mapa_atual # Substituir por dados_da_area.identificador_area
-        self.ponto_de_destino = ponto_de_destino
-        self.olhando_direita = olhando_direita
 
         self.dados_da_area = dados_da_area
         self.dados_da_ilha = dados_da_ilha
@@ -174,7 +168,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 print(f"(Ilha {self.dados_da_ilha.nome} visitada: {self.dados_da_ilha.visitada})")
         else:
             self.exibicao_nome_ilha = None
-            print(f"AVISO: Nenhuma informação de ilha ou área para exibir para o mapa ID: {self.id_mapa}")
+            print(f"AVISO: Nenhuma informação de ilha ou área para exibir para o mapa ID: {self.dados_da_area.identificador_area}")
 
 
     def handle_input(self, evento):
@@ -272,7 +266,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 'jogador_x': self.jogador.mundo_x,
                                 'jogador_y': self.jogador.mundo_y,
                                 'olhando_direita': self.jogador.orientacao,
-                                'id_mapa': self.id_mapa,
+                                'id_mapa': self.dados_da_area.identificador_area,
                                 'personagem': self.jogador.nome}
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                     # elif area.tipo_evento == 'dialogo_npc':
@@ -330,7 +324,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     jogador_atual_x=self.jogador.mundo_x,
                     jogador_atual_y=self.jogador.mundo_y,
                     jogador_olhando_direita=self.jogador.orientacao,
-                    mapa_atual_id=self.id_mapa,
+                    mapa_atual_id=self.dados_da_area.identificador_area,
                     personagem=self.jogador.nome
                 )
                 return # Termina o update aqui para não processar mais nada após a transição
