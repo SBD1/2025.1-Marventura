@@ -918,6 +918,87 @@ VALUES
 
 
 
+INSERT INTO habilidade_personagem
+    (identificador_personagem, identificador_habilidade)
+VALUES
+    ('jog001', 'hab003'),
+    ('jog001', 'hab004'),
+    ('lac001', 'hab043'),
+    ('lac002', 'hab044'),
+    ('che001', 'hab045'),
+    ('lac003', 'hab046'),
+    ('lac004', 'hab047'),
+    ('che002', 'hab048'),
+    ('lac005', 'hab049'),
+    ('lac006', 'hab050'),
+    ('che003', 'hab051'),
+    ('lac007', 'hab052'),
+    ('lac008', 'hab053'),
+    ('che004', 'hab054'),
+    ('lac009', 'hab055'),
+    ('lac010', 'hab056'),
+    ('che005', 'hab057'),
+    ('lac011', 'hab058'),
+    ('lac012', 'hab059'),
+    ('che006', 'hab060'),
+    ('che006', 'hab061'),
+    ('che006', 'hab062'),
+    ('che006', 'hab063'),
+    ('che006', 'hab064');
+
+
+
+-- Inventários de personagens
+INSERT INTO inventario
+    (identificador_personagem)
+VALUES
+    ('lac001'),
+    ('lac002'),
+    ('lac003'),
+    ('lac004'),
+    ('lac005'),
+    ('lac006'),
+    ('lac007'),
+    ('lac008'),
+    ('lac009'),
+    ('lac010'),
+    ('lac011'),
+    ('lac012'),
+    ('che001'),
+    ('che002'),
+    ('che003'),
+    ('che004'),
+    ('che005'),
+    ('che006');
+
+
+
+-- Inventários do jogador
+INSERT INTO inventario
+    (identificador_personagem, tipo_inventario)
+VALUES
+    ('jog001', 'ger'),
+    ('jog001', 'kit');
+
+
+
+-- Itens dos inimigos
+INSERT INTO item_inventario
+    (identificador_inventario, identificador_item)
+VALUES
+    ('inv001', 'ncn004'),
+    ('inv002', 'ncn005'),
+    ('inv003', 'con008'),
+    ('inv004', 'ncn009'),
+    ('inv005', 'ncn011'),
+    ('inv006', 'ncn012'),
+    ('inv007', 'ncn013'),
+    ('inv008', 'ncn014'),
+    ('inv009', 'ncn018'),
+    ('inv010', 'ncn019'),
+    ('inv011', 'con027'),
+    ('inv012', 'ncn022');
+
 INSERT INTO missao
     (identificador_jogador, identificador_area, identificador_recrutador, descricao, nome)
 VALUES

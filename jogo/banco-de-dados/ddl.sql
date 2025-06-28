@@ -499,7 +499,7 @@ CREATE TABLE receitas_conhecidas (
 CREATE TABLE inventario (
     identificador_inventario ID PRIMARY KEY,
     identificador_personagem ID NOT NULL REFERENCES tipo_personagem(identificador_personagem),
-    tipo_inventario CHAR(3) NOT NULL CHECK (tipo_inventario IN ('ger', 'kit'))
+    tipo_inventario CHAR(3) DEFAULT 'ger' NOT NULL CHECK (tipo_inventario IN ('ger', 'kit'))
 );
 
 CREATE TRIGGER atribui_id_inventario
