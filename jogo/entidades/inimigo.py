@@ -6,19 +6,22 @@ from utilidades.constantes import *
 
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_inimigo,
-                 velocidade_caminhada, velocidade_corrida, alcance_visao, angulo_visao_graus,
-                 tempo_reacao_ms, caminho_container,
-                 alcance_ataque=DISTANCIA_ATAQUE_INIMIGO, duracao_ataque_ms=DURACAO_ATAQUE_INIMIGO_MS):
+                 descricao, vida_atual, vida_total, nivel, experiencia, caminho_container):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         self.tipo_inimigo = tipo_inimigo
-        self.velocidade_caminhada = velocidade_caminhada
-        self.velocidade_corrida = velocidade_corrida
-        self.velocidade_atual = velocidade_caminhada
-        self.alcance_visao = alcance_visao
-        self.angulo_visao = math.radians(angulo_visao_graus)
-        self.tempo_reacao_ms = tempo_reacao_ms
+        self.velocidade_caminhada = VELOCIDADE_CAMINHADA_INIMIGO
+        self.velocidade_corrida = VELOCIDADE_CORRIDA_INIMIGO
+        self.velocidade_atual = VELOCIDADE_CAMINHADA_INIMIGO
+        self.alcance_visao = ALCANCE_VISAO
+        self.angulo_visao = math.radians(ANGULO_VISAO)
+        self.tempo_reacao_ms = TEMPO_REACAO_INIMIGO
         self.caminho_container = caminho_container
+        self.descricao = descricao
+        self.vida_atual = vida_atual
+        self.vida_total = vida_total
+        self.nivel = nivel
+        self.experiencia = experiencia
 
         self.imagens_animacao = {}
         self.carregar_animacoes(tipo_inimigo)
@@ -41,8 +44,8 @@ class Inimigo(pygame.sprite.Sprite):
         self.estado = ESTADO_INIMIGO_PARADO
         self.timer_reacao = 0
         self.ultimo_ataque_tempo = 0
-        self.duracao_ataque_ms = duracao_ataque_ms
-        self.alcance_ataque = alcance_ataque
+        self.duracao_ataque_ms = DURACAO_ATAQUE_INIMIGO_MS
+        self.alcance_ataque = DISTANCIA_ATAQUE_INIMIGO
         self.alvo_identificado = False
         self.atingiu_jogador = False
 

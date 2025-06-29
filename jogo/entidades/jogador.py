@@ -6,18 +6,26 @@ from utilidades.constantes import * # Importa as constantes
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, personagem, olhando_direita_inicial=True):
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, nome, descricao,
+                 energia, vida, nivel, sorte, vida_atual, experiencia_atual,
+                 orientacao='direita'):
         super().__init__()
-        print(f"Inicializando Jogador: {personagem} em ({x_inicial}, {y_inicial}), olhando_direita={olhando_direita_inicial}")
         self.gerenciador_recursos = gerenciador_recursos
-        self.personagem = personagem
         # REMOVIDO: self.fator_de_escala = fator_de_escala
 
         # Estado do jogador
         self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.velocidade = VELOCIDADE_JOGADOR
-        self.olhando_direita = olhando_direita_inicial
+        self.orientacao = orientacao
+        self.nome = nome
+        self.descricao = descricao
+        self.energia = energia
+        self.vida = vida
+        self.nivel = nivel
+        self.sorte = sorte
+        self.vida_atual = vida_atual
+        self.experiencia_atual = experiencia_atual
 
         # Animação e estado
         self.estado = 'parado' # 'parado', 'caminhando'
@@ -65,16 +73,16 @@ class Jogador(pygame.sprite.Sprite):
 
     def carregar_animacoes(self):
         # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
-        imagem_parado = self.gerenciador_recursos.obter_imagem(self.personagem + '_em_repouso')
-        imagem_caminhar_frame_1 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_1')
-        imagem_caminhar_frame_2 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_2')
-        imagem_caminhar_frame_3 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_3')
+        imagem_parado = self.gerenciador_recursos.obter_imagem(self.nome + '_em_repouso')
+        imagem_caminhar_frame_1 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_1')
+        imagem_caminhar_frame_2 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_2')
+        imagem_caminhar_frame_3 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_3')
 
         # Adiciona frame 'parado'
         if imagem_parado:
             self.frames_animacao['parado'].append(imagem_parado)
         else:
-            print(f"AVISO: Imagem '{self.personagem}_em_repouso' não encontrada para o jogador. Usando fallback padrão.")
+            print(f"AVISO: Imagem '{self.nome}_em_repouso' não encontrada para o jogador. Usando fallback padrão.")
             fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
             fallback_surface.fill(PRETO)
             self.frames_animacao['parado'].append(fallback_surface)
@@ -90,7 +98,7 @@ class Jogador(pygame.sprite.Sprite):
 
         # Se não houver frames de caminhada carregados, usa o frame 'parado' como fallback
         if not valid_caminhada_frames:
-            print(f"AVISO: Nenhuma imagem de caminhada para '{self.personagem}' carregada. Usando imagem parada como fallback para caminhada.")
+            print(f"AVISO: Nenhuma imagem de caminhada para '{self.nome}' carregada. Usando imagem parada como fallback para caminhada.")
             if self.frames_animacao['parado']:
                 fallback = self.frames_animacao['parado'][0]
                 valid_caminhada_frames = [fallback, fallback, fallback]
@@ -134,10 +142,10 @@ class Jogador(pygame.sprite.Sprite):
 
         if keys[pygame.K_a]:
             self.movendo_esquerda = True
-            self.olhando_direita = False # Olhando para a esquerda
+            self.orientacao = 'esquerda'
         if keys[pygame.K_d]:
             self.movendo_direita = True
-            self.olhando_direita = True # Olhando para a direita
+            self.orientacao = 'direita'
         if keys[pygame.K_w]:
             self.movendo_cima = True
         if keys[pygame.K_s]:
@@ -304,7 +312,7 @@ class Jogador(pygame.sprite.Sprite):
             imagem_atual = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
             imagem_atual.fill(VERMELHO)
 
-        if not self.olhando_direita:
+        if self.orientacao == 'esquerda':
             imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
         self.image = imagem_atual

@@ -34,7 +34,11 @@ LARGURA_JOGADOR = 80
 ALTURA_JOGADOR = 120
 
 # --- Constantes do Inimigo ---
-ANGULO_VISAO = 150
+ANGULO_VISAO = 120
+ALCANCE_VISAO = 200
+VELOCIDADE_CORRIDA_INIMIGO = 300
+VELOCIDADE_CAMINHADA_INIMIGO = 150
+TEMPO_REACAO_INIMIGO = 750
 TEMPO_RECARGA_ATAQUE_INIMIGO_MS = 1500 # Tempo entre ataques do inimigo
 DURACAO_ATAQUE_INIMIGO_MS = 300      # Duração da animação/fase de ataque do inimigo
 DISTANCIA_ATAQUE_INIMIGO = 40        # Distância que o inimigo considera "alvo ao alcance" para atacar
@@ -125,33 +129,32 @@ CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
 
 CHAVE_CENARIO_OCEANO = 'cenario_oceano'
 
-CHAVE_CENARIO_CAMPO_COSTA_OESTE = 'cenario_ilha_1_parte_1'
-CHAVE_CENARIO_CAMPO_COSTA_LESTE = 'cenario_ilha_1_parte_3'
-CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR = 'cenario_ilha_1_parte_1-camada_superior'
-CHAVE_CENARIO_CAMPO_COSTA_LESTE_CAMADA_SUPERIOR = 'cenario_ilha_1_parte_3-camada_superior'
-CHAVE_CENARIO_CAMPO_VILA = 'cenario_ilha_1_parte_2'
-CHAVE_CENARIO_CAMPO_COSTA_LESTE = 'cenario_ilha_1_parte_3'
+CHAVE_CENARIO_CAMPO_COSTA_OESTE = 'cenario_boraboia_pastos'
+CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR = 'cenario_boraboia_pastos_camada_superior'
+CHAVE_CENARIO_CAMPO_VILA = 'cenario_boraboia_vila'
+CHAVE_CENARIO_CAMPO_COSTA_LESTE = 'cenario_boraboia_vale'
+CHAVE_CENARIO_CAMPO_COSTA_LESTE_CAMADA_SUPERIOR = 'cenario_boraboia_vale_camada_superior'
 
-CHAVE_CENARIO_CIDADE_PORTO = 'cenario_ilha_2_parte_1'
-CHAVE_CENARIO_CIDADE_PORTO_CAMADA_SUPERIOR = 'cenario_ilha_2_parte_1-camada_superior'
-CHAVE_CENARIO_CIDADE_CENTRO = 'cenario_ilha_2_parte_2'
-CHAVE_CENARIO_CIDADE_PRACA = 'cenario_ilha_2_parte_3'
+CHAVE_CENARIO_CIDADE_PORTO = 'cenario_lurien_porto'
+CHAVE_CENARIO_CIDADE_PORTO_CAMADA_SUPERIOR = 'cenario_lurien_porto_camada_superior'
+CHAVE_CENARIO_CIDADE_CENTRO = 'cenario_lurien_centro'
+CHAVE_CENARIO_CIDADE_PRACA = 'cenario_lurien_praca'
 
-CHAVE_CENARIO_NEVE_COSTA_OESTE = 'cenario_ilha_3_parte_1'
-CHAVE_CENARIO_NEVE_VILA = 'cenario_ilha_3_parte_2'
-CHAVE_CENARIO_NEVE_COSTA_LESTE = 'cenario_ilha_3_parte_3'
+CHAVE_CENARIO_NEVE_COSTA_OESTE = 'cenario_frimora_porto'
+CHAVE_CENARIO_NEVE_VILA = 'cenario_frimora_vila'
+CHAVE_CENARIO_NEVE_COSTA_LESTE = 'cenario_frimora_montanha'
 
-CHAVE_CENARIO_ILHA_4_PARTE_1 = 'cenario_ilha_4_parte_1'
-CHAVE_CENARIO_ILHA_4_PARTE_2 = 'cenario_ilha_4_parte_2'
-CHAVE_CENARIO_ILHA_4_PARTE_3 = 'cenario_ilha_4_parte_3'
+CHAVE_CENARIO_ILHA_4_PARTE_1 = 'cenario_cactuaraquara_duna'
+CHAVE_CENARIO_ILHA_4_PARTE_2 = 'cenario_cactuaraquara_cidadela'
+CHAVE_CENARIO_ILHA_4_PARTE_3 = 'cenario_cactuaraquara_oasis'
 
-CHAVE_CENARIO_ILHA_5_PARTE_1 = 'cenario_ilha_5_parte_1'
-CHAVE_CENARIO_ILHA_5_PARTE_2 = 'cenario_ilha_5_parte_2'
-CHAVE_CENARIO_ILHA_5_PARTE_3 = 'cenario_ilha_5_parte_3'
+CHAVE_CENARIO_ILHA_5_PARTE_1 = 'cenario_nublaria_penumbra'
+CHAVE_CENARIO_ILHA_5_PARTE_2 = 'cenario_nublaria_acampamento'
+CHAVE_CENARIO_ILHA_5_PARTE_3 = 'cenario_nublaria_floresta'
 
-CHAVE_CENARIO_ILHA_6_PARTE_1 = 'cenario_ilha_6_parte_1'
-CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_ilha_6_parte_2'
-CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_ilha_6_parte_3'
+CHAVE_CENARIO_ILHA_6_PARTE_1 = 'cenario_quartel_porto'
+CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_quartel_interior'
+CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
 
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)

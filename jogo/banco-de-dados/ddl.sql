@@ -1,60 +1,553 @@
-CREATE TABLE efeito (
-    identificador_efeito SMALLINT SERIAL PRIMARY KEY,
-    nome CHAR(100) NOT NULL,
-    valor SMALLINT NOT NULL
+CREATE TABLE tipo_item (
+    identificador_item ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ace', 'arm', 'fru', 'con', 'ncn'))
 );
+
+CREATE TRIGGER atribui_id_tipo_item
+BEFORE INSERT ON tipo_item
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE arma (
+    identificador_arma ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    tipo_arma CHAR(3) NOT NULL CHECK (tipo_arma IN ('esp', 'est', 'arc')),
+    local_encontrado CHAR(27) NOT NULL CHECK (local_encontrado IN ('Loja de Espadas', 'Loja de Estilingues e Arcos')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_arma
+BEFORE INSERT ON arma
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE fruta (
+    identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(222) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Missão', 'Evento')),
+    preco_de_venda SMALLINT CHECK (preco_de_venda IS NULL OR preco_de_venda BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_fruta
+BEFORE INSERT ON fruta
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
+
+CREATE TABLE acessorio (
+    identificador_acessorio ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(18) NOT NULL CHECK (local_encontrado IN ('Loja de Acessórios')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
+);
+
+CREATE TRIGGER atribui_id_acessorio
+BEFORE INSERT ON acessorio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
 
 CREATE TABLE consumivel (
-    identificador_consumivel SMALLINT PRIMARY KEY,
-    tipo CHAR(3) NOT NULL CHECK (Tipo IN ('con')),
-    nome CHAR(100) NOT NULL,
-    descricao CHAR(100) NOT NULL,
-    quantidade SMALLINT NOT NULL,
-    raridade CHAR(3) DEFAULT '★' NOT NULL CHECK (Raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(100) NOT NULL CHECK (local_encontrado IN ('Campos', 'Cidade', 'Neve', 'Deserto', 'Ilha Assombrada', 'Fortaleza da Marinha')),
-    preco_de_compra SMALLINT NOT NULL,
-    preco_de_venda SMALLINT NOT NULL,
-    e_fabricavel BOOLEAN
+    identificador_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
 );
+
+CREATE TRIGGER atribui_id_consumivel
+BEFORE INSERT ON consumivel
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
 
 CREATE TABLE nao_consumivel (
-    identificador_nao_consumivel SMALLINT PRIMARY KEY,
-    tipo CHAR(3) NOT NULL CHECK (Tipo IN ('ncn')),
-    nome CHAR(100) NOT NULL,
-    descricao CHAR(100) NOT NULL,
-    quantidade SMALLINT NOT NULL,
-    raridade CHAR(3) DEFAULT '★' NOT NULL CHECK (Raridade IN ('★', '★★', '★★★')),
-    local_encontrado CHAR(100) NOT NULL CHECK (local_encontrado IN ('Campos', 'Cidade', 'Neve', 'Deserto', 'Ilha Assombrada', 'Fortaleza da Marinha')),
-    preco_de_compra SMALLINT NOT NULL,
-    preco_de_venda SMALLINT NOT NULL,
+    identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
 );
 
-CREATE TABLE efeito_consumivel (
-    identificador_consumivel SMALLINT,
-    identificador_efeito SMALLINT,
-    PRIMARY KEY (identificador_consumivel, identificador_efeito),
-    FOREIGN KEY (identificador_consumivel) REFERENCES consumivel(identificador_consumivel),
-    FOREIGN KEY (identificador_efeito) REFERENCES efeito(identificador_efeito)
-);
+CREATE TRIGGER atribui_id_nao_consumivel
+BEFORE INSERT ON nao_consumivel
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_item();
+
+
 
 CREATE TABLE receita (
-    identificador_receita SMALLINT PRIMARY KEY,
-    consumivel_produzido SMALLINT,
-    FOREIGN KEY (consumivel_roduzido) REFERENCES consumivel(identificador_consumivel)
+    identificador_receita ID PRIMARY KEY,
+    consumivel_produzido ID NOT NULL REFERENCES consumivel(identificador_consumivel)
 );
 
+CREATE TRIGGER atribui_id_receita
+BEFORE INSERT ON receita
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
 CREATE TABLE ingrediente_consumivel (
-    identificador_receita SMALLINT,
-    identificador_consumivel SMALLINT,
-    PRIMARY KEY (identificador_receita, identificador_consumivel),
-    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita),
-    FOREIGN KEY (identificador_consumivel) REFERENCES consumivel(identificador_consumivel)
+    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
+    PRIMARY KEY (identificador_receita, identificador_consumivel)
 );
 
 CREATE TABLE ingrediente_nao_consumivel (
-    identificador_receita SMALLINT,
-    identificador_nao_consumivel SMALLINT,
-    PRIMARY KEY (identificador_receita, identificador_nao_consumivel),
-    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita),
-    FOREIGN KEY (identificador_nao_consumivel) REFERENCES nao_consumivel(identificador_nao_consumivel)
+    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    identificador_nao_consumivel ID NOT NULL REFERENCES nao_consumivel(identificador_nao_consumivel),
+    PRIMARY KEY (identificador_receita, identificador_nao_consumivel)
+);
+
+
+
+CREATE TABLE efeito (
+    identificador_efeito ID PRIMARY KEY,
+    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    valor SMALLINT CHECK (
+        (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
+        (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
+        (nome = 'Vida Máxima' AND valor BETWEEN 1 AND 15) OR
+        (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
+        (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
+        (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
+        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Purificação' AND valor IS NULL)
+    )
+);
+
+CREATE TRIGGER atribui_id_efeito
+BEFORE INSERT ON efeito
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE efeito_acessorio (
+    identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
+    identificador_acessorio ID NOT NULL REFERENCES acessorio(identificador_acessorio),
+    PRIMARY KEY (identificador_efeito, identificador_acessorio)
+);
+
+CREATE TABLE efeito_consumivel (
+    identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
+    identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
+    PRIMARY KEY (identificador_efeito, identificador_consumivel)
+);
+
+
+
+CREATE TABLE habilidade (
+    identificador_habilidade ID PRIMARY KEY,
+    identificador_efeito ID REFERENCES efeito(identificador_efeito),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'arco', 'fruta')),
+    tipo_de_alvo CHAR(15) NOT NULL CHECK (tipo_de_alvo IN ('fila', 'alvo_terrestre', 'terrestre', 'alvo_livre', 'area')),
+    dano SMALLINT NOT NULL,
+    custo SMALLINT DEFAULT 0
+);
+
+CREATE TRIGGER atribui_id_habilidade
+BEFORE INSERT ON habilidade
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE habilidade_arma (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_arma ID NOT NULL REFERENCES arma (identificador_arma),
+    PRIMARY KEY (identificador_habilidade, identificador_arma)
+);
+
+CREATE TABLE habilidade_fruta (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_fruta ID NOT NULL REFERENCES fruta (identificador_fruta),
+    PRIMARY KEY (identificador_habilidade, identificador_fruta)
+);
+
+
+
+CREATE TABLE ilha (
+    identificador_ilha ID PRIMARY KEY,
+    nome CHAR(30) CHECK (nome IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
+    visitada BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TRIGGER atribui_id_ilha
+BEFORE INSERT ON ilha
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE conexao_entre_ilhas (
+    identificador_ilha_a ID NOT NULL REFERENCES ilha(identificador_ilha),
+    identificador_ilha_b ID NOT NULL REFERENCES ilha(identificador_ilha),
+    bloqueada BOOLEAN,
+    PRIMARY KEY (identificador_ilha_a, identificador_ilha_b)
+);
+
+CREATE TABLE area (
+    identificador_area ID PRIMARY KEY,
+    identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
+    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\\-]+$'),
+    tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
+    chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z _]+$'),
+    chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z _]+$'),
+    visitada BOOLEAN
+);
+
+CREATE TRIGGER atribui_id_area
+BEFORE INSERT ON area
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE conexao_entre_areas (
+    identificador_area_a ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_b ID NOT NULL REFERENCES area(identificador_area),
+    PRIMARY KEY (identificador_area_a, identificador_area_b)
+);
+
+CREATE TABLE evento (
+    identificador_evento ID PRIMARY KEY,
+    
+    -- Campos de uso geral
+    tipo_evento CHAR(10) NOT NULL CHECK (
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
+    ),
+    
+    -- Para tipo_evento = 'mudar_area'
+    identificador_area_a ID REFERENCES area(identificador_area),
+    identificador_area_b ID REFERENCES area(identificador_area),
+    ponto_geracao_x SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    ponto_geracao_y SMALLINT CHECK (ponto_geracao_y BETWEEN 0 AND 5000),
+    orientacao CHAR(8) CHECK (orientacao IN ('esquerda', 'direita')),
+
+    -- Para tipo_evento = 'embarcar'
+    identificador_porto_destino ID REFERENCES area(identificador_area),
+
+    -- Para tipo_evento = 'investigar'
+    chance_sucesso DECIMAL CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
+
+    -- Regras de integridade condicional: ver CHECK abaixo
+    CHECK (
+        (tipo_evento = 'mudar_area' AND identificador_area_a IS NOT NULL AND identificador_area_b IS NOT NULL
+         AND ponto_geracao_x IS NOT NULL AND ponto_geracao_y IS NOT NULL AND orientacao IS NOT NULL)
+        OR
+        (tipo_evento = 'embarcar' AND identificador_porto_destino IS NOT NULL
+         AND ponto_geracao_x IS NOT NULL AND ponto_geracao_y IS NOT NULL AND orientacao IS NOT NULL)
+        OR
+        (tipo_evento = 'investigar' AND chance_sucesso IS NOT NULL)
+    )
+);
+
+CREATE TRIGGER atribui_id_evento
+BEFORE INSERT ON evento
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE tipo_elemento_espacial (
+    identificador_elemento_espacial ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ari', 'obs', 'cam'))
+);
+
+CREATE TRIGGER atribui_id_tipo_elemento_espacial
+BEFORE INSERT ON tipo_elemento_espacial
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE obstaculo (
+    identificador_obstaculo ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+);
+
+CREATE TRIGGER atribui_id_obstaculo
+BEFORE INSERT ON obstaculo
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+CREATE TABLE area_interativa (
+    identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
+    tipo_evento CHAR(10) NOT NULL CHECK (
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
+    )
+);
+
+CREATE TRIGGER atribui_id_area_interativa
+BEFORE INSERT ON area_interativa
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+CREATE TABLE area_interativa_evento (
+    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
+    identificador_evento ID NOT NULL REFERENCES evento(identificador_evento),
+    PRIMARY KEY (identificador_area_interativa, identificador_evento)
+);
+
+CREATE TABLE caminho (
+    identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    tipo_terreno CHAR(6) DEFAULT 'normal' CHECK (tipo_terreno IN ('normal', 'neve', 'arena')),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+);
+
+CREATE TRIGGER atribui_id_caminho
+BEFORE INSERT ON caminho
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+CREATE TABLE recompensa_de_exploracao (
+    identificador_recompensa ID PRIMARY KEY,
+    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
+    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TRIGGER atribui_id_recompensa_de_exploracao
+BEFORE INSERT ON recompensa_de_exploracao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE tipo_personagem (
+    identificador_personagem ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('hbt', 'rct', 'coz', 'ven', 'ali', 'jog', 'lac', 'che'))
+);
+
+CREATE TRIGGER atribui_id_tipo_personagem
+BEFORE INSERT ON tipo_personagem
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE jogador (
+    identificador_jogador ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
+    descricao CHAR(250),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
+    vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
+    vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+
+CREATE TRIGGER atribui_id_jogador
+BEFORE INSERT ON jogador
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
+CREATE TABLE aliado (
+    identificador_aliado ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT  CHECK (vida BETWEEN 10 AND 70),
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida)
+);
+
+CREATE TRIGGER atribui_id_aliado
+BEFORE INSERT ON aliado
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
+CREATE TABLE chefe (
+    identificador_chefe ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    nome CHAR(28),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 10 AND 60),
+    experiencia SMALLINT,
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+
+CREATE TRIGGER atribui_id_chefe
+BEFORE INSERT ON chefe
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
+CREATE TABLE lacaio (
+    identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    nome CHAR(20),
+    descricao CHAR(100),
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    experiencia SMALLINT,
+    tempo_reacao SMALLINT
+);
+
+CREATE TRIGGER atribui_id_lacaio
+BEFORE INSERT ON lacaio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
+CREATE TABLE habitante (
+    identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    nome CHAR(27),
+    descricao CHAR(100),
+    tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+
+CREATE TRIGGER atribui_id_habitante
+BEFORE INSERT ON habitante
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
+
+CREATE TABLE instancia_lacaio (
+    identificador_instancia_lacaio ID PRIMARY KEY,
+    identificador_lacaio ID NOT NULL REFERENCES lacaio(identificador_lacaio),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida_atual SMALLINT,
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+
+CREATE TRIGGER atribui_id_instancia_lacaio
+BEFORE INSERT ON instancia_lacaio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+CREATE TABLE barco (
+    identificador_barco ID PRIMARY KEY,
+    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
+    tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
+    nome CHAR(30) NOT NULL,
+    descricao CHAR (150) NOT NULL,
+    estado CHAR (9) NOT NULL CHECK (estado IN ('bloquedo', 'adquirido', 'destruido'))
+);
+
+CREATE TRIGGER atribui_id_barco
+BEFORE INSERT ON barco
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE habilidade_personagem (
+    identificador_personagem ID,
+    identificador_habilidade ID,
+    PRIMARY KEY (identificador_personagem, identificador_habilidade),
+    FOREIGN KEY (identificador_personagem) REFERENCES tipo_personagem(identificador_personagem),
+    FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(identificador_habilidade)
+);
+
+CREATE TABLE receitas_conhecidas (
+    identificador_jogador ID,
+    identificador_receita ID,
+    PRIMARY KEY (identificador_jogador, identificador_receita),
+    FOREIGN KEY (identificador_jogador) REFERENCES jogador(identificador_jogador),
+    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita)
+);
+
+CREATE TABLE inventario (
+    identificador_inventario ID PRIMARY KEY,
+    identificador_personagem ID NOT NULL REFERENCES tipo_personagem(identificador_personagem),
+    tipo_inventario CHAR(3) DEFAULT 'ger' NOT NULL CHECK (tipo_inventario IN ('ger', 'kit'))
+);
+
+CREATE TRIGGER atribui_id_inventario
+BEFORE INSERT ON inventario
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE item_inventario (
+    identificador_inventario ID,
+    identificador_item ID,
+    PRIMARY KEY (identificador_inventario, identificador_item),
+    FOREIGN KEY (identificador_inventario) REFERENCES inventario(identificador_inventario),
+    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
+);
+
+CREATE TABLE negociacao (
+    identificador_negociacao ID PRIMARY KEY,
+    identificador_item ID NOT NULL REFERENCES tipo_item(identificador_item),
+    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
+    identificador_vendedor ID NOT NULL REFERENCES habitante(identificador_habitante),
+    quantidade SMALLINT CHECK (quantidade BETWEEN 0 AND 99),
+    preco_final SMALLINT,
+    tipo_negociacao CHAR(6) NOT NULL CHECK (tipo_negociacao IN ('compra', 'venda'))
+);
+
+CREATE TRIGGER atribui_id_negociacao
+BEFORE INSERT ON negociacao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE missao (
+    identificador_missao ID PRIMARY KEY,
+    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador), 
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_recrutador ID REFERENCES habitante(identificador_habitante), 
+    descricao CHAR(100),
+    nome CHAR(50) NOT NULL
+);
+
+CREATE TRIGGER atribui_id_missao
+BEFORE INSERT ON missao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+CREATE TABLE item_missao (
+    identificador_missao ID,
+    identificador_item ID,
+    PRIMARY KEY (identificador_missao, identificador_item),
+    FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
+    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
 );
