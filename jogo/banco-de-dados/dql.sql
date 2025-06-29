@@ -1,164 +1,160 @@
-SELECT identificador_item, tipo
-FROM tipo_item;
+SELECT receita.identificador_receita AS Receita, consumivel.nome AS Nome
+FROM receita JOIN consumivel ON receita.consumivel_produzido = consumivel.identificador_consumivel
 
-SELECT COUNT(*) AS total_de_tipos
-FROM tipo_item;
 
-SELECT nome, valor
-FROM efeito;
+-- Buscar informações básicas do jogador
+SELECT * FROM jogador;
 
-SELECT nome, valor
-FROM efeito
-WHERE nome = 'Restaura PV'
-ORDER BY valor DESC
-LIMIT 5;
 
-SELECT nome, raridade, preco_de_venda, descricao
-FROM consumivel
-WHERE e_fabricavel = TRUE;
+-- Buscar inventário do jogador
 
-SELECT nome, preco_de_venda, raridade
-FROM consumivel
-ORDER BY preco_de_venda DESC
-LIMIT 10;
 
-SELECT nome, tipo, preco_de_venda, descricao
-FROM nao_consumivel
-WHERE raridade = '★★';
+-- Buscar os dados da ilha atual do jogador
+SELECT * FROM ilha
+	WHERE identificador_ilha = (
+		SELECT identificador_ilha FROM area
+			WHERE identificador_area = (
+		        SELECT identificador_area
+		        FROM jogador
+		        WHERE identificador_jogador = 'jog001'
+		    )
+	);
 
-SELECT nome, (preco_de_venda - preco_de_compra) AS margem_de_lucro
-FROM nao_consumivel
-WHERE preco_de_compra > 0
-ORDER BY margem_de_lucro DESC;
 
-SELECT nome, dano
-FROM habilidade
-WHERE custo = 0;
-
-SELECT nome, dano, custo, (dano::decimal / custo) AS eficiencia
-FROM habilidade
-WHERE custo > 0
-ORDER BY eficiencia DESC;
-
-SELECT 'Consumível' AS tipo_ingrediente, ing_c.nome AS nome_ingrediente
-FROM receita r
-JOIN ingrediente_consumivel ic ON r.identificador_receita = ic.identificador_receita
-JOIN consumivel ing_c ON ic.identificador_consumivel = ing_c.identificador_consumivel
-WHERE r.identificador_receita = 3
-
-UNION ALL
-
-SELECT 'Não-Consumível' AS tipo_ingrediente, ing_nc.nome AS nome_ingrediente
-FROM receita r
-JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
-JOIN nao_consumivel ing_nc ON inc.identificador_nao_consumivel = ing_nc.identificador_nao_consumivel
-WHERE r.identificador_receita = 3;
-
+-- Buscar informações da área atual
 SELECT
-    r.identificador_receita,
-    c.nome AS item_produzido
-FROM receita r
-JOIN consumivel c ON r.consumivel_produzido = c.identificador_consumivel
-JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
-WHERE inc.identificador_nao_consumivel = 8;
+    TRIM(nome) AS nome,
+    TRIM(tipo_area) AS tipo_area,
+    TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+    TRIM(chave_imagem_frente) AS chave_imagem_frente,
+    visitada
+FROM area
+    WHERE identificador_area = (
+        SELECT identificador_area
+        FROM jogador
+        WHERE identificador_jogador = 'jog001'
+    );
 
-SELECT sala_id, tipo_terreno, tamanho 
-FROM campo_batalha 
-WHERE tipo_terreno = 'Floresta';
 
-SELECT i.id AS id_da_ilha
-FROM ilha i
-JOIN mapa m ON i.id = m.id_ilha
-WHERE m.id_mapa = 1;
+-- Buscar caminhos da área atual
+SELECT tipo_terreno, x, y, largura, altura
+    FROM caminho
+    WHERE identificador_area = (
+        SELECT identificador_area
+        FROM jogador
+        WHERE identificador_jogador = 'jog001'
+    );
 
-SELECT j.nome AS nome_jogador, m.id_mapa, m.id_ilha
-FROM jogador j
-JOIN mapa m ON j.id_mapa_pk = m.id_mapa_pk
-WHERE j.id_jogador = 1;
 
-SELECT a.nome AS nome_aliado, h.nome AS nome_habilidade, h.dano, h.custo
-FROM habilidade_aliado ha
-JOIN aliado a ON ha.id_aliado = a.id_aliado
-JOIN habilidade h ON ha.id_habilidade = h.id_habilidade
-WHERE a.nome = 'Shuan';
-
-SELECT nome, 'Chefe' as tipo FROM chefe WHERE id_mapa_pk = 1
-UNION ALL
-SELECT nome, 'Lacaio' as tipo FROM lacaio WHERE id_mapa_pk = 1
-UNION ALL
-SELECT nome, 'Aliado' as tipo FROM aliado WHERE id_mapa_pk = 1
-UNION ALL
-SELECT nome, 'Habitante' as tipo FROM habitante WHERE id_mapa_pk = 1;
-
-SELECT nome, vida, nivel
-FROM chefe
-ORDER BY vida DESC
-LIMIT 1;
-
+-- Buscar inimigos comuns da área atual
 SELECT 
-    b.identificador_batalha, 
-    j.nome AS nome_jogador, 
-    c.nome AS nome_chefe
-FROM batalha b
-JOIN jogador j ON b.identificador_jogador = j.id_jogador
-JOIN chefe c ON b.identificador_chefe = c.id_chefe;
+    il.identificador_instancia_lacaio,
+    il.coordenada_x,
+    il.coordenada_y,
+    il.vida_atual,
+	il.moedas_totais,
 
-SELECT l.nome AS nome_lacaio
-FROM batalha_instancia_lacaio bil
-JOIN instancia_lacaio il ON bil.identificador_instancia_lacaio = il.id_instancia_lacaio
-JOIN lacaio l ON il.identificador_lacaio = l.id_lacaio
-WHERE bil.identificador_batalha = 1;
+    l.identificador_lacaio,
+    l.nome AS nome_lacaio,
+    l.descricao AS descricao_lacaio,
+    l.vida AS vida_total,
+    l.nivel,
+    l.experiencia,
 
-SELECT m.nome, m.descricao
-FROM missao m
-WHERE m.id_recrutador = 1;
+    h.identificador_habilidade,
+    h.nome AS nome_habilidade,
+    h.dano,
+    h.tipo_de_ataque,
+    h.tipo_de_alvo,
 
-SELECT m.nome AS nome_missao, ti.tipo AS tipo_item_necessario
-FROM missao m
-JOIN ItemMissao im ON m.missao_id = im.missao_id
-JOIN tipo_item ti ON im.identificador_item = ti.identificador_item
-WHERE ti.tipo = 'Fruta';
+    ti.identificador_item,
+    ti.tipo AS tipo_item,
 
-SELECT 
-    n.identificador_negociacao,
-    n.tipo,
-    ti.tipo AS tipo_de_item,
-    n.quantidade,
-    n.preco_final,
-    v.nome AS nome_vendedor
-FROM negociacao n
-JOIN habitante v ON n.identificador_vendedor = v.identificador_habitante
-JOIN tipo_item ti ON n.identificador_item = ti.identificador_item
-WHERE n.identificador_jogador = 1;
+    consumivel.nome AS consumivel_saqueavel,
+    nao_consumivel.nome AS nao_consumivel_saqueavel
 
+FROM instancia_lacaio il
+JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
+
+-- Habilidades do lacaio (1 ou mais)
+LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identificador_lacaio
+LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
+
+-- Inventário geral do lacaio
+LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'ger'
+LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
+LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+
+-- Subtipos possíveis do item
+LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
+LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+
+-- Restrição pela área atual do jogador
+WHERE il.identificador_area = (
+    SELECT identificador_area
+    FROM jogador
+    WHERE identificador_jogador = 'jog001'
+);
+
+
+-- Buscar todas as áreas que se conectam com a área atual
+SELECT a.*
+FROM conexao_entre_areas ca
+JOIN area a
+  ON a.identificador_area = ca.identificador_area_a
+     AND ca.identificador_area_b = (
+        SELECT identificador_area
+        FROM jogador
+        WHERE identificador_jogador = 'jog001'
+    )
+
+UNION
+
+SELECT a.*
+FROM conexao_entre_areas ca
+JOIN area a
+  ON a.identificador_area = ca.identificador_area_b
+     AND ca.identificador_area_a = (
+        SELECT identificador_area
+        FROM jogador
+        WHERE identificador_jogador = 'jog001'
+    );
+
+
+-- Buscar todas as áreas interativas da área atual
 SELECT
-    inv.id_inventario,
-    j.nome AS dono_do_inventario,
-    ti.tipo AS tipo_de_item_no_inventario
-FROM ItemInventario ii
-JOIN Inventario inv ON ii.id_inventario = inv.id_inventario
-JOIN jogador j ON inv.id_jogador = j.id_jogador
-JOIN tipo_item ti ON ii.identificador_item = ti.identificador_item
-WHERE j.id_jogador = 1;
+    ai.identificador_area_interativa,
+    TRIM(ai.chave_imagem) AS chave_imagem,
+    ai.x,
+    ai.y,
+    ai.largura,
+    ai.altura
+FROM area_interativa ai
+WHERE ai.identificador_area = (
+    SELECT identificador_area
+    FROM jogador
+    WHERE identificador_jogador = 'jog001'
+);
 
-SELECT 
-    ilha_a.id AS id_origem, 
-    ilha_b.id AS id_destino
-FROM corredor_maritimo cm
-JOIN ilha ilha_a ON cm.ilha_a = ilha_a.id
-JOIN ilha ilha_b ON cm.ilha_b = ilha_b.id
-WHERE cm.ilha_a = 1;
 
-SELECT 
-    cm.ilha_a, 
-    cm.ilha_b, 
-    m.monstro, 
-    m.obstaculo
-FROM controlador_mar ctm
-JOIN mar m ON ctm.mar_id = m.mar_id
-JOIN corredor_maritimo cm ON ctm.maritimo_id = cm.maritimo_id;
+-- Buscar todas as ilhas que se conectam com a ilha atual
+SELECT i.*
+FROM conexao_entre_ilhas c
+JOIN ilha i ON i.identificador_ilha = 
+    CASE
+        WHEN c.identificador_ilha_a = 'ilh001' THEN c.identificador_ilha_b
+        ELSE c.identificador_ilha_a
+    END
+WHERE 'ilh001' IN (c.identificador_ilha_a, c.identificador_ilha_b);
 
-SELECT b.nome, b.tipo, b.melhoria
-FROM barco_porto bp
-JOIN barco b ON bp.barco_id = b.id
-WHERE bp.sala_id = 16;
+-- Buscar o porto de uma ilha específica
+SELECT
+	identificador_area,
+	identificador_ilha,
+	TRIM(nome) AS nome,
+	TRIM(tipo_area) AS tipo_area,
+	TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+	TRIM(chave_imagem_frente) AS chave_imagem_frente,
+	visitada
+FROM area
+WHERE identificador_ilha = 'ilh001' AND tipo_area = 'Porto';

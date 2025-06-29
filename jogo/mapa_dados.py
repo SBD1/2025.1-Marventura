@@ -27,10 +27,10 @@ def get_ilhas_vizinhas(id_mapa_atual):
 # Dicionário para armazenar os dados de configuração de cada mapa do jogo.
 # Cada chave é o ID único do mapa.
 dados_das_ilhas = {
-    'Campos': {
-        'nome': 'Campos',
+    'Ilha de Borabóia': {
+        'nome': 'Ilha de Borabóia',
         'visitada': False,
-        'ilhas_vizinhas': ['Cidade', 'Deserto'],
+        'ilhas_vizinhas': ['Cidade de Lurien', 'Cactuaraquara'],
         'areas':  [
             ID_MAPA_CAMPO_COSTA_OESTE,
             ID_MAPA_CAMPO_VILA,
@@ -39,10 +39,10 @@ dados_das_ilhas = {
         ],
         'pier': ID_MAPA_CAMPO_COSTA_LESTE,
     },
-    'Cidade': {
-        'nome': 'Cidade',
+    'Cidade de Lurien': {
+        'nome': 'Cidade de Lurien',
         'visitada': False,
-        'ilhas_vizinhas': ['Campos', 'Neve', 'Fortaleza'],
+        'ilhas_vizinhas': ['Ilha de Borabóia', 'Ilha Glacial de Frimora', 'Quartel Naval D-57'],
         'areas': [
             ID_MAPA_CIDADE_PORTO,
             ID_MAPA_CIDADE_CENTRO,
@@ -52,10 +52,10 @@ dados_das_ilhas = {
         ],
         'pier': ID_MAPA_CIDADE_PORTO,
     },
-    'Neve': {
-        'nome': 'Neve',
+    'Ilha Glacial de Frimora': {
+        'nome': 'Ilha Glacial de Frimora',
         'visitada': False,
-        'ilhas_vizinhas': ['Cidade', 'Deserto', 'Assombrada'],
+        'ilhas_vizinhas': ['Cidade de Lurien', 'Cactuaraquara', 'Nublária'],
         'areas': [
             #ID_MAPA_NEVE_COSTA_OESTE,
             ID_MAPA_NEVE_VILA,
@@ -63,10 +63,10 @@ dados_das_ilhas = {
         ],
         'pier': ID_MAPA_NEVE_VILA,
     },
-    'Deserto': {
-        'nome': 'Deserto',
+    'Cactuaraquara': {
+        'nome': 'Cactuaraquara',
         'visitada': False,
-        'ilhas_vizinhas': ['Campos', 'Neve'],
+        'ilhas_vizinhas': ['Ilha de Borabóia', 'Ilha Glacial de Frimora'],
         'areas': [
             ID_MAPA_DESERTO_COSTA_OESTE,
             ID_MAPA_DESERTO_VILA,
@@ -75,10 +75,10 @@ dados_das_ilhas = {
         ],
         'pier': ID_MAPA_DESERTO_COSTA_LESTE,
     },
-    'Assombrada': {
-        'nome': 'Assombrada',
+    'Nublária': {
+        'nome': 'Nublária',
         'visitada': False,
-        'ilhas_vizinhas': ['Neve', 'Fortaleza'],
+        'ilhas_vizinhas': ['Ilha Glacial de Frimora', 'Quartel Naval D-57'],
         'areas': [
             ID_MAPA_ASSOMBRADA_COSTA_OESTE,
             ID_MAPA_ASSOMBRADA_VILA,
@@ -86,10 +86,10 @@ dados_das_ilhas = {
         ],
         'pier': ID_MAPA_ASSOMBRADA_COSTA_OESTE,
     },
-    'Fortaleza': {
-        'nome': 'Fortaleza',
+    'Quartel Naval D-57': {
+        'nome': 'Quartel Naval D-57',
         'visitada': False,
-        'ilhas_vizinhas': ['Cidade', 'Assombrada'],
+        'ilhas_vizinhas': ['Cidade de Lurien', 'Nublária'],
         'areas': [
             ID_MAPA_FORTALEZA_PORTO,
             ID_MAPA_FORTALEZA_INTERIOR,
@@ -104,18 +104,14 @@ dados_das_salas = {
         'nome': 'Costa Oeste',
         'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_OESTE, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
         'chave_camada_superior': CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, # Chave do gerenciador de recursos para a camada superior deste mapa
-        'obstaculos': [ # Lista de obstáculos para este mapa. Cada item é um dicionário com as propriedades do obstáculo.
-            # Limite superior do caminho (particionado em segmentos)
-            {'x': 0, 'y': 276, 'largura': 329, 'altura': 196},
-            {'x': 330, 'y': 276, 'largura': 140, 'altura': 20},
-            {'x': 470, 'y': 12, 'largura': 375, 'altura': 328},
-            {'x': 845, 'y': 12, 'largura': 2491, 'altura': 108},
-            {'x': 3320, 'y': -20, 'largura': 1180, 'altura': 20},
-            {'x': 4480, 'y': 0, 'largura': 20, 'altura': 114},
-            # Limite inferior do caminho
-            {'x': 958, 'y': 361, 'largura': 2338, 'altura': 239},
-            {'x': 3320, 'y': 600, 'largura': 1180, 'altura': 20},
-            {'x': 4480, 'y': 356, 'largura': 20, 'altura': 244},
+        'obstaculos': [],
+        'caminhos': [
+            {'x': 3329, 'y': 0, 'largura': 1144, 'altura': 600, 'tipo_terreno': 'arena'},
+            {'x': 4473, 'y': 197, 'largura': 36, 'altura': 180, 'tipo_terreno': 'normal'},
+            {'x': 826, 'y': 216, 'largura': 2503, 'altura': 154, 'tipo_terreno': 'normal'},
+            {'x': 826, 'y': 370, 'largura': 150, 'altura': 230, 'tipo_terreno': 'normal'},
+            {'x': 339, 'y': 438, 'largura': 487, 'altura': 162, 'tipo_terreno': 'normal'},
+
         ],
         'npcs': [
             # Lista de NPCs para este mapa.
@@ -171,7 +167,7 @@ dados_das_salas = {
         'areas_interacao': [
             # Entrada direita
             {
-                'x': 4485, 'y': 214, 'largura': 15, 'altura': 142, # Ex: Perto do final do mapa
+                'x': 4473, 'y': 197, 'largura': 20, 'altura': 180,
                 'tipo_evento': 'mudar_mapa',
                 'dados_evento': {
                     'id_proximo_mapa': ID_MAPA_CAMPO_VILA, # O ID da próxima área
@@ -183,11 +179,10 @@ dados_das_salas = {
     ID_MAPA_CAMPO_VILA: {
         'nome': 'Vila',
         'chave_cenario': CHAVE_CENARIO_CAMPO_VILA,
-        'obstaculos': [
-            # Limite superior do caminho (particionado em segmentos)
-            {'x': 0, 'y': 323, 'largura': 1715, 'altura': 20},
-            {'x': 1716, 'y': 290, 'largura': 200, 'altura': 20},
-            {'x': 1916, 'y': 323, 'largura': 3540 - 1915, 'altura': 20},
+        'obstaculos': [],
+        'caminhos': [
+            {'x': 0, 'y': 445, 'largura': 3540, 'altura': 155, 'tipo_terreno': 'normal'},
+            {'x': 1728, 'y': 412, 'largura': 174, 'altura': 33, 'tipo_terreno': 'normal'},
         ],
         'npcs': [
             # Lista de NPCs para este mapa.
@@ -251,9 +246,49 @@ dados_das_salas = {
         'nome': 'Costa Leste',
         'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_LESTE,
         'chave_camada_superior': CHAVE_CENARIO_CAMPO_COSTA_LESTE_CAMADA_SUPERIOR,
-        'obstaculos': [],
+        'obstaculos': [
+            {'x': 3717, 'y': 471, 'largura': 250, 'altura': 24},
+        ],
+        'caminhos': [
+            {'x': 0, 'y': 236, 'largura': 1360, 'altura': 156, 'tipo_terreno': 'normal'},
+            {'x': 1360, 'y': 33, 'largura': 1226, 'altura': 567, 'tipo_terreno': 'arena'},
+            {'x': 2586, 'y': 230, 'largura': 827, 'altura': 145, 'tipo_terreno': 'normal'},
+            {'x': 3413, 'y': 230, 'largura': 481, 'altura': 370, 'tipo_terreno': 'normal'},
+            {'x': 3894, 'y': 313, 'largura': 361, 'altura': 158, 'tipo_terreno': 'normal'},
+        ],
         'npcs': [],
-        'inimigos': [],
+        'inimigos': [
+            {
+                'tipo': INIMIGO_LOBO,
+                'x': 1500, 'y': 125,
+                'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
+                'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
+                'alcance_visao': 200,
+                'angulo_visao_graus': 90,
+                'tempo_reacao_ms': 750,      # 0.75 segundos para reagir
+                'imagem_chave': INIMIGO_LOBO
+            },
+            {
+                'tipo': INIMIGO_LOBO,
+                'x': 1900, 'y': 400,
+                'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
+                'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
+                'alcance_visao': 200,
+                'angulo_visao_graus': 90,
+                'tempo_reacao_ms': 750,      # 0.75 segundos para reagir
+                'imagem_chave': INIMIGO_LOBO
+            },
+            {
+                'tipo': INIMIGO_LOBO,
+                'x': 2360, 'y': 210,
+                'velocidade_caminhada': 150, # Exemplo: 1.5 pixels/frame
+                'velocidade_corrida': 300,   # Exemplo: 3.5 pixels/frame
+                'alcance_visao': 200,
+                'angulo_visao_graus': 90,
+                'tempo_reacao_ms': 750,      # 0.75 segundos para reagir
+                'imagem_chave': INIMIGO_LOBO
+            },
+        ],
         'pontos_de_entrada_no_mapa': {
             'vila': {'x': 50, 'y': 190, 'olhando_direita': True},
             'pier': {'x': 4160, 'y': 280, 'olhando_direita': False},
@@ -268,7 +303,7 @@ dados_das_salas = {
                 }
             },
             {
-                'x': 4260, 'y': 300, 'largura': 20, 'altura': 130,
+                'x': 4205, 'y': 313, 'largura': 50, 'altura': 158,
                 'tipo_evento': 'embarcar',
                 'dados_evento': {}
             },
@@ -309,6 +344,10 @@ dados_das_salas = {
             {'x': 1413, 'y': 390, 'largura': 93, 'altura': 22},
             {'x': 2472, 'y': 390, 'largura': 93, 'altura': 22},
         ],
+        'caminhos': [
+            {'x': 111, 'y': 309, 'largura': 2589, 'altura': 107, 'tipo_terreno': 'normal'},
+            {'x': 580, 'y': 270, 'largura': 290, 'altura': 39, 'tipo_terreno': 'normal'},
+        ],
         'npcs': [],
         'inimigos': [],
         'pontos_de_entrada_no_mapa': {
@@ -334,13 +373,20 @@ dados_das_salas = {
     ID_MAPA_CIDADE_CENTRO: {
         'nome': 'Centro',
         'chave_cenario': CHAVE_CENARIO_CIDADE_CENTRO,
-        'obstaculos': [],
+        'obstaculos': [
+            {'x': 1539, 'y': 418, 'largura': 102, 'altura': 17},
+            {'x': 1641, 'y': 435, 'largura': 41, 'altura': 25},
+        ],
         'npcs': [],
         'inimigos': [],
         'pontos_de_entrada_no_mapa': {
             'porto': {'x': 100, 'y': 415, 'olhando_direita': True},
             'praca': {'x': 1570, 'y': 460, 'olhando_direita': False},
         },
+        'caminhos': [
+            {'x': 0, 'y': 498, 'largura': 1682, 'altura': 102, 'tipo_terreno': 'normal'},
+            {'x': 1539, 'y': 403, 'largura': 143, 'altura': 95, 'tipo_terreno': 'normal'},
+        ],
         'areas_interacao': [
             {
                 'x': 0, 'y': 480, 'largura': 50, 'altura': 150,
@@ -364,6 +410,10 @@ dados_das_salas = {
         'nome': 'Praça',
         'chave_cenario': CHAVE_CENARIO_CIDADE_PRACA,
         'obstaculos': [],
+        'caminhos': [
+            {'x': 0, 'y': 483, 'largura': 764, 'altura': 117, 'tipo_terreno': 'normal'},
+            {'x': 764, 'y': 203, 'largura': 1036, 'altura': 397, 'tipo_terreno': 'arena'},
+        ],
         'npcs': [],
         'inimigos': [],
         'pontos_de_entrada_no_mapa': {
@@ -383,13 +433,11 @@ dados_das_salas = {
     ID_MAPA_NEVE_VILA: {
         'nome': 'Vila',
         'chave_cenario': CHAVE_CENARIO_NEVE_VILA,
-        'obstaculos': [
-            # Limite superior do caminho (particionado em segmentos)
-            {'x': 0, 'y': 300, 'largura': 678, 'altura': 20},
-            {'x': 679, 'y': 252, 'largura': 116, 'altura': 20},
-            {'x': 795, 'y': 300, 'largura': 3540 - 795, 'altura': 20},
-            # Limite inferior do caminho (segmento único)
-            {'x': 0, 'y': 570, 'largura': 3540, 'altura': 20},
+        'obstaculos': [],
+        'caminhos': [
+            {'x': 0, 'y': 407, 'largura': 3540, 'altura': 193, 'tipo_terreno': 'normal'},
+            {'x': 0, 'y': 407, 'largura': 3540, 'altura': 74, 'tipo_terreno': 'neve'},
+            {'x': 0, 'y': 571, 'largura': 3540, 'altura': 29, 'tipo_terreno': 'neve'},
         ],
         'npcs': [],
         'inimigos': [],

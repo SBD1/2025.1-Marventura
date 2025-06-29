@@ -1,240 +1,1020 @@
+INSERT INTO efeito
+    (nome, valor)
+VALUES
+    ('Cura', 1),
+    ('Cura', 2),
+    ('Cura', 3),
+    ('Cura', 4),
+    ('Cura', 5),
+    ('Cura', 6),
+    ('Cura', 7),
+    ('Cura', 8),
+    ('Cura', 9),
+    ('Cura', 10),
+    ('Cura', 11),
+    ('Cura', 12),
+    ('Cura', 13),
+    ('Cura', 14),
+    ('Cura', 15),
+    ('Cura', 16),
+    ('Cura', 17),
+    ('Cura', 18),
+    ('Cura', 19),
+    ('Cura', 20),
+    ('Energia', 1),
+    ('Energia', 2),
+    ('Energia', 3),
+    ('Energia', 4),
+    ('Energia', 5),
+    ('Energia', 6),
+    ('Energia', 7),
+    ('Energia', 8),
+    ('Energia', 9),
+    ('Energia', 10),
+    ('Energia', 11),
+    ('Energia', 12),
+    ('Energia', 13),
+    ('Energia', 14),
+    ('Energia', 15),
+    ('Ataque', 1),
+    ('Ataque', 2),
+    ('Ataque', 3),
+    ('Ataque', 4),
+    ('Ataque', 5),
+    ('Ataque', 6),
+    ('Ataque', 7),
+    ('Ataque', 8),
+    ('Ataque', 9),
+    ('Ataque', 10),
+    ('Vida Máxima', 1),
+    ('Vida Máxima', 2),
+    ('Vida Máxima', 3),
+    ('Vida Máxima', 4),
+    ('Vida Máxima', 5),
+    ('Vida Máxima', 6),
+    ('Vida Máxima', 7),
+    ('Vida Máxima', 8),
+    ('Vida Máxima', 9),
+    ('Vida Máxima', 10),
+    ('Vida Máxima', 11),
+    ('Vida Máxima', 12),
+    ('Vida Máxima', 13),
+    ('Vida Máxima', 14),
+    ('Vida Máxima', 15),
+    ('Energia Máxima', 1),
+    ('Energia Máxima', 2),
+    ('Energia Máxima', 3),
+    ('Energia Máxima', 4),
+    ('Energia Máxima', 5),
+    ('Energia Máxima', 6),
+    ('Energia Máxima', 7),
+    ('Energia Máxima', 8),
+    ('Energia Máxima', 9),
+    ('Energia Máxima', 10),
+    ('Sorte', 1),
+    ('Sorte', 2),
+    ('Sorte', 3),
+    ('Sorte', 4),
+    ('Sorte', 5),
+    ('Sorte', 6),
+    ('Sorte', 7),
+    ('Eletrificado', 0),
+    ('Eletrificado', 1),
+    ('Congelado', 0),
+    ('Congelado', 1),
+    ('Molhado', 0),
+    ('Molhado', 1),
+    ('Envenenado', 0),
+    ('Envenenado', 1),
+    ('Sangramento', 0),
+    ('Sangramento', 1),
+    ('Queimadura', 0),
+    ('Queimadura', 1),
+    ('Tontura', 0),
+    ('Tontura', 1),
+    ('Cegueira', 0),
+    ('Cegueira', 1),
+    ('Purificação', NULL);
 
-INSERT INTO habilidade (nome, dano, custo) VALUES
-('Poder da Fruta do Eco', 5, 1),
-('Mordida Feroz', 15, 0),
-('Golpe de Espada', 10, 2),
-('Tiro de Pistola', 8, 1),
-('Avalanche', 12, 3),
-('Transformacao', 20, 4);
 
-INSERT INTO tipo_personagem (tipo) VALUES
-('Jogador'),
-('Chefe'),
-('Lacaio'),
-('Aliado'),
-('Habitante');
 
-INSERT INTO tipo_item (tipo) VALUES
-('Fruta'),
-('Arma'),
-('Consumivel'),
-('NaoConsumivel'),
-('Acessorio');
+-- Habilidades do Personagem
+INSERT INTO habilidade
+    (identificador_efeito, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano, custo)
+VALUES
+    (NULL, 'Soco Direto', 'Um golpe rápido e certeiro. Simples, mas eficiente como uma boa bronca.', 'soco', 'alvo_terrestre', 8, 0),
+    ('efe091', 'Martelo de Carne', 'Socos pesados e ritmados como um churrasqueiro raivoso. Aplica Tontura.', 'soco', 'terrestre', 8, 4),
+    (NULL, 'Soco Giratório', 'Um giro rápido com soco final. Às vezes acerta dois alvos lado a lado.', 'soco', 'alvo_terrestre', 8, 0),
+    ('efe091', 'Trovão de Punhos', 'Uma sequência de socos trovejantes que sacodem o chão. Pode causar Tontura em todos.', 'soco', 'terrestre', 8, 4),
+    ('efe091', 'Onda de Reverb', 'Uma onda sonora concentrada vibra direto no corpo do inimigo, bagunçando os sentidos e até o penteado. Quem nunca tomou um choque de eco?', 'fruta', 'alvo_terrestre', 11, 6),
+    ('efe081', 'Tempestade de Ecos', 'Libera todos os ecos gravados de uma só vez — risos, gritos, passos, trovões, sinos e até um “quem deixou isso cair?”. O resultado é um caos auditivo que confunde e machuca.', 'fruta', 'area', 11, 10),
+    (NULL, 'Golpe Quadrado', 'Um corte direto, como manda o manual.', 'espada', 'fila', 8, 0),
+    (NULL, 'Golpe de Ordem', 'Um ataque com impacto moral.', 'espada', 'fila', 9, 3),
+    (NULL, 'Corte Rasteiro', 'Um corte baixo que levanta poeira nos olhos do inimigo.', 'espada', 'fila', 9, 0),
+    ('efe087', 'Tempestade de Grãos', 'Uma rajada de cortes rápidos e secos. Aplica Sangramento em até dois inimigos.', 'espada', 'terrestre', 9, 4),
+    (NULL, 'Estocada Espinhosa', 'Um ataque direto com o risco de lascar... o inimigo.', 'espada', 'fila', 9, 0),
+    ('efe085', 'Maré Ácida', 'Um corte que espalha fragmentos venenosos. Aplica Envenenado em todos os inimigos.', 'espada', 'terrestre', 9, 5),
+    (NULL, 'Corte Ilusório', 'Você ataca... ou acha que atacou? O inimigo fica confuso.', 'espada', 'fila', 9, 0),
+    ('efe093', 'Passo entre Dimensões', 'Some e surge atrás do inimigo com um golpe crítico. Aplica Cegueira.', 'espada', 'fila', 10, 6),
+    (NULL, 'Corte Ascendente', 'Um golpe leve que levanta o inimigo no ar.', 'espada', 'terrestre', 9, 0),
+    ('efe087', 'Dança do Vento', 'Vários golpes tão rápidos quanto o vento. Aplica Sangramento e pode atacar duas vezes.', 'espada', 'terrestre', 10, 6),
+    (NULL, 'Corte Silencioso', 'Um corte que mal faz barulho, mas dói do mesmo jeito.', 'espada', 'fila', 9, 0),
+    ('efe081', 'Fio da Névoa', 'Um ataque rápido e gelado que aplica Congelado. Ideal para travar inimigos velozes.', 'espada', 'terrestre', 9, 8),
+    (NULL, 'Corte Preciso', 'Um golpe tão limpo que dá até vontade de servir com arroz.', 'espada', 'fila', 10, 0),
+    ('efe089', 'Fatia de Dragão', 'Um corte flamejante que torra o ar ao redor. Aplica Queimadura em todos os inimigos.', 'espada', 'terrestre', 12, 9),
+    (NULL, 'Corte Temperado', 'O golpe tem gosto de lar... e um leve ardor de pimenta.', 'espada', 'fila', 10, 0),
+    ('efe089', 'Receita Final', 'Um corte carregado de amor (e fúria). Aplica Queimadura e aumenta o ataque por 1 turno.', 'espada', 'fila', 11, 8),
+    (NULL, 'Golpe Bêbado', 'Um ataque errático com chance de acerto crítico… ou escorregar.', 'espada', 'fila', 11, 0),
+    ('efe091', 'Brado do Samurai Fantasma', 'Um golpe sombrio e instável. Aplica Tontura no inimigo e pode reduzir o ataque dele.', 'espada', 'terrestre', 11, 6),
+    (NULL, 'Pedra Voadora', 'Um disparo simples que pode surpreender pelo barulho (não pela força).', 'estilingue', 'alvo_livre', 7, 0),
+    (NULL, 'Pancada Improvisada', 'Lança dois projéteis de uma vez. Chance de causar dano duplo.', 'estilingue', 'alvo_livre', 8, 3),
+    (NULL, 'Doce no Olho', 'Dispara uma bala de açúcar direto no orgulho do alvo.', 'estilingue', 'alvo_livre', 6, 0),
+    ('efe091', 'Nuvem de Confeiteiro', 'Estoura uma explosão de confeitos. Aplica Tontura a todos os inimigos.', 'estilingue', 'area', 7, 2),
+    (NULL, 'Flecha Dramática', 'Dispara com estilo, aumentando sua autoestima.', 'arco', 'alvo_livre', 9, 0),
+    ('efe093', 'Rajada Ofuscante', 'Disparo que reflete a luz. Aplica Cegueira por 2 turnos.', 'arco', 'alvo_livre', 9, 5),
+    (NULL, 'Coco Direto', 'Dispara um coco com a delicadeza de um canhão de praia.', 'estilingue', 'alvo_livre', 10, 0),
+    ('efe091', 'Tempestade Tropical', 'Lança uma sequência de cocos. Aplica Tontura e dano leve em 2 alvos.', 'estilingue', 'area', 10, 6),
+    (NULL, 'Flecha Reciclada', 'Atira farpas com aquele sentimento de “quebra galho”.', 'arco', 'alvo_livre', 9, 0),
+    (NULL, 'Assento Desmontável', 'Disparo pesado. Chance de Sangramento.', 'arco', 'alvo_livre', 11, 7),
+    (NULL, 'Duplo Estalo', 'Atira duas vezes no mesmo alvo. Mais precisão, menos paciência.', 'estilingue', 'alvo_livre', 9, 0),
+    ('efe087', 'Golpe Veloz', 'Dispara três vezes em sequência. Aplica Sangramento no último golpe.', 'estilingue', 'alvo_livre', 10, 5),
+    (NULL, 'Flecha Natural', 'Disparo com o som suave de folhas ao vento.', 'arco', 'alvo_livre', 10, 0),
+    ('efe089', 'Chama da Selva', 'Flecha flamejante. Aplica Queimadura e reduz defesa por 1 turno.', 'arco', 'area', 10, 8),
+    (NULL, 'Flecha Silenciosa', 'Disparo limpo que quase não se ouve.', 'arco', 'alvo_livre', 11, 0),
+    ('efe085', 'Veneno Dourado', 'Flecha envenenada. Aplica Envenenado e reduz ataque.', 'arco', 'alvo_livre', 10, 6),
+    (NULL, 'Canhão de Bolinha', 'Um disparo pesado como o nome sugere.', 'estilingue', 'alvo_livre', 11, 0),
+    ('efe089', 'Bombardeio Pirata', 'Dispara uma salva em todos os inimigos. Aplica Queimadura.', 'estilingue', 'area', 11, 9);
 
--- =========== Inserções em Efeitos, Itens e Receitas (Dados Detalhados) ===========
 
-INSERT INTO efeito (identificador_efeito, nome, valor) VALUES
-(1, 'Restaura PE', 2), (2, 'Restaura PV', 2), (3, 'Restaura PV', 1), (4, 'Restaura PE', 1), (5, 'Restaura PV', 1),
-(6, 'Restaura PE', 2), (7, 'Restaura PV', 1), (8, 'Aumenta Ataque', 2), (9, 'Restaura PV', 1), (10, 'Restaura PE', 2),
-(11, 'Restaura PV', 3), (12, 'Restaura PE', 3), (13, 'Aumenta Ataque', 3), (14, 'Restaura PV', -1), (15, 'Aumenta Ataque', 2),
-(16, 'Restaura PV', 2), (17, 'Restaura PE', 2), (18, 'Restaura PV', 4), (19, 'Restaura PE', 1), (20, 'Aumenta Ataque', 2),
-(21, 'Restaura PE', 3), (22, 'Restaura PV', 2), (23, 'Aumenta Ataque', 3), (24, 'Restaura PV', 2), (25, 'Restaura PE', 3),
-(26, 'Restaura PV', 1), (27, 'Restaura PV', -2), (28, 'Aumenta Ataque', 3), (29, 'Restaura PV', 2), (30, 'Restaura PE', 3),
-(31, 'Restaura PE', 5), (32, 'Restaura PV', 4), (33, 'Restaura PE', 2), (34, 'Restaura PV', 5), (35, 'Restaura PE', 5),
-(36, 'Restaura PV', 3), (37, 'Aumenta Ataque', 3), (38, 'Restaura PV', 7), (39, 'Restaura PE', 1), (40, 'Restaura PV', 3),
-(41, 'Reduz Ataque', -2), (42, 'Restaura PV', 5), (43, 'Restaura PE', 3), (44, 'Aumenta Ataque', 5), (45, 'Aumenta Sorte', 2),
-(46, 'Aumenta Sorte', 1), (47, 'Aumenta Sorte', 4), (48, 'Aumenta Sorte', 1), (49, 'Aumenta Sorte', 3), (50, 'Aumenta Sorte', 2),
-(51, 'Restaura PE', 6), (52, 'Restaura PV', 6), (53, 'Restaura PV', 4), (54, 'Aumenta Ataque', 4), (55, 'Restaura PV', 2),
-(56, 'Aumenta Ataque', 4), (57, 'Restaura PE', 4), (58, 'Restaura PV', 1), (59, 'Restaura PE', 5), (60, 'Restaura PV', 1),
-(61, 'Restaura PE', 5), (62, 'Restaura PV', 3), (63, 'Restaura PE', 1), (64, 'Aumenta Ataque', 3), (65, 'Restaura PE', -1),
-(66, 'Aumenta Ataque', 3), (67, 'Restaura PE', 3), (68, 'Aumenta Ataque', 1), (69, 'Aumenta Sorte', 3), (70, 'Aumenta Sorte', 1),
-(71, 'Restaura PV', 2), (72, 'Restaura PV', 1);
 
-INSERT INTO nao_consumivel (identificador_nao_consumivel, tipo, nome, descricao, quantidade, raridade, local_encontrado, preco_de_compra, preco_de_venda) VALUES
-(8, 'ncn', 'Presa de Lobo', 'Uma presa afiada de um lobo selvagem, usada em artesanato.', 1, '★★', 'Campos', 0, 15),
-(12, 'ncn', 'Farinha Misteriosa', 'Um pó fino e branco de origem desconhecida.', 1, '★', 'Cidade', 10, 5),
-(13, 'ncn', 'ButterCream de Fuligem', 'Uma pasta escura e fuliginosa, estranhamente cremosa.', 1, '★★', 'Cidade', 20, 8),
-(16, 'ncn', 'Medalha de Marinheiro', 'Uma medalha de bronze um pouco gasta, símbolo de bravura.', 1, '★★', 'Fortaleza da Marinha', 0, 20),
-(20, 'ncn', 'Pérola Cantante', 'Uma pérola que emite uma melodia suave quando segurada.', 1, '★★', 'Ilha Assombrada', 30, 17),
-(23, 'ncn', 'Pedaço de Tecido Rasgado', 'Fragmento de uma bandeira ou vela, marcado pelo tempo.', 1, '★', 'Campos', 0, 8),
-(31, 'ncn', 'Faixa de Pirata Estorricado', 'A faixa de um pirata que sobreviveu a uma grande explosão.', 1, '★', 'Deserto', 0, 10),
-(35, 'ncn', 'Sombra Engarrafada', 'Um frasco contendo uma sombra que se move lentamente.', 1, '★★', 'Ilha Assombrada', 0, 17),
-(36, 'ncn', 'Açúcar Estranho', 'Cristais de açúcar que mudam de cor lentamente.', 1, '★', 'Ilha Assombrada', 5, 2),
-(38, 'ncn', 'Essência de Névoa Doce', 'Um líquido que cheira a chuva e doces.', 1, '★★', 'Ilha Assombrada', 10, 4),
-(42, 'ncn', 'Peixe Saltitante', 'Um peixe que continua a saltitar mesmo fora dágua.', 1, '★', 'Campos', 0, 11),
-(48, 'ncn', 'Chapéu de Marinheiro', 'Um quepe de marinheiro, surpreendentemente limpo.', 1, '★★', 'Fortaleza da Marinha', 0, 15);
+-- Habilidades de Inimigos
+INSERT INTO habilidade
+    (identificador_efeito, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano)
+VALUES
+    ('efe093', 'Investida Penosa', 'O corvo mergulha com um grito estridente, mirando os olhos. Quem precisa de precisão quando se tem drama?', 'soco', 'alvo_livre', 4),
+    ('efe087', 'Mordida Selvagem', 'Uma mordida rápida e feroz. Ele rosna depois, só pra garantir que você não esqueça.', 'soco', 'alvo_terrestre', 4),
+    ('efe091', 'Carga Desgovernada', 'Baixa a cabeça, corre, atropela. Você não está preparado. Ninguém está preparado.', 'soco', 'terrestre', 4),
+    ('efe091', 'Soco Açucarado', 'Um murro tão forte quanto seu vício em balas. Quem diria que açúcar deixava alguém assim?', 'soco', 'alvo_terrestre', 4),
+    (NULL, 'Suborno de Honra', 'Ele tenta “convencer” você a baixar a guarda. Com um soco. E uma proposta indecente.', 'soco', 'alvo_terrestre', 4),
+    ('efe091', 'Discurso Furioso', 'Ele grita tanto — e tão mal — que o chão treme. E sua paciência também. Todo mundo sai atordoado.', 'soco', 'area', 4),
+    ('efe081', 'Corte Gélido', 'Um golpe vindo do além... e do frio. Faz até os ossos doerem — literalmente.', 'espada', 'alvo_terrestre', 4),
+    ('efe091', 'Lamento Espectral', 'Um grito abafado ecoa debaixo da neve, mexendo com a cabeça de quem ainda está vivo.', 'soco', 'area', 4),
+    (NULL, 'Chicote da Disciplina Fantasma', 'Ele ainda tenta manter a ordem no navio… mesmo sem navio. O golpe consome sua energia e sua moral.', 'soco', 'alvo_terrestre', 4),
+    ('efe087', 'Corte Ressecado', 'Um corte seco e direto, como o vento do deserto. Não dói na hora, mas logo arde como areia nos olhos.', 'espada', 'alvo_terrestre', 4),
+    ('efe093', 'Miragem Veloz', 'Ele gira, tropeça e ataca ilusões. O problema? Às vezes acerta você no processo — e ainda te deixa tonto de confusão.', 'soco', 'area', 4),
+    ('efe085', 'Estratégia de Escorpião', 'Ele ataca como quem traça um plano: rápido, certeiro e com veneno suficiente pra fazer um camelo desmaiar.', 'estilingue', 'alvo_terrestre', 4),
+    (NULL, 'Chilreio Atordoante', 'Um grito agudo que reverbera dentro do crânio. Você esquece por um momento quem é o inimigo… ou quem é você.', 'soco', 'alvo_livre', 4),
+    ('efe085', 'Picada Venenosa', 'Um ataque rápido com as presas. A picada mal se sente — mas a dormência e a baba verde depois, sim.', 'soco', 'alvo_terrestre', 4),
+    ('efe081', 'Teia Sinistra', 'Lança uma rede de teias espectrais que grudam em tudo. Não é frio... mas te faz travar como se fosse.', 'soco', 'area', 4),
+    (NULL, 'Investida Quadrada', 'Um avanço com baioneta ou espada curta. Pouco inspirador, mas certinho como o manual.', 'espada', 'alvo_terrestre', 4),
+    ('efe091', 'Comando Impositivo', 'Um grito autoritário que ecoa pelo campo. Não machuca, mas deixa todos meio zonzos (e irritados).', 'soco', 'area', 4),
+    ('efe093', 'Golpe da Maré Controlada', 'Um golpe técnico e preciso, mirando nos olhos e na moral do oponente. A disciplina é uma arma.', 'soco', 'alvo_terrestre', 4),
+    ('efe087', 'Rajada Vento-Escamas', 'As asas batem com força, espalhando escamas cortantes e um vendaval que embaralha sentidos.', 'fruta', 'area', 5),
+    ('efe083', 'Dilúvio Celeste', 'Do alto, o dragão invoca uma chuva mística e destrutiva. O chão treme, a visão embaça, e o terror paira.', 'fruta', 'area', 6),
+    ('efe079', 'Trovão Ancestral', 'As nuvens rugem, e do céu o dragão invoca relâmpagos que atingem inimigos e solo. O zumbido permanece mesmo após o silêncio.', 'fruta', 'area', 6),
+    ('efe089', 'Inferno Celeste', 'Do alto, o dragão cospe uma rajada flamejante que gira como um furacão. O calor dobra o ar e torce a razão. Só os mais firmes não caem.', 'fruta', 'area', 6);
 
-INSERT INTO consumivel (identificador_consumivel, tipo, nome, descricao, quantidade, raridade, local_encontrado, preco_de_compra, preco_de_venda, e_fabricavel) VALUES
-(1, 'con', 'Fruta do Mar Azul', 'Uma fruta de cor vibrante com um sabor salgado do mar.', 1, '★', 'Campos', 0, 5, false),
-(2, 'con', 'Fruta do Mar Vermelha', 'Uma fruta suculenta e vermelha, comum em planícies.', 1, '★', 'Campos', 0, 5, false),
-(3, 'con', 'Folha de Hortelã', 'Uma folha refrescante que revigora o espírito.', 1, '★', 'Campos', 0, 5, false),
-(4, 'con', 'Abóbora Redonduda', 'Uma abóbora nutritiva, base de muitas receitas.', 1, '★', 'Campos', 15, 6, false),
-(5, 'con', 'Arroz do Planalto', 'Grãos de arroz cultivados nas terras altas e férteis.', 1, '★', 'Campos', 10, 5, false),
-(6, 'con', 'Ovo dos Campos', 'Um ovo fresco, pego de ninhos nos campos abertos.', 1, '★', 'Campos', 10, 5, false),
-(7, 'con', 'Carne de Ave Brava', 'Carne de uma ave selvagem, um pouco dura mas saborosa.', 1, '★', 'Campos', 0, 7, false),
-(9, 'con', 'Maçã Lustrosa', 'Uma maçã tão polida que parece uma joia.', 1, '★', 'Campos', 0, 7, false),
-(10, 'con', 'Repolho Redondo', 'Um repolho comum, ingrediente básico para sopas.', 1, '★', 'Campos', 0, 5, false),
-(11, 'con', 'Alga Fresca', 'Algas colhidas na costa, com cheiro de mar.', 1, '★', 'Campos', 0, 6, false),
-(14, 'con', 'Chá Enlatado', 'Uma bebida popular na cidade, para uma pausa rápida.', 1, '★', 'Cidade', 15, 6, false),
-(15, 'con', 'Doce Amassado', 'Um doce simples que sobreviveu a uma longa viagem.', 1, '★', 'Cidade', 0, 2, false),
-(17, 'con', 'Noz Crocante', 'Uma noz dura que exige esforço para abrir.', 1, '★', 'Campos', 0, 2, false),
-(18, 'con', 'Ervas Aromáticas', 'Um punhado de ervas que perfumam qualquer prato.', 1, '★', 'Campos', 0, 3, false),
-(19, 'con', 'Neve Mágica', 'Um punhado de neve que nunca derrete e brilha suavemente.', 1, '★★', 'Neve', 0, 12, false),
-(21, 'con', 'Leite de Cabra Alpina', 'Leite cremoso de cabras que vivem nas montanhas de neve.', 1, '★', 'Neve', 10, 6, false),
-(22, 'con', 'Chocolate Amargo', 'Um chocolate intenso, preferido pelos habitantes da neve.', 1, '★', 'Neve', 15, 8, false),
-(24, 'con', 'Lamento Gelado', 'Um cristal de gelo que emite um som melancólico.', 1, '★★', 'Neve', 0, 12, false),
-(25, 'con', 'Fruta Cítrica do Oeste', 'Uma fruta azeda que cresce nos limites do deserto.', 1, '★', 'Deserto', 0, 4, false),
-(26, 'con', 'Côco do Oásis', 'Um côco cheio de água fresca, um tesouro no deserto.', 1, '★', 'Deserto', 0, 7, false),
-(27, 'con', 'Areia Mineral', 'Grãos de areia com propriedades nutritivas incomuns.', 1, '★★', 'Deserto', 0, 10, false),
-(28, 'con', 'Carne do Deserto', 'Carne seca e resistente de uma criatura do deserto.', 1, '★★', 'Deserto', 20, 8, false),
-(29, 'con', 'Geleia de Cacto Doce', 'Uma geleia feita da polpa de um cacto raro.', 1, '★★', 'Deserto', 11, 6, false),
-(30, 'con', 'Suco Refrescante Solar', 'Um suco que parece conter a luz do sol.', 1, '★', 'Deserto', 7, 4, false),
-(32, 'con', 'Fragmento de Miragem', 'Um pedaço de luz solidificada que distorce o ar ao redor.', 1, '★★', 'Deserto', 0, 12, false),
-(33, 'con', 'Cogumelo Risonho', 'Um cogumelo que parece sorrir para quem o encontra.', 1, '★', 'Ilha Assombrada', 0, 9, false),
-(34, 'con', 'Fruta Fluorescente', 'Uma fruta que brilha no escuro com uma luz azulada.', 1, '★', 'Ilha Assombrada', 0, 7, false),
-(37, 'con', 'Doce Fantasmal', 'Um doce translúcido com um sabor etéreo.', 1, '★', 'Ilha Assombrada', 13, 5, false),
-(39, 'con', 'Asa de Morcego Noturno', 'A asa de um morcego que habita as cavernas da ilha.', 1, '★', 'Ilha Assombrada', 0, 9, false),
-(40, 'con', 'Presa Venenosa', 'Uma presa oca que ainda contém vestígios de veneno.', 1, '★', 'Ilha Assombrada', 0, 7, false),
-(41, 'con', 'Amendoim Crocante', 'Um lanche simples, mas satisfatório.', 1, '★', 'Cidade', 0, 3, false),
-(43, 'con', 'Pepino de Salmoura', 'Um pepino conservado em salmoura, com sabor forte.', 1, '★', 'Cidade', 0, 5, false),
-(44, 'con', 'Ração de Soldado', 'Comida compacta e durável, parte do suprimento da Marinha.', 1, '★★', 'Fortaleza da Marinha', 10, 4, false),
-(45, 'con', 'Café Turbinado', 'Um café forte que mantém os marinheiros acordados por dias.', 1, '★', 'Fortaleza da Marinha', 8, 3, false),
-(46, 'con', 'Carne de Rei dos Mares', 'Um pedaço raro e delicioso da carne de uma besta marinha.', 1, '★★★', 'Fortaleza da Marinha', 40, 19, false),
-(47, 'con', 'Rosquinha Mordida', 'Uma rosquinha com uma única e suspeita marca de mordida.', 1, '★', 'Cidade', 0, 3, false),
-(101, 'con', 'Sushi Enrolado', 'Um prato delicado feito com peixe e alga.', 1, '★★', 'Cidade', 0, 15, true),
-(102, 'con', 'Chá de Algas', 'Um chá quente com um sabor distinto do mar.', 1, '★', 'Campos', 0, 10, true),
-(103, 'con', 'Pastel de Fruta do Diabo', 'Um pastel perigoso com um recheio imprevisível.', 1, '★★', 'Ilha Assombrada', 0, 18, true),
-(104, 'con', 'Caldo da Vovó Yuba', 'Um caldo reconfortante que cura corpo e alma.', 1, '★★', 'Deserto', 0, 22, true),
-(105, 'con', 'Tônico de Areia', 'Uma bebida revigorante feita com minerais do deserto.', 1, '★★', 'Deserto', 0, 16, true),
-(106, 'con', 'Chá Gelado de Neve', 'Um chá feito com neve mágica, extremamente refrescante.', 1, '★★', 'Neve', 0, 15, true),
-(107, 'con', 'Receita Secreta do Capitão', 'Uma refeição lendária com poder imenso.', 1, '★★★', 'Fortaleza da Marinha', 0, 27, true),
-(108, 'con', 'Carne Grelhada', 'Um pedaço de carne perfeitamente grelhado.', 1, '★★', 'Campos', 0, 18, true),
-(109, 'con', 'Pérola Caramelizada', 'Uma pérola comestível coberta por uma casca de açúcar.', 1, '★★', 'Cidade', 0, 13, true),
-(110, 'con', 'Pérola da Lua de Inverno', 'Uma iguaria rara feita apenas durante o inverno.', 1, '★★★', 'Neve', 0, 24, true),
-(111, 'con', 'Pérola do Sol Escaldante', 'Uma iguaria rara encontrada apenas no auge do verão.', 1, '★★★', 'Deserto', 0, 24, true),
-(112, 'con', 'Gelado de Algas', 'Uma sobremesa fria com um toque salgado.', 1, '★', 'Campos', 0, 15, true),
-(113, 'con', 'Omurice de Arroz', 'Arroz frito envolto em uma omelete macia.', 1, '★★', 'Cidade', 0, 15, true),
-(114, 'con', 'Bolo do Campo', 'Um bolo simples feito com ingredientes frescos dos campos.', 1, '★★', 'Campos', 0, 14, true),
-(115, 'con', 'Bombom Nebuloso', 'Um bombom que libera uma pequena névoa ao ser mordido.', 1, '★★', 'Ilha Assombrada', 0, 12, true),
-(116, 'con', 'Arroz dos Sete Mares', 'Um prato de arroz com ingredientes de várias partes do mundo.', 1, '★', 'Cidade', 0, 9, true),
-(117, 'con', 'Doce da Ilha', 'Um doce tropical feito com frutas exóticas.', 1, '★★', 'Campos', 0, 12, true),
-(118, 'con', 'Omelete dos 4 Ventos', 'Uma omelete fofa com ervas de todas as direções.', 1, '★★', 'Campos', 0, 13, true),
-(119, 'con', 'Frango Assado Estaladiço', 'Frango assado com uma pele perfeitamente crocante.', 1, '★', 'Cidade', 0, 10, true),
-(120, 'con', 'Sopa da Guarda Noturna', 'Uma sopa simples para aquecer as noites frias.', 1, '★', 'Neve', 0, 6, true),
-(121, 'con', 'Doce de Duna Dourada', 'Um doce feito com açúcar caramelizado e areia mineral.', 1, '★★', 'Deserto', 0, 16, true),
-(122, 'con', 'Bife do Abismo', 'Carne de uma criatura das profundezas, de sabor intenso.', 1, '★★★', 'Fortaleza da Marinha', 0, 35, true),
-(123, 'con', 'Sashimi do Fim do Mundo', 'Fatias de um peixe lendário que vive nos confins do oceano.', 1, '★★★', 'Fortaleza da Marinha', 0, 35, true),
-(124, 'con', 'Torta do Marujo Feliz', 'Uma torta simples que eleva o moral de qualquer um.', 1, '★', 'Cidade', 0, 10, true),
-(125, 'con', 'Doce Assombrado', 'Um doce que parece sussurrar segredos quando você come.', 1, '★★', 'Ilha Assombrada', 0, 12, true),
-(126, 'con', 'Curry do Capitão Covarde', 'Um curry picante que te dá coragem (ou desespero).', 1, '★★', 'Fortaleza da Marinha', 0, 13, true),
-(127, 'con', 'Elixir Sombrio', 'Uma poção borbulhante de origem duvidosa.', 1, '★★', 'Ilha Assombrada', 0, 18, true),
-(128, 'con', 'Poção do Dente Torto', 'Uma poção que fortalece os dentes, ou os entorta.', 1, '★★', 'Ilha Assombrada', 0, 18, true),
-(129, 'con', 'Cookie de Chocolate', 'Um cookie clássico, perfeito com um copo de leite.', 1, '★', 'Cidade', 0, 14, true),
-(130, 'con', 'Leite Condensado Alpino', 'Leite condensado feito com o melhor leite das montanhas.', 1, '★', 'Neve', 0, 11, true),
-(131, 'con', 'Doce do Silêncio Eterno', 'Um doce que, dizem, silencia até os pensamentos mais altos.', 1, '★★', 'Ilha Assombrada', 0, 17, true),
-(132, 'con', 'Cacto‑Pop Geladinho', 'Um picolé refrescante feito de cacto.', 1, '★★', 'Deserto', 0, 16, true),
-(133, 'con', 'Esfera da Miragem', 'Uma sobremesa gelatinosa que parece uma miragem distante.', 1, '★★', 'Deserto', 0, 17, true),
-(134, 'con', 'Amendoins Torrados', 'Amendoins salgados e torrados, um lanche viciante.', 1, '★', 'Cidade', 0, 5, true),
-(135, 'con', 'Pickles Pirata', 'Conserva de pepino com um toque de rum.', 1, '★', 'Cidade', 0, 10, true),
-(136, 'con', 'Frankenprato', 'Uma mistura bizarra de ingredientes que surpreendentemente é comestível.', 1, '★', 'Ilha Assombrada', 0, 5, true);
 
-INSERT INTO efeito_consumivel (identificador_consumivel, identificador_efeito) VALUES
-(1, 1), (2, 2), (3, 3), (9, 4), (10, 5), (11, 6), (14, 7), (15, 8), (17, 2), (18, 9), (19, 10), (21, 11), (22, 12), (25, 13),
-(26, 14), (27, 11), (28, 15), (29, 16), (30, 17), (33, 18), (34, 19), (37, 20), (41, 21), (43, 22), (44, 23), (45, 24),
-(46, 25), (47, 56), (101, 26), (102, 27), (103, 28), (104, 29), (105, 30), (106, 31), (107, 32), (108, 33), (109, 34),
-(110, 35), (111, 36), (112, 37), (113, 38), (114, 39), (115, 40), (116, 41), (117, 42), (118, 43), (119, 33), (120, 44),
-(121, 45), (122, 46), (123, 47), (124, 39), (125, 12), (126, 31), (127, 48), (128, 49), (129, 50), (130, 51), (131, 52),
-(132, 53), (133, 54), (134, 55), (135, 40), (136, 8);
 
-INSERT INTO receita (identificador_receita, consumivel_produzido) VALUES
-(1, 101), (2, 102), (3, 103), (4, 104), (5, 104), (6, 105), (7, 106), (8, 107), (9, 108), (10, 109), (11, 110),
-(12, 111), (13, 112), (14, 113), (15, 114), (16, 115), (17, 115), (18, 116), (19, 116), (20, 116), (21, 116),
-(22, 117), (23, 118), (24, 118), (25, 119), (26, 120), (27, 120), (28, 121), (29, 122), (30, 123), (31, 124),
-(32, 125), (33, 126), (34, 127), (35, 128), (36, 129), (37, 130), (38, 131), (39, 132), (40, 133), (41, 134),
-(42, 135), (43, 136);
+INSERT INTO acessorio
+    (nome, descricao, raridade, local_encontrado,
+     preco_de_compra)
+VALUES
+    ('Botas de Areia Firme', 'Essas botas estão sempre secas. Sempre. Mesmo dentro d’água.', '★★', 'Loja de Acessórios', 35),
+    ('Coração de Coral', 'Um pingente delicado que pulsa junto com o seu. Um toque de vida extra.', '★★★', 'Loja de Acessórios', 60),
+    ('Ampola da Brisa do Mar', 'Um frasquinho com o ar mais fresco da costa. Inspira fundo e sente o vigor voltar!', '★★', 'Loja de Acessórios', 40),    
+    ('Bracelete Estrela-do-Mar', 'Brilha no escuro e traz uma paz estranha — talvez um pouco demais.', '★★★', 'Loja de Acessórios', 65),
+    ('Luva de Lobo Feroz', 'Dizem que era de um lobo muito nervoso. Agora é só estilo e poder.', '★★', 'Loja de Acessórios', 35),
+    ('Faixa da Força da Vovó Yuba', 'Costurada entre uma sopa e outra, essa faixa guarda o cheiro de tempero e a força de mil panelas batendo.', '★★★', 'Loja de Acessórios', 60),
+    ('Olho de Sorte', 'Um broche com um olho pintado que “pisca” quando você se esquiva de um golpe.', '★★', 'Loja de Acessórios', 55),
+    ('Bandana do Incrível', 'Dizia-se que quem a usava nunca perdia... ou pelo menos parecia bem confiante.', '★★★', 'Loja de Acessórios', 85);
 
-INSERT INTO ingrediente_consumivel (identificador_receita, identificador_consumivel) VALUES
-(1, 11), (2, 11), (3, 2), (3, 28), (4, 28), (4, 18), (5, 28), (5, 3), (6, 27), (7, 19), (7, 3), (8, 101), (8, 104), (9, 28),
-(11, 109), (11, 19), (12, 109), (12, 19), (13, 11), (13, 19), (14, 5), (14, 6), (15, 6), (17, 22), (18, 5), (18, 1), (19, 5),
-(19, 2), (20, 5), (20, 25), (21, 5), (21, 34), (22, 26), (22, 25), (23, 6), (23, 3), (24, 6), (24, 18), (25, 7), (25, 18),
-(26, 10), (26, 11), (27, 10), (27, 7), (28, 27), (28, 26), (29, 46), (29, 24), (30, 46), (31, 4), (32, 4), (33, 4),
-(33, 28), (34, 39), (35, 40), (35, 30), (36, 17), (36, 22), (37, 21), (38, 24), (38, 19), (39, 29), (39, 25), (40, 32),
-(40, 27), (41, 41), (42, 43), (42, 28);
 
-INSERT INTO ingrediente_nao_consumivel (identificador_receita, identificador_nao_consumivel) VALUES
-(1, 42), (6, 38), (10, 20), (10, 36), (15, 12), (16, 35), (16, 38), (17, 35), (30, 35), (31, 12), (32, 38), (34, 35), (37, 36);
 
--- =========== Inserções no Restante das Tabelas ===========
-INSERT INTO campo_batalha (tipo_terreno, qtd_de_pessoas, tamanho) VALUES
-('Floresta', 1, 'Pequeno'), ('Floresta', 1, 'Medio'), ('Urbano', 5, 'Pequeno'), ('Urbano', 1, 'Medio'),
-('Neve', 3, 'Pequeno'), ('Costa', 10, 'Medio'), ('Deserto', 1, 'Grande'), ('Deserto', 0, 'Pequeno'),
-('Deserto', 1, 'Medio'), ('Misterioso', 0, 'Medio'), ('Militar', 10, 'Grande'), ('Aquatico', 1, 'Enorme');
+INSERT INTO efeito_acessorio
+    (identificador_acessorio, identificador_efeito)
+VALUES
+    ('ace001', 'efe052'),
+    ('ace002', 'efe055'),
+    ('ace003', 'efe065'),
+    ('ace004', 'efe067'),
+    ('ace005', 'efe039'),
+    ('ace006', 'efe044'),
+    ('ace007', 'efe073'),
+    ('ace008', 'efe074');
 
-INSERT INTO vila (total_salas, informacoes) VALUES
-(1, 'Primeira vila encontrada, amigavel.'),
-(1, 'Vila fria, moradores desconfiados.'),
-(1, 'Vila com medica famosa.');
 
-INSERT INTO porto (qtd_barcos, capacidade, sendo_ilha) VALUES
-(5, 100, FALSE);
 
-INSERT INTO ilha (sala_id) VALUES
-(13), (16), (14), (7), (10), (11);
+INSERT INTO arma
+    (nome, descricao, raridade, tipo_arma, local_encontrado,
+     preco_de_compra)
+VALUES
+    ('Espadinha do Marinheiro', 'Básica, reta e sem sal — igual à comida do quartel.', '★', 'esp', 'Loja de Espadas', 50),    
+    ('Corte de Areia', 'Uma lâmina fina, feita para deslizar no calor escaldante do deserto. Melhor usar antes que enferruje.', '★', 'esp', 'Loja de Espadas', 55),
+    ('Gume de Coral', 'Forjada com pedaços de coral duro. Linda, mas cuidado com lascas!', '★★', 'esp', 'Loja de Espadas', 80),
+    ('Espada Fantasma', 'Você jura que ela está na sua mão, mas às vezes… ela desaparece.', '★★', 'esp', 'Loja de Espadas', 90),
+    ('Lâmina da Brisa', 'Tão leve que quase voa sozinha. Ideal para quem gosta de parecer estiloso enquanto luta.', '★★', 'esp', 'Loja de Espadas', 105),
+    ('Lâmina Sussurrante', 'Dizem que ela corta o ar tão silenciosamente que até o vento pede licença.', '★★', 'esp', 'Loja de Espadas', 110),
+    ('Katana do Sushi Supremo', 'Corta peixe tão bem que o próprio mar fica com inveja. Também serve pra vilões, se estiverem quietos o suficiente.', '★★★', 'esp', 'Loja de Espadas', 140),
+    ('Katana da Vovó Yuba', 'Ela usava pra cortar carne, peixe e argumentos. Respeito e corte limpo em cada golpe.', '★★★', 'esp', 'Loja de Espadas', 150),
+    ('Katana do Capitão Caído', 'Roubada de um lendário capitão samurai que confundiu o oceano com arrozal. Ainda tem cheiro de saquê.', '★★★', 'esp', 'Loja de Espadas', 165),
+    ('Estilingue de Iniciante', 'Feito com elástico e madeira de galho. Não subestime a força de uma boa gambiarra.', '★', 'est', 'Loja de Estilingues e Arcos', 30),
+    ('Lança-Suspiro', 'Disparar projéteis doces não é eficaz, mas é surpreendentemente ofensivo ao ego inimigo.', '★', 'arc', 'Loja de Estilingues e Arcos', 45),
+    ('Arco da Pose Perfeita', 'Aumenta carisma em 20% ao ser empunhado dramaticamente diante do pôr do sol.', '★', 'arc', 'Loja de Estilingues e Arcos', 50),
+    ('Atira-Coco', 'Não é elegante, mas já derrubou mais de um pirata. Lançar cocos exige força… e coragem.', '★★', 'est', 'Loja de Estilingues e Arcos', 70),
+    ('Arco de Pedaço de Cadeira', 'Sim, é o encosto de uma cadeira com uma corda. Sim, funciona. Vai discutir com ele?', '★★', 'arc', 'Loja de Estilingues e Arcos', 70),
+    ('Estilingue do Voo Duplo', 'Se acertar o mesmo inimigo duas vezes seguidas, você ganha o direito de chamá-lo de ‘meu alvo favorito’.', '★★', 'est', 'Loja de Estilingues e Arcos', 80),
+    ('Arco de Liana', 'Um arco feito com cipós flexíveis e muita criatividade. Tensão máxima, estilo selvagem.', '★★', 'arc', 'Loja de Estilingues e Arcos', 85),
+    ('Arco do Oásis', 'Suave e silencioso como uma brisa no deserto. Ideal para acertar antes de ser visto.', '★★★', 'arc', 'Loja de Estilingues e Arcos', 125),
+    ('Estilingue de Batalha Naval', 'Usado por um pirata que confundia navios com alvos de treino. Deu certo… até certo ponto.', '★★★', 'est', 'Loja de Estilingues e Arcos', 125);
 
-INSERT INTO mapa (id_mapa, id_ilha) VALUES
-(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6);
 
-INSERT INTO jogador (id_personagem, id_habilidade, id_mapa_pk, nome, dano_base, coordenada_x, coordenada_y) VALUES
-(1, 1, 1, 'Protagonista', 10, 0, 0);
 
-INSERT INTO habitante (id_mapa_pk, nome, tipo, descricao, especialidade, coordenada_x, coordenada_y) VALUES
-(1, 'Aldeao', 'rec', 'Aldeao que acorda o protagonista.', NULL, 10, 5),
-(6, 'Medico', 'coz', 'Medica famosa da vila da neve.', NULL, 15, 10),
-(5, 'Morador Secreto', 'hbt', 'Morador escondido na ilha fantasma.', NULL, 50, 50);
+INSERT INTO fruta
+    (nome, descricao, raridade, local_encontrado)
+VALUES
+    ('Mimi Mimi no Mi: Fruta do Eco', 'Uma fruta rara, de cor chamativa e com um aroma meio doce, meio… enxerido. Quem a come desenvolve habilidades sonoras peculiares — perfeitas para quem adora ouvir, repetir e, claro, se meter onde não foi chamado.', '★★★', 'Missão');
 
-INSERT INTO chefe (id_habilidade, id_mapa_pk, nome, dano, vida, nivel, experiencia, coordenada_x, coordenada_y) VALUES
-(2, 1, 'A Fera', 20, 150, 5, 50, 10, 10),
-(3, 2, 'Comandante da Marinha', 30, 200, 10, 100, 25, 25),
-(4, 2, 'Lider Rebelde', 15, 120, 8, 80, 20, 15),
-(3, 4, 'Lider Pirata do Deserto', 40, 250, 15, 150, 5, 5),
-(6, 6, 'Marinheiro Nobre - Final', 50, 300, 20, 200, 40, 40);
+INSERT INTO habilidade_arma
+    (identificador_arma, identificador_habilidade)
+VALUES
+    ('arm001', 'hab007'),
+    ('arm001', 'hab008'),
+    ('arm002', 'hab009'),
+    ('arm002', 'hab010'),
+    ('arm003', 'hab011'),
+    ('arm003', 'hab012'),
+    ('arm004', 'hab013'),
+    ('arm004', 'hab014'),
+    ('arm005', 'hab015'),
+    ('arm005', 'hab016'),
+    ('arm006', 'hab017'),
+    ('arm006', 'hab018'),
+    ('arm007', 'hab019'),
+    ('arm007', 'hab020'),
+    ('arm008', 'hab021'),
+    ('arm008', 'hab022'),
+    ('arm009', 'hab023'),
+    ('arm009', 'hab024'),
+    ('arm010', 'hab025'),
+    ('arm010', 'hab026'),
+    ('arm011', 'hab027'),
+    ('arm011', 'hab028'),
+    ('arm012', 'hab029'),
+    ('arm012', 'hab030'),
+    ('arm013', 'hab031'),
+    ('arm013', 'hab032'),
+    ('arm014', 'hab033'),
+    ('arm014', 'hab034'),
+    ('arm015', 'hab035'),
+    ('arm015', 'hab036'),
+    ('arm016', 'hab037'),
+    ('arm016', 'hab038'),
+    ('arm017', 'hab039'),
+    ('arm017', 'hab040'),
+    ('arm018', 'hab041'),
+    ('arm018', 'hab042');
 
-INSERT INTO lacaio (id_habilidade, id_mapa_pk, nome, dano, vida, nivel, experiencia, coordenada_x, coordenada_y) VALUES
-(2, 1, 'Lobo Selvagem', 8, 50, 2, 10, 12, 12),
-(4, 2, 'Soldado Marinha', 10, 60, 3, 15, 30, 30);
 
-INSERT INTO instancia_lacaio (identificador_lacaio, vida_atual) VALUES
-(1, 50),
-(2, 60);
 
-INSERT INTO aliado (id_mapa_pk, nome, descricao, vida, nivel, dano_base) VALUES
-(3, 'Shuan', 'Aliado caçador do vilarejo do norte.', 120, 7, 15),
-(5, 'Silvie', 'Lider dos moradores da ilha fantasma.', 150, 9, 20);
+INSERT INTO habilidade_fruta
+    (identificador_fruta, identificador_habilidade)
+VALUES
+    ('fru001', 'hab005'),
+    ('fru001', 'hab006');
 
-INSERT INTO habilidade_aliado (id_aliado, id_habilidade) VALUES
-(1, 5);
 
-INSERT INTO missao (nome, descricao, id_mapa_pk, id_jogador, id_recrutador, tipo_sala, sala_id) VALUES
-('Animal Selvagem', 'Derrotar o animal selvagem que atacou o protagonista.', 1, 1, 1, 'campo_batalha', 1),
-('A Fera da Vila', 'Enfrentar a fera das plantacoes.', 1, 1, 1, 'campo_batalha', 2),
-('Vendedor Agressao', 'Salvar o vendedor de frutas.', 2, 1, 1, 'porto', 16),
-('Infiltracao Prisao', 'Invadir registros da prisao.', 2, 1, 3, 'campo_batalha', 3),
-('Comandante da Marinha', 'Lutar contra o comandante da Marinha.', 2, 1, 3, 'campo_batalha', 4),
-('Ataque de Lobos', 'Lutar contra lobos no caminho.', 3, 1, 1, 'campo_batalha', 5),
-('Defesa do Vilarejo', 'Defender vilarejo de piratas.', 3, 1, 1, 'campo_batalha', 6),
-('Verme da Areia', 'Lutar contra o verme no deserto.', 4, 1, 1, 'campo_batalha', 7),
-('Estrategia do Deserto', 'Diminuir piratas no deserto.', 4, 1, 1, 'campo_batalha', 8),
-('Lider Pirata do Deserto', 'Derrotar lider pirata.', 4, 1, 1, 'campo_batalha', 9),
-('Treinamento Secreto', 'Passar por treinamento e coletar materiais.', 5, 1, 3, 'campo_batalha', 10),
-('Favores na Fortaleza', 'Realizar favores para os marinheiros.', 6, 1, 1, 'campo_batalha', 11),
-('Besta Marinha', 'Derrotar besta marinha.', 6, 1, 1, 'campo_batalha', 12),
-('Marinheiro Nobre - Hibrido', 'Lutar contra Marinheiro Nobre hibrido.', 6, 1, 5, 'campo_batalha', 11),
-('Marinheiro Nobre - Final', 'Luta final contra Marinheiro Nobre completo.', 6, 1, 5, 'campo_batalha', 11);
 
-INSERT INTO negociacao (identificador_item, identificador_jogador, identificador_vendedor, quantidade, preco_final, tipo) VALUES
-(3, 1, 1, 5, 250.00, 'compra');
 
-INSERT INTO Inventario (id_jogador, nome) VALUES
-(1, 'Bolsa de Itens');
+INSERT INTO nao_consumivel
+    (nome, descricao, raridade, local_encontrado,
+     preco_de_compra, preco_de_venda)
+VALUES
+    ('Abóbora Redonduda', 'Grande, laranja e cheia de personalidade. Ótima para sopas, risos e sustos.', '★', 'Ilha de Borabóia', 15, 6),
+    ('Arroz do Planalto', 'Grãos branquinhos que dançam quando caem na panela. Base de quase tudo!', '★', 'Ilha de Borabóia', 10, 5),
+    ('Ovo dos Campos', 'Um ovo fresquinho, coletado de aves que vivem soltas pelos campos. Dá vontade de fritar, mas também pode virar algo mais sofisticado.', '★', 'Ilha de Borabóia', 10, 5),
+    ('Carne de Ave Brava', 'Um pedaço de ave com gosto de aventura. Cozinhe bem ou corra risco de bicadas!', '★', 'Ilha de Borabóia', NULL, 7),
+    ('Presa de Lobo', 'Um dente afiado arrancado de um lobo valente. Não é comestível, mas é estiloso.', '★★', 'Ilha de Borabóia', NULL, 15),
+    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 10, 5),
+    ('ButterCream de Fuligem', 'O preferido dos confeiteiros da cidade, feito com um toque especial de cana-de-açúcar e... partículas do ar local.', '★★', 'Cidade de Lurien', NULL, 15),
+    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 20, 8),
+    ('Medalha de Marinheiro', 'Símbolo de honra… ou corrupção. Não serve pra comer, mas pode abrir portas.', '★★', 'Cidade de Lurien', NULL, 20),
+    ('Pérola Cantante', 'Emite um som suave quando tocada. Dizem que revive quem ouve sua melodia até o fim.', '★★', 'Ilha Glacial de Frimora', 30, 17),
+    ('Pedaço de Tecido Rasgado', 'Um trapo que já foi parte de um uniforme pirata. Cheira a nostalgia e mofo.', '★', 'Ilha Glacial de Frimora', NULL, 8),
+    ('Lamento Gelado', 'Um fragmento de tristeza congelada. Só aparece quando almas inquietas são libertadas.', '★★', 'Ilha Glacial de Frimora', NULL, 12),
+    ('Faixa de Pirata Estorricado', 'Um pano ressecado de pirata que enfrentou o sol por tempo demais. Ótimo pra rituais e costura.', '★', 'Cactuaraquara', NULL, 10),
+    ('Fragmento de Miragem', 'Um cristal etéreo que brilha e some quando você olha fixo. Nasceu da confusão de mentes perdidas.', '★★', 'Cactuaraquara', NULL, 12),
+    ('Sombra Engarrafada', 'Uma sombra viva que foi capturada. Útil em receitas que assustam até o cozinheiro.', '★★', 'Nublária', NULL, 17),
+    ('Açúcar Estranho', 'Doce, crocante e... será que isso tá brilhando? Ideal para doces perigosamente bons.', '★', 'Nublária', 5, 2),
+    ('Essência de Névoa Doce', 'Um xarope espesso que adoça e assusta. Parece açúcar, mas sussurra nomes perdidos.', '★★', 'Nublária', 10, 4),
+    ('Asa de Morcego Noturno', 'Negra como a meia-noite sem lua. Serve para receitas, poções e decoração gótica.', '★', 'Nublária', NULL, 9),
+    ('Presa Venenosa', 'Brilha com um verde nada confiável. Cuide para não furar o dedo ao manusear.', '★', 'Nublária', NULL,  7),
+    ('Peixe Saltitante', 'Ainda parece se mexer! Ideal para grelhar, cozinhar ou assustar aprendizes.', '★', 'Quartel Naval D-57', NULL, 11),
+    ('Pepino de Salmoura', 'Conservado com tanto sal que chega a arrepiar a alma. Dizem que dura uma década.', '★', 'Quartel Naval D-57', NULL, 5),
+    ('Chapéu de Marinheiro', 'Simboliza status, disciplina e... bom, é só um chapéu suado. Não comestível.', '★★', 'Quartel Naval D-57', NULL, 15);
 
-INSERT INTO ItemInventario (id_inventario, identificador_item) VALUES
-(1, 1);
 
-INSERT INTO ItemMissao (missao_id, identificador_item) VALUES
-(1, 1);
 
-INSERT INTO batalha (identificador_jogador, identificador_chefe) VALUES
-(1, 1);
+INSERT INTO consumivel
+    (nome, descricao, raridade, local_encontrado,
+     preco_de_compra, preco_de_venda, e_fabricavel)
+VALUES
+    ('Fruta do Mar Azul', 'Uma frutinha brilhante e saborosa! Recupera energia e pode causar inveja em gaivotas.', '★', 'Ilha de Borabóia', NULL, 5, FALSE),
+    ('Fruta do Mar Vermelha', 'Mais doce e vibrante que sua prima azul. Dizem que aquece até o coração gelado.', '★', 'Ilha de Borabóia', NULL, 5, FALSE),
+    ('Folha de Hortelã', 'Refrescante, cheirosa e ótima em chás ou nas mãos de piratas resfriados.', '★', 'Ilha de Borabóia', NULL, 5, FALSE),
+    ('Maçã Lustrosa', 'Brilha tanto que você se vê nela. Tão docinha quanto promessas de marinheiro.', '★', 'Cidade de Lurien', NULL, 7, FALSE),
+    ('Repolho Redondo', 'Enrola mais que muito pirata mentiroso. Cru ou cozido, sempre útil.', '★', 'Cidade de Lurien',  NULL, 5, FALSE),
+    ('Alga Fresca', 'Parece nojenta, mas dizem que é cheia de nutrientes. Piratas fitness adoram.', '★', 'Cidade de Lurien', NULL, 6, FALSE),
+    ('Chá Enlatado', 'Vendido em latas esquisitas. Tem gosto de “quase chá”, mas funciona.', '★', 'Cidade de Lurien', 15, 6, FALSE),
+    ('Doce Amassado', 'Parece que foi esmagado por um punho gigante. Ainda doce, com gosto de luta.', '★', 'Cidade de Lurien', NULL, 2, FALSE),
+    ('Noz Crocante', 'Pequena, dura e barulhenta. Ideal para mordidas rápidas ou espantar pinguins curiosos.', '★', 'Ilha Glacial de Frimora', NULL, 2, FALSE),
+    ('Ervas Aromáticas', 'Um cheirinho que aquece a alma. Ótimas para chás, sopas ou magias de vovó.', '★', 'Ilha Glacial de Frimora', NULL, 3, FALSE),
+    ('Neve Mágica', 'Parece gelo raspado, mas derrete em cura. Tente não comer tudo de uma vez.', '★★', 'Ilha Glacial de Frimora', NULL, 12, FALSE),
+    ('Leite de Cabra Alpina', 'Quentinho, cremoso e nutritivo. Perfeito para combater o frio e o mau humor.', '★', 'Ilha Glacial de Frimora', 10, 6, FALSE),
+    ('Chocolate Amargo', 'Amargo como a vida no gelo. Derrete o cansaço e o coração congelado.', '★', 'Ilha Glacial de Frimora', 15, 8, FALSE),
+    ('Fruta Cítrica do Oeste', 'Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida.', '★', 'Cactuaraquara', NULL, 4, FALSE),
+    ('Côco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara', NULL, 7, FALSE),
+    ('Areia Mineral', 'Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante.', '★★', 'Cactuaraquara', NULL, 10, FALSE),
+    ('Carne do Deserto', 'Picante o suficiente pra te fazer cuspir fogo. +1 em coragem depois de comer.', '★★', 'Cactuaraquara',  20, 8, FALSE),
+    ('Geleia de Cacto Doce', 'Um docinho raro feito do néctar de um cacto bem zangado. Cuidadosamente colhida!', '★★', 'Cactuaraquara', 11, 6, FALSE),
+    ('Suco Refrescante Solar', 'Tão gelado que parece mágica. Refresca mais que mergulho em fonte sagrada.', '★', 'Cactuaraquara', 7, 4, FALSE),
+    ('Cogumelo Risonho', 'Tem uma carinha feliz. Ninguém sabe por quê. Comer pode causar risos... ou arrependimentos.', '★', 'Nublária', NULL, 9, FALSE),
+    ('Fruta Fluorescente', 'Brilha no escuro! Alguns dizem que tem alma própria.', '★', 'Nublária', NULL, 7, FALSE),
+    ('Doce Fantasmal', 'Derrete na língua e deixa um leve arrepio na espinha. Doces espíritos aprovariam.', '★', 'Nublária', 13, 5, FALSE),
+    ('Ração de Soldado', 'Embalada à vácuo e sem gosto. Mas dá energia e fortalece o espírito patriótico.', '★★', 'Quartel Naval D-57', NULL, 10, FALSE),
+    ('Biscoito de Gengibre', 'Na ala dos oficiais, um confeiteiro reformado da Marinha mantém a tradição de assar biscoitos para “manter a moral da tropa”. Só não conte pros recrutas — é só pros superiores.', '★★', 'Quartel Naval D-57', 12, 7, FALSE),
+    ('Café Turbinado', 'Tão forte que acorda até os mortos e os marinheiros de plantão.', '★', 'Quartel Naval D-57',     8, 3, FALSE),
+    ('Carne de Rei dos Mares', 'Gigantesca, rara e cara. Cheia de proteína e orgulho militar.', '★★★', 'Quartel Naval D-57', 40, 19, FALSE),
+    ('Rosquinha Mordida', 'Quem mordeu e largou? Ainda tá boa. Restaura pouco, mas serve como prova de negligência.', '★', 'Quartel Naval D-57', NULL, 3, FALSE),
+    ('Sushi Enrolado', 'Enrolado com carinho e peixe saltitante! Um lanche leve, mas cheio de sabor.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Chá de Algas', 'Um gole desse chá marinho e você sente até as ondas te abraçando por dentro.', '★', 'Cozinha',  NULL, 10, TRUE),
+    ('Pastel de Fruta do Diabo', 'Ardido e adocicado, um quitute perigoso para os mais ousados.', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Caldo da Vovó Yuba', 'Uma sopa tão boa que parece que te dá um abraço. Feita com amor... e pimenta!', '★★', 'Cozinha', NULL, 22, TRUE),
+    ('Tônico de Areia', 'Tem gosto de areia? Sim. Funciona? Mais do que você imagina!', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Chá Gelado de Neve', 'Refrescante até congelar os pensamentos. A escolha perfeita pra esfriar os ânimos.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Receita Secreta do Capitão', 'Uma mistura poderosa e misteriosa, só os verdadeiros líderes se atrevem a provar.', '★★★', 'Cozinha', NULL, 27, TRUE),
+    ('Carne Grelhada', 'Crocante por fora, suculenta por dentro. Perfeita para qualquer fogueira.', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Pérola Caramelizada', 'Crocante, mágica e doce. Dizem que revive até o humor de um pirata carrancudo.', '★★', 'Cozinha', NULL, 13, TRUE),
+    ('Pérola da Lua de Inverno', 'Um doce etéreo que brilha como a luz da lua sobre a neve. Quem o come sente o universo piscando para si — e os dados da vida rolando a seu favor.', '★★★', 'Cozinha', NULL, 24, TRUE),
+    ('Pérola do Sol Escaldante', 'Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável.', '★★★', 'Cozinha', NULL, 24, TRUE),
+    ('Gelado de Algas', 'Uma sobremesa geladinha com gosto do mar e um toque de frescor sobrenatural.', '★', 'Cozinha',  NULL, 15, TRUE),
+    ('Omurice de Arroz', 'Receita tradicional dos viajantes do campo, famosa por causar nostalgia e fome ao mesmo tempo.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Bolo do Campo', 'Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura!', '★★', 'Cozinha', NULL, 14, TRUE),
+    ('Bombom Nebuloso', 'Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra).', '★★', 'Cozinha', NULL, 12, TRUE),
+    ('Arroz dos Sete Mares', 'Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte.', '★', 'Cozinha', NULL, 9, TRUE),
+    ('Doce da Ilha', 'Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto.', '★★', 'Cozinha', NULL, 12, TRUE),
+    ('Omelete dos 4 Ventos', 'Leve e fofa, com o sabor do campo e a brisa das planícies.', '★★', 'Cozinha', NULL, 13, TRUE),
+    ('Frango Assado Estaladiço', 'Crocante por fora, macio por dentro. Tão bom que até o corvo queria roubar.', '★', 'Cozinha', NULL, 10, TRUE),
+    ('Sopa da Guarda Noturna', 'Revigorante e quentinha, ideal para noites frias e perseguições por becos.', '★', 'Cozinha', NULL, 6, TRUE),
+    ('Doce de Duna Dourada', 'Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos.', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Bife do Abismo', 'Um corte suculento direto das profundezas do mar. Tão macio que derrete na boca, mas tão forte que faz os músculos tremerem.', '★★★', 'Cozinha', NULL, 35, TRUE),
+    ('Sashimi do Fim do Mundo', 'Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor.', '★★★', 'Cozinha', NULL, 35, TRUE),
+    ('Torta do Marujo Feliz', 'Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação.', '★', 'Cozinha',  NULL, 10, TRUE),
+    ('Doce Assombrado', 'Não se sabe se o sabor é bom ou se é só a maldição agindo. Textura perfeita... demais até.', '★★', 'Cozinha', NULL, 12, TRUE),
+    ('Curry do Capitão Covarde', 'O cheiro é intenso, o sabor é duvidoso, mas nenhum pirata consegue parar de comer.', '★★', 'Cozinha', NULL, 13, TRUE),
+    ('Elixir Sombrio', 'Bebida proibida sussurrada em tavernas assombradas. Quem é que vai querer beber isso...?', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Poção do Dente Torto', 'Um gole é suficiente para se sentir... diferente. Tem certeza que isso não é veneno?', '★★', 'Cozinha', NULL, 18, TRUE),
+    ('Cookie de Chocolate', 'Crocante por fora, macia por dentro. Derrete na boca como a neve da infância.', '★', 'Cozinha', NULL, 14, TRUE),
+    ('Leite Condensado Alpino', 'Um creme docinho e suave.', '★', 'Cozinha',  NULL, 11, TRUE),
+    ('Chocolate Quente', 'Um gole e você sente como se tivesse abraçado um urso de cachecol... que acabou de sair do banho e decidiu virar seu terapeuta de plantão.', '★★', 'Cozinha',  NULL, 15, TRUE),
+    ('Doce do Silêncio Eterno', 'Um doce que ecoa sussurros antigos. Quem come diz sentir a presença dos que partiram.', '★★', 'Cozinha', NULL, 17, TRUE),
+    ('Cacto-Pop Geladinho', 'Uma explosão refrescante e pegajosa! Perfeito para os dias escaldantes no deserto.', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Esfera da Miragem', 'Parece sólida, mas será que é? Um doce ilusório que desorienta quem o encara por muito tempo.', '★★', 'Cozinha', NULL, 17, TRUE),
+    ('Pickles Pirata', 'Um prato inusitado e ousado. Os piratas juram que melhora a mira (e o hálito!).', '★', 'Cozinha', NULL, 10, TRUE),
+    ('Torta de Telhado', 'Doce crocante e levemente defumado. Dizem que foi assada nos telhados quentes da cidade durante uma greve dos padeiros.', '★★', 'Cozinha', NULL, 15, TRUE),
+    ('Doce de Fuligem Cítrica', 'Uma sobremesa brilhante com um leve toque de fumaça — parece suspeita, mas é incrivelmente viciante.', '★', 'Cozinha', NULL, 11, TRUE),
+    ('Rosquinha do Quartel Proibida', 'Criada por um marinheiro rebelde com talento para confeitaria e zero noção de higiene. Um sucesso entre os subalternos.', '★★', 'Cozinha', NULL, 16, TRUE),
+    ('Bolo da Chaminé Encantada', 'Dizem que foi feito com açúcar mágico... ou fuligem encantada. Vai saber. Pelo menos é fofo e aquece o coração.', '★★★', 'Cozinha', NULL, 18, TRUE),
+    ('Frankenprato', 'Uma aberração culinária nascida da mistura de ingredientes incompatíveis. Não parece comida... mas tecnicamente é.', '★', 'Cozinha', NULL, 5, TRUE);
 
-INSERT INTO batalha_instancia_lacaio (identificador_batalha, identificador_instancia_lacaio) VALUES
-(1, 1);
+
+
+INSERT INTO efeito_consumivel
+    (identificador_consumivel, identificador_efeito)
+VALUES
+    ('con001', 'efe023'),
+    ('con002', 'efe003'),
+    ('con003', 'efe022'),
+    ('con003', 'efe094'),
+    ('con004', 'efe003'),
+    ('con004', 'efe021'),
+    ('con005', 'efe022'),
+    ('con006', 'efe022'),
+    ('con006', 'efe036'),
+    ('con007', 'efe038'),
+    ('con007', 'efe079'),
+    ('con008', 'efe002'),
+    ('con009', 'efe003'),
+    ('con010', 'efe024'),
+    ('con010', 'efe094'),
+    ('con011', 'efe006'),
+    ('con011', 'efe081'),
+    ('con012', 'efe025'),
+    ('con013', 'efe002'),
+    ('con013', 'efe038'),
+    ('con014', 'efe037'),
+    ('con014', 'efe079'),
+    ('con015', 'efe003'),
+    ('con015', 'efe024'),
+    ('con016', 'efe025'),
+    ('con016', 'efe089'),
+    ('con017', 'efe039'),
+    ('con017', 'efe089'),
+    ('con018', 'efe001'),
+    ('con018', 'efe024'),
+    ('con019', 'efe025'),
+    ('con019', 'efe079'),
+    ('con020', 'efe004'),
+    ('con020', 'efe091'),
+    ('con021', 'efe039'),
+    ('con022', 'efe027'),
+    ('con022', 'efe081'),
+    ('con023', 'efe005'),
+    ('con023', 'efe025'),
+    ('con024', 'efe006'),
+    ('con024', 'efe037'),
+    ('con025', 'efe029'),
+    ('con026', 'efe010'),
+    ('con026', 'efe085'),
+    ('con027', 'efe003'),
+    ('con027', 'efe022'),
+    ('con028', 'efe010'),
+    ('con029', 'efe026'),
+    ('con029', 'efe094'),
+    ('con030', 'efe006'),
+    ('con030', 'efe041'),
+    ('con031', 'efe027'),
+    ('con031', 'efe089'),
+    ('con032', 'efe026'),
+    ('con032', 'efe079'),
+    ('con033', 'efe028'),
+    ('con033', 'efe081'),
+    ('con034', 'efe015'),
+    ('con034', 'efe030'),
+    ('con034', 'efe072'),
+    ('con035', 'efe004'),
+    ('con035', 'efe041'),
+    ('con036', 'efe073'),
+    ('con036', 'efe004'),
+    ('con037', 'efe077'),
+    ('con037', 'efe081'),
+    ('con038', 'efe075'),
+    ('con038', 'efe089'),
+    ('con039', 'efe028'),
+    ('con040', 'efe006'),
+    ('con040', 'efe022'),
+    ('con041', 'efe004'),
+    ('con041', 'efe071'),
+    ('con042', 'efe039'),
+    ('con042', 'efe093'),
+    ('con043', 'efe002'),
+    ('con043', 'efe039'),
+    ('con044', 'efe024'),
+    ('con044', 'efe071'),
+    ('con045', 'efe022'),
+    ('con045', 'efe038'),
+    ('con046', 'efe003'),
+    ('con046', 'efe040'),
+    ('con047', 'efe021'),
+    ('con047', 'efe038'),
+    ('con048', 'efe001'),
+    ('con048', 'efe025'),
+    ('con049', 'efe045'),
+    ('con049', 'efe089'),
+    ('con050', 'efe020'),
+    ('con050', 'efe079'),
+    ('con050', 'efe093'),
+    ('con051', 'efe004'),
+    ('con051', 'efe022'),
+    ('con052', 'efe038'),
+    ('con052', 'efe079'),
+    ('con053', 'efe024'),
+    ('con053', 'efe093'),
+    ('con054', 'efe005'),
+    ('con054', 'efe085'),
+    ('con055', 'efe025'),
+    ('con055', 'efe091'),
+    ('con056', 'efe003'),
+    ('con056', 'efe071'),
+    ('con057', 'efe001'),
+    ('con057', 'efe023'),
+    ('con058', 'efe005'),
+    ('con058', 'efe071'),
+    ('con059', 'efe038'),
+    ('con059', 'efe093'),
+    ('con060', 'efe023'),
+    ('con060', 'efe036'),
+    ('con061', 'efe073'),
+    ('con061', 'efe093'),
+    ('con062', 'efe042'),
+    ('con062', 'efe083'),
+    ('con063', 'efe005'),
+    ('con063', 'efe037'),
+    ('con064', 'efe026'),
+    ('con064', 'efe079'),
+    ('con065', 'efe024'),
+    ('con065', 'efe037'),
+    ('con066', 'efe009'),
+    ('con066', 'efe093'),
+    ('con067', 'efe002'),
+    ('con067', 'efe091');
+
+
+
+INSERT INTO receita
+    (consumivel_produzido)
+VALUES
+    ('con028'),
+    ('con029'),
+    ('con030'),
+    ('con031'),
+    ('con032'),
+    ('con033'),
+    ('con034'),
+    ('con035'),
+    ('con036'),
+    ('con037'),
+    ('con038'),
+    ('con039'),
+    ('con040'),
+    ('con041'),
+    ('con042'),
+    ('con043'),
+    ('con044'),
+    ('con045'),
+    ('con046'),
+    ('con047'),
+    ('con048'),
+    ('con049'),
+    ('con050'),
+    ('con051'),
+    ('con052'),
+    ('con053'),
+    ('con054'),
+    ('con055'),
+    ('con056'),
+    ('con057'),
+    ('con058'),
+    ('con059'),
+    ('con060'),
+    ('con061'),
+    ('con062'),
+    ('con063'),
+    ('con064'),
+    ('con065'),
+    ('con066'),
+    ('con067');
+
+
+
+INSERT INTO ingrediente_nao_consumivel
+    (identificador_receita, identificador_nao_consumivel)
+VALUES
+    ('rec001', 'ncn020'),
+    ('rec005', 'ncn017'),
+    ('rec009', 'ncn010'),
+    ('rec009', 'ncn016'),
+    ('rec013', 'ncn002'),
+    ('rec013', 'ncn003'),
+    ('rec014', 'ncn006'),
+    ('rec014', 'ncn003'),
+    ('rec015', 'ncn015'),
+    ('rec015', 'ncn017'),
+    ('rec016', 'ncn002'),
+    ('rec018', 'ncn003'),
+    ('rec019', 'ncn004'),
+    ('rec020', 'ncn004'),
+    ('rec022', 'ncn012'),
+    ('rec023', 'ncn015'),
+    ('rec024', 'ncn001'),
+    ('rec024', 'ncn006'),
+    ('rec025', 'ncn001'),
+    ('rec025', 'ncn017'),
+    ('rec026', 'ncn001'),
+    ('rec027', 'ncn018'),
+    ('rec027', 'ncn015'),
+    ('rec028', 'ncn019'),
+    ('rec030', 'ncn016'),
+    ('rec032', 'ncn012'),
+    ('rec034', 'ncn014'),
+    ('rec035', 'ncn021'),
+    ('rec036', 'ncn007'),
+    ('rec036', 'ncn006'),
+    ('rec037', 'ncn007'),
+    ('rec038', 'ncn007'),
+    ('rec039', 'ncn007');
+
+
+
+INSERT INTO ingrediente_consumivel
+    (identificador_receita, identificador_consumivel)
+VALUES
+    ('rec001', 'con006'),
+    ('rec002', 'con006'),
+    ('rec003', 'con002'),
+    ('rec003', 'con017'),
+    ('rec004', 'con017'),
+    ('rec004', 'con010'),
+    ('rec004', 'con003'),
+    ('rec005', 'con016'),
+    ('rec006', 'con011'),
+    ('rec006', 'con003'),
+    ('rec007', 'con028'),
+    ('rec007', 'con031'),
+    ('rec008', 'con017'),
+    ('rec010', 'con036'),
+    ('rec010', 'con011'),
+    ('rec011', 'con036'),
+    ('rec011', 'con016'),
+    ('rec012', 'con006'),
+    ('rec012', 'con011'),
+    ('rec015', 'con013'),
+    ('rec016', 'con001'),
+    ('rec016', 'con002'),
+    ('rec016', 'con014'),
+    ('rec016', 'con021'),
+    ('rec017', 'con015'),
+    ('rec017', 'con014'),
+    ('rec018', 'con003'),
+    ('rec018', 'con010'),
+    ('rec019', 'con010'),
+    ('rec020', 'con005'),
+    ('rec020', 'con006'),
+    ('rec021', 'con016'),
+    ('rec021', 'con015'),
+    ('rec022', 'con026'),
+    ('rec023', 'con026'),
+    ('rec026', 'con017'),
+    ('rec028', 'con019'),
+    ('rec029', 'con009'),
+    ('rec029', 'con013'),
+    ('rec030', 'con012'),
+    ('rec031', 'con013'),
+    ('rec031', 'con012'),
+    ('rec032', 'con011'),
+    ('rec033', 'con018'),
+    ('rec033', 'con014'),
+    ('rec034', 'con016'),
+    ('rec035', 'con017'),
+    ('rec037', 'con014'),
+    ('rec038', 'con025'),
+    ('rec039', 'con041');
+
+
+
+INSERT INTO ilha
+	(nome, visitada)
+VALUES
+	('Ilha de Borabóia', FALSE), -- → ilh001
+	('Cidade de Lurien', FALSE), -- → ilh002
+	('Ilha Glacial de Frimora', FALSE), -- → ilh003
+	('Cactuaraquara', FALSE), -- → ilh004
+	('Nublária', FALSE), -- → ilh005
+	('Quartel Naval D-57', FALSE); -- → ilh006
+
+
+
+INSERT INTO conexao_entre_ilhas
+    (identificador_ilha_a, identificador_ilha_b, bloqueada)
+VALUES
+    ('ilh001', 'ilh002', TRUE),
+    ('ilh001', 'ilh004', TRUE),
+    ('ilh002', 'ilh003', TRUE),
+    ('ilh002', 'ilh006', TRUE),
+    ('ilh003', 'ilh004', TRUE),
+    ('ilh003', 'ilh005', TRUE),
+    ('ilh005', 'ilh006', TRUE);
+
+
+
+INSERT INTO area
+	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente, visitada)
+VALUES
+	('ilh001', 'Pastos do Sol Dourado', 'Área de combate', 'cenario_boraboia_pastos', 'cenario_boraboia_pastos_camada_superior', FALSE), -- → are001
+	('ilh001', 'Vilarejo de Borabóia', 'Vila', 'cenario_boraboia_vila', null, FALSE), -- → are002
+	('ilh001', 'Vale Verdejante', 'Porto', 'cenario_boraboia_vale', null, FALSE), -- → are003
+	('ilh001', 'Loja de Borabóia', 'Loja', 'loja_interior', null, FALSE), -- → are004
+	('ilh001', 'Casa', 'Vila', 'cenario_boraboia_casa', null, FALSE), -- → are005
+	('ilh001', 'Sótão', 'Vila', 'cenario_boraboia_sotao', null, FALSE), -- → are006
+	('ilh002', 'Porto de Lurien', 'Porto', 'cenario_lurien_porto', 'cenario_lurien_porto_camada_superior', FALSE), -- → are007
+	('ilh002', 'Centro', 'Área neutra', 'cenario_lurien_centro', null, FALSE), -- → are008
+	('ilh002', 'Praça de execução', 'Área de combate', 'cenario_lurien_praca', null, FALSE), -- → are009
+	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null, FALSE), -- → are010
+	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null, FALSE), -- → are011
+	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null, FALSE), -- → are012
+	('ilh003', 'Porto de Frimora', 'Área neutra', 'cenario_frimora_porto', null, FALSE), -- → are013
+	('ilh003', 'Vila de Frimora', 'Vila', 'cenario_frimora_vila', null, FALSE), -- → are014
+	('ilh003', 'Montanha da Cabra Congelada', 'Área de combate', 'cenario_frimora_montanha', null, FALSE), -- → are015
+	('ilh003', 'Cozinha da Vovó Yuba', 'Loja', 'cozinha_interior', null, FALSE), -- → are016
+	('ilh004', 'Duna Braba', 'Porto', 'cenario_cactuaraquara_duna', null, FALSE), -- → are017
+	('ilh004', 'Cidadela de Cactuaraquara', 'Vila', 'cenario_cactuaraquara_cidadela', null, FALSE), -- → are018
+	('ilh004', 'Oásis de Ramtak', 'Área de combate', 'cenario_cactuaraquara_oasis', null, FALSE), -- → are019
+	('ilh004', 'Loja de Cactuaraquara', 'Loja', 'loja_interior', null, FALSE), -- → are020
+	('ilh005', 'Penumbra dos Ossudos', 'Porto', 'cenario_nublaria_penumbra', null, FALSE), -- → are021
+	('ilh005', 'Acampamento de Nublária', 'Vila', 'cenario_nublaria_acampamento', null, FALSE), -- → are022
+	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null, FALSE), -- → are023
+	('ilh005', 'Loja de Nublária', 'Loja', 'loja_interior', null, FALSE), -- → are024
+    ('ilh005', 'Yomotsu Hirasaka', 'Yomotsu Hirasaka', null, null, FALSE), -- → are025
+	('ilh006', 'Porto da Égide', 'Porto', 'cenario_quartel_porto', null, FALSE), -- → are026
+	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null, FALSE), -- → are027
+	('ilh006', 'Escritório do Vice-Almirante', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE), -- → are028
+	('ilh006', 'Loja da Marinha', 'Loja', 'loja_interior', null, FALSE), -- → are029
+	('ilh006', 'Cozinha do Capitão', 'Loja', 'cozinha_interior', null, FALSE); -- → are030
+
+
+
+INSERT INTO conexao_entre_areas
+    (identificador_area_a, identificador_area_b)
+VALUES
+    ('are001', 'are002'),
+    ('are002', 'are003'),
+    ('are002', 'are004'),
+    ('are002', 'are005'),
+    ('are005', 'are006'),
+    ('are007', 'are008'),
+    ('are008', 'are009'),
+    ('are008', 'are010'),
+    ('are009', 'are012'),
+    ('are010', 'are011'),
+    ('are013', 'are014'),
+    ('are014', 'are015'),
+    ('are014', 'are016'),
+    ('are017', 'are018'),
+    ('are018', 'are019'),
+    ('are018', 'are020'),
+    ('are021', 'are022'),
+    ('are022', 'are023'),
+    ('are022', 'are024'),
+    ('are026', 'are027'),
+    ('are027', 'are028'),
+    ('are027', 'are029'),
+    ('are027', 'are030');
+
+
+
+-- Insere eventos de mudar_area
+INSERT INTO evento
+    (identificador_area_a, identificador_area_b, tipo_evento, ponto_geracao_x,
+    ponto_geracao_y, orientacao)
+VALUES
+    ('are001', 'are002', 'mudar_area', 100, 370, 'direita'), -- are001 → are002
+    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'), -- are002 → are001
+    ('are002', 'are004', 'mudar_area', 100, 275, 'direita'), -- are002 → are004
+    ('are002', 'are004', 'mudar_area', 1781, 312, 'esquerda'), -- are004 → are002
+    ('are002', 'are003', 'mudar_area', 50, 190, 'direita'), -- are002 → are003
+    ('are002', 'are003', 'mudar_area', 3361, 370, 'esquerda'), -- are003 → are002
+    ('are007', 'are008', 'mudar_area', 100, 415, 'direita'), -- are007 → are008
+    ('are007', 'are008', 'mudar_area', 680, 175, 'esquerda'), -- are008 → are007
+    ('are008', 'are009', 'mudar_area', 100, 415, 'direita'), -- are008 → are009
+    ('are008', 'are009', 'mudar_area', 1570, 460, 'esquerda'); -- are009 → are008
+
+
+
+-- Insere eventos de embarcar
+INSERT INTO evento
+    (identificador_porto_destino, tipo_evento, ponto_geracao_x,
+    ponto_geracao_y, orientacao)
+VALUES
+    ('are003', 'embarcar', 4160, 280, 'esquerda'),
+    ('are007', 'embarcar', 2470, 265, 'esquerda'),
+    ('are013', 'embarcar', 100, 415, 'direita'),
+    ('are017', 'embarcar', 2470, 265, 'direita'),
+    ('are021', 'embarcar', 2470, 265, 'direita'),
+    ('are026', 'embarcar', 2470, 265, 'direita');
+
+
+
+INSERT INTO area_interativa
+    (identificador_area, x, y, largura, altura, tipo_evento)
+VALUES
+    ('are001', 4473, 187, 30, 180, 'mudar_area'), -- → vila
+    ('are002', 0, 360, 50, 150, 'mudar_area'), -- → pastos
+    ('are002', 1716, 300, 200, 40, 'mudar_area'), -- → loja
+    ('are002', 3490, 360, 50, 150, 'mudar_area'), -- → vale
+    ('are003', 0, 200, 50, 150, 'mudar_area'), -- → vila
+    ('are003', 4205, 313, 50, 158, 'embarcar'), -- → navegar
+    ('are004', 0, 300, 50, 270, 'mudar_area'), -- → sair da loja
+    ('are007', 610, 185, 250, 20, 'mudar_area'), -- → centro
+    ('are007', 2472, 375, 93, 67, 'embarcar'), -- → navegar
+    ('are008', 0, 480, 50, 150, 'mudar_area'), -- → porto
+    ('are008', 1656, 484, 50, 150, 'mudar_area'), -- → praça
+    ('are009', 0, 500, 50, 85, 'mudar_area'); -- → centro
+
+
+INSERT INTO area_interativa_evento
+    (identificador_area_interativa, identificador_evento)
+VALUES
+    ('ari001', 'eve001'),
+    ('ari002', 'eve002'),
+    ('ari003', 'eve003'),
+    ('ari004', 'eve005'),
+    ('ari005', 'eve006'),
+    ('ari006', 'eve012'),
+    ('ari006', 'eve014'),
+    ('ari007', 'eve004'),
+    ('ari008', 'eve007'),
+    ('ari009', 'eve011'),
+    ('ari010', 'eve008'),
+    ('ari011', 'eve009'),
+    ('ari012', 'eve010');
+
+INSERT INTO caminho
+    (identificador_area, tipo_terreno, x, y, largura, altura)
+VALUES
+    ('are001', 'arena', 3329, 0, 1144, 600),
+    ('are001', 'normal', 4473, 197, 36, 180),
+    ('are001', 'normal', 826, 216, 2503, 154),
+    ('are001', 'normal', 826, 370, 150, 230),
+    ('are001', 'normal', 339, 438, 487, 162),
+    ('are002', 'normal', 0, 445, 3540, 155),
+    ('are002', 'normal', 1728, 412, 174, 33),
+    ('are003', 'normal', 0, 236, 1360, 156),
+    ('are003', 'arena', 1360, 33, 1226, 567),
+    ('are003', 'normal', 2586, 230, 827, 145),
+    ('are003', 'normal', 3413, 230, 481, 370),
+    ('are003', 'normal', 3894, 313, 361, 158),
+    ('are007', 'normal', 111, 309, 2589, 107),
+    ('are007', 'normal', 580, 270, 290, 39),
+    ('are008', 'normal', 0, 498, 1682, 102),
+    ('are008', 'normal', 1539, 403, 143, 95),
+    ('are009', 'normal', 0, 483, 764, 117),
+    ('are009', 'arena', 764, 203, 1036, 397),
+    ('are014', 'normal', 0, 407, 3540, 193),
+    ('are014', 'neve', 0, 407, 3540, 74),
+    ('are014', 'neve', 0, 571, 3540, 29);
+
+
+
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais)
+VALUES
+    ('are001', 'Aldeão', 'Habitante da Ilha de Borabóia', 'rct', 0, 0, 15),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 290, 300, 16),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 615, 330, 14),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1650, 340, 17),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2775, 345, 20),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2870, 345, 10),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1000, 450, 13),
+    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 915, 323, 14),
+    ('are007', 'Cidadão', 'Costuma vender frutas no porto da Cidade de Lurien', 'rct', 0, 0, 50),
+    ('are012', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0, 75),
+    ('are014', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0, 40),
+    ('are019', 'Chefe do vilarejo', 'Chefe do vilarejo de Cactuaraquara', 'rct', 0, 0, 30),
+    ('are027', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0, 70);
+
+
+
+INSERT INTO jogador
+    (identificador_area, nome, descricao, coordenada_x, coordenada_y,
+    energia, vida, nivel, sorte, vida_atual, experiencia_atual, moedas_totais)
+VALUES
+    ('are001', 'Silvie', 'Cheia de sonhos, coragem e um apetite por aventura (e por comida também), ela parte rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
+    1950, 140, 5, 10, 0, 1, 10, 0, 0);
+
+
+
+INSERT INTO lacaio
+    (nome, descricao, vida, nivel, experiencia, tempo_reacao)
+VALUES
+    ('Corvo',	'Um bico afiado e uma risada sarcástica. Costuma roubar frutas e orgulho.', 8, 1, 10, 750), -- lac001 vida=8(1+0.05*nível)^(1.5)
+    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 7, 11, 10, 1200), -- lac002
+    ('Brutamontes',	'Grande, mal-humorado e com um gosto inusitado por doces.', 16, 12, 15, 900), -- lac003
+    ('Marinheiro Corrupto',	'Usa o uniforme da Marinha, mas segue as ordens do bolso.', 20, 17, 17, 900), -- lac004
+    ('Pirata Congelado',	'Foi soterrado pela neve... e agora está de volta para esfriar os ânimos.', 24, 22, 22, 900), -- lac005
+    ('Alma Soterrada',	'Um espírito inquieto com voz gelada e olhos que brilham no escuro.', 28, 27, 27, 900), -- lac006
+    ('Pirata do Deserto',	'Armado com espadas enferrujadas e piadas secas como o clima.', 33, 32, 32, 900), -- lac007
+    ('Pirata Iludido',	'Perdeu o rumo e parte da sanidade nas miragens. Ainda acha que está no mar.', 38, 37, 37, 900), -- lac008
+    ('Morcego',	'Só aparece no escuro. Detesta luz e adora cabelo desgrenhado.', 43, 42, 42, 900), -- lac009
+    ('Aranha',	'Anda silenciosa e deixa rastros de teia e calafrios por onde passa.', 49, 47, 47, 900), -- lac010
+    ('Marinheiro',	'Cansado, mal pago, mas ainda tenta manter a postura.', 54, 52, 52, 900), -- lac011
+    ('Oficial da Marinha',	'Sabe gritar "atenção!" melhor do que lutar, mas impõe respeito.', 60, 57, 57, 900); -- lac012
+
+
+
+INSERT INTO instancia_lacaio
+    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, vida_atual, moedas_totais)
+VALUES
+    ('lac001', 'are001', 3430, 55, 5, 0),
+    ('lac001', 'are001', 4273, 412, 5, 0),
+    ('lac001', 'are001', 3935, 208, 5, 0),
+    ('lac001', 'are001', 3600, 427, 5, 0),
+    ('lac002', 'are003', 1500, 125, 7, 0),
+    ('lac002', 'are003', 1900, 400, 7, 0),
+    ('lac002', 'are003', 2360, 210, 7, 0);
+
+
+
+INSERT INTO chefe
+    (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia, moedas_totais)
+VALUES
+    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 14, 10, 20, 0),
+    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 22, 20, 30, 100),
+    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 31, 30, 40, 30),
+    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 41, 40, 50, 50),
+    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 52, 50, 60, 0),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 70, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 70, 200);
+
+
+
+INSERT INTO habilidade_personagem
+    (identificador_personagem, identificador_habilidade)
+VALUES
+    ('jog001', 'hab003'),
+    ('jog001', 'hab004'),
+    ('lac001', 'hab043'),
+    ('lac002', 'hab044'),
+    ('che001', 'hab045'),
+    ('lac003', 'hab046'),
+    ('lac004', 'hab047'),
+    ('che002', 'hab048'),
+    ('lac005', 'hab049'),
+    ('lac006', 'hab050'),
+    ('che003', 'hab051'),
+    ('lac007', 'hab052'),
+    ('lac008', 'hab053'),
+    ('che004', 'hab054'),
+    ('lac009', 'hab055'),
+    ('lac010', 'hab056'),
+    ('che005', 'hab057'),
+    ('lac011', 'hab058'),
+    ('lac012', 'hab059'),
+    ('che006', 'hab060'),
+    ('che006', 'hab061'),
+    ('che006', 'hab062'),
+    ('che006', 'hab063'),
+    ('che006', 'hab064');
+
+
+
+-- Inventários de personagens
+INSERT INTO inventario
+    (identificador_personagem)
+VALUES
+    ('lac001'),
+    ('lac002'),
+    ('lac003'),
+    ('lac004'),
+    ('lac005'),
+    ('lac006'),
+    ('lac007'),
+    ('lac008'),
+    ('lac009'),
+    ('lac010'),
+    ('lac011'),
+    ('lac012'),
+    ('che001'),
+    ('che002'),
+    ('che003'),
+    ('che004'),
+    ('che005'),
+    ('che006');
+
+
+
+-- Inventários do jogador
+INSERT INTO inventario
+    (identificador_personagem, tipo_inventario)
+VALUES
+    ('jog001', 'ger'),
+    ('jog001', 'kit');
+
+
+
+-- Itens dos inimigos
+INSERT INTO item_inventario
+    (identificador_inventario, identificador_item)
+VALUES
+    ('inv001', 'ncn004'),
+    ('inv002', 'ncn005'),
+    ('inv003', 'con008'),
+    ('inv004', 'ncn009'),
+    ('inv005', 'ncn011'),
+    ('inv006', 'ncn012'),
+    ('inv007', 'ncn013'),
+    ('inv008', 'ncn014'),
+    ('inv009', 'ncn018'),
+    ('inv010', 'ncn019'),
+    ('inv011', 'con027'),
+    ('inv012', 'ncn022');
+
+INSERT INTO missao
+    (identificador_jogador, identificador_area, identificador_recrutador, descricao, nome)
+VALUES
+    ('jog001', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
+    ('jog001', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
+    ('jog001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
+    ('jog001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
+    ('jog001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
+    ('jog001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
+    ('jog001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
+    ('jog001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
+    ('jog001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
+    ('jog001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
+    ('jog001', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
+    ('jog001', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
+    ('jog001', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
+    ('jog001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
+    ('jog001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
+

@@ -4,6 +4,7 @@ import pygame
 import sys
 from utilidades.constantes import *
 from recursos import GerenciadorDeRecursos
+from utilidades import DBManager
 from telas import GerenciadorDeTelas
 
 # Inicializa o Pygame (DEVE VIR ANTES DE CARREGAR FONTES/IMAGENS)
@@ -18,6 +19,7 @@ pygame.display.set_caption("Marventura") # Título da janela do jogo
 # --- Gerenciador de Recursos ---
 # Cria uma única instância do gerenciador de recursos
 gerenciador_recursos = GerenciadorDeRecursos()
+gerenciador_banco_de_dados = DBManager()
 
 gerenciador_recursos.carregar_recursos()
 
@@ -27,7 +29,7 @@ def executar_jogo():
 
     # Cria uma instância do GerenciadorDeTelas.
     # Ele será responsável por inicializar a primeira tela (menu principal).
-    gerenciador_telas = GerenciadorDeTelas(tela_principal, gerenciador_recursos)
+    gerenciador_telas = GerenciadorDeTelas(tela_principal, gerenciador_recursos, gerenciador_banco_de_dados)
 
     rodando = True
     while rodando:
