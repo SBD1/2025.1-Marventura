@@ -14,7 +14,6 @@ CREATE TABLE arma (
     identificador_arma ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
     descricao CHAR(150) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     tipo_arma CHAR(3) NOT NULL CHECK (tipo_arma IN ('esp', 'est', 'arc')),
     local_encontrado CHAR(27) NOT NULL CHECK (local_encontrado IN ('Loja de Espadas', 'Loja de Estilingues e Arcos')),
@@ -32,7 +31,6 @@ CREATE TABLE fruta (
     identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
     descricao CHAR(222) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Missão', 'Evento')),
     preco_de_venda SMALLINT CHECK (preco_de_venda IS NULL OR preco_de_venda BETWEEN 1 AND 999)
@@ -49,7 +47,6 @@ CREATE TABLE acessorio (
     identificador_acessorio ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
     descricao CHAR(150) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(18) NOT NULL CHECK (local_encontrado IN ('Loja de Acessórios')),
     preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
@@ -66,7 +63,6 @@ CREATE TABLE consumivel (
     identificador_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
     descricao CHAR(200) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
@@ -85,7 +81,6 @@ CREATE TABLE nao_consumivel (
     identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
     descricao CHAR(150) NOT NULL,
-    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
@@ -510,6 +505,7 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE item_inventario (
     identificador_inventario ID,
     identificador_item ID,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
     PRIMARY KEY (identificador_inventario, identificador_item),
     FOREIGN KEY (identificador_inventario) REFERENCES inventario(identificador_inventario),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
