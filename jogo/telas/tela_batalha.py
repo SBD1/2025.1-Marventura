@@ -110,6 +110,14 @@ class TelaBatalha(TelaModelo):
                 self.imagem_inimigo = pygame.Surface((150, 150))
                 self.imagem_inimigo.fill(VERMELHO)
 
+        self.estado_batalha = "turno_jogador"  # outros: "turno_inimigo", "esperando_ataque"
+        self.tempo_proximo_ataque = 0
+        self.inimigo_index_atacando = 0
+
+        self.tempo_dano_jogador = 0
+        self.danos_flutuantes = []
+
+
         self.menu_mochila_ativo = False
         self.item_selecionado = None
 
@@ -161,6 +169,11 @@ class TelaBatalha(TelaModelo):
         self.texto_mensagem_onda = f"Onda {self.numero_da_onda}/{total_ondas}"
         self.tempo_mensagem_onda = 2.5  # segundos visíveis
 
+        # garantir que o turno recomeça do jogador
+        self.estado_batalha = "turno_jogador"
+        self.tempo_proximo_ataque = 0
+        self.inimigo_index_atacando = 0
+        
         return True
 
     def usar_item_da_mochila(self, chave_item):
@@ -199,11 +212,10 @@ class TelaBatalha(TelaModelo):
 
     def inimigos_realizam_turno(self):
         print("Turno dos inimigos!")
-        for inimigo in self.inimigos:
-            if inimigo['PV'] > 0:
-                dano = 1  # pode ser random ou baseado no tipo do inimigo
-                self.vida_jogador -= dano
-                print(f"{inimigo['tipo']} atacou! Jogador perdeu {dano} PV.")
+        self.estado_batalha = "turno_inimigo"
+        self.tempo_proximo_ataque = 0.5  # tempo de espera antes do primeiro ataque
+        self.inimigo_index_atacando = 0
+        
 
         # Atualiza a barra de estado do jogador
         self.barra_de_estado.atualizar_estado(
@@ -237,12 +249,21 @@ class TelaBatalha(TelaModelo):
         tela.blit(self.fundo_batalha, (0, 0))
 
         if self.imagem_jogador:
-            jogador_rect = self.imagem_jogador.get_rect(center=(self.posicao_jogador))
-            tela.blit(self.imagem_jogador, jogador_rect)
+            imagem = self.imagem_jogador
+            if self.tempo_dano_jogador > 0:
+                imagem = pygame.transform.rotate(imagem, 15)  # inclina para trás
+
+            rect = imagem.get_rect(center=self.posicao_jogador)
+            tela.blit(imagem, rect)
+
 
         # Desenhar todos os inimigos da onda atual
         for animado in self.inimigos_animados:
             animado.draw(tela)
+
+        fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+        for dano in self.danos_flutuantes:
+            dano.draw(tela, fonte)
 
         # Desenha a barra de estado
         self.barra_de_estado.desenhar(tela)
@@ -250,12 +271,13 @@ class TelaBatalha(TelaModelo):
         centro = (self.posicao_jogador)
         raio = 220  # distância do personagem
 
-        # Suponha que icones_acao seja uma lista de objetos que têm .image e .rect
-        self.distribuir_icones_em_arco(self.icones_acao, centro, raio)
+        if self.estado_batalha == "turno_jogador":
+            # Suponha que icones_acao seja uma lista de objetos que têm .image e .rect
+            self.distribuir_icones_em_arco(self.icones_acao, centro, raio)
 
-        # Depois desenhe normalmente:
-        for icone in self.icones_acao:
-            tela.blit(icone.image, icone.rect)
+            # Depois desenhe normalmente:
+            for icone in self.icones_acao:
+                tela.blit(icone.image, icone.rect)
 
         if self.tempo_mensagem_onda > 0:
             texto = self.titulo.render(self.texto_mensagem_onda, True, BRANCO_CLARO)
@@ -316,6 +338,8 @@ class TelaBatalha(TelaModelo):
                 self.menu_mochila_ativo = False
                 return
         """
+        if self.estado_batalha != "turno_jogador":
+            return
         if evento.type == pygame.MOUSEBUTTONDOWN:
             # Se o menu da mochila está aberto, verifica clique nos itens
             if self.menu_mochila_ativo:
@@ -383,6 +407,45 @@ class TelaBatalha(TelaModelo):
         if self.tempo_mensagem_onda > 0:
             self.tempo_mensagem_onda -= dt
 
+        if self.tempo_dano_jogador > 0:
+            self.tempo_dano_jogador -= dt
+
+        if self.estado_batalha == "turno_inimigo":
+            self.tempo_proximo_ataque -= dt
+            if self.tempo_proximo_ataque <= 0:
+                if self.inimigo_index_atacando < len(self.inimigos):
+                    inimigo = self.inimigos[self.inimigo_index_atacando]
+                    if inimigo['PV'] > 0:
+                        self.inimigos_animados[self.inimigo_index_atacando].iniciar_ataque()
+
+                        dano = 1
+                        self.vida_jogador -= dano
+                        print(f"{inimigo['tipo']} atacou! Jogador perdeu {dano} PV.")
+                        self.tempo_dano_jogador = 0.25  # dura 0.25s
+                        pos = self.posicao_jogador
+                        self.danos_flutuantes.append(DanoFlutuante(str(dano), (pos[0], pos[1] - 50)))
+                        
+                        self.barra_de_estado.atualizar_estado(
+                            self.vida_jogador,
+                            self.vida_jogador_max,
+                            self.energia_jogador,
+                            self.energia_jogador_max
+                        )
+
+                        if self.vida_jogador <= 0:
+                            self.fim_batalha(venceu=False)
+                            return
+
+                    self.inimigo_index_atacando += 1
+                    self.tempo_proximo_ataque = 0.7  # tempo entre ataques
+                else:
+                    self.estado_batalha = "turno_jogador"
+
+        for dano in self.danos_flutuantes:
+            dano.update(dt)
+        self.danos_flutuantes = [d for d in self.danos_flutuantes if not d.acabou()]
+
+
         # 1) Atualiza TODAS as animações visuais
         for animado in self.inimigos_animados:
             animado.update(dt)
@@ -417,6 +480,15 @@ class InimigoAnimado:
         self.alpha = 255
         self.estado = "entrando"  # pode ser: "entrando", "parado", "morrendo"
         self.tempo_morte = 0
+        self.atacando = False
+        self.avanco_total = 80  # pixels que o inimigo avança
+        self.avanco_duracao = 0.3  # segundos (ida + volta)
+        self.avanco_progresso = 0 
+    
+    def iniciar_ataque(self):
+        self.atacando = True
+        self.avanco_progresso = 0
+
 
     def update(self, dt):
         if self.estado == "entrando":
@@ -424,6 +496,13 @@ class InimigoAnimado:
             if self.pos[0] <= self.pos_final[0]:
                 self.pos[0] = self.pos_final[0]
                 self.estado = "parado"
+        
+        if self.atacando:
+            self.avanco_progresso += dt / self.avanco_duracao
+            if self.avanco_progresso >= 1:
+                self.avanco_progresso = 1
+                self.atacando = False
+
 
         elif self.estado == "morrendo":
             self.alpha -= 400 * dt  # fade rápido (~0.6s)
@@ -432,11 +511,45 @@ class InimigoAnimado:
                 self.estado = "removido"
 
     def draw(self, tela):
-        if self.estado != "removido":
-            img = self.imagem.copy()
-            img.set_alpha(int(self.alpha))
-            tela.blit(img, self.pos)
+        if self.estado == "removido":
+            return
+
+        offset = 0
+        if self.atacando:
+            t = self.avanco_progresso
+            deslocamento = self.avanco_total
+            if t < 0.5:
+                offset = deslocamento * (t * 2)  # avança
+            else:
+                offset = deslocamento * (1 - (t - 0.5) * 2)  # recua
+
+        img = self.imagem.copy()
+        img.set_alpha(int(self.alpha))
+        tela.blit(img, (self.pos[0] - offset, self.pos[1]))
 
     def iniciar_morte(self):
         if self.estado != "morrendo":
             self.estado = "morrendo"
+
+class DanoFlutuante:
+    def __init__(self, texto, pos):
+        self.texto = texto
+        self.pos = list(pos)
+        self.tempo = 0
+        self.max_tempo = 0.8
+        self.alpha = 255
+
+    def update(self, dt):
+        self.tempo += dt
+        self.pos[1] -= 30 * dt
+        self.alpha = max(0, 255 * (1 - self.tempo / self.max_tempo))
+
+    def draw(self, tela, fonte):
+        if self.tempo < self.max_tempo:
+            img = fonte.render(self.texto, True, (255, 60, 60))
+            img.set_alpha(int(self.alpha))
+            rect = img.get_rect(center=self.pos)
+            tela.blit(img, rect)
+
+    def acabou(self):
+        return self.tempo >= self.max_tempo
