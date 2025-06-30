@@ -1,2 +1,4 @@
 pygame
+psycopg-binary
 auto-py-to-exe
+python-dotenv

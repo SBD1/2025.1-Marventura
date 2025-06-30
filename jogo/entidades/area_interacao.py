@@ -8,7 +8,8 @@ class AreaInteracao(pygame.sprite.Sprite):
     Representa uma área no mundo do jogo que ativa um evento quando o jogador a sobrepõe
     e interage (ex: pressiona uma tecla). Não é um obstáculo sólido.
     """
-    def __init__(self, x, y, largura, altura, tipo_evento, dados_evento, resource_manager=None):
+    def __init__(self, x, y, largura, altura, tipo_evento,
+        mudar_area = None, navegar_para = None, investigar = None, ):
         """
         Inicializa uma Área de Interação.
         :param x: Posição X no mundo do jogo (canto superior esquerdo).
@@ -26,7 +27,9 @@ class AreaInteracao(pygame.sprite.Sprite):
 
         # Informações sobre o evento a ser ativado
         self.tipo_evento = tipo_evento
-        self.dados_evento = dados_evento # Armazena os dados do evento
+        self.ir_para_area = mudar_area
+        self.navegar_para = navegar_para
+        self.investigar = investigar
 
         # A área de interação não precisa de uma imagem visível por padrão,
         # mas podemos desenhar seu contorno para debug.

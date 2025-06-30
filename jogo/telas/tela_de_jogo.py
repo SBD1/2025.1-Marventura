@@ -6,9 +6,9 @@ from utilidades.constantes import *
 from entidades import Jogador
 from entidades import Inimigo
 from entidades import Obstaculo
+from entidades import Caminho
 from entidades import AreaInteracao
 from utilidades import Camera
-from mapa_dados import mapas_data
 from .tela_modelo import TelaModelo
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
@@ -25,30 +25,32 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, id_mapa_atual, personagem, ponto_de_destino, coordenada_x = None, coordenada_y = None, olhando_direita = None):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, dados_da_ilha, dados_da_area,
+                 gerenciador_banco_de_dados, jogador, ponto_geracao_jogador):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
 
-        self.id_mapa = id_mapa_atual
-        self.personagem = personagem
-        self.ponto_de_destino = ponto_de_destino
-        self.coordenada_x = coordenada_x
-        self.coordenada_y = coordenada_y
-        self.olhando_direita = olhando_direita
+        self.dados_da_area = dados_da_area
+        self.dados_da_ilha = dados_da_ilha
+        self.informacoes_jogador = jogador
 
-        self.mapa_data = mapas_data[self.id_mapa]
+        self.banco_de_dados = gerenciador_banco_de_dados
 
-        self.mapa_fundo_imagem = self.gerenciador_recursos.obter_imagem(self.mapa_data['chave_cenario'])
-        if not self.mapa_fundo_imagem:
-            print(f"ERRO: Imagem de cenário '{self.mapa_data['chave_cenario']}' não encontrada para o mapa '{self.id_mapa}'!")
-            sys.exit()
+        # --- Atributos para o menu de viagem ---
+        self.menu_viagem = None # Será uma instância de _MenuViagemFlutuante quando ativo
+        self.menu_viagem_ativo = False
+
+        # --- Atributo para exibição do nome da ilha ---
+        self.exibicao_nome_ilha = None # Será uma instância de _ExibicaoNomeIlha
+
+        # Inicializa a exibição do nome da ilha (chamando o método auxiliar)
+        self._marcar_ilha_visitada_e_exibir_nome()
+
+        self.mapa_fundo_imagem = self.gerenciador_recursos.obter_imagem(self.dados_da_area.chave_imagem_fundo)
 
         # --- Carregar a camada superior (opcional) ---
         self.camada_superior_imagem = None
-        if 'chave_camada_superior' in self.mapa_data:
-            self.camada_superior_imagem = self.gerenciador_recursos.obter_imagem(self.mapa_data['chave_camada_superior'])
-            if not self.camada_superior_imagem:
-                print(f"AVISO: Imagem de camada superior '{self.mapa_data['chave_camada_superior']}' não encontrada para o mapa '{self.id_mapa}'. A camada superior não será exibida.")
-
+        if self.dados_da_area.chave_imagem_frente:
+            self.camada_superior_imagem = self.gerenciador_recursos.obter_imagem(self.dados_da_area.chave_imagem_frente)
 
         self.largura_mundo = self.mapa_fundo_imagem.get_width()
         self.altura_mundo = self.mapa_fundo_imagem.get_height()
@@ -59,17 +61,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             tamanho_mundo=(self.largura_mundo, self.altura_mundo)
         )
 
-        pos_info = self._definir_posicao_inicial_jogador()
-        pos_x_jogador = pos_info['x']
-        pos_y_jogador = pos_info['y']
-        olhando_direita_inicial = pos_info['olhando_direita']
-
+        x, y, orientacao = ponto_geracao_jogador
         self.jogador = Jogador(
             self.gerenciador_recursos,
-            pos_x_jogador,
-            pos_y_jogador,
-            self.personagem,
-            olhando_direita_inicial
+            x, y,
+            jogador.nome,
+            jogador.descricao,
+            jogador.energia,
+            jogador.vida,
+            jogador.nivel,
+            jogador.sorte,
+            jogador.vida_atual,
+            jogador.experiencia_atual,
+            orientacao
         )
 
         self.obstaculos_caminho = pygame.sprite.Group()
@@ -80,76 +84,91 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # --- Variáveis para rastrear áreas de interação ativas ---
         self.areas_interacao_colididas = [] # Lista das áreas de interação onde o jogador está colidindo
+        self.caminhos = []
 
         self._carregar_entidades_dos_dados_do_mapa()
 
-    def _definir_posicao_inicial_jogador(self):
-        """
-        Determina a posição inicial do jogador e a direção para onde ele está olhando.
-        Prioriza um ponto de destino específico do mapa, depois coordenadas de fallback.
-        Retorna um dicionário {'x': int, 'y': int, 'olhando_direita': bool}.
-        """
-        map_data = mapas_data.get(self.id_mapa)
-        if not map_data:
-            print(f"ERRO: Dados para o mapa com ID '{self.id_mapa}' não encontrados. Usando posição padrão.")
-            return {'x': 100, 'y': 400, 'olhando_direita': True} # Posição padrão segura
-
-        # 1. Tenta usar o ponto de destino se fornecido
-        if self.ponto_de_destino:
-            pontos_de_entrada = map_data.get('pontos_de_entrada_no_mapa', {})
-            entrada = pontos_de_entrada.get(self.ponto_de_destino)
-            if entrada:
-                return {
-                    'x': entrada.get('x', 100),
-                    'y': entrada.get('y', 400),
-                    'olhando_direita': entrada.get('olhando_direita', True)
-                }
-            else:
-                print(f"AVISO: Ponto de destino '{self.ponto_de_destino}' não encontrado no mapa '{self.id_mapa}'. Usando coordenadas de fallback ou padrão.")
-
-        # 2. Se o ponto de destino não foi encontrado ou não foi fornecido, usa as coordenadas de fallback
-        if self.coordenada_x is not None and self.coordenada_y is not None:
-            return {
-                'x': self.coordenada_x,
-                'y': self.coordenada_y,
-                'olhando_direita': self.olhando_direita if self.olhando_direita is not None else True
-            }
-
-        # 3. Se nenhuma opção acima, retorna uma posição padrão
-        print(f"AVISO: Nenhuma posição inicial específica fornecida para o mapa '{self.id_mapa}'. Usando posição padrão.")
-        return {'x': 100, 'y': 400, 'olhando_direita': True}
 
 
     def _carregar_entidades_dos_dados_do_mapa(self):
-        for obj_data in self.mapa_data['obstaculos']:
+        id_area_atual = self.dados_da_area.identificador_area
+        obstaculos = self.banco_de_dados.buscar_obstaculos_da_area(id_area_atual)
+        for obj_data in obstaculos:
             obstaculo = Obstaculo(
                 self.gerenciador_recursos,
-                obj_data['x'], obj_data['y'],
-                obj_data['largura'], obj_data['altura']
+                obj_data.x, obj_data.y,
+                obj_data.largura, obj_data.altura
             )
             self.obstaculos_caminho.add(obstaculo)
             self.obstaculos_visao.add(obstaculo)
+        
+        caminhos = self.banco_de_dados.buscar_caminhos_da_area(id_area_atual)
+        caminho_arena = None 
+        for dado_do_caminho in caminhos:
+            caminho = Caminho(dado_do_caminho.x, dado_do_caminho.y,
+                              dado_do_caminho.largura, dado_do_caminho.altura,
+                              dado_do_caminho.tipo_terreno)
+            if caminho.tipo_terreno == 'arena':
+                # O inimigo sampre fica restringido dentro de um caminho. Aqui encontra qual é esse caminho.
+                caminho_arena = caminho
+            self.caminhos.append(caminho)
 
-        for inimigo_data in self.mapa_data.get('inimigos', []):
-            novo_inimigo = Inimigo(
-                self.gerenciador_recursos,
-                inimigo_data['x'], inimigo_data['y'],
-                inimigo_data['tipo'],
-                inimigo_data['velocidade_caminhada'],
-                inimigo_data['velocidade_corrida'],
-                inimigo_data['alcance_visao'],
-                inimigo_data['angulo_visao_graus'],
-                inimigo_data['tempo_reacao_ms'],
-                alcance_ataque=inimigo_data.get('alcance_ataque', DISTANCIA_ATAQUE_INIMIGO),
-                duracao_ataque_ms=inimigo_data.get('duracao_ataque_ms', DURACAO_ATAQUE_INIMIGO_MS)
-            )
-            self.inimigos.add(novo_inimigo)
+        if not caminho_arena:
+            print("AVISO: Nenhum caminho do tipo 'arena' foi encontrado no mapa. Os inimigos não serão carregados.")
+        else:
+            inimigos = self.banco_de_dados.buscar_lacaios_por_area(id_area_atual)
 
-        for area_data in self.mapa_data.get('areas_interacao', []):
-            area = AreaInteracao(area_data['x'], area_data['y'],
-                                 area_data['largura'], area_data['altura'],
-                                 area_data['tipo_evento'], area_data['dados_evento'])
+            # Carrega os inimigos, agora passando o caminho da arena
+            for dado_do_inimigo in inimigos:
+                novo_inimigo = Inimigo(
+                    self.gerenciador_recursos,
+                    dado_do_inimigo.x, dado_do_inimigo.y,
+                    dado_do_inimigo.nome_lacaio,
+                    dado_do_inimigo.descricao_lacaio,
+                    dado_do_inimigo.vida_atual,
+                    dado_do_inimigo.vida_total,
+                    dado_do_inimigo.nivel,
+                    dado_do_inimigo.experiencia,
+                    caminho_container=caminho_arena, # Passa o caminho encontrado
+                )
+                self.inimigos.add(novo_inimigo)
+
+        areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
+        for area_data in areas_interativas:
+            if area_data.tipo_evento == 'mudar_area':
+                evento_acionado = self.banco_de_dados.buscar_eventos_mudar_area(area_data.identificador_area_interativa)
+
+                area = AreaInteracao(area_data.x, area_data.y,
+                                 area_data.largura, area_data.altura,
+                                 area_data.tipo_evento,
+                                 mudar_area=evento_acionado)
+                
+            if area_data.tipo_evento == 'embarcar':
+                evento_acionado = self.banco_de_dados.buscar_eventos_embarcar(area_data.identificador_area_interativa)
+
+                area = AreaInteracao(area_data.x, area_data.y,
+                                    area_data.largura, area_data.altura,
+                                    area_data.tipo_evento,
+                                    navegar_para=evento_acionado)
+
             self.areas_interacao.add(area)
+
+
+
+    def _marcar_ilha_visitada_e_exibir_nome(self):
+        """
+        Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
+        """
+        # db.marcar_ilha_como_visitada(self.dados_da_ilha.identificador_ilha)
+
+        if self.dados_da_ilha.nome or self.dados_da_area.nome: # Só cria a exibição se houver algo para mostrar
+            self.exibicao_nome_ilha = _ExibicaoNomeIlha(self.dados_da_ilha.nome, self.dados_da_area.nome, self.gerenciador_recursos)
+            print(f"Exibindo Ilha: {self.dados_da_ilha.nome}, Área: {self.dados_da_area.nome}")
+            if self.dados_da_ilha.identificador_ilha:
+                print(f"(Ilha {self.dados_da_ilha.nome} visitada: {self.dados_da_ilha.visitada})")
+        else:
+            self.exibicao_nome_ilha = None
+            print(f"AVISO: Nenhuma informação de ilha ou área para exibir para o mapa ID: {self.dados_da_area.identificador_area}")
 
 
     def busca_dados_do_inimigo(self, tipos_inimigos):
@@ -201,6 +220,51 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         transicao_info = super().handle_input(evento)
         if transicao_info:
             return transicao_info
+        
+        # --- Lógica do Menu de Viagem (se estiver ativo) ---
+        if self.menu_viagem_ativo and self.menu_viagem:
+            resultado_menu = self.menu_viagem.handle_input(evento)
+            if resultado_menu is not None:
+                if resultado_menu == "cancelar":
+                    self.menu_viagem_ativo = False
+                    self.menu_viagem = None # Limpa a instância do menu
+                    return None # Consome o evento
+                else: # Uma ilha foi selecionada
+                    ilha_selecionada = resultado_menu
+                    print(f"Viajando para: {ilha_selecionada.nome}")
+
+                    if ilha_selecionada:
+                        porto_destino = self.banco_de_dados.buscar_porto_por_ilha(ilha_selecionada.identificador_ilha)
+
+                        if porto_destino:
+                            self.menu_viagem_ativo = False
+                            self.menu_viagem = None # Limpa a instância do menu
+                            id_area = porto_destino.identificador_area
+
+                            evento = next(
+                                (row for row in self.evento_selecionado if row.identificador_porto_destino == id_area),
+                                None  # valor padrão caso não encontre
+                            )
+
+                            ponto_geracao_jogador = (
+                                evento.ponto_geracao_x,
+                                evento.ponto_geracao_y,
+                                evento.orientacao
+                            )
+                            return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
+                                'id_mapa': id_area,
+                                'ponto_de_destino': None,
+                                'personagem': self.jogador.nome,
+                                'dados_da_area': porto_destino,
+                                'dados_da_ilha': ilha_selecionada,
+                                'jogador': self.informacoes_jogador,
+                                'ponto_geracao_jogador': ponto_geracao_jogador}
+                        else:
+                            print(f"AVISO: Não foi possível determinar o mapa de destino para a ilha '{ilha_selecionada.nome}'.")
+                    else:
+                        print(f"AVISO: ID da ilha não encontrado para o nome '{ilha_selecionada.nome}'.")
+            return None # Consome o evento, não processa o input do jogador normal
+
 
         # --- Lógica de Interação com Áreas de Interação (Eventos KEYDOWN) ---
         # SOMENTE reage a um evento KEYDOWN, não ao estado contínuo da tecla.
@@ -214,21 +278,41 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
                 
                 for area in areas_colidindo_agora:
-                    if area.tipo_evento == 'mudar_mapa':
-                        print(f"Detectou interação para mudar mapa para {area.dados_evento.get('id_proximo_mapa')}")
+                    if area.tipo_evento == 'mudar_area':
+                        print(f"Detectou interação para mudar mapa para {area.ir_para_area.area_destino}")
+                        proxima_area = self.banco_de_dados.buscar_info_area(area.ir_para_area.area_destino)
+                        ponto_geracao_jogador = (
+                            area.ir_para_area.ponto_geracao_x,
+                            area.ir_para_area.ponto_geracao_y,
+                            area.ir_para_area.orientacao
+                        )
                         return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
-                                'id_mapa': area.dados_evento['id_proximo_mapa'],
-                                'ponto_de_destino': area.dados_evento['ponto_de_destino'],
-                                'personagem': self.personagem} # Mantenha o tipo de personagem
+                                'id_mapa': area.ir_para_area.area_destino,
+                                'ponto_de_destino': None,
+                                'personagem': self.jogador.nome,
+                                'dados_da_area': proxima_area,
+                                'dados_da_ilha': self.dados_da_ilha,
+                                'jogador': self.informacoes_jogador,
+                                'ponto_geracao_jogador': ponto_geracao_jogador}
+                    elif area.tipo_evento == 'embarcar':
+                        if not self.menu_viagem_ativo:
+                            print('Embarcando na viagem...')
+                            self.ilhas_vizinhas = self.banco_de_dados.buscar_conexoes_ilha(self.dados_da_area.identificador_ilha)
+
+                            self.evento_selecionado = area.navegar_para # Armazena as opções de destino do evento de embarcar
+                            self.menu_viagem = _MenuViagemFlutuante(self.ilhas_vizinhas)
+                            self.menu_viagem_ativo = True
+                            return None # Consome o evento
+                    
                     elif area.tipo_evento == 'iniciar_batalha':
                         print(f"Detectou interação para iniciar batalha com {area.dados_evento.get('inimigos')}")
                         return {'estado': CHAVE_TRANSICAO_BATALHA,
                                 'inimigos': area.dados_evento['inimigos'], # Passe os inimigos da área
                                 'jogador_x': self.jogador.mundo_x,
                                 'jogador_y': self.jogador.mundo_y,
-                                'olhando_direita': self.jogador.olhando_direita,
-                                'id_mapa': self.id_mapa,
-                                'personagem': self.personagem}
+                                'olhando_direita': self.jogador.orientacao,
+                                'id_mapa': self.dados_da_area.identificador_area,
+                                'personagem': self.jogador.nome}
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
@@ -240,8 +324,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
     def update(self, dt):
         super().update(dt)
 
+        if self.menu_viagem_ativo and self.menu_viagem:
+            return None
+
         # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
-        self.jogador.update(dt, self.obstaculos_caminho)
+        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
 
         # Lógica de clamping do jogador para não sair dos limites do mundo
         largura_mundo_atual = self.mapa_fundo_imagem.get_width()
@@ -283,13 +370,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     inimigos_na_batalha=ondas_de_inimigos,
                     jogador_atual_x=self.jogador.mundo_x,
                     jogador_atual_y=self.jogador.mundo_y,
-                    jogador_olhando_direita=self.jogador.olhando_direita,
-                    mapa_atual_id=self.id_mapa,
-                    personagem=self.personagem
+                    jogador_olhando_direita=self.jogador.orientacao,
+                    mapa_atual_id=self.dados_da_area.identificador_area,
+                    personagem=self.jogador.nome
                 )
                 return # Termina o update aqui para não processar mais nada após a transição
+            
+        # --- Atualiza a exibição do nome da ilha ---
+        if self.exibicao_nome_ilha:
+            self.exibicao_nome_ilha.update()
 
         return None
+
+
 
     def draw(self, tela):
         # Desenha a imagem de fundo
@@ -305,6 +398,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- Desenhar a camada superior (se existir) ---
         if self.camada_superior_imagem:
             tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
+
+        for caminho in self.caminhos:
+            caminho.desenhar(tela, self.camera.rect.x)
 
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
             for area in self.areas_interacao:
@@ -324,3 +420,132 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     obstaculo.rect.height
                 )
                 pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
+
+        # --- Desenha o nome da ilha com fade ---
+        if self.exibicao_nome_ilha:
+            self.exibicao_nome_ilha.draw(tela)
+        
+        # --- Desenha o menu de viagem se estiver ativo ---
+        if self.menu_viagem_ativo and self.menu_viagem:
+            self.menu_viagem.draw(tela)
+
+
+
+
+class _MenuViagemFlutuante:
+    def __init__(self, opcoes_viagem):
+        self.opcoes = opcoes_viagem  # Lista de objetos Row com id, nome_ilha, visitada
+        self.indice_selecionado = 0
+        self.fonte_menu = pygame.font.Font(None, 36)
+        self.cor_texto_normal = (255, 255, 255)
+        self.cor_texto_selecionado = (255, 255, 0)
+        self.cor_fundo_menu = (50, 50, 50, 200)
+        self.cor_borda_menu = (200, 200, 200)
+
+    def handle_input(self, evento):
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_UP:
+                self.indice_selecionado = (self.indice_selecionado - 1) % len(self.opcoes)
+            elif evento.key == pygame.K_DOWN:
+                self.indice_selecionado = (self.indice_selecionado + 1) % len(self.opcoes)
+            elif evento.key == pygame.K_RETURN:
+                if self.opcoes:
+                    return self.opcoes[self.indice_selecionado]  # Retorna o ID da ilha
+                return None
+            elif evento.key == pygame.K_ESCAPE:
+                return "cancelar"
+
+        return None
+
+    def draw(self, tela):
+        if not self.opcoes:
+            return
+
+        largura_menu = 300
+        altura_linha = self.fonte_menu.get_height() + 10
+        altura_menu = (len(self.opcoes) * altura_linha) + 40
+
+        pos_x_menu = (LARGURA_TELA - largura_menu) // 2
+        pos_y_menu = (ALTURA_TELA - altura_menu) // 2
+
+        retangulo_menu = pygame.Rect(pos_x_menu, pos_y_menu, largura_menu, altura_menu)
+
+        s = pygame.Surface((largura_menu, altura_menu), pygame.SRCALPHA)
+        s.fill(self.cor_fundo_menu)
+        tela.blit(s, retangulo_menu.topleft)
+
+        pygame.draw.rect(tela, self.cor_borda_menu, retangulo_menu, 3)
+
+        y_offset = pos_y_menu + 20
+        for i, opcao in enumerate(self.opcoes):
+            nome_ilha = opcao.nome  # Usa o nome da ilha para exibir
+            cor_texto = self.cor_texto_selecionado if i == self.indice_selecionado else self.cor_texto_normal
+            texto_renderizado = self.fonte_menu.render(nome_ilha, True, cor_texto)
+
+            pos_x_texto = pos_x_menu + (largura_menu - texto_renderizado.get_width()) // 2
+            tela.blit(texto_renderizado, (pos_x_texto, y_offset))
+            y_offset += altura_linha
+
+
+
+class _ExibicaoNomeIlha:
+    def __init__(self, nome_ilha, nome_area_mapa, gerenciador_recursos):
+        self.nome_ilha = nome_ilha
+        self.nome_area_mapa = nome_area_mapa
+
+        self.fonte_ilha = gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO) # Fonte maior para o nome da ilha
+        self.fonte_area = gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO) # Fonte menor para o nome da área
+        self.cor = (255, 255, 255) # Branco
+
+        self.ativo = True
+        self.alpha = 0 # Transparência atual (0-255)
+        self.tempo_inicio_animacao = pygame.time.get_ticks()
+        self.duracao_fade = 1000 # 1 segundo para fade-in/out
+        self.duracao_estatica = 2000 # 2 segundos no máximo de opacidade
+
+    def update(self):
+        if not self.ativo:
+            return
+
+        tempo_decorrido = pygame.time.get_ticks() - self.tempo_inicio_animacao
+        total_duracao = self.duracao_fade + self.duracao_estatica + self.duracao_fade
+
+        if tempo_decorrido < self.duracao_fade: # Fade-in
+            self.alpha = int(255 * (tempo_decorrido / self.duracao_fade))
+        elif tempo_decorrido < (self.duracao_fade + self.duracao_estatica): # Estático
+            self.alpha = 255
+        elif tempo_decorrido < total_duracao: # Fade-out
+            tempo_decorrido_fade_out = tempo_decorrido - (self.duracao_fade + self.duracao_estatica)
+            self.alpha = int(255 * (1 - (tempo_decorrido_fade_out / self.duracao_fade)))
+            if self.alpha < 0:
+                self.alpha = 0
+        else: # Animação completa
+            self.ativo = False
+            self.alpha = 0
+
+    def draw(self, tela):
+        if not self.ativo or not self.nome_ilha:
+            return
+
+        # Renderiza o nome da ilha (maior)
+        texto_ilha_superficie = self.fonte_ilha.render(self.nome_ilha, True, self.cor)
+        texto_ilha_superficie.set_alpha(self.alpha)
+
+        # Renderiza o nome da área do mapa (menor)
+        texto_area_superficie = None
+        if self.nome_area_mapa: # Só renderiza se houver um nome de área
+            texto_area_superficie = self.fonte_area.render(self.nome_area_mapa, True, self.cor)
+            texto_area_superficie.set_alpha(self.alpha)
+
+        # Calcula posições para centralizar e empilhar
+        pos_x_ilha = (LARGURA_TELA - texto_ilha_superficie.get_width()) // 2
+        pos_y_ilha = 50 # Posição vertical inicial no topo
+
+        tela.blit(texto_ilha_superficie, (pos_x_ilha, pos_y_ilha))
+
+        if texto_area_superficie:
+            pos_x_area = (LARGURA_TELA - texto_area_superficie.get_width()) // 2
+            # Posiciona a área abaixo da ilha, com um pequeno espaçamento
+            pos_y_area = pos_y_ilha + texto_ilha_superficie.get_height() + 10 # 10 pixels de espaço
+
+            tela.blit(texto_area_superficie, (pos_x_area, pos_y_area))

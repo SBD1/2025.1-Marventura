@@ -26,7 +26,6 @@ class TelaSalvamento(TelaModelo):
             # Adicionamos as coordenadas e orientação salvas (mundo do jogo)
             'coordenada_x': 200, # Exemplo de coord X salva
             'coordenada_y': 400, # Exemplo de coord Y salva
-            'olhando_para_direita': True # Exemplo de orientação salva
         },
         {
             'ocupado': False, # Este slot está vazio
@@ -36,7 +35,6 @@ class TelaSalvamento(TelaModelo):
             'progresso': None,
             'coordenada_x': None,
             'coordenada_y': None,
-            'olhando_para_direita': None
         },
          {
             'ocupado': True, # Outro slot salvo
@@ -46,7 +44,6 @@ class TelaSalvamento(TelaModelo):
             'progresso': '60%',
             'coordenada_x': 200, # <-- Posição X salva
             'coordenada_y': 400, # <-- Posição Y salva
-            'olhando_para_direita': False # <-- Orientação salva
         },
     ]
 
@@ -58,10 +55,10 @@ class TelaSalvamento(TelaModelo):
         self.imagem_cartaz_procurada = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADA)
         self.imagem_cartaz_vazio = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_VAZIO)
 
-        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_TITULO)
-        self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_BOTAO)
-        self.fonte_nome_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_NOME_CARTAZ) # Fonte para o nome/tipo no cartaz
-        self.fonte_data_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_DATA_CARTAZ) # Fonte para data/dados no cartaz
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TITULO)
+        self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
+        self.fonte_nome_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_PAYFAIR_TEXTO) # Fonte para o nome/tipo no cartaz
+        self.fonte_data_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_HEART_TEXTO) # Fonte para data/dados no cartaz
 
         # Imagem de fundo comum para telas de menu
         self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_TELA_INICIAL)
@@ -130,8 +127,7 @@ class TelaSalvamento(TelaModelo):
                                 personagem=slot_data['personagem'],
                                 coordenada_x=slot_data['coordenada_x'],
                                 coordenada_y=slot_data['coordenada_y'],
-                                olhando_para_direita=slot_data['olhando_para_direita'],
-                                ponto_de_destino='entrada_padrao'
+                                olhando_para_direita=True,
                             )
                         else:
                             print(f"Slot {i+1} vazio. Iniciando novo jogo a partir daqui (ou indo para seleção de personagem).")
@@ -194,8 +190,8 @@ class TelaSalvamento(TelaModelo):
             # --- Desenha os textos do slot ---
             # Verifica se a fonte para o nome/tipo no cartaz está disponível
             if self.fonte_nome_cartaz:
-                # O texto principal mostra o tipo de personagem salvo ou "Slot Vazio"
-                texto_principal = dados_slot.get('personagem', "Slot Vazio") if dados_slot['ocupado'] else "Vazio" # Adapta o texto principal
+                # O texto principal mostra o tipo de personagem salvo
+                texto_principal = dados_slot.get('personagem', "").upper() if dados_slot['ocupado'] else "" # Adapta o texto principal
                 superficie_texto_principal = self.fonte_nome_cartaz.render(texto_principal, True, COR_TEXTO_SALVAR) # Renderiza o texto
                 # Calcula a posição do retângulo do texto principal (centralizado no slot com offset Y)
                 rect_texto_principal = superficie_texto_principal.get_rect(center=(rect_slot.center[0], rect_slot.center[1] + 55))
@@ -212,7 +208,7 @@ class TelaSalvamento(TelaModelo):
 
                      superficie_texto_dados = self.fonte_data_cartaz.render(texto_dados, True, COR_TEXTO_SALVAR) # Renderiza o texto de dados
                      # Calcula a posição do retângulo do texto de dados (centralizado no slot com offset Y maior)
-                     rect_texto_dados = superficie_texto_dados.get_rect(center=(rect_slot.center[0], rect_slot.center[1] + 75))
+                     rect_texto_dados = superficie_texto_dados.get_rect(center=(rect_slot.center[0] + 5, rect_slot.center[1] + 75))
                      tela.blit(superficie_texto_dados, rect_texto_dados) # Desenha o texto de dados na tela
 
                 # else: se o slot está ocupado mas a fonte de dados não está disponível, um aviso já é impresso.

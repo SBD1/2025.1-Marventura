@@ -6,18 +6,26 @@ from utilidades.constantes import * # Importa as constantes
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, personagem, olhando_direita_inicial=True):
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, nome, descricao,
+                 energia, vida, nivel, sorte, vida_atual, experiencia_atual,
+                 orientacao='direita'):
         super().__init__()
-        print(f"Inicializando Jogador: {personagem} em ({x_inicial}, {y_inicial}), olhando_direita={olhando_direita_inicial}")
         self.gerenciador_recursos = gerenciador_recursos
-        self.personagem = personagem
         # REMOVIDO: self.fator_de_escala = fator_de_escala
 
         # Estado do jogador
         self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.velocidade = VELOCIDADE_JOGADOR
-        self.olhando_direita = olhando_direita_inicial
+        self.orientacao = orientacao
+        self.nome = nome
+        self.descricao = descricao
+        self.energia = energia
+        self.vida = vida
+        self.nivel = nivel
+        self.sorte = sorte
+        self.vida_atual = vida_atual
+        self.experiencia_atual = experiencia_atual
 
         # Animação e estado
         self.estado = 'parado' # 'parado', 'caminhando'
@@ -44,6 +52,14 @@ class Jogador(pygame.sprite.Sprite):
         
         self.rect = self.image.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
 
+        altura_pes = 18
+        self.pes_rect = pygame.Rect(
+            self.rect.x,
+            self.rect.bottom - altura_pes,
+            self.rect.width,
+            altura_pes
+        )
+
         # Flags de movimento contínuo (agora gerenciadas internamente por handle_input_continuo)
         self.movendo_esquerda = False
         self.movendo_direita = False
@@ -57,16 +73,16 @@ class Jogador(pygame.sprite.Sprite):
 
     def carregar_animacoes(self):
         # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
-        imagem_parado = self.gerenciador_recursos.obter_imagem(self.personagem + '_em_repouso')
-        imagem_caminhar_frame_1 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_1')
-        imagem_caminhar_frame_2 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_2')
-        imagem_caminhar_frame_3 = self.gerenciador_recursos.obter_imagem(self.personagem + '_caminhando_3')
+        imagem_parado = self.gerenciador_recursos.obter_imagem(self.nome + '_em_repouso')
+        imagem_caminhar_frame_1 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_1')
+        imagem_caminhar_frame_2 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_2')
+        imagem_caminhar_frame_3 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_3')
 
         # Adiciona frame 'parado'
         if imagem_parado:
             self.frames_animacao['parado'].append(imagem_parado)
         else:
-            print(f"AVISO: Imagem '{self.personagem}_em_repouso' não encontrada para o jogador. Usando fallback padrão.")
+            print(f"AVISO: Imagem '{self.nome}_em_repouso' não encontrada para o jogador. Usando fallback padrão.")
             fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
             fallback_surface.fill(PRETO)
             self.frames_animacao['parado'].append(fallback_surface)
@@ -82,7 +98,7 @@ class Jogador(pygame.sprite.Sprite):
 
         # Se não houver frames de caminhada carregados, usa o frame 'parado' como fallback
         if not valid_caminhada_frames:
-            print(f"AVISO: Nenhuma imagem de caminhada para '{self.personagem}' carregada. Usando imagem parada como fallback para caminhada.")
+            print(f"AVISO: Nenhuma imagem de caminhada para '{self.nome}' carregada. Usando imagem parada como fallback para caminhada.")
             if self.frames_animacao['parado']:
                 fallback = self.frames_animacao['parado'][0]
                 valid_caminhada_frames = [fallback, fallback, fallback]
@@ -124,104 +140,179 @@ class Jogador(pygame.sprite.Sprite):
         self.movendo_cima = False
         self.movendo_baixo = False
 
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        if keys[pygame.K_a]:
             self.movendo_esquerda = True
-            self.olhando_direita = False # Olhando para a esquerda
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.orientacao = 'esquerda'
+        if keys[pygame.K_d]:
             self.movendo_direita = True
-            self.olhando_direita = True # Olhando para a direita
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.orientacao = 'direita'
+        if keys[pygame.K_w]:
             self.movendo_cima = True
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        if keys[pygame.K_s]:
             self.movendo_baixo = True
 
-    def update(self, dt, obstaculos):
+
+
+    def _obter_terreno_atual(self, lista_de_caminhos):
+        """
+        Verifica o tipo de terreno sob os pés do jogador.
+        Prioriza 'neve' se houver múltiplos terrenos.
+        Retorna:
+            str: O tipo de terreno ('neve', 'grama', etc.) ou 'normal' se nenhum for encontrado.
+        """
+        terreno_encontrado = 'normal' # Valor padrão se não estiver em nenhum caminho
+
+        for caminho in lista_de_caminhos:
+            # Verifica se os pés do jogador colidem com o retângulo do caminho
+            if self.pes_rect.colliderect(caminho):
+                terreno_encontrado = caminho.tipo_terreno
+                # Se o terreno for neve, ele tem prioridade máxima, então já podemos retornar.
+                if terreno_encontrado == 'neve':
+                    return 'neve'
+        
+        return terreno_encontrado
+
+
+
+    def _esta_dentro_do_caminho(self, lista_de_caminhos):
+        """
+        Método privado que verifica se os 4 cantos do jogador estão em algum
+        dos retângulos da lista de caminhos. Retorna True se a posição for válida.
+        """
+        # Se não houver caminhos definidos, qualquer lugar é válido.
+        if not lista_de_caminhos:
+            return True
+
+        cantos = [self.pes_rect.topleft, self.pes_rect.topright,
+                  self.pes_rect.bottomleft, self.pes_rect.bottomright]
+        
+        for canto in cantos:
+            canto_esta_valido = False
+            # Itera sobre cada objeto Caminho na lista
+            for caminho in lista_de_caminhos:
+                if caminho.collidepoint(canto):
+                    canto_esta_valido = True
+                    break # Encontrou um caminho válido para este canto, pode testar o próximo canto
+            
+            # Se este canto específico não estava em nenhum caminho, a posição geral é inválida
+            if not canto_esta_valido:
+                return False
+        
+        # Se todos os cantos passaram na verificação, a posição é válida
+        return True
+
+
+
+    def update(self, dt, obstaculos, lista_de_caminhos): # NOVO: Adicionado 'lista_de_caminhos'
         """
         Atualiza a posição do jogador e a animação a cada frame do jogo.
         :param dt: Delta time (tempo em segundos desde o último frame).
         :param obstaculos: Um grupo de sprites de obstáculos para colisão.
+        :param lista_de_caminhos: Uma lista de objetos Caminho que definem a área andável.
         """
-        self.handle_input_continuo() # Processa as entradas do teclado continuamente
+        self.handle_input_continuo()
 
-        # Salva a posição anterior para reverter em caso de colisão
+        # --- NOVO: LÓGICA DE VELOCIDADE BASEADA NO TERRENO ---
+        
+        # 1. Obtém o terreno atual sob os pés do jogador
+        terreno_atual = self._obter_terreno_atual(lista_de_caminhos)
+
+        # 2. Define o modificador de velocidade com base no terreno
+        modificador_velocidade = 1.0  # 100% da velocidade por padrão
+        if terreno_atual == 'neve':
+            modificador_velocidade = 0.7  # 70% da velocidade (redução de 30%)
+        
+        # 3. Calcula a velocidade efetiva para este quadro
+        velocidade_efetiva = self.velocidade * modificador_velocidade
+
+        # --- FIM DA NOVA LÓGICA ---
+
         pos_anterior_x = self.mundo_x
         pos_anterior_y = self.mundo_y
 
-        # Calcula o movimento
-        dx = 0
-        dy = 0
+        dx, dy = 0, 0
         if self.movendo_esquerda:
-            dx -= self.velocidade
+            dx -= velocidade_efetiva
         if self.movendo_direita:
-            dx += self.velocidade
+            dx += velocidade_efetiva
         if self.movendo_cima:
-            dy -= self.velocidade
+            dy -= velocidade_efetiva
         if self.movendo_baixo:
-            dy += self.velocidade
+            dy += velocidade_efetiva
 
-        # Atualiza a posição X e verifica colisão
+        # --- Verificação de colisão em X ---
         self.mundo_x += dx
-        self.rect.x = int(self.mundo_x) # Atualiza o rect para colisão
+        self.rect.x = int(self.mundo_x)
+        self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
+        self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
 
-        # Verifica colisão em X com obstáculos
-        if pygame.sprite.spritecollideany(self, obstaculos):
-            self.mundo_x = pos_anterior_x # Reverte o movimento em X
-            self.rect.x = int(self.mundo_x) # Atualiza o rect para a posição revertida
+        colidiu_obstaculo_x = False
+        for obstaculo in obstaculos:
+            if self.pes_rect.colliderect(obstaculo.rect):
+                colidiu_obstaculo_x = True
+                break
+        
+        fora_do_caminho_x = not self._esta_dentro_do_caminho(lista_de_caminhos)
 
-        # Atualiza a posição Y e verifica colisão
+        if colidiu_obstaculo_x or fora_do_caminho_x:
+            self.mundo_x = pos_anterior_x
+            self.rect.x = int(self.mundo_x)
+            self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
+            self.pes_rect.bottom = self.rect.bottom
+
+        # --- Verificação de colisão em Y ---
         self.mundo_y += dy
-        self.rect.y = int(self.mundo_y) # Atualiza o rect para colisão
+        self.rect.y = int(self.mundo_y)
+        self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
+        self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
 
-        # Verifica colisão em Y com obstáculos
-        if pygame.sprite.spritecollideany(self, obstaculos):
-            self.mundo_y = pos_anterior_y # Reverte o movimento em Y
-            self.rect.y = int(self.mundo_y) # Atualiza o rect para a posição revertida
+        colidiu_obstaculo_y = False
+        for obstaculo in obstaculos:
+            if self.pes_rect.colliderect(obstaculo.rect):
+                colidiu_obstaculo_y = True
+                break
 
+        fora_do_caminho_y = not self._esta_dentro_do_caminho(lista_de_caminhos)
 
-        # --- Atualizar Animação ---
+        if colidiu_obstaculo_y or fora_do_caminho_y:
+            self.mundo_y = pos_anterior_y
+            self.rect.y = int(self.mundo_y)
+            self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
+            self.pes_rect.bottom = self.rect.bottom
+
+        # --- Atualizar Animação --- (O resto do método permanece idêntico)
         esta_movendo = (self.movendo_esquerda or self.movendo_direita or
                         self.movendo_cima or self.movendo_baixo)
-
+        
+        # (O restante da sua lógica de animação continua aqui, sem alterações)
         if esta_movendo:
             self.estado = 'caminhando'
             self.tempo_desde_ultimo_frame += dt
             if self.tempo_desde_ultimo_frame >= self.taxa_animacao:
-                # Garante que a lista de frames de caminhada não esteja vazia
                 if self.frames_animacao['caminhando']:
                     self.indice_frame = (self.indice_frame + 1) % len(self.frames_animacao['caminhando'])
                 else:
-                    self.indice_frame = 0 # Fallback se não houver frames
+                    self.indice_frame = 0
                 self.tempo_desde_ultimo_frame = 0.0
         else:
             self.estado = 'parado'
-            self.indice_frame = 0 # Volta para o primeiro frame de parado
+            self.indice_frame = 0
             self.tempo_desde_ultimo_frame = 0.0
-
-            # Quando parar, primeiro mostra o frame 2 de caminhada, depois repouso
             if hasattr(self, 'frame_parada_apos_caminhada') and self.frame_parada_apos_caminhada:
                 self.image = self.frame_parada_apos_caminhada
-                # Remove o atributo para que isso só aconteça uma vez ao parar
                 del self.frame_parada_apos_caminhada
-                # Return aqui interromperia a atualização da imagem para o estado parado
-                # O ideal é que na próxima chamada do update ele já esteja no estado parado
-                # Remova o 'return' e deixe a lógica de seleção de imagem abaixo cuidar disso.
-                # Não é necessário um 'return' aqui.
-                pass # Apenas passa para a próxima linha
+                pass
 
-        # Selecionar a imagem do frame atual
         imagem_atual = None
         if self.estado == 'parado' and self.frames_animacao['parado']:
             imagem_atual = self.frames_animacao['parado'][self.indice_frame]
         elif self.estado == 'caminhando' and self.frames_animacao['caminhando']:
             imagem_atual = self.frames_animacao['caminhando'][self.indice_frame]
         else:
-            # Fallback final se nada foi encontrado
-            print(f"ERRO FATAL (Fallback): Imagem para estado '{self.estado}' e índice '{self.indice_frame}' não encontrada. Criando superfície de erro.")
-            imagem_atual = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
+            imagem_atual = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
             imagem_atual.fill(VERMELHO)
 
-        # Aplicar inversão horizontal se estiver olhando para a esquerda
-        if not self.olhando_direita:
+        if self.orientacao == 'esquerda':
             imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
         self.image = imagem_atual
@@ -249,3 +340,7 @@ class Jogador(pygame.sprite.Sprite):
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
             debug_rect = pygame.Rect(self.rect.x - camera_x, self.rect.y - camera_y, self.rect.width, self.rect.height)
             pygame.draw.rect(screen, COR_CAIXA_COLISAO, debug_rect, 1)
+
+            # NOVO: Retângulo dos pés (colisão)
+            debug_rect_pes = pygame.Rect(self.pes_rect.x - camera_x, self.pes_rect.y - camera_y, self.pes_rect.width, self.pes_rect.height)
+            pygame.draw.rect(screen, VERMELHO, debug_rect_pes, 2) # Cor e espessura diferentes para destacar

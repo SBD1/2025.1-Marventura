@@ -113,13 +113,7 @@ class GerenciadorDeRecursos:
             return self._fontes[chave]
         else:
             print(f"AVISO: Fonte '{chave}' não encontrada ou falhou no carregamento. Usando fallback genérico.")
-            # Fallback genérico caso a fonte não tenha sido carregada, a key esteja errada, ou o fallback original falhou
-            try:
-                return pygame.font.SysFont("Arial", 30) # Tenta um fallback genérico com Arial tamanho 30
-            except pygame.error as generic_fallback_e:
-                 print(f"ERRO: Falha no fallback genérico para fonte: {generic_fallback_e}")
-                 # Retorna None ou levanta um erro crítico se nenhum fallback funcionar
-                 return None # Retorna None como último recurso
+            return pygame.font.Font(None, 30)
             
     def carregar_recursos(self):
         """
@@ -129,12 +123,16 @@ class GerenciadorDeRecursos:
         print("Iniciando carregamento de todos os recursos...")
 
         # --- Carregar Fontes ---
-        caminho_arquivo_fonte = 'recursos/fontes/Tagesschrift-Regular.ttf'
+        #caminho_arquivo_fonte_coliner = 'recursos/fontes/Coliner-Regular.ttf'
+        caminho_arquivo_fonte_coliner = 'recursos/fontes/Coliner-Bold.ttf'
+        caminho_arquivo_fonte_always = 'recursos/fontes/Always In My Heart.ttf'
+        caminho_arquivo_fonte_playfair = 'recursos/fontes/PlayfairDisplay-Regular.ttf'
         fonte_cherry = 'recursos/fontes/CherryBombOne-Regular.ttf'
-        self._carregar_fonte(CHAVE_FONTE_TITULO, caminho_arquivo_fonte, 70)       # Fonte para títulos grandes
-        self._carregar_fonte(CHAVE_FONTE_BOTAO, caminho_arquivo_fonte, 48)     # Fonte para botões
-        self._carregar_fonte(CHAVE_FONTE_NOME_CARTAZ, caminho_arquivo_fonte, 20)  # Fonte para nome no cartaz
-        self._carregar_fonte(CHAVE_FONTE_DATA_CARTAZ, caminho_arquivo_fonte, 12)   # Fonte para data/dados no cartaz
+        self._carregar_fonte(CHAVE_FONTE_COLINER_TITULO, caminho_arquivo_fonte_coliner, 70)       # Fonte para títulos grandes
+        self._carregar_fonte(CHAVE_FONTE_COLINER_BOTAO, caminho_arquivo_fonte_coliner, 48)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_COLINER_TEXTO, caminho_arquivo_fonte_coliner, 20)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_PAYFAIR_TEXTO, caminho_arquivo_fonte_playfair, 20)  # Fonte para nome no cartaz
+        self._carregar_fonte(CHAVE_FONTE_HEART_TEXTO, caminho_arquivo_fonte_always, 15)   # Fonte para data/dados no cartaz
         self._carregar_fonte(CHAVE_FONTE_CHERRY_TITULO, fonte_cherry, 48)          # Fonte para barra de estado
         self._carregar_fonte(CHAVE_FONTE_CHERRY_TEXTO, fonte_cherry, 24)           # Fonte para textos gerais
 
@@ -149,8 +147,13 @@ class GerenciadorDeRecursos:
 
         # --- Carregar planos de fundo para os mapas do jogo ---
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_LESTE, 'recursos/imagens/cenario/ilha_campo_costa_leste.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_campo_costa_oeste-camada_superior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_VILA, 'recursos/imagens/cenario/ilha_campo_vila.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_PORTO, 'recursos/imagens/cenario/ilha_cidade_porto.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_PORTO_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_cidade_porto-camada_superior.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_CENTRO, 'recursos/imagens/cenario/ilha_cidade_centro.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_PRACA, 'recursos/imagens/cenario/ilha_cidade_praça.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
