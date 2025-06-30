@@ -662,125 +662,164 @@ VALUES
 
 
 
-INSERT INTO ilha
-	(nome, visitada)
+INSERT INTO progresso
+    (numero_do_slot, data_ultimo_salvamento)
 VALUES
-	('Ilha de Borabóia', FALSE), -- → ilh001
-	('Cidade de Lurien', FALSE), -- → ilh002
-	('Ilha Glacial de Frimora', FALSE), -- → ilh003
-	('Cactuaraquara', FALSE), -- → ilh004
-	('Nublária', FALSE), -- → ilh005
-	('Quartel Naval D-57', FALSE); -- → ilh006
+    (1, null),
+    (2, null),
+    (3, null);
+
+
+
+INSERT INTO ilha
+	(nome)
+VALUES
+	('Ilha de Borabóia'), -- → ilh001
+	('Cidade de Lurien'), -- → ilh002
+	('Ilha Glacial de Frimora'), -- → ilh003
+	('Cactuaraquara'), -- → ilh004
+	('Nublária'), -- → ilh005
+	('Quartel Naval D-57'); -- → ilh006
 
 
 
 INSERT INTO conexao_entre_ilhas
-    (identificador_ilha_a, identificador_ilha_b, bloqueada)
+    (identificador_ilha_a, identificador_ilha_b, identificador_progresso)
 VALUES
-    ('ilh001', 'ilh002', TRUE),
-    ('ilh001', 'ilh004', TRUE),
-    ('ilh002', 'ilh003', TRUE),
-    ('ilh002', 'ilh006', TRUE),
-    ('ilh003', 'ilh004', TRUE),
-    ('ilh003', 'ilh005', TRUE),
-    ('ilh005', 'ilh006', TRUE);
+    ('ilh001', 'ilh002', 'pro001'),
+    ('ilh001', 'ilh004', 'pro001'),
+    ('ilh002', 'ilh003', 'pro001'),
+    ('ilh002', 'ilh006', 'pro001'),
+    ('ilh003', 'ilh004', 'pro001'),
+    ('ilh003', 'ilh005', 'pro001'),
+    ('ilh005', 'ilh006', 'pro001'),
+    ('ilh001', 'ilh002', 'pro002'),
+    ('ilh001', 'ilh004', 'pro002'),
+    ('ilh002', 'ilh003', 'pro002'),
+    ('ilh002', 'ilh006', 'pro002'),
+    ('ilh003', 'ilh004', 'pro002'),
+    ('ilh003', 'ilh005', 'pro002'),
+    ('ilh005', 'ilh006', 'pro002'),
+    ('ilh001', 'ilh002', 'pro003'),
+    ('ilh001', 'ilh004', 'pro003'),
+    ('ilh002', 'ilh003', 'pro003'),
+    ('ilh002', 'ilh006', 'pro003'),
+    ('ilh003', 'ilh004', 'pro003'),
+    ('ilh003', 'ilh005', 'pro003'),
+    ('ilh005', 'ilh006', 'pro003');
 
 
 
 INSERT INTO area
-	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente, visitada)
+	(identificador_ilha, nome, tipo_area, chave_imagem_fundo, chave_imagem_frente)
 VALUES
-	('ilh001', 'Pastos do Sol Dourado', 'Área de combate', 'cenario_boraboia_pastos', 'cenario_boraboia_pastos_camada_superior', FALSE), -- → are001
-	('ilh001', 'Vilarejo de Borabóia', 'Vila', 'cenario_boraboia_vila', null, FALSE), -- → are002
-	('ilh001', 'Vale Verdejante', 'Porto', 'cenario_boraboia_vale', null, FALSE), -- → are003
-	('ilh001', 'Loja de Borabóia', 'Loja', 'loja_interior', null, FALSE), -- → are004
-	('ilh001', 'Casa', 'Vila', 'cenario_boraboia_casa', null, FALSE), -- → are005
-	('ilh001', 'Sótão', 'Vila', 'cenario_boraboia_sotao', null, FALSE), -- → are006
-	('ilh002', 'Porto de Lurien', 'Porto', 'cenario_lurien_porto', 'cenario_lurien_porto_camada_superior', FALSE), -- → are007
-	('ilh002', 'Centro', 'Área neutra', 'cenario_lurien_centro', null, FALSE), -- → are008
-	('ilh002', 'Praça de execução', 'Área de combate', 'cenario_lurien_praca', 'cenario_lurien_praca_camada_superior', FALSE), -- → are009
-	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null, FALSE), -- → are010
-	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null, FALSE), -- → are011
-	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null, FALSE), -- → are012
-	('ilh003', 'Costa de Frimora', 'Área neutra', 'cenario_frimora_costa', null, FALSE), -- → are013
-	('ilh003', 'Vila de Frimora', 'Vila', 'cenario_frimora_vila', null, FALSE), -- → are014
-	('ilh003', 'Montanha da Cabra Congelada', 'Área de combate', 'cenario_frimora_montanha', null, FALSE), -- → are015
-	('ilh003', 'Cozinha da Vovó Yuba', 'Loja', 'cozinha_interior', null, FALSE), -- → are016
-	('ilh004', 'Duna Braba', 'Porto', 'cenario_cactuaraquara_duna', null, FALSE), -- → are017
-	('ilh004', 'Cidadela de Cactuaraquara', 'Vila', 'cenario_cactuaraquara_cidadela', null, FALSE), -- → are018
-	('ilh004', 'Oásis de Ramtak', 'Área de combate', 'cenario_cactuaraquara_oasis', null, FALSE), -- → are019
-	('ilh004', 'Loja de Cactuaraquara', 'Loja', 'loja_interior', null, FALSE), -- → are020
-	('ilh005', 'Penumbra dos Ossudos', 'Porto', 'cenario_nublaria_penumbra', null, FALSE), -- → are021
-	('ilh005', 'Acampamento de Nublária', 'Vila', 'cenario_nublaria_acampamento', null, FALSE), -- → are022
-	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null, FALSE), -- → are023
-	('ilh005', 'Loja de Nublária', 'Loja', 'loja_interior', null, FALSE), -- → are024
-    ('ilh005', 'Yomotsu Hirasaka', 'Yomotsu Hirasaka', null, null, FALSE), -- → are025
-	('ilh006', 'Porto da Égide', 'Porto', 'cenario_quartel_porto', null, FALSE), -- → are026
-	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null, FALSE), -- → are027
-	('ilh006', 'Escritório do Vice-Almirante', 'Área neutra', 'cenario_quartel_escritorio', null, FALSE), -- → are028
-	('ilh006', 'Loja da Marinha', 'Loja', 'loja_interior', null, FALSE), -- → are029
-	('ilh006', 'Cozinha do Capitão', 'Loja', 'cozinha_interior', null, FALSE); -- → are030
+	('ilh001', 'Pastos do Sol Dourado', 'Área de combate', 'cenario_boraboia_pastos', 'cenario_boraboia_pastos_camada_superior'), -- → are001
+	('ilh001', 'Vilarejo de Borabóia', 'Vila', 'cenario_boraboia_vila', null), -- → are002
+	('ilh001', 'Vale Verdejante', 'Porto', 'cenario_boraboia_vale', 'cenario_boraboia_vale_camada_superior'), -- → are003
+	('ilh001', 'Loja de Borabóia', 'Loja', 'loja_interior', null), -- → are004
+	('ilh001', 'Casa', 'Vila', 'cenario_boraboia_casa', null), -- → are005
+	('ilh001', 'Sótão', 'Vila', 'cenario_boraboia_sotao', null), -- → are006
+	('ilh002', 'Porto de Lurien', 'Porto', 'cenario_lurien_porto', 'cenario_lurien_porto_camada_superior'), -- → are007
+	('ilh002', 'Centro', 'Área neutra', 'cenario_lurien_centro', null), -- → are008
+	('ilh002', 'Praça de execução', 'Área de combate', 'cenario_lurien_praca', 'cenario_lurien_praca_camada_superior'), -- → are009
+	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null), -- → are010
+	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null), -- → are011
+	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null), -- → are012
+	('ilh002', 'Loja de espadas', 'Loja', 'loja_interior', null), -- → are013
+	('ilh002', 'Loja de acessórios', 'Loja', 'loja_interior', null), -- → are014
+	('ilh003', 'Costa de Frimora', 'Área neutra', 'cenario_frimora_costa', null), -- → are015
+	('ilh003', 'Vila de Frimora', 'Vila', 'cenario_frimora_vila', null), -- → are016
+	('ilh003', 'Floresta de Frimora', 'Vila', 'cenario_frimora_floresta', 'cenario_frimora_floresta_camada_superior'), -- → are017
+	('ilh003', 'Montanha da Cabra Congelada', 'Área de combate', 'cenario_frimora_montanha', null), -- → are018
+	('ilh003', 'Cozinha da Vovó Yuba', 'Loja', 'cozinha_interior', null), -- → are019
+	('ilh003', 'Loja de Frimora', 'Loja', 'loja_interior', null), -- → are020
+	('ilh004', 'Duna Braba', 'Porto', 'cenario_cactuaraquara_duna', null), -- → are021
+	('ilh004', 'Cidadela de Cactuaraquara', 'Vila', 'cenario_cactuaraquara_cidadela', null), -- → are022
+	('ilh004', 'Oásis de Ramtak', 'Área de combate', 'cenario_cactuaraquara_oasis', null), -- → are023
+	('ilh004', 'Loja de Cactuaraquara', 'Loja', 'loja_interior', null), -- → are024
+	('ilh004', 'Loja de armas', 'Loja', 'loja_interior', null), -- → are025
+	('ilh005', 'Penumbra dos Ossudos', 'Porto', 'cenario_nublaria_penumbra', null), -- → are026
+	('ilh005', 'Acampamento de Nublária', 'Vila', 'cenario_nublaria_acampamento', null), -- → are027
+	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null), -- → are028
+	('ilh005', 'Loja de Nublária', 'Loja', 'loja_interior', null), -- → are029
+	('ilh006', 'Porto da Égide', 'Porto', 'cenario_quartel_porto', null), -- → are030
+	('ilh006', 'Interior', 'Área de combate', 'cenario_quartel_interior', null), -- → are031
+	('ilh006', 'Escritório do Vice-Almirante', 'Área neutra', 'cenario_quartel_escritorio', null), -- → are032
+	('ilh006', 'Loja da Marinha', 'Loja', 'loja_interior', null), -- → are033
+    (null, 'Yomotsu Hirasaka', 'Yomotsu Hirasaka', null, null); -- → are034
 
 
 
 INSERT INTO conexao_entre_areas
-    (identificador_area_a, identificador_area_b)
-VALUES
-    ('are001', 'are002'),
-    ('are002', 'are003'),
-    ('are002', 'are004'),
-    ('are002', 'are005'),
-    ('are005', 'are006'),
-    ('are007', 'are008'),
-    ('are008', 'are009'),
-    ('are008', 'are010'),
-    ('are009', 'are012'),
-    ('are010', 'are011'),
-    ('are013', 'are014'),
-    ('are014', 'are015'),
-    ('are014', 'are016'),
-    ('are017', 'are018'),
-    ('are018', 'are019'),
-    ('are018', 'are020'),
-    ('are021', 'are022'),
-    ('are022', 'are023'),
-    ('are022', 'are024'),
-    ('are026', 'are027'),
-    ('are027', 'are028'),
-    ('are027', 'are029'),
-    ('are027', 'are030');
-
-
-
--- Insere eventos de mudar_area
-INSERT INTO evento
-    (identificador_area_a, identificador_area_b, tipo_evento, ponto_geracao_x,
+    (identificador_area_origem, identificador_area_destino, ponto_geracao_x,
     ponto_geracao_y, orientacao)
 VALUES
-    ('are001', 'are002', 'mudar_area', 100, 370, 'direita'), -- are001 → are002
-    ('are001', 'are002', 'mudar_area', 4373, 174, 'esquerda'), -- are002 → are001
-    ('are002', 'are004', 'mudar_area', 100, 275, 'direita'), -- are002 → are004
-    ('are002', 'are004', 'mudar_area', 1781, 312, 'esquerda'), -- are004 → are002
-    ('are002', 'are003', 'mudar_area', 50, 190, 'direita'), -- are002 → are003
-    ('are002', 'are003', 'mudar_area', 3361, 370, 'esquerda'), -- are003 → are002
-    ('are007', 'are008', 'mudar_area', 100, 415, 'direita'), -- are007 → are008
-    ('are007', 'are008', 'mudar_area', 680, 175, 'esquerda'), -- are008 → are007
-    ('are008', 'are009', 'mudar_area', 100, 415, 'direita'), -- are008 → are009
-    ('are008', 'are009', 'mudar_area', 1570, 460, 'esquerda'); -- are009 → are008
-
-
-
--- Insere eventos de embarcar
-INSERT INTO evento
-    (identificador_porto_destino, tipo_evento, ponto_geracao_x,
-    ponto_geracao_y, orientacao)
-VALUES
-    ('are003', 'embarcar', 4160, 280, 'esquerda'),
-    ('are007', 'embarcar', 2470, 265, 'esquerda'),
-    ('are013', 'embarcar', 100, 415, 'direita'),
-    ('are017', 'embarcar', 2470, 265, 'direita'),
-    ('are021', 'embarcar', 2470, 265, 'direita'),
-    ('are026', 'embarcar', 2470, 265, 'direita');
+    ('are001', 'are002', 100, 370, 'direita'),
+    ('are002', 'are001', 4373, 174, 'esquerda'),
+    ('are002', 'are003', 50, 190, 'direita'),
+    ('are003', 'are002', 3361, 370, 'esquerda'),
+    ('are003', 'are007', 2470, 265, 'esquerda'), -- ilh001 → ilh002
+    ('are003', 'are021', 100, 415, 'direita'), -- ilh001 → ilh004
+    ('are002', 'are004', 100, 275, 'direita'),
+    ('are004', 'are002', 1781, 312, 'esquerda'),
+    ('are002', 'are005', 0, 0, 'esquerda'),
+    ('are005', 'are002', 2147, 312, 'esquerda'),
+    ('are005', 'are006', 0, 0, 'esquerda'),
+    ('are006', 'are005', 0, 0, 'esquerda'),
+    ('are007', 'are008', 100, 415, 'direita'),
+    ('are007', 'are003', 4160, 280, 'esquerda'),-- ilh002 → ilh001
+    ('are007', 'are015', 0, 0, 'direita'),-- ilh002 → ilh003
+    ('are007', 'are030', 0, 0, 'direita'),-- ilh002 → ilh006
+    ('are008', 'are007', 680, 175, 'esquerda'),
+    ('are008', 'are009', 100, 415, 'direita'),
+    ('are009', 'are008', 1570, 460, 'esquerda'),
+    ('are008', 'are010', 0, 0, 'direita'),
+    ('are010', 'are008', 0, 0, 'esquerda'),
+    ('are008', 'are014', 0, 0, 'esquerda'),
+    ('are014', 'are008', 1083, 397, 'direita'),
+    ('are009', 'are012', 0, 0, 'direita'),
+    ('are012', 'are009', 1439, 111, 'esquerda'),
+    ('are009', 'are013', 0, 0, 'esquerda'),
+    ('are013', 'are009', 289, 397, 'direita'),
+    ('are010', 'are011', 0, 0, 'esquerda'),
+    ('are011', 'are010', 0, 0, 'esquerda'),
+    ('are015', 'are016', 1600, 415, 'esquerda'),
+    ('are015', 'are007', 2470, 265, 'esquerda'),-- ilh003 → ilh002
+    ('are015', 'are021', 0, 0, 'esquerda'),-- ilh003 → ilh004
+    ('are015', 'are026', 0, 0, 'esquerda'),-- ilh003 → ilh005
+    ('are016', 'are015', 50, 700, 'direita'),
+    ('are016', 'are017', 1410, 775, 'esquerda'),
+    ('are017', 'are016', 50, 415, 'direita'),
+    ('are016', 'are019', 0, 0, 'direita'),
+    ('are019', 'are016', 695, 325, 'direita'),
+    ('are016', 'are020', 0, 0, 'esquerda'),
+    ('are020', 'are016', 1460, 210, 'direita'),
+    ('are017', 'are018', 1377, 757, 'esquerda'),
+    ('are018', 'are017', 50, 750, 'direita'),
+    ('are021', 'are022', 0, 0, 'esquerda'),
+    ('are021', 'are003', 4160, 280, 'esquerda'),-- ilh004 → ilh001
+    ('are021', 'are015', 0, 0, 'esquerda'),-- ilh004 → ilh003
+    ('are022', 'are021', 0, 0, 'esquerda'),
+    ('are022', 'are023', 0, 0, 'esquerda'),
+    ('are023', 'are022', 0, 0, 'esquerda'),
+    ('are022', 'are024', 0, 0, 'esquerda'),
+    ('are024', 'are022', 0, 0, 'esquerda'),
+    ('are022', 'are025', 0, 0, 'esquerda'),
+    ('are025', 'are022', 0, 0, 'esquerda'),
+    ('are026', 'are027', 0, 0, 'esquerda'),
+    ('are027', 'are026', 0, 0, 'esquerda'),
+    ('are027', 'are028', 0, 0, 'esquerda'),
+    ('are028', 'are027', 0, 0, 'esquerda'),
+    ('are027', 'are029', 0, 0, 'esquerda'),
+    ('are029', 'are027', 0, 0, 'esquerda'),
+    ('are030', 'are030', 0, 0, 'esquerda'),
+    ('are030', 'are003', 2470, 265, 'esquerda'),-- ilh006 → ilh002
+    ('are030', 'are026', 0, 0, 'esquerda'),-- ilh006 → ilh005
+    ('are031', 'are031', 0, 0, 'esquerda'),
+    ('are031', 'are032', 0, 0, 'esquerda'),
+    ('are032', 'are031', 0, 0, 'esquerda'),
+    ('are031', 'are033', 0, 0, 'esquerda'),
+    ('are033', 'are031', 0, 0, 'esquerda');
 
 
 
@@ -801,22 +840,6 @@ VALUES
     ('are009', 0, 500, 50, 85, 'mudar_area'); -- → centro
 
 
-INSERT INTO area_interativa_evento
-    (identificador_area_interativa, identificador_evento)
-VALUES
-    ('ari001', 'eve001'),
-    ('ari002', 'eve002'),
-    ('ari003', 'eve003'),
-    ('ari004', 'eve005'),
-    ('ari005', 'eve006'),
-    ('ari006', 'eve012'),
-    ('ari006', 'eve014'),
-    ('ari007', 'eve004'),
-    ('ari008', 'eve007'),
-    ('ari009', 'eve011'),
-    ('ari010', 'eve008'),
-    ('ari011', 'eve009'),
-    ('ari012', 'eve010');
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
@@ -892,16 +915,41 @@ VALUES
 
 
 INSERT INTO instancia_lacaio
-    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, vida_atual, moedas_totais)
+    (identificador_lacaio, coordenada_x, coordenada_y, moedas_totais)
 VALUES
-    ('lac001', 'are001', 3430, 55, 5, 0),
-    ('lac001', 'are001', 4273, 412, 5, 0),
-    ('lac001', 'are001', 3935, 208, 5, 0),
-    ('lac001', 'are001', 3600, 427, 5, 0),
-    ('lac002', 'are003', 1500, 125, 7, 0),
-    ('lac002', 'are003', 1900, 400, 7, 0),
-    ('lac002', 'are003', 2360, 210, 7, 0);
+    ('lac001', 3430, 55, 0),
+    ('lac001', 4273, 412, 0),
+    ('lac001', 3935, 208, 0),
+    ('lac001', 3600, 427, 0),
+    ('lac002', 1500, 125, 0),
+    ('lac002', 1900, 400, 0),
+    ('lac002', 2360, 210, 0);
 
+
+INSERT INTO estado_instancia_lacaio
+    (identificador_progresso, identificador_instancia_lacaio, identificador_area, vida_atual, tempo_para_reviver)
+VALUES
+    ('pro001', 'ins001', 'are001', 5, 50000),
+    ('pro001', 'ins002', 'are001', 5, 50000),
+    ('pro001', 'ins003', 'are001', 5, 50000),
+    ('pro001', 'ins004', 'are001', 5, 50000),
+    ('pro001', 'ins005', 'are003', 7, 50000),
+    ('pro001', 'ins006', 'are003', 7, 50000),
+    ('pro001', 'ins007', 'are003', 7, 50000),
+    ('pro002', 'ins001', 'are001', 5, 50000),
+    ('pro002', 'ins002', 'are001', 5, 50000),
+    ('pro002', 'ins003', 'are001', 5, 50000),
+    ('pro002', 'ins004', 'are001', 5, 50000),
+    ('pro002', 'ins005', 'are003', 7, 50000),
+    ('pro002', 'ins006', 'are003', 7, 50000),
+    ('pro002', 'ins007', 'are003', 7, 50000),
+    ('pro003', 'ins001', 'are001', 5, 50000),
+    ('pro003', 'ins002', 'are001', 5, 50000),
+    ('pro003', 'ins003', 'are001', 5, 50000),
+    ('pro003', 'ins004', 'are001', 5, 50000),
+    ('pro003', 'ins005', 'are003', 7, 50000),
+    ('pro003', 'ins006', 'are003', 7, 50000),
+    ('pro003', 'ins007', 'are003', 7, 50000);
 
 
 INSERT INTO chefe
@@ -915,6 +963,20 @@ VALUES
     ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 70, 200),
     ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70, 200),
     ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 70, 200);
+
+
+
+INSERT INTO estado_chefe
+    (identificador_area, identificador_progresso, identificador_chefe, vida_atual, tempo_para_reviver)
+VALUES
+    ('are001', 'pro001', 14, 150000),
+    ('are009', 'pro001', 22, 150000),
+    ('are015', 'pro001', 31, 150000),
+    ('are019', 'pro001', 41, 150000),
+    ('are023', 'pro001', 52, 150000),
+    ('are026', 'pro001', 100, 150000),
+    ('are026', 'pro001', 120, 150000),
+    ('are026', 'pro001', 150, 150000);
 
 
 
