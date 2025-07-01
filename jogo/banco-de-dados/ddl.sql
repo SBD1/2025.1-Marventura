@@ -285,7 +285,8 @@ EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 
 CREATE TABLE area_interativa (
     identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
-    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_destino ID REFERENCES area(identificador_area),
     chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
     x SMALLINT CHECK (x BETWEEN 0 AND 5000),
     y SMALLINT CHECK (y BETWEEN 0 AND 5000),
@@ -294,6 +295,12 @@ CREATE TABLE area_interativa (
     chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
     tipo_evento CHAR(10) NOT NULL CHECK (
         tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
+    )
+
+    -- Se for evento 'mudar_area', então identificador_area_destino é obrigatório
+    CHECK (
+        tipo_evento = 'mudar_area' OR identificador_area_destino IS NOT NULL OR
+        tipo_evento <> 'mudar_area'
     )
 );
 
@@ -351,7 +358,7 @@ CREATE TABLE jogador (
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_progresso ID UNIQUE REFERENCES progresso(identificador_progresso),
     nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
-    descricao CHAR(250),
+    descricao CHAR(300),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
@@ -373,8 +380,9 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 CREATE TABLE aliado (
     identificador_aliado ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_progresso ID UNIQUE REFERENCES progresso(identificador_progresso),
     nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
-    descricao CHAR(100),
+    descricao CHAR(300),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     vida SMALLINT  CHECK (vida BETWEEN 10 AND 70),
@@ -463,7 +471,7 @@ EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE barco (
     identificador_barco ID PRIMARY KEY,
-    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
+    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
     tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
     nome CHAR(30) NOT NULL,
     descricao CHAR (150) NOT NULL,
@@ -543,6 +551,7 @@ CREATE TABLE conexao_entre_ilhas (
 
 CREATE TABLE area_visitada (
     identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_area ID REFERENCES area(identificador_area),
     PRIMARY KEY (identificador_progresso, identificador_area),
     visitada BOOLEAN NOT NULL DEFAULT FALSE
 );
@@ -552,9 +561,9 @@ CREATE TABLE area_visitada (
 CREATE TABLE estado_instancia_lacaio (
     identificador_progresso ID REFERENCES progresso(identificador_progresso),
     identificador_instancia_lacaio ID REFERENCES instancia_lacaio(identificador_instancia_lacaio),
-    identificador_area ID REFERENCES area(identificador_area),
+    identificador_area_atual ID REFERENCES area(identificador_area),
     vida_atual SMALLINT,
-    tempo_para_reviver TIMESTAMP,
+    data_da_morte TIMESTAMP DEFAULT NULL,
     PRIMARY KEY (identificador_progresso, identificador_instancia_lacaio)
 );
 
@@ -563,20 +572,10 @@ CREATE TABLE estado_instancia_lacaio (
 CREATE TABLE estado_chefe (
     identificador_progresso ID REFERENCES progresso(identificador_progresso),
     identificador_chefe ID REFERENCES chefe(identificador_chefe),
-    identificador_area ID REFERENCES area(identificador_area),
+    identificador_area_atual ID REFERENCES area(identificador_area),
     vida_atual SMALLINT,
-    tempo_para_reviver TIMESTAMP,
+    data_da_morte TIMESTAMP DEFAULT NULL,
     PRIMARY KEY (identificador_progresso, identificador_chefe)
-);
-
-
-
-CREATE TABLE item_vendedor_jogador (
-    identificador_jogador ID REFERENCES jogador(identificador_jogador),
-    identificador_habitante ID REFERENCES habitante(identificador_habitante),
-    identificador_item ID REFERENCES tipo_item(identificador_item),
-    quantidade SMALLINT CHECK (quantidade BETWEEN 0 AND 99),
-    PRIMARY KEY (identificador_jogador, identificador_habitante, identificador_item)
 );
 
 
@@ -604,7 +603,8 @@ CREATE TABLE missao (
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_recrutador ID REFERENCES habitante(identificador_habitante), 
     descricao CHAR(100),
-    nome CHAR(50) NOT NULL
+    nome CHAR(50) NOT NULL,
+    estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente'))
 );
 
 CREATE TRIGGER atribui_id_missao

@@ -824,20 +824,20 @@ VALUES
 
 
 INSERT INTO area_interativa
-    (identificador_area, x, y, largura, altura, tipo_evento)
+    (identificador_area_origem, identificador_area_destino, x, y, largura, altura, tipo_evento)
 VALUES
-    ('are001', 4473, 187, 30, 180, 'mudar_area'), -- → vila
-    ('are002', 0, 360, 50, 150, 'mudar_area'), -- → pastos
-    ('are002', 1716, 300, 200, 40, 'mudar_area'), -- → loja
-    ('are002', 3490, 360, 50, 150, 'mudar_area'), -- → vale
-    ('are003', 0, 200, 50, 150, 'mudar_area'), -- → vila
-    ('are003', 4205, 313, 50, 158, 'embarcar'), -- → navegar
-    ('are004', 0, 300, 50, 270, 'mudar_area'), -- → sair da loja
-    ('are007', 610, 185, 250, 20, 'mudar_area'), -- → centro
-    ('are007', 2472, 375, 93, 67, 'embarcar'), -- → navegar
-    ('are008', 0, 480, 50, 150, 'mudar_area'), -- → porto
-    ('are008', 1656, 484, 50, 150, 'mudar_area'), -- → praça
-    ('are009', 0, 500, 50, 85, 'mudar_area'); -- → centro
+    ('are001', 'are002', 4473, 187, 30, 180, 'mudar_area'), -- → vila
+    ('are002', 'are001', 0, 360, 50, 150, 'mudar_area'), -- → pastos
+    ('are002', 'are004', 1716, 300, 200, 40, 'mudar_area'), -- → loja
+    ('are002', 'are003', 3490, 360, 50, 150, 'mudar_area'), -- → vale
+    ('are003', 'are002', 0, 200, 50, 150, 'mudar_area'), -- → vila
+    ('are003', null, 4205, 313, 50, 158, 'embarcar'), -- → navegar
+    ('are004', 'are002', 0, 300, 50, 270, 'mudar_area'), -- → sair da loja
+    ('are007', 'are008', 610, 185, 250, 20, 'mudar_area'), -- → centro
+    ('are007', null, 2472, 375, 93, 67, 'embarcar'), -- → navegar
+    ('are008', 'are007', 0, 480, 50, 150, 'mudar_area'), -- → porto
+    ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area'), -- → praça
+    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area'); -- → centro
 
 
 
@@ -880,19 +880,10 @@ VALUES
     ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1000, 450, 13),
     ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 915, 323, 14),
     ('are007', 'Cidadão', 'Costuma vender frutas no porto da Cidade de Lurien', 'rct', 0, 0, 50),
-    ('are012', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0, 75),
-    ('are014', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0, 40),
-    ('are019', 'Chefe do vilarejo', 'Chefe do vilarejo de Cactuaraquara', 'rct', 0, 0, 30),
-    ('are027', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0, 70);
-
-
-
-INSERT INTO jogador
-    (identificador_area, nome, descricao, coordenada_x, coordenada_y,
-    energia, vida, nivel, sorte, vida_atual, experiencia_atual, moedas_totais)
-VALUES
-    ('are001', 'Silvie', 'Cheia de sonhos, coragem e um apetite por aventura (e por comida também), ela parte rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
-    1950, 140, 5, 10, 0, 1, 10, 0, 0);
+    ('are011', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0, 75),
+    ('are016', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0, 40),
+    ('are022', 'Chefe da cidadelA', 'Chefe dA cidadelA de Cactuaraquara', 'rct', 0, 0, 30),
+    ('are031', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0, 70);
 
 
 
@@ -915,41 +906,39 @@ VALUES
 
 
 INSERT INTO instancia_lacaio
-    (identificador_lacaio, coordenada_x, coordenada_y, moedas_totais)
+    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, moedas_totais)
 VALUES
-    ('lac001', 3430, 55, 0),
-    ('lac001', 4273, 412, 0),
-    ('lac001', 3935, 208, 0),
-    ('lac001', 3600, 427, 0),
-    ('lac002', 1500, 125, 0),
-    ('lac002', 1900, 400, 0),
-    ('lac002', 2360, 210, 0);
+    ('lac001', 'are001', 3430, 55, 0),
+    ('lac001', 'are001', 4273, 412, 0),
+    ('lac001', 'are001', 3600, 427, 0),
+    ('lac002', 'are002', 1500, 125, 0),
+    ('lac002', 'are002', 1900, 400, 0),
+    ('lac002', 'are002', 2360, 210, 0);
+
 
 
 INSERT INTO estado_instancia_lacaio
-    (identificador_progresso, identificador_instancia_lacaio, identificador_area, vida_atual, tempo_para_reviver)
+    (identificador_progresso, identificador_instancia_lacaio, identificador_area_atual, vida_atual)
 VALUES
-    ('pro001', 'ins001', 'are001', 5, 50000),
-    ('pro001', 'ins002', 'are001', 5, 50000),
-    ('pro001', 'ins003', 'are001', 5, 50000),
-    ('pro001', 'ins004', 'are001', 5, 50000),
-    ('pro001', 'ins005', 'are003', 7, 50000),
-    ('pro001', 'ins006', 'are003', 7, 50000),
-    ('pro001', 'ins007', 'are003', 7, 50000),
-    ('pro002', 'ins001', 'are001', 5, 50000),
-    ('pro002', 'ins002', 'are001', 5, 50000),
-    ('pro002', 'ins003', 'are001', 5, 50000),
-    ('pro002', 'ins004', 'are001', 5, 50000),
-    ('pro002', 'ins005', 'are003', 7, 50000),
-    ('pro002', 'ins006', 'are003', 7, 50000),
-    ('pro002', 'ins007', 'are003', 7, 50000),
-    ('pro003', 'ins001', 'are001', 5, 50000),
-    ('pro003', 'ins002', 'are001', 5, 50000),
-    ('pro003', 'ins003', 'are001', 5, 50000),
-    ('pro003', 'ins004', 'are001', 5, 50000),
-    ('pro003', 'ins005', 'are003', 7, 50000),
-    ('pro003', 'ins006', 'are003', 7, 50000),
-    ('pro003', 'ins007', 'are003', 7, 50000);
+    ('pro001', 'ins001', 'are001', 5),
+    ('pro001', 'ins002', 'are001', 5),
+    ('pro001', 'ins003', 'are001', 5),
+    ('pro001', 'ins004', 'are003', 7),
+    ('pro001', 'ins005', 'are003', 7),
+    ('pro001', 'ins006', 'are003', 7),
+    ('pro002', 'ins001', 'are001', 5),
+    ('pro002', 'ins002', 'are001', 5),
+    ('pro002', 'ins003', 'are001', 5),
+    ('pro002', 'ins004', 'are003', 7),
+    ('pro002', 'ins005', 'are003', 7),
+    ('pro002', 'ins006', 'are003', 7),
+    ('pro003', 'ins001', 'are001', 5),
+    ('pro003', 'ins002', 'are001', 5),
+    ('pro003', 'ins003', 'are001', 5),
+    ('pro003', 'ins004', 'are003', 7),
+    ('pro003', 'ins005', 'are003', 7),
+    ('pro003', 'ins006', 'are003', 7);
+
 
 
 INSERT INTO chefe
@@ -960,31 +949,45 @@ VALUES
     ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 31, 30, 40, 30),
     ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 41, 40, 50, 50),
     ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 52, 50, 60, 0),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 70, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 60, 200),
     ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70, 200),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 70, 200);
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 80, 200);
 
 
 
 INSERT INTO estado_chefe
-    (identificador_area, identificador_progresso, identificador_chefe, vida_atual, tempo_para_reviver)
+    (identificador_area_atual, identificador_progresso, identificador_chefe, vida_atual)
 VALUES
-    ('are001', 'pro001', 14, 150000),
-    ('are009', 'pro001', 22, 150000),
-    ('are015', 'pro001', 31, 150000),
-    ('are019', 'pro001', 41, 150000),
-    ('are023', 'pro001', 52, 150000),
-    ('are026', 'pro001', 100, 150000),
-    ('are026', 'pro001', 120, 150000),
-    ('are026', 'pro001', 150, 150000);
+    ('are001', 'pro001', 'che001', 14),
+    ('are009', 'pro001', 'che002', 22),
+    ('are015', 'pro001', 'che003', 31),
+    ('are019', 'pro001', 'che004', 41),
+    ('are023', 'pro001', 'che005', 52),
+    ('are026', 'pro001', 'che006', 100),
+    ('are026', 'pro001', 'che007', 120),
+    ('are026', 'pro001', 'che008', 150),
+    ('are001', 'pro002', 'che001', 14),
+    ('are009', 'pro002', 'che002', 22),
+    ('are015', 'pro002', 'che003', 31),
+    ('are019', 'pro002', 'che004', 41),
+    ('are023', 'pro002', 'che005', 52),
+    ('are026', 'pro002', 'che006', 100),
+    ('are026', 'pro002', 'che007', 120),
+    ('are026', 'pro002', 'che008', 150),
+    ('are001', 'pro003', 'che001', 14),
+    ('are009', 'pro003', 'che002', 22),
+    ('are015', 'pro003', 'che003', 31),
+    ('are019', 'pro003', 'che004', 41),
+    ('are023', 'pro003', 'che005', 52),
+    ('are026', 'pro003', 'che006', 100),
+    ('are026', 'pro003', 'che007', 120),
+    ('are026', 'pro003', 'che008', 150);
 
 
 
 INSERT INTO habilidade_personagem
     (identificador_personagem, identificador_habilidade)
 VALUES
-    ('jog001', 'hab003'),
-    ('jog001', 'hab004'),
     ('lac001', 'hab043'),
     ('lac002', 'hab044'),
     ('che001', 'hab045'),
@@ -1010,73 +1013,156 @@ VALUES
 
 
 
--- Inventários de personagens
+-- Inventários de inimigos
 INSERT INTO inventario
-    (identificador_personagem)
+    (identificador_personagem, identificador_progresso)
 VALUES
-    ('lac001'),
-    ('lac002'),
-    ('lac003'),
-    ('lac004'),
-    ('lac005'),
-    ('lac006'),
-    ('lac007'),
-    ('lac008'),
-    ('lac009'),
-    ('lac010'),
-    ('lac011'),
-    ('lac012'),
-    ('che001'),
-    ('che002'),
-    ('che003'),
-    ('che004'),
-    ('che005'),
-    ('che006');
-
-
-
--- Inventários do jogador
-INSERT INTO inventario
-    (identificador_personagem, tipo_inventario)
-VALUES
-    ('jog001', 'ger'),
-    ('jog001', 'kit');
+    ('lac001', 'pro001'), -- inv001
+    ('lac002', 'pro001'), -- inv002
+    ('lac003', 'pro001'), -- inv003
+    ('lac004', 'pro001'), -- inv004
+    ('lac005', 'pro001'), -- inv005
+    ('lac006', 'pro001'), -- inv006
+    ('lac007', 'pro001'), -- inv007
+    ('lac008', 'pro001'), -- inv008
+    ('lac009', 'pro001'), -- inv009
+    ('lac010', 'pro001'), -- inv010
+    ('lac011', 'pro001'), -- inv011
+    ('lac012', 'pro001'), -- inv012
+    ('che001', 'pro001'), -- inv013
+    ('che002', 'pro001'), -- inv014
+    ('che003', 'pro001'), -- inv015
+    ('che004', 'pro001'), -- inv016
+    ('che005', 'pro001'), -- inv017
+    ('che006', 'pro001'), -- inv018
+    ('lac001', 'pro002'), -- inv019
+    ('lac002', 'pro002'), -- inv020
+    ('lac003', 'pro002'), -- inv021
+    ('lac004', 'pro002'), -- inv022
+    ('lac005', 'pro002'), -- inv023
+    ('lac006', 'pro002'), -- inv024
+    ('lac007', 'pro002'), -- inv025
+    ('lac008', 'pro002'), -- inv026
+    ('lac009', 'pro002'), -- inv027
+    ('lac010', 'pro002'), -- inv028
+    ('lac011', 'pro002'), -- inv029
+    ('lac012', 'pro002'), -- inv030
+    ('che001', 'pro002'), -- inv031
+    ('che002', 'pro002'), -- inv032
+    ('che003', 'pro002'), -- inv033
+    ('che004', 'pro002'), -- inv034
+    ('che005', 'pro002'), -- inv035
+    ('che006', 'pro002'), -- inv036
+    ('lac001', 'pro003'), -- inv037
+    ('lac002', 'pro003'), -- inv038
+    ('lac003', 'pro003'), -- inv039
+    ('lac004', 'pro003'), -- inv040
+    ('lac005', 'pro003'), -- inv041
+    ('lac006', 'pro003'), -- inv042
+    ('lac007', 'pro003'), -- inv043
+    ('lac008', 'pro003'), -- inv044
+    ('lac009', 'pro003'), -- inv045
+    ('lac010', 'pro003'), -- inv046
+    ('lac011', 'pro003'), -- inv047
+    ('lac012', 'pro003'), -- inv048
+    ('che001', 'pro003'), -- inv049
+    ('che002', 'pro003'), -- inv050
+    ('che003', 'pro003'), -- inv051
+    ('che004', 'pro003'), -- inv052
+    ('che005', 'pro003'), -- inv053
+    ('che006', 'pro003'); -- inv054
 
 
 
 -- Itens dos inimigos
 INSERT INTO item_inventario
-    (identificador_inventario, identificador_item)
+    (identificador_inventario, identificador_item, quantidade)
 VALUES
-    ('inv001', 'ncn004'),
-    ('inv002', 'ncn005'),
-    ('inv003', 'con008'),
-    ('inv004', 'ncn009'),
-    ('inv005', 'ncn011'),
-    ('inv006', 'ncn012'),
-    ('inv007', 'ncn013'),
-    ('inv008', 'ncn014'),
-    ('inv009', 'ncn018'),
-    ('inv010', 'ncn019'),
-    ('inv011', 'con027'),
-    ('inv012', 'ncn022');
+    ('inv001', 'ncn004', 1),
+    ('inv002', 'ncn005', 1),
+    ('inv003', 'con008', 1),
+    ('inv004', 'ncn009', 1),
+    ('inv005', 'ncn011', 1),
+    ('inv006', 'ncn012', 1),
+    ('inv007', 'ncn013', 1),
+    ('inv008', 'ncn014', 1),
+    ('inv009', 'ncn018', 1),
+    ('inv010', 'ncn019', 1),
+    ('inv011', 'con027', 1),
+    ('inv012', 'ncn022', 1),
+    ('inv019', 'ncn004', 1),
+    ('inv020', 'ncn005', 1),
+    ('inv021', 'con008', 1),
+    ('inv022', 'ncn009', 1),
+    ('inv023', 'ncn011', 1),
+    ('inv024', 'ncn012', 1),
+    ('inv025', 'ncn013', 1),
+    ('inv026', 'ncn014', 1),
+    ('inv027', 'ncn018', 1),
+    ('inv028', 'ncn019', 1),
+    ('inv029', 'con027', 1),
+    ('inv030', 'ncn022', 1),
+    ('inv037', 'ncn004', 1),
+    ('inv038', 'ncn005', 1),
+    ('inv039', 'con008', 1),
+    ('inv040', 'ncn009', 1),
+    ('inv041', 'ncn011', 1),
+    ('inv042', 'ncn012', 1),
+    ('inv043', 'ncn013', 1),
+    ('inv044', 'ncn014', 1),
+    ('inv045', 'ncn018', 1),
+    ('inv046', 'ncn019', 1),
+    ('inv047', 'con027', 1),
+    ('inv048', 'ncn022', 1);
+
+
 
 INSERT INTO missao
-    (identificador_jogador, identificador_area, identificador_recrutador, descricao, nome)
+    (identificador_progresso, identificador_area, identificador_recrutador, descricao, nome)
 VALUES
-    ('jog001', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
-    ('jog001', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    ('jog001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    ('jog001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    ('jog001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    ('jog001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    ('jog001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    ('jog001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    ('jog001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    ('jog001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    ('jog001', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    ('jog001', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    ('jog001', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    ('jog001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    ('jog001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
+    ('pro001', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
+    ('pro001', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
+    ('pro001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
+    ('pro001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
+    ('pro001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
+    ('pro001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
+    ('pro001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
+    ('pro001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
+    ('pro001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
+    ('pro001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
+    ('pro001', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
+    ('pro001', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
+    ('pro001', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
+    ('pro001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
+    ('pro001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final'),
+    ('pro002', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
+    ('pro002', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
+    ('pro002', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
+    ('pro002', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
+    ('pro002', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
+    ('pro002', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
+    ('pro002', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
+    ('pro002', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
+    ('pro002', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
+    ('pro002', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
+    ('pro002', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
+    ('pro002', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
+    ('pro002', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
+    ('pro002', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
+    ('pro002', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final'),
+    ('pro003', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
+    ('pro003', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
+    ('pro003', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
+    ('pro003', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
+    ('pro003', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
+    ('pro003', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
+    ('pro003', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
+    ('pro003', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
+    ('pro003', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
+    ('pro003', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
+    ('pro003', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
+    ('pro003', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
+    ('pro003', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
+    ('pro003', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
+    ('pro003', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
 

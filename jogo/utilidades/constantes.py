@@ -29,7 +29,7 @@ FPS = 60 # Quadros por segundo
 VELOCIDADE_ANIMACAO_INIMIGO = 0.2
 
 # --- Constantes do Jogador ---
-VELOCIDADE_JOGADOR = 7 # Exemplo de velocidade padrão para o jogador
+VELOCIDADE_JOGADOR = 5 # Exemplo de velocidade padrão para o jogador
 LARGURA_JOGADOR = 80
 ALTURA_JOGADOR = 120
 
