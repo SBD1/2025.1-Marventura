@@ -20,8 +20,8 @@ class Jogador(pygame.sprite.Sprite):
         self.orientacao = orientacao
         self.nome = nome
         self.descricao = descricao
-        self.energia = energia
-        self.vida = vida
+        self.energia_maxima = energia
+        self.vida_maxima = vida
         self.nivel = nivel
         self.sorte = sorte
         self.vida_atual = vida_atual
