@@ -158,3 +158,34 @@ SELECT
 	visitada
 FROM area
 WHERE identificador_ilha = 'ilh001' AND tipo_area = 'Porto';
+
+
+-- Buscar as habilidades de uma arma
+SELECT
+	habilidade.nome,
+    habilidade.descricao,
+    habilidade.tipo_de_ataque,
+    habilidade.tipo_de_alvo,
+    habilidade.dano,
+    habilidade.custo,
+    efeito.nome AS efeito_nome,
+    efeito.valor AS efeito_valor
+FROM habilidade_arma
+	JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_arma.identificador_habilidade
+	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+WHERE habilidade_arma.identificador_arma = 'arm001';
+
+-- Buscar as habilidades de uma fruta
+SELECT
+	habilidade.nome,
+	habilidade.descricao,
+	habilidade.tipo_de_ataque,
+	habilidade.tipo_de_alvo,
+	habilidade.dano,
+	habilidade.custo,
+	efeito.nome AS efeito_nome,
+	efeito.valor AS efeito_valor
+FROM habilidade_fruta
+	JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_fruta.identificador_habilidade
+	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+WHERE habilidade_fruta.identificador_fruta = 'fru001';
