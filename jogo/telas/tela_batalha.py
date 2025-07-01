@@ -54,20 +54,17 @@ class TelaBatalha(TelaModelo):
         }
     }
 
-    def __init__(self, gerenciador_telas, gerenciador_recursos, personagem, inimigos_na_batalha, jogador_x, jogador_y, jogador_olhando_direita, mapa_retorno_id):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, jogador, inimigos_na_batalha, coordenadas_de_retorno, dados_da_ilha, dados_da_area, jogador_iniciou=False):
         super().__init__(gerenciador_telas, gerenciador_recursos)
-        self.personagem = personagem
-        self.vida_jogador = 10
-        self.vida_jogador_max = 10
-        self.energia_jogador = 5
-        self.energia_jogador_max = 5
+        self.jogador = jogador
+        self.energia_atual = jogador.energia_maxima
 
         
         # Dados do jogador para retornar ao mapa
-        self.jogador_x_retorno = jogador_x
-        self.jogador_y_retorno = jogador_y
-        self.jogador_olhando_direita_retorno = jogador_olhando_direita
-        self.mapa_retorno_id = mapa_retorno_id
+        self.coordenadas_de_retorno = coordenadas_de_retorno
+        self.dados_da_ilha = dados_da_ilha
+        self.dados_da_area = dados_da_area
+        print(f"Batalha: {coordenadas_de_retorno}")
 
         # Carrega o fundo da batalha
         self.fundo_batalha = self.gerenciador_recursos.obter_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS)
@@ -76,10 +73,10 @@ class TelaBatalha(TelaModelo):
             self.fundo_batalha.fill(CINZA_ESCURO)
             print("AVISO: Imagem 'batalha_fundo_padrao' não encontrada. Usando fundo cinza.")
 
-        # Carrega a imagem do personagem
-        self.imagem_jogador = self.gerenciador_recursos.obter_imagem(f'{SHUAN}_em_repouso' if self.personagem == SHUAN else f'{SILVIE}_em_repouso')
+        # Carrega a imagem do jogador
+        self.imagem_jogador = self.gerenciador_recursos.obter_imagem(f'{SHUAN}_em_repouso' if self.jogador == SHUAN else f'{SILVIE}_em_repouso')
         if not self.imagem_jogador:
-            print(f"AVISO: Imagem de batalha para o personagem '{self.personagem}' não encontrada.")
+            print(f"AVISO: Imagem de batalha para o jogador '{self.jogador}' não encontrada.")
             self.imagem_jogador = pygame.Surface((100, 100))
             self.imagem_jogador.fill(AZUL)
 
@@ -91,11 +88,13 @@ class TelaBatalha(TelaModelo):
         self._icones_acao_equipaveis()
         
         # Interface de batalha
-        self.barra_de_estado = BarraDeEstado(self.gerenciador_recursos)
+        self.barra_de_estado = BarraDeEstado(self.gerenciador_recursos, jogador)
         self.titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TITULO)
         self.tempo_mensagem_onda = 0
         self.texto_mensagem_onda = ""
         self.posicao_jogador = (180, ALTURA_TELA - 170)
+
+        self.jogador_iniciou = jogador_iniciou
 
         # Prepara a lista de inimigos que serão enfrentados
         self.ondas_pendentes = inimigos_na_batalha
@@ -121,6 +120,14 @@ class TelaBatalha(TelaModelo):
         self.menu_mochila_ativo = False
         self.item_selecionado = None
 
+    def _usar_ataque_extra(self):
+        if self.inimigos:
+            inimigo = self.inimigos[0]
+            dano = 2  # ataque básico
+            inimigo["PV"] -= dano
+            print(f"O jogador iniciou com um ataque extra! {inimigo['tipo']} levou {dano} de dano.")
+            self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
+
     def _icones_acao_equipaveis(self):
         fruta = self._kit_do_explorador_personagem['espaco_fruta']['fruta']
         arma = self._kit_do_explorador_personagem['espaco_arma']['arma']
@@ -133,7 +140,7 @@ class TelaBatalha(TelaModelo):
         elif arma == "Arco e Flecha":
             self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_PROJETIL), acao="projetil"))
         else:
-            chave_soco = CHAVE_ACAO_SOCO_SILVIE if self.personagem == SILVIE else CHAVE_ACAO_SOCO_SHUAN
+            chave_soco = CHAVE_ACAO_SOCO_SILVIE if self.jogador == SILVIE else CHAVE_ACAO_SOCO_SHUAN
             self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(chave_soco), acao="soco"))
         
     def _carregar_proxima_onda(self):
@@ -183,23 +190,25 @@ class TelaBatalha(TelaModelo):
 
         for efeito in item["efeitos"]:
             if efeito["tipo"] == "PV":
-                self.vida_jogador += efeito["valor"]
-                if self.vida_jogador > self.vida_jogador_max:
-                    self.vida_jogador = self.vida_jogador_max
-                print(f"+{efeito['valor']} PV → atual: {self.vida_jogador}")
+                self.jogador.vida_atual += efeito["valor"]
+                if self.jogador.vida_atual > self.jogador.vida_maxima:
+                    self.jogador.vida_atual = self.jogador.vida_maxima
+                # print(f"+{efeito['valor']} PV → atual: {self.jogador.vida_maxima}")
     
             elif efeito["tipo"] == "PE":
-                self.energia_jogador += efeito["valor"]
-                if self.energia_jogador > self.energia_jogador_max:
-                    self.energia_jogador = self.energia_jogador_max
-                print(f"+{efeito['valor']} PE → atual: {self.energia_jogador}")
+                self.energia_atual += efeito["valor"]
+                if self.energia_atual > self.jogador.energia_maxima:
+                    self.energia_atual = self.jogador.energia_maxima
+                # print(f"+{efeito['valor']} PE → atual: {self.energia_atual}")
 
         # Atualiza a barra de estado do jogador
         self.barra_de_estado.atualizar_estado(
-            self.vida_jogador,
-            self.vida_jogador_max,
-            self.energia_jogador,
-            self.energia_jogador_max
+            self.jogador.vida_atual,
+            self.jogador.vida_maxima,
+            self.energia_atual,
+            self.jogador.energia_maxima,
+            self.jogador.nivel,
+            self.jogador.experiencia_atual
         )
 
         # Remove da mochila (ou marque como usado)
@@ -213,36 +222,33 @@ class TelaBatalha(TelaModelo):
     def inimigos_realizam_turno(self):
         print("Turno dos inimigos!")
         self.estado_batalha = "turno_inimigo"
+        self.fila_turnos = []
+
+        # Adiciona todos os inimigos vivos na fila
+        for i, inimigo in enumerate(self.inimigos):
+            if inimigo["PV"] > 0:
+                self.fila_turnos.append(i)
+
         self.tempo_proximo_ataque = 0.5  # tempo de espera antes do primeiro ataque
         self.inimigo_index_atacando = 0
         
 
-        # Atualiza a barra de estado do jogador
-        self.barra_de_estado.atualizar_estado(
-            self.vida_jogador,
-            self.vida_jogador_max,
-            self.energia_jogador,
-            self.energia_jogador_max
-        )
-
-        # Checar se jogador morreu
-        if self.vida_jogador <= 0:
-            print("Jogador foi derrotado!")
-            self.fim_batalha(venceu=False)
+        
     
     def fim_batalha(self, venceu):
         if venceu:
             print("Todos os inimigos foram derrotados! Você venceu a batalha!")
         else:
             print("Você foi derrotado! A batalha terminou.")
+        print(f"Batalha: {self.coordenadas_de_retorno}")
+
         # Retorna para a tela do mapa
         self.gerenciador_telas.mudar_tela(
             CHAVE_TRANSICAO_MAPA,
-            id_mapa=self.mapa_retorno_id,
-            personagem=self.personagem,
-            coordenada_x=self.jogador_x_retorno,
-            coordenada_y=self.jogador_y_retorno,
-            olhando_para_direita=self.jogador_olhando_direita_retorno
+            ponto_geracao_jogador = self.coordenadas_de_retorno,
+            dados_da_ilha = self.dados_da_ilha,
+            dados_da_area = self.dados_da_area,
+            jogador=self.jogador
         )
  
     def draw(self, tela):
@@ -269,7 +275,7 @@ class TelaBatalha(TelaModelo):
         self.barra_de_estado.desenhar(tela)
 
         centro = (self.posicao_jogador)
-        raio = 220  # distância do personagem
+        raio = 220  # distância do jogador
 
         if self.estado_batalha == "turno_jogador":
             # Suponha que icones_acao seja uma lista de objetos que têm .image e .rect
@@ -307,7 +313,7 @@ class TelaBatalha(TelaModelo):
         """
         Distribui os ícones em arco.
         - icones: lista de surfaces ou objetos com .image e .rect
-        - centro: (x, y) onde ficará o centro do arco (geralmente o personagem)
+        - centro: (x, y) onde ficará o centro do arco (geralmente o jogador)
         - raio: distância do centro até os ícones
         - angulo_inicial: ângulo onde o primeiro ícone aparecerá (em graus, -90 é topo)
         - angulo_total: arco total em graus (ex: 180 para meio círculo)
@@ -369,11 +375,10 @@ class TelaBatalha(TelaModelo):
                         case "fugir":
                             self.gerenciador_telas.mudar_tela(
                                 CHAVE_TRANSICAO_MAPA,
-                                id_mapa=self.mapa_retorno_id,
-                                personagem=self.personagem,
-                                coordenada_x=self.jogador_x_retorno,
-                                coordenada_y=self.jogador_y_retorno,
-                                olhando_para_direita=self.jogador_olhando_direita_retorno
+                                ponto_geracao_jogador = self.coordenadas_de_retorno,
+                                dados_da_ilha = self.dados_da_ilha,
+                                dados_da_area = self.dados_da_area,
+                                jogador=self.jogador
                             )
                             return
 
@@ -385,8 +390,8 @@ class TelaBatalha(TelaModelo):
                             print("Usar fruta")
                             dano = 8
                             if self.inimigos:
-                                self.inimigos[0]['PV'] -= dano  # Supondo que o inimigo é um dicionário com 'vida'
-                                #self.log_batalha.append(f"Jogador usou fruta! ({dano} de dano)")
+                                self.inimigos[0]['PV'] -= dano
+                                self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
                                 print("Vida do inimigo:", self.inimigos[0]['PV'])
                                 self.inimigos_realizam_turno()
 
@@ -396,6 +401,7 @@ class TelaBatalha(TelaModelo):
                             dano = 5
                             if self.inimigos:
                                 self.inimigos[0]['PV'] -= dano
+                                self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
                                 print("Vida do inimigo:", self.inimigos[0]['PV'])
                                 self.inimigos_realizam_turno()
 
@@ -404,6 +410,11 @@ class TelaBatalha(TelaModelo):
         return None
 
     def update(self, dt):
+        # Verifica se o jogador iniciou a luta
+        if self.jogador_iniciou:
+            self._usar_ataque_extra()
+            self.jogador_iniciou = False
+
         if self.tempo_mensagem_onda > 0:
             self.tempo_mensagem_onda -= dt
 
@@ -412,34 +423,38 @@ class TelaBatalha(TelaModelo):
 
         if self.estado_batalha == "turno_inimigo":
             self.tempo_proximo_ataque -= dt
-            if self.tempo_proximo_ataque <= 0:
-                if self.inimigo_index_atacando < len(self.inimigos):
-                    inimigo = self.inimigos[self.inimigo_index_atacando]
-                    if inimigo['PV'] > 0:
-                        self.inimigos_animados[self.inimigo_index_atacando].iniciar_ataque()
+            if self.tempo_proximo_ataque <= 0 and self.fila_turnos:
+                i = self.fila_turnos.pop(0)
+                if i < len(self.inimigos) and i < len(self.inimigos_animados):
+                    inimigo = self.inimigos[i]
+                    animado = self.inimigos_animados[i]
 
-                        dano = 1
-                        self.vida_jogador -= dano
-                        print(f"{inimigo['tipo']} atacou! Jogador perdeu {dano} PV.")
-                        self.tempo_dano_jogador = 0.25  # dura 0.25s
-                        pos = self.posicao_jogador
-                        self.danos_flutuantes.append(DanoFlutuante(str(dano), (pos[0], pos[1] - 50)))
-                        
-                        self.barra_de_estado.atualizar_estado(
-                            self.vida_jogador,
-                            self.vida_jogador_max,
-                            self.energia_jogador,
-                            self.energia_jogador_max
-                        )
+                    animado.iniciar_ataque()
+                    dano = 1
+                    self.jogador.vida_atual -= dano
+                    print(f"{inimigo['tipo']} atacou! Jogador perdeu {dano} PV.")
+                    self.tempo_dano_jogador = 0.25  # dura 0.25s
+                    pos = self.posicao_jogador
+                    self.danos_flutuantes.append(DanoFlutuante(str(dano), (pos[0], pos[1] - 50)))
 
-                        if self.vida_jogador <= 0:
-                            self.fim_batalha(venceu=False)
-                            return
+                    self.barra_de_estado.atualizar_estado(
+                        self.jogador.vida_atual,
+                        self.jogador.vida_maxima,
+                        self.energia_atual,
+                        self.jogador.energia_maxima,
+                        self.jogador.nivel,
+                        self.jogador.experiencia_atual
+                    )
 
-                    self.inimigo_index_atacando += 1
+                    if self.jogador.vida_atual <= 0:
+                        self.fim_batalha(venceu=False)
+                        return
+
                     self.tempo_proximo_ataque = 0.7  # tempo entre ataques
                 else:
-                    self.estado_batalha = "turno_jogador"
+                    print(f"Índice inválido na fila de turnos: {i}")
+            elif not self.fila_turnos:
+                self.estado_batalha = "turno_jogador"
 
         for dano in self.danos_flutuantes:
             dano.update(dt)

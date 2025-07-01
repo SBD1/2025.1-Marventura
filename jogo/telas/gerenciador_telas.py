@@ -60,6 +60,8 @@ class GerenciadorDeTelas:
                             jogador=jogador,
                             ponto_geracao_jogador=posicao_jogador)
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
+            print(f"Tela: {kwargs.get('ponto_geracao_jogador')}")
+            
             return TelaJogo(self, self.gerenciador_recursos,
                             gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
                             dados_da_area=kwargs.get('dados_da_area'),
@@ -69,11 +71,10 @@ class GerenciadorDeTelas:
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
-                               personagem=kwargs.get('personagem'),
-                               jogador_x=kwargs.get('jogador_atual_x'),
-                               jogador_y=kwargs.get('jogador_atual_y'),
-                               jogador_olhando_direita=kwargs.get('jogador_olhando_direita'),
-                               mapa_retorno_id=kwargs.get('mapa_atual_id'))
+                               jogador=kwargs.get('jogador'),
+                               coordenadas_de_retorno= kwargs.get('coordenadas_de_retorno'),
+                               dados_da_area=kwargs.get('dados_da_area'),
+                               dados_da_ilha=kwargs.get('dados_da_ilha'))
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None
