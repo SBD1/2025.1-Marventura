@@ -84,6 +84,47 @@ class DBManager:
             return False
 
     # ===============================================
+    # Métodos de Operações com Habilidades
+    # ===============================================
+
+    def buscar_habilidades_por_arma(self, id_arma):
+        query = """
+            SELECT
+            	habilidade.nome,
+                habilidade.descricao,
+                habilidade.tipo_de_ataque,
+                habilidade.tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                efeito.nome AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_arma
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_arma.identificador_habilidade
+            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_arma.nome = %s;
+        """
+        return self.executar_query(query, (id_arma,), fetchall=True)
+    
+    def buscar_habilidades_por_fruta(self, id_arma):
+        query = """
+            SELECT
+            	habilidade.nome,
+                habilidade.descricao,
+                habilidade.tipo_de_ataque,
+                habilidade.tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                efeito.nome AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_fruta
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_fruta.identificador_habilidade
+            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_fruta.nome = %s;
+        """
+        return self.executar_query(query, (id_arma,), fetchall=True)
+
+
+    # ===============================================
     # Métodos de Operações com Jogador
     # ===============================================
     def carregar_dados_do_progresso(self, id_jogador):
@@ -117,8 +158,8 @@ class DBManager:
                 TRIM(descricao) AS descricao,
                 coordenada_x,
                 coordenada_y,
-                energia,
-                vida,
+                energia AS energia_maxima,
+                vida AS vida_maxima,
                 nivel,
                 sorte,
                 vida_atual,
