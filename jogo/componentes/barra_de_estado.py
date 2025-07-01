@@ -4,7 +4,7 @@ from utilidades.constantes import *
 
 
 class BarraDeEstado:
-    def __init__(self, gerenciador_recursos):
+    def __init__(self, gerenciador_recursos, jogador):
         self.gerenciador_recursos = gerenciador_recursos
         
         self.imagem_barra = self.gerenciador_recursos.obter_imagem(CHAVE_BARRA_DE_ESTADO)
@@ -38,24 +38,28 @@ class BarraDeEstado:
             self.moeda.fill(AMARELO)
 
         # Inicializa os valores de estado (ATUALIZAR DEPOIS COM OS DADOS DO JOGADOR)
-        self.pv_atual = 10
-        self.pv_maximo = 10
-        self.energia_atual = 5
-        self.energia_maxima = 5
-        self.nivel = 5
-        self.xp_atual = 30
+        self.jogador = jogador
+        self.energia_atual = jogador.energia_maxima
         self.xp_para_proximo = 100
 
-        self.texto_nivel = self.texto.render(f"Nv. {self.nivel}", True, BRANCO_CLARO)
+        self.texto_nivel = self.texto.render(f"Nv. {self.jogador.nivel}", True, BRANCO_CLARO)
         self.rect_texto_nivel = self.texto_nivel.get_rect(topleft=(10, 80))
 
     
     
-    def atualizar_estado(self, pv_atual, pv_maximo, pe_atual, pe_maximo):
-        self.pv_atual = pv_atual
-        self.pv_maximo = pv_maximo
-        self.energia_atual = pe_atual
-        self.energia_maxima = pe_maximo
+    def atualizar_estado(self, vida_atual = None, vida_maxima = None, energia_atual = None, energia_maxima = None, nivel = None, experiencia = None):
+        if vida_atual:
+            self.jogador.vida_atual = vida_atual
+        if vida_maxima:
+            self.jogador.vida_maxima = vida_maxima
+        if energia_atual:
+            self.energia_atual = energia_atual
+        if energia_maxima:
+            self.jogador.energia_maxima = energia_maxima
+        if nivel:
+            self.jogador.nivel = nivel
+        if experiencia:
+            self.jogador.experiencia_atual += experiencia
         #self.moeda_atual = moeda_atual
 
 
@@ -96,7 +100,7 @@ class BarraDeEstado:
             tela,
             "PV",                                       # Texto
             self.coracao,                               # Ícone
-            f"{self.pv_atual}/{self.pv_maximo}",    # Estado atual
+            f"{self.jogador.vida_atual}/{self.jogador.vida_maxima}",    # Estado atual
             self.titulo,                                # Fonte
             BRANCO_CLARO,                               # Cor do texto
             x,                                          # X inicial
@@ -111,7 +115,7 @@ class BarraDeEstado:
             tela,
             "PE",
             self.energia,
-            f"{self.energia_atual}/{self.energia_maxima}",
+            f"{self.energia_atual}/{self.jogador.energia_maxima}",
             self.titulo,
             BRANCO_CLARO,
             x,
@@ -143,7 +147,7 @@ class BarraDeEstado:
         y_barra = self.rect_texto_nivel.top + (self.texto_nivel.get_height() - altura_barra) // 2
 
         # Calcula o preenchimento
-        proporcao = self.xp_atual / self.xp_para_proximo
+        proporcao = self.jogador.experiencia_atual / self.xp_para_proximo
         largura_preenchida = int(largura_barra_total * proporcao)
 
         # Fundo da barra
