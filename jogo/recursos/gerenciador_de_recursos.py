@@ -154,7 +154,10 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CENARIO_CIDADE_PORTO_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_cidade_porto-camada_superior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CIDADE_CENTRO, 'recursos/imagens/cenario/ilha_cidade_centro.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CIDADE_PRACA, 'recursos/imagens/cenario/ilha_cidade_praça.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_CIDADE_PRACA_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_cidade_praça-camada_superior.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_NEVE_COSTA, 'recursos/imagens/cenario/ilha_neve_costa.png')
         self._carregar_imagem(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_NEVE_MONTANHA, 'recursos/imagens/cenario/ilha_neve_montanha.png')
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
 

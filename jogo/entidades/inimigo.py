@@ -6,7 +6,7 @@ from utilidades.constantes import *
 
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_inimigo,
-                 descricao, vida_atual, vida_total, nivel, experiencia, caminho_container):
+                 descricao, vida_atual, vida_total, nivel, experiencia, habilidade, inventario, caminho_container):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         self.tipo_inimigo = tipo_inimigo
@@ -22,6 +22,8 @@ class Inimigo(pygame.sprite.Sprite):
         self.vida_total = vida_total
         self.nivel = nivel
         self.experiencia = experiencia
+        self.habilidade = habilidade
+        self.inventario = inventario
 
         self.imagens_animacao = {}
         self.carregar_animacoes(tipo_inimigo)
