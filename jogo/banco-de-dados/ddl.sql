@@ -509,7 +509,7 @@ CREATE TABLE inventario (
     identificador_inventario ID PRIMARY KEY,
     identificador_personagem ID NOT NULL REFERENCES tipo_personagem(identificador_personagem),
     identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
-    tipo_inventario CHAR(3) DEFAULT 'ger' NOT NULL CHECK (tipo_inventario IN ('ger', 'kit'))
+    tipo_inventario CHAR(3) DEFAULT 'moc' NOT NULL CHECK (tipo_inventario IN ('moc', 'kit'))
 );
 
 CREATE TRIGGER atribui_id_inventario

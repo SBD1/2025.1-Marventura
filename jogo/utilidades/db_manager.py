@@ -163,7 +163,7 @@ class DBManager:
         if not jogador:
             return None, None, None
 
-        mochila_jogador = self.buscar_inventario(id_jogador, 'ger')
+        mochila_jogador = self.buscar_inventario(id_jogador, 'moc')
         kit_jogador = self.buscar_inventario(id_jogador, 'kit')
 
         area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
@@ -260,7 +260,7 @@ class DBManager:
     # Métodos de Operações com Inventário e Itens
     # ===============================================
 
-    def buscar_inventario(self, identificador_personagem, tipo_inventario='ger', identificador_progresso=None):
+    def buscar_inventario(self, identificador_personagem, tipo_inventario='moc', identificador_progresso=None):
         """Acessa o inventário de um personagem e seus atributos, filtrando também por progresso."""
         query = """
             SELECT
@@ -294,7 +294,7 @@ class DBManager:
         return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
 
 
-    def criar_inventario(self, id_jogador, id_progresso, tipo_inventario='ger'):
+    def criar_inventario(self, id_jogador, id_progresso, tipo_inventario='moc'):
         """Cria um novo inventário para um jogador e retorna o ID do inventário."""
         query = """
             INSERT INTO inventario (identificador_personagem, identificador_progresso, tipo_inventario)

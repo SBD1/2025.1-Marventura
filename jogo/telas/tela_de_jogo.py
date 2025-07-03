@@ -121,7 +121,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             # Carrega os inimigos, agora passando o caminho da arena
             for dado_do_inimigo in inimigos:
                 habilidades = self.banco_de_dados.buscar_habilidades_por_personagem(dado_do_inimigo.identificador_instancia_lacaio)
-                itens = self.banco_de_dados.buscar_inventario(dado_do_inimigo.identificador_instancia_lacaio, 'ger', self.dados_do_progresso.identificador_progresso)
+                itens = self.banco_de_dados.buscar_inventario(dado_do_inimigo.identificador_instancia_lacaio, 'moc', self.dados_do_progresso.identificador_progresso)
 
                 novo_inimigo = Inimigo(
                     self.gerenciador_recursos,
@@ -179,11 +179,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     return None # Consome o evento
                 else: # Uma ilha foi selecionada
                     ilha_selecionada = resultado_menu
-                    print(f"Viajando para: {ilha_selecionada.nome}")
+                    print(f"Viajando para: {ilha_selecionada.identificador_ilha}")
 
                     if ilha_selecionada:
                         porto_destino = self.banco_de_dados.buscar_porto_da_ilha(ilha_selecionada.identificador_ilha, self.dados_do_progresso.identificador_progresso)
-
+                        print(f"porto_destino: {porto_destino}")
                         if porto_destino:
                             self.menu_viagem_ativo = False
                             self.menu_viagem = None # Limpa a instância do menu
