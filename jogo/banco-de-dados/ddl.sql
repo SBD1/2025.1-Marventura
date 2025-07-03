@@ -597,19 +597,6 @@ EXECUTE FUNCTION public.gerar_id();
 
 
 
-CREATE TABLE dialogo (
-    identificador_missao ID PRIMARY KEY,
-    identificador_jogador ID NOT NULL REFERENCES tipo_personagem(identificador_personagem),
-    dialogo CHAR(500)
-);
-
-CREATE TRIGGER atribui_id_dialogo
-BEFORE INSERT ON dialogo
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-
-
 CREATE TABLE missao (
     identificador_missao ID PRIMARY KEY,
     identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso), 
@@ -622,6 +609,21 @@ CREATE TABLE missao (
 
 CREATE TRIGGER atribui_id_missao
 BEFORE INSERT ON missao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE dialogo (
+    identificador_missao ID PRIMARY KEY,
+    identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
+    identificador_missao ID NOT NULL REFERENCES missao(identificador_missao),
+    ordem_na_missao SMALLINT CHECK (ordem_na_missão > 0)
+    dialogo CHAR(500)
+);
+
+CREATE TRIGGER atribui_id_dialogo
+BEFORE INSERT ON dialogo
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
