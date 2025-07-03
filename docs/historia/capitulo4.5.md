@@ -171,4 +171,4 @@ E juntos, navegaram em direção ao desconhecido — onde novos segredos os agua
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 28/06/2025 |  |  |
+| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 28/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 03/07/2025 |

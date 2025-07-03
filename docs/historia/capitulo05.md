@@ -353,4 +353,4 @@ Silvie ergueu os olhos para o céu, e pela primeira vez em dias, uma fresta de s
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/07/2025 |  |  |
+| `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 02/07/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 03/07/2025 |

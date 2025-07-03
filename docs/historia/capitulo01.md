@@ -31,7 +31,7 @@ Um animal selvagem, com pelos ouriçados e olhos famintos, saltou do mato, rosna
 > **Silvie**  
 — Tsc… sério? — murmurou a jovem, assumindo uma posição defensiva.
 
-Sem muita escolha, ela entrou em combate. Usando instinto e criatividade, conseguiu derrubar o bicho após uma luta intensa. Apesar de inexperiente, havia algo nele — algo que parecia... natural em meio à batalha.
+Sem muita escolha, ela entrou em combate. Usando instinto e criatividade, conseguiu derrubar o bicho após uma luta intensa. Apesar de inexperiente, havia algo nela — algo que parecia... natural em meio à batalha.
 
 —
 
@@ -67,7 +67,7 @@ No dia seguinte, ela partiu com as instruções dos moradores. No caminho, mais 
  
 Ao chegar ao local indicado — uma clareira cercada por árvores altas e retorcidas — a fera apareceu. Um grande javali selvagem coberto por cicatrizes e musgo. Os chifres se erguiam como lâminas e os olhos brilhavam de raiva.
 
-A batalha foi intensa. A criatura investia com força brutal, e Silvie desviava, atacava e resistia. Mas no fim, ao tentar um golpe final, a fera se lançou com tudo… e o jovem se esquivou por instinto.
+A batalha foi intensa. A criatura investia com força brutal, e Silvie desviava, atacava e resistia. Mas no fim, ao tentar um golpe final, a fera se lançou com tudo… e a jovem se esquivou por instinto.
 
 *CRASH!*
 
@@ -116,4 +116,4 @@ O destino a chamava. E a busca pela irmã… estava apenas começando.
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 23/05/2025 | - | - |
-| `1.1` | Atualização da História | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/06/2025 |  |  |
+| `1.1` | Atualização da História | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 03/07/2025 |

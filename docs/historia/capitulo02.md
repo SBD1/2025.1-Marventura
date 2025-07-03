@@ -362,4 +362,4 @@ Vozes que ainda tinham algo a dizer.
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 15/06/2025 | - | - |
-| `1.1` | Atualização da História | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/06/2025 |  |  |
+| `1.1` | Atualização da História | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 03/07/2025 |
