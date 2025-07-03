@@ -3,9 +3,9 @@
 import pygame
 import sys
 from utilidades.constantes import *
-from recursos import GerenciadorDeRecursos
-from utilidades import DBManager
-from telas import GerenciadorDeTelas
+from gerenciadores import GerenciadorDeRecursos
+from gerenciadores import DBManager
+from gerenciadores import GerenciadorDeTelas
 
 # Inicializa o Pygame (DEVE VIR ANTES DE CARREGAR FONTES/IMAGENS)
 pygame.init()
