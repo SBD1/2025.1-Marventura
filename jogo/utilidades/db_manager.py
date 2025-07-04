@@ -219,6 +219,15 @@ class DBManager:
         """
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
         return self.executar_query(query, params)
+    
+    def atualizar_posicao_jogador(self, identificador_jogador, identificador_area, coordenada_x, coordenada_y):
+        """Atualiza a posição do jogador"""
+        consulta = """
+            UPDATE jogador
+                SET identificador_area = %s, coordenada_x = %s, coordenada_y = %s
+                WHERE identificador_jogador = %s;
+        """
+        return self.executar_query(consulta, (identificador_area, coordenada_x, coordenada_y, identificador_jogador))
 
     def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
         """Insere um novo jogador no banco de dados e retorna o ID gerado."""

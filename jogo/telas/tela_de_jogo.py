@@ -9,6 +9,7 @@ from entidades import Obstaculo
 from entidades import Caminho
 from entidades import AreaInteracao
 from utilidades import Camera
+from interface import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
@@ -88,6 +89,15 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         self._carregar_entidades_dos_dados_do_mapa()
 
+        # --- Atributos da Caixa de Diálogo ---
+        self.caixa_dialogo = None
+        self.dialogos_atuais = []
+        self.indice_dialogo_atual = 0
+        self.dialogo_ativo = False
+        
+        # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
+        self.iniciar_dialogo(["Bem-vindo a esta área!", "Espero que se divirta!"])
+
 
 
     def _carregar_entidades_dos_dados_do_mapa(self):
@@ -151,6 +161,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
 
 
+    def iniciar_dialogo(self, lista_de_textos):
+        """Inicia uma sequência de diálogos."""
+        self.dialogos_atuais = lista_de_textos
+        self.indice_dialogo_atual = 0
+        self.dialogo_ativo = True
+        
+        # Cria a caixa de diálogo se ainda não existir
+        if not self.caixa_dialogo:
+            self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos)
+        
+        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual], SILVIE)
+
+
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
         Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
@@ -169,6 +192,21 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if transicao_info:
             return transicao_info
         
+        # --- Lógica da Caixa de Diálogo (TEM PRIORIDADE SOBRE OUTROS INPUTS) ---
+        if self.dialogo_ativo and self.caixa_dialogo:
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_SPACE:
+                    if self.caixa_dialogo.esta_digitando:
+                        self.caixa_dialogo.pular_digitacao()
+                    elif self.caixa_dialogo.esta_finalizado():
+                        self.indice_dialogo_atual += 1
+                        if self.indice_dialogo_atual < len(self.dialogos_atuais):
+                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual], SILVIE)
+                        else:
+                            self.dialogo_ativo = False # Fim do diálogo
+                            self.caixa_dialogo.limpar_dialogo() # Limpa o texto da caixa
+            return None # Consome o evento, o jogador não deve se mover enquanto o diálogo está ativo
+
         # --- Lógica do Menu de Viagem (se estiver ativo) ---
         if self.menu_viagem_ativo and self.menu_viagem:
             resultado_menu = self.menu_viagem.handle_input(evento)
@@ -231,6 +269,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             informacoes_de_destino.orientacao
                         )
 
+                        self.banco_de_dados.atualizar_posicao_jogador(self.informacoes_jogador.identificador_jogador, area.area_destino, informacoes_de_destino.ponto_geracao_x, informacoes_de_destino.ponto_geracao_y,)
+
                         return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
                                 'dados_da_area': proxima_area,
                                 'dados_da_ilha': self.dados_da_ilha,
@@ -265,6 +305,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
     def update(self, dt):
         super().update(dt)
+
+        # Se o diálogo estiver ativo, apenas atualiza a caixa de diálogo
+        if self.dialogo_ativo:
+            self.caixa_dialogo.atualizar()
+            #return # Não atualiza o jogador ou inimigos enquanto o diálogo está ativo
 
         if self.menu_viagem_ativo and self.menu_viagem:
             return None
@@ -368,6 +413,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- Desenha o menu de viagem se estiver ativo ---
         if self.menu_viagem_ativo and self.menu_viagem:
             self.menu_viagem.draw(tela)
+
+        # --- Desenha a caixa de diálogo se estiver ativa ---
+        if self.dialogo_ativo and self.caixa_dialogo:
+            self.caixa_dialogo.desenhar(tela)
 
 
 
