@@ -6,7 +6,7 @@ from utilidades.constantes import * # Importa as constantes
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, nome, descricao,
+    def __init__(self, gerenciador_recursos, identificador, x_inicial, y_inicial, nome, descricao,
                  energia, vida, nivel, sorte, vida_atual, experiencia_atual,
                  orientacao='direita'):
         super().__init__()
@@ -19,6 +19,7 @@ class Jogador(pygame.sprite.Sprite):
         self.velocidade = VELOCIDADE_JOGADOR
         self.orientacao = orientacao
         self.nome = nome
+        self.identificador_jogador = identificador
         self.descricao = descricao
         self.energia = energia
         self.vida = vida
@@ -69,6 +70,14 @@ class Jogador(pygame.sprite.Sprite):
         # Variáveis para o ícone de interação
         self.mostrar_icone_interacao = False
         self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO)
+
+
+
+    def atualizar_posicao_jogador(self, x_inicial, y_inicial, orientacao):
+        self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.orientacao = orientacao
+    
 
 
     def carregar_animacoes(self):
@@ -316,6 +325,8 @@ class Jogador(pygame.sprite.Sprite):
             imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
         self.image = imagem_atual
+
+
 
     def draw(self, screen, camera_x, camera_y):
         """

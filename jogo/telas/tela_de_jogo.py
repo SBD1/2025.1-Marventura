@@ -1,9 +1,7 @@
 # telas/tela_jogo.py
 
 import pygame
-import sys
 from utilidades.constantes import *
-from entidades import Jogador
 from entidades import Inimigo
 from entidades import Obstaculo
 from entidades import Caminho
@@ -11,6 +9,7 @@ from entidades import AreaInteracao
 from utilidades import Camera
 from interface import CaixaDeDialogo
 from .tela_modelo import TelaModelo
+from gerenciadores import GerenciadorDeEntidades
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
     """
@@ -26,14 +25,13 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, dados_da_ilha, dados_da_area,
-                 gerenciador_banco_de_dados, jogador, ponto_geracao_jogador, dados_do_progresso):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
+        self.gerenciador_entidades = GerenciadorDeEntidades()
 
-        self.dados_da_area = dados_da_area
-        self.dados_da_ilha = dados_da_ilha
-        self.informacoes_jogador = jogador
-        self.dados_do_progresso = dados_do_progresso
+        self.dados_da_area = self.gerenciador_entidades.area_atual
+        self.dados_da_ilha = self.gerenciador_entidades.ilha_atual
+        self.dados_do_progresso = self.gerenciador_entidades.progresso_do_jogo
         self.banco_de_dados = gerenciador_banco_de_dados
 
         # --- Atributos para o menu de viagem ---
@@ -62,20 +60,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             tamanho_mundo=(self.largura_mundo, self.altura_mundo)
         )
 
-        x, y, orientacao = ponto_geracao_jogador
-        self.jogador = Jogador(
-            self.gerenciador_recursos,
-            x, y,
-            jogador.nome,
-            jogador.descricao,
-            jogador.energia,
-            jogador.vida,
-            jogador.nivel,
-            jogador.sorte,
-            jogador.vida_atual,
-            jogador.experiencia_atual,
-            orientacao
-        )
+        self.jogador = self.gerenciador_entidades.jogador
 
         self.obstaculos_caminho = pygame.sprite.Group()
         self.obstaculos_visao = pygame.sprite.Group()
@@ -227,19 +212,25 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             self.menu_viagem = None # Limpa a instância do menu
                             id_area = porto_destino.identificador_area
 
-                            informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, id_area)
+                            self.gerenciador_entidades.ilha_atual = ilha_selecionada
 
-                            ponto_geracao_jogador = (
+                            self.gerenciador_entidades.area_atual = porto_destino
+
+                            informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, id_area)
+                            
+                            self.gerenciador_entidades.jogador.atualizar_posicao_jogador(
                                 informacoes_de_destino.ponto_geracao_x,
                                 informacoes_de_destino.ponto_geracao_y,
                                 informacoes_de_destino.orientacao
                             )
-                            return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
-                                'dados_da_area': porto_destino,
-                                'dados_da_ilha': ilha_selecionada,
-                                'jogador': self.informacoes_jogador,
-                                'ponto_geracao_jogador': ponto_geracao_jogador,
-                                'dados_slot': self.dados_do_progresso}
+
+                            self.banco_de_dados.atualizar_posicao_jogador(
+                                self.gerenciador_entidades.jogador.identificador_jogador,
+                                id_area,
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y,
+                            )
+                            return {'estado': CHAVE_TRANSICAO_MAPA}
                         else:
                             print(f"AVISO: Não foi possível determinar o mapa de destino para a ilha '{ilha_selecionada.nome}'.")
                     else:
@@ -261,22 +252,24 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 for area in areas_colidindo_agora:
                     if area.tipo_evento == 'mudar_area':
                         print(f"Detectou interação para mudar mapa para {area.area_destino}")
-                        proxima_area = self.banco_de_dados.buscar_info_area(area.area_destino, self.dados_do_progresso.identificador_progresso)
+                        self.gerenciador_entidades.area_atual = self.banco_de_dados.buscar_info_area(area.area_destino, self.dados_do_progresso.identificador_progresso)
+
                         informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, area.area_destino)
-                        ponto_geracao_jogador = (
+
+                        self.gerenciador_entidades.jogador.atualizar_posicao_jogador(
                             informacoes_de_destino.ponto_geracao_x,
                             informacoes_de_destino.ponto_geracao_y,
                             informacoes_de_destino.orientacao
                         )
 
-                        self.banco_de_dados.atualizar_posicao_jogador(self.informacoes_jogador.identificador_jogador, area.area_destino, informacoes_de_destino.ponto_geracao_x, informacoes_de_destino.ponto_geracao_y,)
+                        self.banco_de_dados.atualizar_posicao_jogador(
+                            self.gerenciador_entidades.jogador.identificador_jogador,
+                            area.area_destino,
+                            informacoes_de_destino.ponto_geracao_x,
+                            informacoes_de_destino.ponto_geracao_y,
+                        )
 
-                        return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
-                                'dados_da_area': proxima_area,
-                                'dados_da_ilha': self.dados_da_ilha,
-                                'jogador': self.informacoes_jogador,
-                                'ponto_geracao_jogador': ponto_geracao_jogador,
-                                'dados_slot': self.dados_do_progresso}
+                        return {'estado': CHAVE_TRANSICAO_MAPA}
                     elif area.tipo_evento == 'embarcar':
                         if not self.menu_viagem_ativo:
                             print('Embarcando na viagem...')
@@ -315,8 +308,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             return None
 
         # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
-        if not self.dialogo_ativo:
-            self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
+        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
 
         # Lógica de clamping do jogador para não sair dos limites do mundo
         largura_mundo_atual = self.mapa_fundo_imagem.get_width()
