@@ -1,9 +1,7 @@
 # telas/tela_jogo.py
 
 import pygame
-import sys
 from utilidades.constantes import *
-from entidades import Jogador
 from entidades import Inimigo
 from entidades import Obstaculo
 from entidades import Caminho
@@ -32,7 +30,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         self.dados_da_area = self.gerenciador_entidades.area_atual
         self.dados_da_ilha = self.gerenciador_entidades.ilha_atual
-        self.informacoes_jogador = self.gerenciador_entidades.jogador
         self.dados_do_progresso = self.gerenciador_entidades.progresso_do_jogo
         self.banco_de_dados = gerenciador_banco_de_dados
 
