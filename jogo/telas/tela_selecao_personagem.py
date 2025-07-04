@@ -11,8 +11,11 @@ class TelaSelecaoPersonagem(TelaModelo):
     Ao escolher, solicita ao GerenciadorDeTelas para iniciar o jogo no mapa inicial,
     com o personagem selecionado e o ponto de entrada de "novo jogo".
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos): # Adiciona gerenciador_telas
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, dados_slot): # Adiciona gerenciador_telas
         super().__init__(gerenciador_telas, gerenciador_recursos)
+
+        self.banco_de_dados = gerenciador_banco_de_dados
+        self.dados_slot = dados_slot
 
         # --- Recursos específicos da Tela de Seleção de Personagem ---
         self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
@@ -63,6 +66,8 @@ class TelaSelecaoPersonagem(TelaModelo):
         )
         self._texto_botao_voltar = "Voltar"
 
+
+
     def handle_input(self, evento):
         super().handle_input(evento) # Chama o handle_input da base para eventos comuns (ex: QUIT)
 
@@ -70,13 +75,29 @@ class TelaSelecaoPersonagem(TelaModelo):
             if evento.button == 1: # Clique com o botão esquerdo
                 if self._rect_opcao_menino.collidepoint(evento.pos):
                     print(f"Selecionado {SHUAN}! Iniciando novo jogo...")
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=SHUAN)
+                    jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.criar_novo_jogo(SHUAN, self.dados_slot.identificador_progresso)
                 elif self._rect_opcao_menina.collidepoint(evento.pos):
                     print(f"Selecionado {SILVIE}! Iniciando novo jogo...")
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=SILVIE)
+                    jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.criar_novo_jogo(SILVIE, self.dados_slot.identificador_progresso)
                 elif self._rect_botao_voltar.collidepoint(evento.pos):
                     print("Voltando ao Menu Principal...")
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
+                    return None
+
+                posicao_jogador = (
+                    jogador.coordenada_x,
+                    jogador.coordenada_y,
+                    'direita'
+                )
+                self.gerenciador_telas.mudar_tela(
+                    CHAVE_TRANSICAO_NOVO_JOGO,
+                    jogador = jogador,
+                    mochila_jogador = mochila_jogador,
+                    kit_jogador = kit_jogador,
+                    ilha = ilha,
+                    area = area,
+                    dados_slot = self.dados_slot,
+                    ponto_geracao_jogador = posicao_jogador)
         return None
 
     def update(self, dt):

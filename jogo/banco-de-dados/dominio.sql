@@ -44,10 +44,6 @@ BEGIN
         IF NEW.identificador_area IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_area" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    ELSIF TG_TABLE_NAME = 'evento' THEN
-        IF NEW.identificador_evento IS NOT NULL THEN
-            RAISE EXCEPTION 'A coluna "identificador_evento" é gerada automaticamente; não forneça valor manualmente.';
-        END IF;
     ELSIF TG_TABLE_NAME = 'tipo_elemento_espacial' THEN
         IF NEW.identificador_elemento_espacial IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_elemento_espacial" é gerada automaticamente; não forneça valor manualmente.';
@@ -80,9 +76,17 @@ BEGIN
         IF NEW.identificador_item IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_item" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+    ELSIF TG_TABLE_NAME = 'dialogo' THEN
+        IF NEW.identificador_dialogo IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_dialogo" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
     ELSIF TG_TABLE_NAME = 'missao' THEN
         IF NEW.identificador_missao IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_missao" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
+    ELSIF TG_TABLE_NAME = 'progresso' THEN
+        IF NEW.identificador_progresso IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_progresso" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
     END IF;
 
@@ -121,8 +125,6 @@ BEGIN
         NEW.identificador_ilha := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'area' THEN
         NEW.identificador_area := prefixo || lpad(numero_serial::text, 3, '0');
-    ELSIF TG_TABLE_NAME = 'evento' THEN
-        NEW.identificador_evento := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'tipo_elemento_espacial' THEN
         NEW.identificador_elemento_espacial := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'recompensa_de_exploracao' THEN
@@ -139,8 +141,12 @@ BEGIN
         NEW.identificador_negociacao := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'tipo_item' THEN
         NEW.identificador_item := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'dialogo' THEN
+        NEW.identificador_dialogo := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'missao' THEN
         NEW.identificador_missao := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'progresso' THEN
+        NEW.identificador_progresso := prefixo || lpad(numero_serial::text, 3, '0');
     END IF;
 
 
