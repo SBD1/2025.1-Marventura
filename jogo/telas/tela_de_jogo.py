@@ -315,7 +315,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             return None
 
         # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
-        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
+        if not self.dialogo_ativo:
+            self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
 
         # Lógica de clamping do jogador para não sair dos limites do mundo
         largura_mundo_atual = self.mapa_fundo_imagem.get_width()
