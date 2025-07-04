@@ -617,8 +617,8 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE dialogo (
     identificador_missao ID PRIMARY KEY,
     identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
-    identificador_missao ID NOT NULL REFERENCES missao(identificador_missao),
-    ordem_na_missao SMALLINT CHECK (ordem_na_missão > 0)
+    identificador_missao ID REFERENCES missao(identificador_missao),
+    sequencia_local SMALLINT CHECK (sequencia_local > 0)
     dialogo CHAR(500)
 );
 
