@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import psycopg
 from psycopg.rows import namedtuple_row
+from utilidades.constantes import *
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -84,36 +85,116 @@ class DBManager:
             return False
 
     # ===============================================
-    # Métodos de Operações com Jogador
+    # Métodos de Operações com progresso salvo
     # ===============================================
-    def carregar_dados_do_progresso(self, id_jogador):
+    def carregar_dados_dos_slots(self):
+        """
+        Busca os dados dos slots salvos.
+        """
+        consulta = """
+            SELECT
+                p.identificador_progresso,
+                p.numero_do_slot,
+                p.data_ultimo_salvamento,
+                p.ocupado,
+                TRIM(j.nome) AS nome_jogador,
+                j.identificador_jogador,
+                ROUND(
+                    100.0 * COUNT(CASE WHEN m.estado = 'concluida' THEN 1 END) / NULLIF(COUNT(m.identificador_missao), 0),
+                    1
+                ) AS percentual_concluido
+            FROM progresso p
+            LEFT JOIN jogador j ON j.identificador_progresso = p.identificador_progresso
+            LEFT JOIN missao m ON m.identificador_progresso = p.identificador_progresso
+            GROUP BY p.identificador_progresso, p.numero_do_slot, p.data_ultimo_salvamento, p.ocupado, j.nome, j.identificador_jogador
+            ORDER BY p.numero_do_slot;
+        """
+        return self.executar_query(consulta, fetchall=True)
+    
+
+    
+    def criar_novo_jogo(self, personagem_selecionado, id_progresso):
+        """
+        Cria dados iniciais de jogador e aliado.
+        """
+        descricao_silvie = "Silvie é energia em forma de pessoa — fala rápido, pensa mais rápido ainda e dificilmente fica parada. Se algo está calmo demais, é só uma questão de tempo até ela causar um furacão de ideias (ou problemas). Adora improvisar e não leva desaforo pra casa... aliás, raramente volta pra casa."
+        descricao_shuan = "Shuan prefere observar antes de agir, mas quando fala, vale a pena ouvir. Metódico, detalhista e dono de um sarcasmo discreto, ele sempre tem um plano — mesmo que ninguém tenha pedido. Se o mundo for um tabuleiro, Shuan já está três jogadas à frente."
+        
+        # 1) Cria o jogador e o aliado
+        if personagem_selecionado == SILVIE:
+            id_jogador, id_aliado = (
+                self.salvar_novo_jogador(SILVIE, descricao_silvie, id_progresso),
+                self.salvar_novo_aliado(SHUAN, descricao_shuan, id_progresso)
+            )
+            habilidades_jogador = ['hab003','hab004']
+            habilidades_aliado = ['hab001','hab002']
+        else:
+            id_jogador, id_aliado = (
+                self.salvar_novo_jogador(SHUAN, descricao_shuan, id_progresso),
+                self.salvar_novo_aliado(SILVIE, descricao_silvie, id_progresso)
+            )
+            habilidades_jogador = ['hab001','hab002']
+            habilidades_aliado = ['hab003','hab004']
+
+        # 2) Habilidades
+        for habilidade in habilidades_jogador:
+            self.inserir_habilidades(id_jogador, habilidade)
+        for habilidade in habilidades_aliado:
+            self.inserir_habilidades(id_aliado, habilidade)
+
+        # 3) Inventário
+        self.criar_inventario(id_jogador, id_progresso)
+        self.criar_inventario(id_jogador, id_progresso, 'kit')
+
+        self.atualizar_espaco_salvamento(id_progresso)
+
+        # 4) Retorna dados carregados já prontos
+        return self.carregar_dados_do_progresso(id_jogador, id_progresso)
+
+
+
+    def carregar_dados_do_progresso(self, id_jogador, identificador_progresso):
         """
         Retorna uma tupla com os dados do jogador, da área atual e dos inimigos na área (se houver arena).
         :return: (jogador, area, inimigos ou None)
         """
-        #print(f"\n--- Carregando dados do jogador '{id_jogador}' ---\n")
 
         jogador = self.buscar_jogador(id_jogador)
         if not jogador:
-            #print(f"Jogador com ID '{id_jogador}' não encontrado.")
             return None, None, None
 
-        #print(f"Jogador encontrado: {jogador}")
+        mochila_jogador = self.buscar_inventario(id_jogador, 'moc')
+        kit_jogador = self.buscar_inventario(id_jogador, 'kit')
 
-        area = self.buscar_info_area(jogador.identificador_area)
-        #print(f"\nInformações da área atual: {area}")
+        area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
 
-        ilha = self.buscar_info_ilha(area.identificador_ilha)
+        ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
 
-        return jogador, ilha, area
+        return jogador, mochila_jogador, kit_jogador, ilha, area
+    
+    def atualizar_espaco_salvamento(self, identificador_progresso):
+        """
+        Atualiza a data e hora do último dado salvo
+        """
+        consulta = """
+            UPDATE progresso
+            SET ocupado = TRUE,
+                data_ultimo_salvamento = now()
+            WHERE identificador_progresso = %s;
+        """
+        return self.executar_query(consulta, (identificador_progresso,))
 
+
+    # ===============================================
+    # Métodos de Operações com Jogador
+    # ===============================================
     def buscar_jogador(self, id_jogador):
         """Busca os dados de um jogador pelo ID."""
         query = """
             SELECT
                 identificador_jogador,
                 identificador_area,
-                nome,
+                TRIM(nome) AS nome,
                 TRIM(descricao) AS descricao,
                 coordenada_x,
                 coordenada_y,
@@ -139,41 +220,88 @@ class DBManager:
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
         return self.executar_query(query, params)
 
-    def salvar_novo_jogador(self, nome, id_personagem, id_habilidade, id_mapa, energia, vida, nivel, sorte, vida_atual, dano_base, experiencia_atual, coord_x, coord_y):
+    def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
         """Insere um novo jogador no banco de dados e retorna o ID gerado."""
         query = """
-            INSERT INTO jogador (
-                nome, id_personagem, id_habilidade, id_mapa, energia, vida, nivel, sorte,
-                vida_atual, dano_base, experiencia_atual, coordenada_x, coordenada_y
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id_jogador;
+            INSERT INTO jogador
+                (identificador_area, identificador_progresso, nome, descricao, coordenada_x, coordenada_y,
+                energia, vida, nivel, sorte, vida_atual, experiencia_atual, moedas_totais)
+            VALUES
+                ('are001', %s, %s, %s, 1950, 140, 5, 10, 0, 1, 10, 0, 0)
+            RETURNING identificador_jogador;
         """
-        params = (nome, id_personagem, id_habilidade, id_mapa, energia, vida, nivel, sorte, vida_atual, dano_base, experiencia_atual, coord_x, coord_y)
-        result = self.executar_query(query, params, fetchone=True)
-        return result[0] if result else None
+        return self.executar_query(query, (identificador_progresso, nome, descricao), fetchone=True)[0]
+
+    def salvar_novo_aliado(self, nome, descricao, identificador_progresso):
+        """Insere um novo aliado no banco de dados e retorna o ID gerado."""
+        query = """
+            INSERT INTO aliado
+                (identificador_area, identificador_progresso, nome, descricao, coordenada_x, coordenada_y, vida, nivel, vida_atual)
+            VALUES
+                ('are016', %s, %s, %s, 460, 315, 40, 30, 40)
+            RETURNING identificador_aliado;
+        """
+        return self.executar_query(query, (identificador_progresso, nome, descricao), fetchone=True)[0]
+
+    
+    def inserir_habilidades(self, id_personagem, id_habilidade):
+        """Insere habilidades para um personagem específico"""
+
+        consulta = """
+            INSERT INTO habilidade_personagem
+                (identificador_personagem, identificador_habilidade)
+            VALUES
+                (%s, %s)
+            RETURNING (identificador_personagem, identificador_habilidade);
+        """
+        self.executar_query(consulta, (id_personagem, id_habilidade), fetchone=True)
     
     # ===============================================
     # Métodos de Operações com Inventário e Itens
     # ===============================================
 
-    def buscar_inventario_jogador(self, id_jogador):
-        """Acessa o inventário de um jogador e seus atributos."""
+    def buscar_inventario(self, identificador_personagem, tipo_inventario='moc', identificador_progresso=None):
+        """Acessa o inventário de um personagem e seus atributos, filtrando também por progresso."""
         query = """
-            SELECT id_inventario, nome, id_jogador
-            FROM inventario
-            WHERE id_jogador = %s;
-        """
-        return self.executar_query(query, (id_jogador,), fetchone=True)
+            SELECT
+                inv.identificador_inventario,
+                ti.identificador_item,
+                ti.tipo AS tipo_item,
+                COALESCE(a.nome, f.nome, c.nome, nc.nome) AS nome_item,
+                COALESCE(a.raridade, f.raridade, c.raridade, nc.raridade) AS raridade,
+                COALESCE(a.descricao, f.descricao, c.descricao, nc.descricao) AS descricao,
+                ii.quantidade
+            FROM inventario inv
+            JOIN item_inventario ii
+                ON ii.identificador_inventario = inv.identificador_inventario
+            JOIN tipo_item ti
+                ON ti.identificador_item = ii.identificador_item
 
-    def criar_inventario(self, id_jogador, nome_inventario="Inventário Padrão"):
+            -- Joins para cada subtipo
+            LEFT JOIN acessorio a
+                ON a.identificador_acessorio = ti.identificador_item
+            LEFT JOIN fruta f
+                ON f.identificador_fruta = ti.identificador_item
+            LEFT JOIN consumivel c
+                ON c.identificador_consumivel = ti.identificador_item
+            LEFT JOIN nao_consumivel nc
+                ON nc.identificador_nao_consumivel = ti.identificador_item
+
+            WHERE inv.identificador_personagem = %s
+            AND inv.tipo_inventario = %s
+            AND inv.identificador_progresso = %s;
+        """
+        return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
+
+
+    def criar_inventario(self, id_jogador, id_progresso, tipo_inventario='moc'):
         """Cria um novo inventário para um jogador e retorna o ID do inventário."""
         query = """
-            INSERT INTO inventario (id_jogador, nome)
-            VALUES (%s, %s)
-            RETURNING id_inventario;
+            INSERT INTO inventario (identificador_personagem, identificador_progresso, tipo_inventario)
+            VALUES (%s, %s, %s)
+            RETURNING identificador_inventario;
         """
-        result = self.executar_query(query, (id_jogador, nome_inventario), fetchone=True)
-        return result[0] if result else None
+        self.executar_query(query, (id_jogador, id_progresso, tipo_inventario), fetchone=True)
 
     def buscar_itens_no_inventario(self, id_inventario):
         """
@@ -251,57 +379,36 @@ class DBManager:
         """
         return self.executar_query(query, (id_lacaio,), fetchone=True)
     
-    def buscar_lacaios_por_area(self, identificador_area):
+    def buscar_lacaios_por_area(self, identificador_progresso, identificador_area):
         """
-        Busca todos os lacaios em uma área específica.
+        Retorna uma lista de lacaios presentes na área atual, vivos no progresso atual.
+        Cada lacaio vem com seu estado básico. Habilidades e itens devem ser buscados separadamente.
         """
         consulta = """
             SELECT 
                 il.identificador_instancia_lacaio,
+                eil.vida_atual,
+                il.moedas_totais,
                 il.coordenada_x AS x,
                 il.coordenada_y AS y,
-                il.vida_atual,
-                il.moedas_totais,
 
                 l.identificador_lacaio,
                 TRIM(l.nome) AS nome_lacaio,
                 TRIM(l.descricao) AS descricao_lacaio,
                 l.vida AS vida_total,
                 l.nivel,
-                l.experiencia,
-
-                h.identificador_habilidade,
-                h.nome AS nome_habilidade,
-                h.dano,
-                h.tipo_de_ataque,
-                h.tipo_de_alvo,
-
-                ti.identificador_item,
-                ti.tipo AS tipo_item,
-
-                consumivel.nome AS consumivel_saqueavel,
-                nao_consumivel.nome AS nao_consumivel_saqueavel
+                l.experiencia
 
             FROM instancia_lacaio il
+            JOIN estado_instancia_lacaio eil 
+                ON eil.identificador_instancia_lacaio = il.identificador_instancia_lacaio
+            AND eil.identificador_progresso = %s
             JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
-
-            -- Habilidades do lacaio (1 ou mais)
-            LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identificador_lacaio
-            LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
-
-            -- Inventário geral do lacaio
-            LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'ger'
-            LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
-            LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
-
-            -- Subtipos possíveis do item
-            LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
-            LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
-
-            -- Restrição pela área atual do jogador
-            WHERE il.identificador_area = %s;
+            WHERE eil.identificador_area_atual = %s
+            AND eil.data_da_morte IS NULL;
         """
-        return self.executar_query(consulta, (identificador_area,), fetchall=True)
+        return self.executar_query(consulta, (identificador_progresso, identificador_area), fetchall=True)
+
     def buscar_chefe(self, id_chefe):
         """
         Ver atributos de um chefe específico.
@@ -333,23 +440,44 @@ class DBManager:
             WHERE id_habitante = %s;
         """
         return self.executar_query(query, (id_habitante,), fetchone=True)
+    
+    def buscar_habilidades_por_personagem(self, identificador_personagem):
+        """
+        Retorna todas as habilidades associadas a um personagem (jogador, aliado, lacaio etc).
+        """
+        consulta = """
+            SELECT 
+                h.identificador_habilidade,
+                TRIM(h.nome) AS nome_habilidade,
+                h.dano,
+                h.tipo_de_ataque,
+                h.tipo_de_alvo
+            FROM habilidade_personagem hp
+            JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
+            WHERE hp.identificador_personagem = %s;
+        """
+        return self.executar_query(consulta, (identificador_personagem,), fetchall=True)
+
 
     # ===============================================
     # Métodos de Operações com Locais (Mapas, Ilhas, Salas)
     # ===============================================
 
-    def buscar_info_ilha(self, id_ilha):
+    def buscar_info_ilha(self, id_ilha, identificador_progresso):
         """
-        Ver (nome, descrição, motim) de uma prisão X. (Adaptado para Mapa)
+         Retorna dados da ilha e se foi visitada no progresso atual.
         """
         query = """
             SELECT
-                identificador_ilha,
-                TRIM(nome) AS nome,
-                visitada
-            FROM ilha WHERE identificador_ilha = %s;
+                i.identificador_ilha,
+                TRIM(i.nome) AS nome,
+                iv.visitada
+            FROM ilha i
+            LEFT JOIN ilha_visitada iv
+              ON i.identificador_ilha = iv.identificador_ilha AND iv.identificador_progresso = %s
+            WHERE i.identificador_ilha = %s;
             """
-        return self.executar_query(query, (id_ilha,), fetchone=True)
+        return self.executar_query(query, (identificador_progresso, id_ilha), fetchone=True)
     
     def buscar_caminhos_da_area(self, area):
         consulta = """
@@ -367,130 +495,116 @@ class DBManager:
             """
         return self.executar_query(consulta, (area,), fetchall=True)
     
-    def buscar_info_area(self, id_area):
+    def buscar_info_area(self, id_area, id_progresso):
         """
         Busca informações de uma sala específica
         """
         query = """
             SELECT
-                identificador_area,
-                identificador_ilha,
-                TRIM(nome) AS nome,
-                TRIM(tipo_area) AS tipo_area,
-                TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
-                TRIM(chave_imagem_frente) AS chave_imagem_frente,
-                visitada
-            FROM area
-            WHERE identificador_area = %s;
+                a.identificador_area,
+                a.identificador_ilha,
+                TRIM(a.nome) AS nome,
+                TRIM(a.tipo_area) AS tipo_area,
+                TRIM(a.chave_imagem_fundo) AS chave_imagem_fundo,
+                TRIM(a.chave_imagem_frente) AS chave_imagem_frente,
+                COALESCE(av.visitada, FALSE) AS visitada
+            FROM area a
+            LEFT JOIN area_visitada av
+                ON a.identificador_area = av.identificador_area
+            AND av.identificador_progresso = %s
+            WHERE a.identificador_area = %s;
+
         """
-        return self.executar_query(query, (id_area,), fetchone=True)
+        return self.executar_query(query, (id_progresso, id_area), fetchone=True)
     
-    def buscar_porto_por_ilha(self, id_ilha):
+    def buscar_porto_da_ilha(self, id_ilha, id_progresso):
         """
-        Busca informações de uma sala específica que é o porto da ilha
+        Busca a área do tipo 'Porto' associada à ilha atual, considerando se já foi visitada no progresso atual.
         """
         query = """
             SELECT
-                identificador_area,
-                identificador_ilha,
-                TRIM(nome) AS nome,
-                TRIM(tipo_area) AS tipo_area,
-                TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
-                TRIM(chave_imagem_frente) AS chave_imagem_frente,
-                visitada
-            FROM area
-            WHERE identificador_ilha = %s AND tipo_area = 'Porto';
+                a.identificador_area,
+                a.identificador_ilha,
+                TRIM(a.nome) AS nome,
+                TRIM(a.tipo_area) AS tipo_area,
+                TRIM(a.chave_imagem_fundo) AS chave_imagem_fundo,
+                TRIM(a.chave_imagem_frente) AS chave_imagem_frente,
+                COALESCE(av.visitada, FALSE) AS visitada
+            FROM area a
+            LEFT JOIN area_visitada av
+                ON av.identificador_area = a.identificador_area
+            AND av.identificador_progresso = %s
+            WHERE a.identificador_ilha = %s
+            AND a.tipo_area = 'Porto';
         """
-        return self.executar_query(query, (id_ilha,), fetchone=True)
+        return self.executar_query(query, (id_progresso, id_ilha), fetchone=True)
+
     
     def buscar_areas_interativas_da_area(self, id_area):
         """
-        Busca todos os elementos espaciaias do tipo "Área interativa" na área atual.
+        Busca todos os elementos espaciais do tipo 'Área interativa' da área atual (origem).
         """
         consulta = """
             SELECT
                 identificador_area_interativa,
-                identificador_area,
+                identificador_area_origem AS area_origem,
+                identificador_area_destino AS area_destino,
                 TRIM(chave_imagem) AS chave_imagem,
                 x,
                 y,
                 largura,
                 altura,
+                chance_sucesso,
                 TRIM(tipo_evento) AS tipo_evento
             FROM area_interativa
-            WHERE identificador_area = %s;
+            WHERE identificador_area_origem = %s;
         """
         return self.executar_query(consulta, (id_area,), fetchall=True)
+
     
-    def buscar_eventos_embarcar(self, id_area_interativa):
+
+
+    def buscar_conexoes_ilha(self, id_ilha_origem, id_progresso):
         """
-        Busca todos os eventos embarcar acionados por uma área interativa específica.
-        """
-        consulta = """
-            SELECT
-                e.identificador_evento,
-                TRIM(e.tipo_evento) AS tipo_evento,
-
-                -- Campos para embarcar
-                e.identificador_porto_destino,
-
-                -- Campos comuns
-                e.ponto_geracao_x,
-                e.ponto_geracao_y,
-                TRIM(e.orientacao) AS orientacao
-
-
-            FROM area_interativa_evento aie
-            JOIN evento e ON e.identificador_evento = aie.identificador_evento
-            WHERE aie.identificador_area_interativa = %s;
-        """
-        return self.executar_query(consulta, (id_area_interativa,), fetchall=True)
-    
-    def buscar_eventos_mudar_area(self, id_area_interativa):
-        """
-        Busca o evento mudar_area acionado por uma área interativa específica.
-        """
-        consulta = """
-            SELECT
-                e.identificador_evento,
-                TRIM(e.tipo_evento) AS tipo_evento,
-                e.ponto_geracao_x,
-                e.ponto_geracao_y,
-                TRIM(e.orientacao) AS orientacao,
-
-                a_dest.identificador_area AS area_destino
-
-            FROM area_interativa_evento aie
-            JOIN evento e ON e.identificador_evento = aie.identificador_evento
-            JOIN area_interativa ai ON ai.identificador_area_interativa = aie.identificador_area_interativa
-
-            -- Detecta a área de destino real com base na área da área_interativa
-            JOIN area a_dest ON a_dest.identificador_area = 
-                CASE
-                    WHEN e.identificador_area_a = ai.identificador_area THEN e.identificador_area_b
-                    ELSE e.identificador_area_a
-                END
-
-            WHERE aie.identificador_area_interativa = %s;
-        """
-        return self.executar_query(consulta, (id_area_interativa,), fetchone=True)
-
-    def buscar_conexoes_ilha(self, id_ilha_origem):
-        """
-        Ver todas as conexões de um lugar X. (Adaptado para Ilhas via corredor_maritimo)
+        Retorna as conexões da ilha atual com outras ilhas, considerando o progresso atual.
         """
         query = """
-            SELECT i.identificador_ilha, TRIM(i.nome) AS nome, i.visitada
-                FROM conexao_entre_ilhas c
-                JOIN ilha i ON i.identificador_ilha = 
-                    CASE
-                        WHEN c.identificador_ilha_a = %s THEN c.identificador_ilha_b
-                        ELSE c.identificador_ilha_a
-                    END
-                WHERE %s IN (c.identificador_ilha_a, c.identificador_ilha_b);
-
+            SELECT
+                i.identificador_ilha,
+                TRIM(i.nome) AS nome,
+                COALESCE(iv.visitada, FALSE) AS visitada,
+                c.bloqueada
+            FROM conexao_entre_ilhas c
+            JOIN ilha i ON i.identificador_ilha =
+                CASE
+                    WHEN c.identificador_ilha_a = %s THEN c.identificador_ilha_b
+                    ELSE c.identificador_ilha_a
+                END
+            LEFT JOIN ilha_visitada iv
+                ON iv.identificador_ilha = i.identificador_ilha
+            AND iv.identificador_progresso = %s
+            WHERE %s IN (c.identificador_ilha_a, c.identificador_ilha_b)
+            AND c.identificador_progresso = %s;
         """
-        return self.executar_query(query, (id_ilha_origem, id_ilha_origem), fetchall=True)
+        return self.executar_query(query, (id_ilha_origem, id_progresso, id_ilha_origem, id_progresso), fetchall=True)
+   
+    def buscar_conexao_entre_areas(self, id_area_origem, id_area_destino):
+        """
+        Busca a conexão entre duas áreas específicas 
+        """
+        consulta = """
+            SELECT
+                identificador_area_origem,
+                identificador_area_destino,
+                ponto_geracao_x,
+                ponto_geracao_y,
+                orientacao
+            FROM conexao_entre_areas
+            WHERE identificador_area_origem = %s
+            AND identificador_area_destino = %s;
+        """
+        return self.executar_query(consulta, (id_area_origem, id_area_destino), fetchone=True)
+
 
     def buscar_pessoas_em_local(self, id_mapa, coord_x=None, coord_y=None):
         """
