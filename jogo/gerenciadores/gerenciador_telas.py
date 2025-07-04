@@ -7,6 +7,7 @@ from telas import TelaSalvamento
 from telas import TelaSelecaoPersonagem
 from telas import TelaJogo
 from telas import TelaBatalha
+from gerenciadores import GerenciadorDeEntidades
 from utilidades.constantes import *
 
 class GerenciadorDeTelas:
@@ -18,6 +19,7 @@ class GerenciadorDeTelas:
         self.tela_principal_surface = tela_principal_surface
         self.gerenciador_recursos = gerenciador_recursos
         self.gerenciador_banco_de_dados = gerenciador_banco_de_dados
+        self.gerenciador_entidades = GerenciadorDeEntidades()
         self.tela_atual = None
         self.telas_carregadas = {} # Cache de telas já criadas, se aplicável (ex: para não recriar a tela inicial)
 
@@ -35,44 +37,20 @@ class GerenciadorDeTelas:
             # Se ela chamar `self.gerenciador_telas.mudar_tela`, então passe `self` para ela
             return TelaInicial(self, self.gerenciador_recursos)
         elif estado_desejado == CHAVE_TRANSICAO_SALVAMENTO:
-            return TelaSalvamento(self, self.gerenciador_recursos, self.gerenciador_banco_de_dados)
+            return TelaSalvamento(self, self.gerenciador_recursos,
+                                  self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_SELECAO_PERSONAGEM:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos,
-                                         self.gerenciador_banco_de_dados,
-                                         dados_slot=kwargs.get('dados_slot'))
+                                         self.gerenciador_banco_de_dados,)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
             return TelaJogo(self, self.gerenciador_recursos,
-                            gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
-                            dados_da_area=kwargs.get('area'),
-                            dados_da_ilha=kwargs.get('ilha'),
-                            jogador=kwargs.get('jogador'),
-                            ponto_geracao_jogador=kwargs.get('ponto_geracao_jogador'),
-                            dados_do_progresso=kwargs.get('dados_slot'))
+                            self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
-            jogador, mochila_jogador, kit_jogador, ilha, area = self.gerenciador_banco_de_dados.carregar_dados_do_progresso(kwargs.get('identificador_jogador'), kwargs.get('identificador_progresso'))
-
-                    
-            posicao_jogador = (
-                jogador.coordenada_x,
-                jogador.coordenada_y,
-                'direita'
-            )
-
             return TelaJogo(self, self.gerenciador_recursos,
-                            gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
-                            dados_da_area=area,
-                            dados_da_ilha=ilha,
-                            jogador=jogador,
-                            ponto_geracao_jogador=posicao_jogador,
-                            dados_do_progresso=kwargs.get('dados_slot'))
+                            self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
             return TelaJogo(self, self.gerenciador_recursos,
-                            gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
-                            dados_da_area=kwargs.get('dados_da_area'),
-                            dados_da_ilha=kwargs.get('dados_da_ilha'),
-                            jogador=kwargs.get('jogador'),
-                            ponto_geracao_jogador=kwargs.get('ponto_geracao_jogador'),
-                            dados_do_progresso=kwargs.get('dados_slot'))
+                            self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                inimigo_tipo=kwargs.get('inimigo_batalha'),
