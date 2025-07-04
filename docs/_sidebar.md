@@ -11,6 +11,7 @@
   - [Linguagem de Manipulação de Dados](sql/linguagem-de-manipulacao-de-dados.md)
   - [Linguagem de Consulta de Dados](sql/linguagem-de-consulta-de-dados.md)
   - [Tabela de Dados](sql/tabelas-de-dados.md)
+  - [ Álgebra Relacional ](sql/Álgebra%20Relacional.md)
 
 <!-- - **Módulo 3** -->
 

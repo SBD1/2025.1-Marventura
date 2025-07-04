@@ -122,7 +122,7 @@ CREATE TABLE ingrediente_nao_consumivel (
 
 CREATE TABLE efeito (
     identificador_efeito ID PRIMARY KEY,
-    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    nome CHAR(15) UNIQUE NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
     valor SMALLINT CHECK (
         (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
         (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
