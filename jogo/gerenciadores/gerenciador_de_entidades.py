@@ -16,7 +16,6 @@ class GerenciadorDeEntidades:
         Chamado apenas uma vez quando a instância é criada.
         """
         self._entidade_jogador = None
-        self._posicao_atual_do_jogador = None
         self._mochila_jogador = None
         self._kit_jogador = None
 
@@ -64,18 +63,6 @@ class GerenciadorDeEntidades:
     def kit_jogador(self, kit):
         """Define o kit do jogador principal."""
         self._kit_jogador = kit
-
-
-
-    @property
-    def posicao_do_jogador(self):
-        """Retorna a posição atual do jogador principal."""
-        return self._posicao_atual_do_jogador
-
-    @posicao_do_jogador.setter
-    def posicao_do_jogador(self, posicao_do_jogador):
-        """Define a posição atual do jogador principal."""
-        self._posicao_atual_do_jogador = posicao_do_jogador
 
 
 
