@@ -15,20 +15,21 @@ class GerenciadorDeEntidades:
         Método de inicialização real da instância.
         Chamado apenas uma vez quando a instância é criada.
         """
-        self._jogador_principal = None
+        self._entidade_jogador = None
+        self._entidade_inimigos = None
         # Adicione outros atributos para entidades globais persistentes aqui
         # self._inventario_global = None
-        # self._progresso_do_jogo = None
+        self._progresso_do_jogo = None
 
     @property
-    def jogador_principal(self):
+    def jogador(self):
         """Retorna a instância do jogador principal."""
-        return self._jogador_principal
+        return self._entidade_jogador
 
-    @jogador_principal.setter
-    def jogador_principal(self, jogador):
+    @jogador.setter
+    def jogador(self, jogador):
         """Define a instância do jogador principal."""
-        self._jogador_principal = jogador
+        self._entidade_jogador = jogador
 
     # Você pode adicionar métodos para gerenciar outras entidades aqui, por exemplo:
     # def obter_inventario_global(self):
@@ -37,8 +38,10 @@ class GerenciadorDeEntidades:
     # def definir_inventario_global(self, inventario):
     #     self._inventario_global = inventario
     #
-    # def obter_progresso_do_jogo(self):
-    #     return self._progresso_do_jogo
-    #
-    # def definir_progresso_do_jogo(self, progresso):
-    #     self._progresso_do_jogo = progresso
+    @property
+    def progresso_do_jogo(self):
+        return self._progresso_do_jogo
+
+    @progresso_do_jogo.setter
+    def progresso_do_jogo(self, progresso):
+        self._progresso_do_jogo = progresso
