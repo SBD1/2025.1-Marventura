@@ -130,14 +130,14 @@ CREATE TABLE efeito (
         (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
         (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
         (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
-        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
+        (nome = 'Eletrificado' AND valor IS NULL) OR
+        (nome = 'Congelado' AND valor IS NULL) OR
+        (nome = 'Molhado' AND valor IS NULL) OR
+        (nome = 'Envenenado' AND valor IS NULL) OR
+        (nome = 'Sangramento' AND valor IS NULL) OR
+        (nome = 'Queimadura' AND valor IS NULL) OR
+        (nome = 'Tontura' AND valor IS NULL) OR
+        (nome = 'Cegueira' AND valor IS NULL) OR
         (nome = 'Purificação' AND valor IS NULL)
     )
 );
