@@ -2,13 +2,17 @@
 
 import pygame
 from utilidades.constantes import * # Importa as constantes
+from utilidades.db_manager import DBManager
+from entidades.mochila import Mochila
+from entidades.kit import KitDoExplorador
+from entidades.habilidades import Habilidade
 
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, nome, descricao,
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, identificador_jogador, nome, descricao,
                  energia, vida, nivel, sorte, vida_atual, experiencia_atual,
-                 orientacao='direita'):
+                 orientacao='direita', mochila = [], kit = []):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         # REMOVIDO: self.fator_de_escala = fator_de_escala
@@ -18,6 +22,7 @@ class Jogador(pygame.sprite.Sprite):
         self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.velocidade = VELOCIDADE_JOGADOR
         self.orientacao = orientacao
+        self.id = identificador_jogador
         self.nome = nome
         self.descricao = descricao
         self.energia_maxima = energia
@@ -69,6 +74,13 @@ class Jogador(pygame.sprite.Sprite):
         # Variáveis para o ícone de interação
         self.mostrar_icone_interacao = False
         self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO)
+
+        self.banco_de_dados = DBManager()  # Inicializa o gerenciador de banco de dados
+
+        self.mochila = Mochila(mochila)  # Lista de itens na mochila do jogador
+        self.kit_do_explorador = KitDoExplorador(kit) # Lista de itens equipados pelo jogador
+        self.habilidades = []  # Lista de habilidades do jogador
+        self.carregar_habilidades()  # Carrega as habilidades do jogador
 
 
     def carregar_animacoes(self):
@@ -200,6 +212,40 @@ class Jogador(pygame.sprite.Sprite):
         
         # Se todos os cantos passaram na verificação, a posição é válida
         return True
+
+
+
+    def carregar_habilidades(self):
+        identificadores_do_equipamento = self.kit_do_explorador.obter_ids_do_equipamento()
+        print("identificadores_do_equipamento:", identificadores_do_equipamento)
+        habilidades_personagem = self.banco_de_dados.buscar_habilidades_por_personagem(self.id) or []
+        habilidades_arma = self.banco_de_dados.buscar_habilidades_por_arma(identificadores_do_equipamento["id_arma"]) if identificadores_do_equipamento["id_arma"] else []
+        print(f"Habilidades da arma (id_arma={identificadores_do_equipamento['id_arma']}): {habilidades_arma}")
+
+        habilidades_fruta = self.banco_de_dados.buscar_habilidades_por_fruta(identificadores_do_equipamento["id_fruta"]) if identificadores_do_equipamento["id_fruta"] else []
+        print(f"Habilidades da fruta (id_fruta={identificadores_do_equipamento['id_fruta']}): {habilidades_fruta}")
+
+        print(f"Habilidades do personagem: {habilidades_personagem}")
+        print(f"Habilidades da arma: {habilidades_arma}")
+        print(f"Habilidades da fruta: {habilidades_fruta}")
+
+        conjunto_de_habilidades = habilidades_personagem + habilidades_arma + habilidades_fruta
+
+        self.habilidades = [
+            Habilidade(
+                id=h.identificador_habilidade,
+                nome=h.nome.strip(),  # Remove espaços extras
+                descricao=h.descricao.strip(),
+                tipo_de_ataque=h.tipo_de_ataque.strip(),
+                tipo_de_alvo=h.tipo_de_alvo.strip(),
+                dano=h.dano,
+                custo=h.custo,
+                efeito=(
+                    {"nome": h.efeito_nome.strip(), "valor": h.efeito_valor} if h.efeito_nome else None
+                )
+            )
+            for h in conjunto_de_habilidades
+        ]
 
 
 
