@@ -509,7 +509,7 @@ CREATE TABLE inventario (
     identificador_inventario ID PRIMARY KEY,
     identificador_personagem ID NOT NULL REFERENCES tipo_personagem(identificador_personagem),
     identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
-    tipo_inventario CHAR(3) DEFAULT 'ger' NOT NULL CHECK (tipo_inventario IN ('ger', 'kit'))
+    tipo_inventario CHAR(3) DEFAULT 'moc' NOT NULL CHECK (tipo_inventario IN ('moc', 'kit'))
 );
 
 CREATE TRIGGER atribui_id_inventario
@@ -609,6 +609,21 @@ CREATE TABLE missao (
 
 CREATE TRIGGER atribui_id_missao
 BEFORE INSERT ON missao
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE dialogo (
+    identificador_missao ID PRIMARY KEY,
+    identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
+    identificador_missao ID REFERENCES missao(identificador_missao),
+    sequencia_local SMALLINT CHECK (sequencia_local > 0)
+    dialogo CHAR(500)
+);
+
+CREATE TRIGGER atribui_id_dialogo
+BEFORE INSERT ON dialogo
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 

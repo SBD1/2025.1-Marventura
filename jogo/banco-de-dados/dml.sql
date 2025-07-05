@@ -683,6 +683,30 @@ VALUES
 
 
 
+INSERT INTO ilha_visitada
+    (identificador_progresso, identificador_ilha, visitada)
+VALUES
+    ('pro001', 'ilh001', TRUE),
+    ('pro001', 'ilh002', FALSE),
+    ('pro001', 'ilh003', FALSE),
+    ('pro001', 'ilh004', FALSE),
+    ('pro001', 'ilh005', FALSE),
+    ('pro001', 'ilh006', FALSE),
+    ('pro002', 'ilh001', TRUE),
+    ('pro002', 'ilh002', FALSE),
+    ('pro002', 'ilh003', FALSE),
+    ('pro002', 'ilh004', FALSE),
+    ('pro002', 'ilh005', FALSE),
+    ('pro002', 'ilh006', FALSE),
+    ('pro003', 'ilh001', TRUE),
+    ('pro003', 'ilh002', FALSE),
+    ('pro003', 'ilh003', FALSE),
+    ('pro003', 'ilh004', FALSE),
+    ('pro003', 'ilh005', FALSE),
+    ('pro003', 'ilh006', FALSE);
+
+
+
 INSERT INTO conexao_entre_ilhas
     (identificador_ilha_a, identificador_ilha_b, identificador_progresso)
 VALUES
@@ -727,9 +751,9 @@ VALUES
 	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null), -- → are012
 	('ilh002', 'Loja de espadas', 'Loja', 'loja_interior', null), -- → are013
 	('ilh002', 'Loja de acessórios', 'Loja', 'loja_interior', null), -- → are014
-	('ilh003', 'Costa de Frimora', 'Área neutra', 'cenario_frimora_costa', null), -- → are015
+	('ilh003', 'Costa de Frimora', 'Porto', 'cenario_frimora_costa', null), -- → are015
 	('ilh003', 'Vila de Frimora', 'Vila', 'cenario_frimora_vila', null), -- → are016
-	('ilh003', 'Floresta de Frimora', 'Vila', 'cenario_frimora_floresta', 'cenario_frimora_floresta_camada_superior'), -- → are017
+	('ilh003', 'Floresta de Frimora', 'Área de combate', 'cenario_frimora_floresta', 'cenario_frimora_floresta_camada_superior'), -- → are017
 	('ilh003', 'Montanha da Cabra Congelada', 'Área de combate', 'cenario_frimora_montanha', null), -- → are018
 	('ilh003', 'Cozinha da Vovó Yuba', 'Loja', 'cozinha_interior', null), -- → are019
 	('ilh003', 'Loja de Frimora', 'Loja', 'loja_interior', null), -- → are020
@@ -768,7 +792,7 @@ VALUES
     ('are006', 'are005', 0, 0, 'esquerda'),
     ('are007', 'are008', 100, 415, 'direita'),
     ('are007', 'are003', 4160, 280, 'esquerda'),-- ilh002 → ilh001
-    ('are007', 'are015', 0, 0, 'direita'),-- ilh002 → ilh003
+    ('are007', 'are015', 645, 735, 'esquerda'),-- ilh002 → ilh003
     ('are007', 'are030', 0, 0, 'direita'),-- ilh002 → ilh006
     ('are008', 'are007', 680, 175, 'esquerda'),
     ('are008', 'are009', 100, 415, 'direita'),
@@ -783,7 +807,7 @@ VALUES
     ('are013', 'are009', 289, 397, 'direita'),
     ('are010', 'are011', 0, 0, 'esquerda'),
     ('are011', 'are010', 0, 0, 'esquerda'),
-    ('are015', 'are016', 1600, 415, 'esquerda'),
+    ('are015', 'are016', 2870, 415, 'esquerda'),
     ('are015', 'are007', 2470, 265, 'esquerda'),-- ilh003 → ilh002
     ('are015', 'are021', 0, 0, 'esquerda'),-- ilh003 → ilh004
     ('are015', 'are026', 0, 0, 'esquerda'),-- ilh003 → ilh005
@@ -791,9 +815,9 @@ VALUES
     ('are016', 'are017', 1410, 775, 'esquerda'),
     ('are017', 'are016', 50, 415, 'direita'),
     ('are016', 'are019', 0, 0, 'direita'),
-    ('are019', 'are016', 695, 325, 'direita'),
+    ('are019', 'are016', 695, 320, 'direita'),
     ('are016', 'are020', 0, 0, 'esquerda'),
-    ('are020', 'are016', 1460, 210, 'direita'),
+    ('are020', 'are016', 1460, 320, 'direita'),
     ('are017', 'are018', 1377, 757, 'esquerda'),
     ('are018', 'are017', 50, 750, 'direita'),
     ('are021', 'are022', 0, 0, 'esquerda'),
@@ -837,7 +861,18 @@ VALUES
     ('are007', null, 2472, 375, 93, 67, 'embarcar'), -- → navegar
     ('are008', 'are007', 0, 480, 50, 150, 'mudar_area'), -- → porto
     ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area'), -- → praça
-    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area'); -- → centro
+    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area'), -- → centro
+    ('are015', 'are016', 0, 745, 50, 100, 'mudar_area'), -- → vila
+    ('are015', null, 960, 930, 80, 90, 'embarcar'), -- → navegar
+    ('are016', 'are015', 2950, 473, 50, 100, 'mudar_area'), -- → costa
+    ('are016', 'are017', 0, 473, 50, 100, 'mudar_area'), -- → floresta
+    ('are016', 'are019', 695, 273, 78, 108, 'mudar_area'), -- → cozinha
+    ('are016', 'are020', 1449, 269, 95, 108, 'mudar_area'), -- → loja
+    ('are017', 'are016', 1486, 735, 50, 290, 'mudar_area'), -- → vila
+    ('are017', 'are018', 0, 735, 50, 290, 'mudar_area'), -- → montanha
+    ('are018', 'are017', 1486, 735, 50, 172, 'mudar_area'), -- → floresta
+    ('are019', 'are016', 0, 0, 50, 600, 'mudar_area'), -- → vila
+    ('are020', 'are016', 0, 0, 50, 600, 'mudar_area'); -- → vila
 
 
 
@@ -862,9 +897,33 @@ VALUES
     ('are008', 'normal', 1539, 403, 143, 95),
     ('are009', 'normal', 0, 483, 764, 117),
     ('are009', 'arena', 764, 203, 1036, 397),
-    ('are014', 'normal', 0, 407, 3540, 193),
-    ('are014', 'neve', 0, 407, 3540, 74),
-    ('are014', 'neve', 0, 571, 3540, 29);
+    ('are015', 'normal', 0, 705, 1130, 319),
+    ('are015', 'neve', 0, 705, 675, 60),
+    ('are015', 'neve', 0, 853, 247, 172),
+    ('are015', 'neve', 247, 878, 334, 147),
+    ('are015', 'neve', 581, 910, 72, 115),
+    ('are015', 'neve', 653, 931, 92, 94),
+    ('are015', 'neve', 745, 970, 70, 55),
+    ('are016', 'normal', 0, 407, 3540, 193),
+    ('are016', 'neve', 0, 407, 3540, 74),
+    ('are016', 'neve', 0, 571, 3540, 29),
+    ('are017', 'arena', 0, 735, 1536, 289),
+    ('are017', 'neve', 0, 735, 1536, 289);
+
+
+
+INSERT INTO obstaculo
+    (identificador_area, x, y, largura, altura)
+VALUES
+    ('are003', 3717, 471, 250, 24),
+    ('are007', 354, 390, 93, 22),
+    ('are007', 1413, 390, 93, 22),
+    ('are007', 2472, 390, 93, 22),
+    ('are008', 1539, 418, 102, 17),
+    ('are008', 1641, 435, 41, 25),
+    ('are017', 635, 781, 56, 100),
+    ('are017', 1208, 968, 121, 56),
+    ('are017', 201, 978, 121, 46);
 
 
 

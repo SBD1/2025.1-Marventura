@@ -83,6 +83,14 @@ class Jogador(pygame.sprite.Sprite):
         self.carregar_habilidades()  # Carrega as habilidades do jogador
 
 
+
+    def atualizar_posicao_jogador(self, x_inicial, y_inicial, orientacao):
+        self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.orientacao = orientacao
+    
+
+
     def carregar_animacoes(self):
         # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
         imagem_parado = self.gerenciador_recursos.obter_imagem(self.nome + '_em_repouso')
@@ -362,6 +370,8 @@ class Jogador(pygame.sprite.Sprite):
             imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
         self.image = imagem_atual
+
+
 
     def draw(self, screen, camera_x, camera_y):
         """

@@ -4,6 +4,8 @@ import pygame
 import sys
 from .tela_modelo import TelaModelo
 from utilidades.constantes import *
+from gerenciadores import GerenciadorDeEntidades
+from entidades import Jogador
 
 class TelaSelecaoPersonagem(TelaModelo):
     """
@@ -11,11 +13,12 @@ class TelaSelecaoPersonagem(TelaModelo):
     Ao escolher, solicita ao GerenciadorDeTelas para iniciar o jogo no mapa inicial,
     com o personagem selecionado e o ponto de entrada de "novo jogo".
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, dados_slot): # Adiciona gerenciador_telas
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados): # Adiciona gerenciador_telas
         super().__init__(gerenciador_telas, gerenciador_recursos)
+        self.gerenciador_entidades = GerenciadorDeEntidades()
 
         self.banco_de_dados = gerenciador_banco_de_dados
-        self.dados_slot = dados_slot
+        self.dados_slot = self.gerenciador_entidades.progresso_do_jogo
 
         # --- Recursos específicos da Tela de Seleção de Personagem ---
         self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
@@ -84,20 +87,26 @@ class TelaSelecaoPersonagem(TelaModelo):
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
                     return None
 
-                posicao_jogador = (
+                self.gerenciador_entidades.jogador = Jogador(
+                    self.gerenciador_recursos,
                     jogador.coordenada_x,
                     jogador.coordenada_y,
+                    jogador.nome,
+                    jogador.descricao,
+                    jogador.energia,
+                    jogador.vida,
+                    jogador.nivel,
+                    jogador.sorte,
+                    jogador.vida_atual,
+                    jogador.experiencia_atual,
                     'direita'
                 )
-                self.gerenciador_telas.mudar_tela(
-                    CHAVE_TRANSICAO_NOVO_JOGO,
-                    jogador = jogador,
-                    mochila_jogador = mochila_jogador,
-                    kit_jogador = kit_jogador,
-                    ilha = ilha,
-                    area = area,
-                    dados_slot = self.dados_slot,
-                    ponto_geracao_jogador = posicao_jogador)
+                self.gerenciador_entidades.mochila_jogador = mochila_jogador
+                self.gerenciador_entidades.kit_jogador = kit_jogador
+                self.gerenciador_entidades.ilha_atual = ilha
+                self.gerenciador_entidades.area_atual = area
+
+                self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO)
         return None
 
     def update(self, dt):

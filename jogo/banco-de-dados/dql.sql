@@ -81,7 +81,7 @@ LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identifica
 LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
 
 -- Inventário geral do lacaio
-LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'ger'
+LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'moc'
 LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
 LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
 

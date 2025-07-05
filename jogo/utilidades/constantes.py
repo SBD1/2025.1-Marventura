@@ -164,6 +164,8 @@ CHAVE_CENARIO_CIDADE_PRACA_CAMADA_SUPERIOR = 'cenario_lurien_praca_camada_superi
 
 CHAVE_CENARIO_NEVE_COSTA = 'cenario_frimora_costa'
 CHAVE_CENARIO_NEVE_VILA = 'cenario_frimora_vila'
+CHAVE_CENARIO_NEVE_FLORESTA = 'cenario_frimora_floresta'
+CHAVE_CENARIO_NEVE_FLORESTA_CAMADA_SUPERIOR = 'cenario_frimora_floresta_camada_superior'
 CHAVE_CENARIO_NEVE_MONTANHA = 'cenario_frimora_montanha'
 
 CHAVE_CENARIO_ILHA_4_PARTE_1 = 'cenario_cactuaraquara_duna'
