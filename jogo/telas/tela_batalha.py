@@ -54,10 +54,15 @@ class TelaBatalha(TelaModelo):
         }
     }
 
-    def __init__(self, gerenciador_telas, gerenciador_recursos, jogador, inimigos_na_batalha, coordenadas_de_retorno, dados_da_ilha, dados_da_area, jogador_iniciou=False):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, jogador, inimigos_na_batalha, coordenadas_de_retorno, dados_da_ilha, dados_da_area, dados_do_progresso, jogador_iniciou=False):
         super().__init__(gerenciador_telas, gerenciador_recursos)
+        self.dados_do_progresso = dados_do_progresso
+        print(f"self.dados_do_progresso: {self.dados_do_progresso}")
         self.jogador = jogador
         self.energia_atual = jogador.energia_maxima
+        self.habilidades = jogador.habilidades
+        self.habilidades_por_tipo = []
+        self.habilidade_selecionada_index = 0
 
         
         # Dados do jogador para retornar ao mapa
@@ -74,7 +79,7 @@ class TelaBatalha(TelaModelo):
             print("AVISO: Imagem 'batalha_fundo_padrao' não encontrada. Usando fundo cinza.")
 
         # Carrega a imagem do jogador
-        self.imagem_jogador = self.gerenciador_recursos.obter_imagem(f'{SHUAN}_em_repouso' if self.jogador == SHUAN else f'{SILVIE}_em_repouso')
+        self.imagem_jogador = self.gerenciador_recursos.obter_imagem(f'{SHUAN}_em_repouso' if self.jogador.nome == SHUAN else f'{SILVIE}_em_repouso')
         if not self.imagem_jogador:
             print(f"AVISO: Imagem de batalha para o jogador '{self.jogador}' não encontrada.")
             self.imagem_jogador = pygame.Surface((100, 100))
@@ -109,16 +114,22 @@ class TelaBatalha(TelaModelo):
                 self.imagem_inimigo = pygame.Surface((150, 150))
                 self.imagem_inimigo.fill(VERMELHO)
 
-        self.estado_batalha = "turno_jogador"  # outros: "turno_inimigo", "esperando_ataque"
+        self.estado_batalha = "turno_jogador"  # outros: "turno_inimigo", "esperando_ataque", "selecionando_habilidade"
         self.tempo_proximo_ataque = 0
         self.inimigo_index_atacando = 0
 
         self.tempo_dano_jogador = 0
         self.danos_flutuantes = []
 
-
         self.menu_mochila_ativo = False
         self.item_selecionado = None
+
+        self.indice_item_mochila = 0
+        self.itens_visiveis_por_pagina = 4  # pode ajustar
+        self.scroll_offset_mochila = 0
+
+
+
 
     def _usar_ataque_extra(self):
         if self.inimigos:
@@ -128,21 +139,25 @@ class TelaBatalha(TelaModelo):
             print(f"O jogador iniciou com um ataque extra! {inimigo['tipo']} levou {dano} de dano.")
             self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
 
-    def _icones_acao_equipaveis(self):
-        fruta = self._kit_do_explorador_personagem['espaco_fruta']['fruta']
-        arma = self._kit_do_explorador_personagem['espaco_arma']['arma']
 
-        if fruta == "Mimi Mimi no Mi":
+
+    def _icones_acao_equipaveis(self):
+        identificador_de_ataques = self.jogador.kit_do_explorador.obter_ids_do_equipamento()
+
+        if identificador_de_ataques['id_fruta']:
             self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_FRUTA), acao="fruta"))
 
-        if arma == "Espada":
-            self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_ESPADA), acao="espada"))
-        elif arma == "Arco e Flecha":
-            self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_PROJETIL), acao="projetil"))
+        if identificador_de_ataques['id_arma']:
+            if identificador_de_ataques['id_arma'][:3] == 'esp':
+                self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_ESPADA), acao="espada"))
+            elif identificador_de_ataques['id_arma'][:3] == 'est':
+                self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_PROJETIL), acao="projetil"))
         else:
-            chave_soco = CHAVE_ACAO_SOCO_SILVIE if self.jogador == SILVIE else CHAVE_ACAO_SOCO_SHUAN
+            chave_soco = CHAVE_ACAO_SOCO_SILVIE if self.jogador.nome == SILVIE else CHAVE_ACAO_SOCO_SHUAN
             self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(chave_soco), acao="soco"))
-        
+
+
+
     def _carregar_proxima_onda(self):
         if not self.ondas_pendentes:
             self.inimigos = []        # força término da batalha
@@ -183,24 +198,44 @@ class TelaBatalha(TelaModelo):
         
         return True
 
-    def usar_item_da_mochila(self, chave_item):
-        item = self._mochila.get(chave_item)
-        if not item:
-            return
 
-        for efeito in item["efeitos"]:
-            if efeito["tipo"] == "PV":
-                self.jogador.vida_atual += efeito["valor"]
-                if self.jogador.vida_atual > self.jogador.vida_maxima:
-                    self.jogador.vida_atual = self.jogador.vida_maxima
-                # print(f"+{efeito['valor']} PV → atual: {self.jogador.vida_maxima}")
+
+    def usar_item_da_mochila(self, identificador_item):
+        efeitos = self.jogador.mochila.usar_item(identificador_item)
+
+        for efeito in efeitos:
+            match efeito:
+                case 'Cura':
+                    self.jogador.vida_atual += efeito["valor"]
+                    if self.jogador.vida_atual > self.jogador.vida_maxima:
+                        self.jogador.vida_atual = self.jogador.vida_maxima
+                case 'Energia':
+                    self.energia_atual += efeito["valor"]
+                    if self.energia_atual > self.jogador.energia_maxima:
+                        self.energia_atual = self.jogador.energia_maxima
+                case 'Ataque':
+                    pass
+                case 'Sorte':
+                    pass
+                case 'Eletrificado':
+                    pass
+                case 'Congelado':
+                    pass
+                case 'Molhado':
+                    pass
+                case 'Envenenado':
+                    pass
+                case 'Sangramento':
+                    pass
+                case 'Queimadura':
+                    pass
+                case 'Tontura':
+                    pass
+                case 'Cegueira':
+                    pass
+                case 'Purificação':
+                    pass
     
-            elif efeito["tipo"] == "PE":
-                self.energia_atual += efeito["valor"]
-                if self.energia_atual > self.jogador.energia_maxima:
-                    self.energia_atual = self.jogador.energia_maxima
-                # print(f"+{efeito['valor']} PE → atual: {self.energia_atual}")
-
         # Atualiza a barra de estado do jogador
         self.barra_de_estado.atualizar_estado(
             self.jogador.vida_atual,
@@ -211,13 +246,77 @@ class TelaBatalha(TelaModelo):
             self.jogador.experiencia_atual
         )
 
-        # Remove da mochila (ou marque como usado)
-        del self._mochila[chave_item]
-
         # Fecha o menu e passa a vez
         self.menu_mochila_ativo = False
         print("Passa o turno depois de usar o item")
         self.inimigos_realizam_turno()
+
+
+
+    def _preparar_habilidade(self):
+        self.habilidade_usando = self.habilidades[self.habilidade_selecionada_index]
+        self.estado_batalha = "selecao_de_alvo" if self.habilidade_usando.tipo_de_alvo in ["alvo_terrestre", "alvo_livre"] else "executando_ataque"
+
+        tipo_alvo = self.habilidade_usando.tipo_de_alvo
+
+        if tipo_alvo in ["alvo_terrestre", "alvo_livre"]:
+            self.estado_batalha = "selecao_de_alvo"
+        elif tipo_alvo in ["fila", "terrestre", "area"]:
+            self._executar_ataque_auto()
+
+
+
+    def _executar_ataque_manual(self, alvo_index):
+        dano = self._calcular_dano(self.habilidade_usando)
+        self._aplicar_dano(alvo_index, dano)
+        self._encerrar_turno_jogador()
+
+
+
+    def _executar_ataque_auto(self):
+        dano = self._calcular_dano(self.habilidade_usando)
+        tipo = self.habilidade_usando.tipo_de_alvo
+
+        if tipo == "fila":
+            self._aplicar_dano(0, dano)
+        else:  # terrestre ou área
+            for i in range(len(self.inimigos)):
+                self._aplicar_dano(i, dano)
+
+        self._encerrar_turno_jogador()
+
+
+
+    def _calcular_dano(self, habilidade):
+        nivel = self.jogador.nivel
+
+        # Determinar raridade da fonte
+        if habilidade.tipo_de_ataque in ["espada", "estilingue", "arco"]:
+            raridade = self.jogador.kit.arma["raridade"]
+        elif habilidade.tipo_de_ataque == "fruta":
+            raridade = self.jogador.kit.fruta["raridade"]
+        else:
+            raridade = "★"
+
+        return habilidade.calcular_dano_final(nivel, raridade=raridade)
+
+
+
+    def _aplicar_dano(self, index, dano):
+        if 0 <= index < len(self.inimigos):
+            inimigo = self.inimigos[index]
+            inimigo["PV"] -= dano
+            pos = self.inimigos_animados[index].pos
+            self.danos_flutuantes.append(DanoFlutuante(str(dano), (pos[0], pos[1] - 30)))
+
+
+
+    def _encerrar_turno_jogador(self):
+        self.estado_batalha = "turno_inimigo"
+        self.inimigo_index_atacando = 0
+        self.tempo_proximo_ataque = 0.7
+
+
 
     def inimigos_realizam_turno(self):
         print("Turno dos inimigos!")
@@ -230,8 +329,7 @@ class TelaBatalha(TelaModelo):
                 self.fila_turnos.append(i)
 
         self.tempo_proximo_ataque = 0.5  # tempo de espera antes do primeiro ataque
-        self.inimigo_index_atacando = 0
-        
+        self.inimigo_index_atacando = 0      
 
         
     
@@ -248,9 +346,12 @@ class TelaBatalha(TelaModelo):
             ponto_geracao_jogador = self.coordenadas_de_retorno,
             dados_da_ilha = self.dados_da_ilha,
             dados_da_area = self.dados_da_area,
-            jogador=self.jogador
+            jogador=self.jogador,
+            dados_slot = self.dados_do_progresso
         )
  
+
+
     def draw(self, tela):
         tela.blit(self.fundo_batalha, (0, 0))
 
@@ -291,23 +392,57 @@ class TelaBatalha(TelaModelo):
             tela.blit(texto, rect)
 
         if self.menu_mochila_ativo:
-            fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
-            y_base = 100
-            largura_caixa = 400
-            altura_caixa = 40
-            x = LARGURA_TELA // 2 - largura_caixa // 2
+            print(f"Itens da mochila: {self.jogador.mochila.itens}")
+            x = 50
+            y_inicial = 100
+            largura = 400
+            altura_caixa = 64
+            espacamento = 10
 
-            if not self._mochila:
-                texto = fonte.render("Mochila vazia.", True, BRANCO_CLARO)
-                tela.blit(texto, (x + 20, y_base + 20))
-            else:
-                    for i, chave in enumerate(self._mochila.keys()):
-                        item = self._mochila[chave]
-                        nome = item['nome']
-                        texto = fonte.render(f"{i+1}. {nome}", True, BRANCO_CLARO)
-                        y = y_base + i * altura_caixa
-                        pygame.draw.rect(tela, (30, 30, 30), (x, y, largura_caixa, altura_caixa))
-                        tela.blit(texto, (x + 10, y + 10))
+            # Pega os itens da mochila
+            itens = self.jogador.mochila.itens
+
+            # Cálculo de página para scroll
+            inicio = self.scroll_offset_mochila
+            fim = inicio + self.itens_visiveis_por_pagina
+
+            for i, item in enumerate(itens[inicio:fim]):
+                index_real = inicio + i
+                y = y_inicial + i * (altura_caixa + espacamento)
+
+                # Fundo da caixa (destaque se selecionado)
+                cor_fundo = (60, 60, 60) if index_real == self.indice_item_mochila else (40, 40, 40)
+                pygame.draw.rect(tela, cor_fundo, (x, y, largura, altura_caixa), border_radius=8)
+
+                # Nome do item
+                nome = item.nome_item
+                texto_nome = fonte.render(nome, True, (255, 255, 255))
+                tela.blit(texto_nome, (x + 10, y + 5))
+
+                # Descrição (opcional)
+                '''desc = item.descricao
+                texto_desc = fonte.render(desc, True, (180, 180, 180))
+                tela.blit(texto_desc, (x + 10, y + 25))'''
+
+                # Efeitos (ex: +2 PV, +1 PE)
+                efeitos = item.efeitos
+                for j, efeito in enumerate(efeitos):
+                    tipo = efeito.tipo
+                    valor = efeito.valor
+                    texto_efeito = fonte.render(f"+{valor} {tipo}", True, (100, 255, 100))
+                    tela.blit(texto_efeito, (x + 350 + j * 80, y + 5))
+
+
+        # Mostrar lista de habilidades
+        if self.estado_batalha == "selecionando_habilidade":
+            fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+            x, y = 50, 400
+            for i, habilidade in enumerate(self.habilidades):
+                cor = (255, 255, 0) if i == self.habilidade_selecionada_index else (255, 255, 255)
+                texto = fonte.render(habilidade.nome, True, cor)
+                tela.blit(texto, (x, y + i * 30))
+
+
 
     def distribuir_icones_em_arco(self, icones, centro, raio, angulo_inicial=-90, angulo_total=90):
         """
@@ -333,6 +468,8 @@ class TelaBatalha(TelaModelo):
             rect = icones[i].image.get_rect(center=(x, y))
             icones[i].rect = rect  # Se for um objeto
 
+
+
     def handle_input(self, evento):
         # Chama o handle_input da base para eventos comuns (ex: QUIT)
         super().handle_input(evento)
@@ -353,14 +490,13 @@ class TelaBatalha(TelaModelo):
                 y_base = 100
                 altura_caixa = 40
 
-                if not self._mochila:
+                if not self.jogador.mochila.itens:
                     print("Mochila vazia – nada para usar.")
                 else:
-                    for i, chave in enumerate(self._mochila.keys()):
+                    for i, chave in enumerate(self.jogador.mochila.itens):
                         y = y_base + i * altura_caixa
                         rect = pygame.Rect(x, y, 400, altura_caixa)
                         if rect.collidepoint(evento.pos):
-                            print(f"Usar item: {self._mochila[chave]['nome']}")
                             self.usar_item_da_mochila(chave)
                             return
 
@@ -378,7 +514,8 @@ class TelaBatalha(TelaModelo):
                                 ponto_geracao_jogador = self.coordenadas_de_retorno,
                                 dados_da_ilha = self.dados_da_ilha,
                                 dados_da_area = self.dados_da_area,
-                                jogador=self.jogador
+                                jogador=self.jogador,
+                                dados_slot = self.dados_do_progresso
                             )
                             return
 
@@ -388,26 +525,60 @@ class TelaBatalha(TelaModelo):
 
                         case "fruta":
                             print("Usar fruta")
-                            dano = 8
+                            self.habilidades_por_tipo = [
+                                h for h in self.habilidades if h.tipo_de_ataque == icone.acao
+                            ]
+                            if self.habilidades:
+                                self.estado_batalha = "selecionando_habilidade"
+                                self.habilidade_selecionada_index = 0
+                            else:
+                                print("⚠️ Nenhuma habilidade disponível para esse tipo.")
+                            '''dano = 8
                             if self.inimigos:
                                 self.inimigos[0]['PV'] -= dano
                                 self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
                                 print("Vida do inimigo:", self.inimigos[0]['PV'])
-                                self.inimigos_realizam_turno()
+                                self.inimigos_realizam_turno()'''
 
                         case "espada" | "projetil" | "soco":
                             print(f"Ação de ataque: {icone.acao}")
+                            self.habilidades_por_tipo = [
+                                h for h in self.habilidades if h.tipo_de_ataque == icone.acao
+                            ]
+                            if self.habilidades:
+                                self.estado_batalha = "selecionando_habilidade"
+                                self.habilidade_selecionada_index = 0
+                            else:
+                                print("⚠️ Nenhuma habilidade disponível para esse tipo.")
                             #self.realizar_turno(icone.acao)
-                            dano = 5
+                            '''dano = 5
                             if self.inimigos:
                                 self.inimigos[0]['PV'] -= dano
                                 self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
                                 print("Vida do inimigo:", self.inimigos[0]['PV'])
-                                self.inimigos_realizam_turno()
+                                self.inimigos_realizam_turno()'''
 
                         case _:
                             print(f"Ação desconhecida: {icone.acao}")
+    
+        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "selecao_de_alvo":
+            for i, animado in enumerate(self.inimigos_animados):
+                rect = animado.imagem.get_rect(topleft=animado.pos)
+                if rect.collidepoint(evento.pos):
+                    self._executar_ataque_manual(i)
+                    break
+                
+        elif evento.type == pygame.KEYDOWN and self.estado_batalha == "selecionando_habilidade":
+            if evento.key == pygame.K_UP:
+                self.habilidade_selecionada_index = (self.habilidade_selecionada_index - 1) % len(self.habilidades)
+            elif evento.key == pygame.K_DOWN:
+                self.habilidade_selecionada_index = (self.habilidade_selecionada_index + 1) % len(self.habilidades)
+            elif evento.key == pygame.K_RETURN:
+                self._preparar_habilidade()
+
         return None
+
+
 
     def update(self, dt):
         # Verifica se o jogador iniciou a luta
@@ -485,7 +656,9 @@ class TelaBatalha(TelaModelo):
         if not self.inimigos:
             if not self._carregar_proxima_onda():
                 self.fim_batalha(venceu=True)
-    
+
+
+  
 class InimigoAnimado:
     def __init__(self, imagem, posicao_final):
         self.imagem = imagem
