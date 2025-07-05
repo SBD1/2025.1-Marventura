@@ -26,7 +26,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
     def __init__(self, gerenciador_telas, gerenciador_recursos, dados_da_ilha, dados_da_area,
-                 gerenciador_banco_de_dados, jogador, ponto_geracao_jogador, dados_do_progresso):
+                 gerenciador_banco_de_dados, jogador, ponto_geracao_jogador, dados_do_progresso, mochila, kit):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
 
         self.dados_da_area = dados_da_area
@@ -70,6 +70,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.jogador = Jogador(
             self.gerenciador_recursos,
             x, y,
+            jogador.identificador_jogador,
             jogador.nome,
             jogador.descricao,
             jogador.energia_maxima,
@@ -78,7 +79,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             jogador.sorte,
             jogador.vida_atual,
             jogador.experiencia_atual,
-            orientacao
+            orientacao,
+            mochila=mochila,
+            kit=kit
         )
 
         self.coordenadas_de_retorno = (
@@ -255,7 +258,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 dados_da_area=self.dados_da_area,
                 dados_da_ilha=self.dados_da_ilha,
                 jogador=self.jogador,
-                jogador_iniciou=True  # ← importante
+                jogador_iniciou=True,
+                dados_do_progresso = self.dados_do_progresso
             )
 
 
@@ -427,7 +431,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     coordenadas_de_retorno = self.coordenadas_de_retorno,
                     dados_da_area = self.dados_da_area,
                     dados_da_ilha = self.dados_da_ilha,
-                    jogador=self.jogador
+                    jogador=self.jogador,
+                    dados_do_progresso = self.dados_do_progresso
                 )
                 return # Termina o update aqui para não processar mais nada após a transição
             
