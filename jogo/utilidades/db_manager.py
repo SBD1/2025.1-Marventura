@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import psycopg
 from psycopg.rows import namedtuple_row
 from utilidades.constantes import *
+from entidades.item_inventario import ItemInventario
+
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -84,45 +86,6 @@ class DBManager:
             print(f"DBManager ERRO ao executar query '{query}': {e}")
             return False
 
-    # ===============================================
-    # Métodos de Operações com Habilidades
-    # ===============================================
-
-    def buscar_habilidades_por_arma(self, id_arma):
-        query = """
-            SELECT
-            	habilidade.nome,
-                habilidade.descricao,
-                habilidade.tipo_de_ataque,
-                habilidade.tipo_de_alvo,
-                habilidade.dano,
-                habilidade.custo,
-                efeito.nome AS efeito_nome,
-                efeito.valor AS efeito_valor
-            FROM habilidade_arma
-                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_arma.identificador_habilidade
-            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
-            WHERE habilidade_arma.nome = %s;
-        """
-        return self.executar_query(query, (id_arma,), fetchall=True)
-    
-    def buscar_habilidades_por_fruta(self, id_arma):
-        query = """
-            SELECT
-            	habilidade.nome,
-                habilidade.descricao,
-                habilidade.tipo_de_ataque,
-                habilidade.tipo_de_alvo,
-                habilidade.dano,
-                habilidade.custo,
-                efeito.nome AS efeito_nome,
-                efeito.valor AS efeito_valor
-            FROM habilidade_fruta
-                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_fruta.identificador_habilidade
-            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
-            WHERE habilidade_fruta.nome = %s;
-        """
-        return self.executar_query(query, (id_arma,), fetchall=True)
 
 
     # ===============================================
@@ -204,14 +167,35 @@ class DBManager:
         if not jogador:
             return None, None, None
 
-        mochila_jogador = self.buscar_inventario(id_jogador, 'ger')
-        kit_jogador = self.buscar_inventario(id_jogador, 'kit')
+        resultados = self.buscar_inventario(id_jogador, 'ger', identificador_progresso)
+        kit_jogador = self.buscar_kit_do_explorador(id_jogador, 'kit')
+        mochila = []
 
+        for row in resultados:
+            item = ItemInventario(
+                id_item=row.identificador_item,
+                nome=row.nome_item,
+                descricao=row.descricao,
+                tipo=row.tipo_item,
+                raridade=row.raridade,
+                quantidade=row.quantidade
+            )
+
+            # Buscar os efeitos do item usando seu identificador
+            efeitos = self.buscar_efeitos_por_item(row.identificador_item)
+
+            for efeito in efeitos:
+                item.adicionar_efeito(efeito["nome"], efeito["valor"])
+
+            mochila.append(item)
+        
+        print("Mochila do jogador:", resultados)
+        print("kit_jogador:", kit_jogador)
         area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
 
         ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
 
-        return jogador, mochila_jogador, kit_jogador, ilha, area
+        return jogador, mochila, kit_jogador, ilha, area
     
     def atualizar_espaco_salvamento(self, identificador_progresso):
         """
@@ -301,36 +285,88 @@ class DBManager:
     # Métodos de Operações com Inventário e Itens
     # ===============================================
 
+    def buscar_kit_do_explorador(self, identificador_jogador, tipo_inventario='kit'):
+        """Busca o inventário do kit do explorador de um jogador."""
+        query = """
+            SELECT
+                inventario.identificador_inventario,
+                tipo_item.identificador_item,
+                tipo_item.tipo AS tipo_item,
+                COALESCE(
+                    TRIM(acessorio.nome),
+                    TRIM(fruta.nome),
+                    TRIM(arma.nome)
+                ) AS nome_item,
+                COALESCE(acessorio.raridade, fruta.raridade, arma.raridade) AS raridade,
+                COALESCE(
+                    TRIM(acessorio.descricao),
+                    TRIM(fruta.descricao),
+                    TRIM(arma.descricao)
+                ) AS descricao,
+                item_inventario.quantidade
+            FROM inventario
+            JOIN item_inventario
+                ON item_inventario.identificador_inventario = inventario.identificador_inventario
+            JOIN tipo_item
+                ON tipo_item.identificador_item = item_inventario.identificador_item
+
+            -- Joins para cada subtipo
+            LEFT JOIN acessorio
+                ON acessorio.identificador_acessorio = tipo_item.identificador_item
+            LEFT JOIN fruta
+                ON fruta.identificador_fruta = tipo_item.identificador_item
+            LEFT JOIN arma
+                ON arma.identificador_arma = tipo_item.identificador_item
+
+			WHERE inventario.identificador_personagem = %s
+            AND inventario.tipo_inventario = %s;
+        """
+        return self.executar_query(query, (identificador_jogador, tipo_inventario), fetchall=True)
+        
     def buscar_inventario(self, identificador_personagem, tipo_inventario='ger', identificador_progresso=None):
         """Acessa o inventário de um personagem e seus atributos, filtrando também por progresso."""
         query = """
             SELECT
-                inv.identificador_inventario,
-                ti.identificador_item,
-                ti.tipo AS tipo_item,
-                COALESCE(a.nome, f.nome, c.nome, nc.nome) AS nome_item,
-                COALESCE(a.raridade, f.raridade, c.raridade, nc.raridade) AS raridade,
-                COALESCE(a.descricao, f.descricao, c.descricao, nc.descricao) AS descricao,
-                ii.quantidade
-            FROM inventario inv
-            JOIN item_inventario ii
-                ON ii.identificador_inventario = inv.identificador_inventario
-            JOIN tipo_item ti
-                ON ti.identificador_item = ii.identificador_item
+                inventario.identificador_inventario,
+                tipo_item.identificador_item,
+                tipo_item.tipo AS tipo_item,
+                COALESCE(
+                    TRIM(acessorio.nome),
+                    TRIM(fruta.nome),
+                    TRIM(consumivel.nome),
+                    TRIM(nao_consumivel.nome),
+                    TRIM(arma.nome)
+                ) AS nome_item,
+                COALESCE(acessorio.raridade, fruta.raridade, consumivel.raridade, nao_consumivel.raridade, arma.raridade) AS raridade,
+                COALESCE(
+                    TRIM(acessorio.descricao),
+                    TRIM(fruta.descricao),
+                    TRIM(consumivel.descricao),
+                    TRIM(nao_consumivel.descricao),
+                    TRIM(arma.descricao)
+                ) AS descricao,
+                item_inventario.quantidade
+            FROM inventario
+            JOIN item_inventario
+                ON item_inventario.identificador_inventario = inventario.identificador_inventario
+            JOIN tipo_item
+                ON tipo_item.identificador_item = item_inventario.identificador_item
 
             -- Joins para cada subtipo
-            LEFT JOIN acessorio a
-                ON a.identificador_acessorio = ti.identificador_item
-            LEFT JOIN fruta f
-                ON f.identificador_fruta = ti.identificador_item
-            LEFT JOIN consumivel c
-                ON c.identificador_consumivel = ti.identificador_item
-            LEFT JOIN nao_consumivel nc
-                ON nc.identificador_nao_consumivel = ti.identificador_item
-
-            WHERE inv.identificador_personagem = %s
-            AND inv.tipo_inventario = %s
-            AND inv.identificador_progresso = %s;
+            LEFT JOIN acessorio
+                ON acessorio.identificador_acessorio = tipo_item.identificador_item
+            LEFT JOIN fruta
+                ON fruta.identificador_fruta = tipo_item.identificador_item
+            LEFT JOIN consumivel
+                ON consumivel.identificador_consumivel = tipo_item.identificador_item
+            LEFT JOIN nao_consumivel
+                ON nao_consumivel.identificador_nao_consumivel = tipo_item.identificador_item
+			LEFT JOIN arma
+				ON arma.identificador_arma = tipo_item.identificador_item
+            
+            WHERE inventario.identificador_personagem = %s
+            AND inventario.tipo_inventario = %s
+            AND inventario.identificador_progresso = %s;
         """
         return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
 
@@ -390,6 +426,16 @@ class DBManager:
             WHERE identificador_item = %s;
         """
         return self.executar_query(query, (id_tipo_item,), fetchone=True)
+    
+    def buscar_efeitos_por_item(self, id_item):
+        query = """
+            SELECT efeito.nome AS efeito_nome, efeito.valor AS efeito_valor
+            FROM efeito
+                JOIN efeito_consumivel ON efeito_consumivel.identificador_efeito = efeito.identificador_efeito
+            WHERE efeito_consumivel.identificador_consumivel = %s;
+        """
+        return self.executar_query(query, (id_item,), fetchall=True)
+
 
     # ===============================================
     # Métodos de Operações com Personagens (Lacaio, Chefe, Aliado, Habitante)
@@ -932,4 +978,67 @@ class DBManager:
             WHERE ti.identificador_item IS NULL; -- Busca itens no inventário que não têm um tipo correspondente
         """
         return self.executar_query(query, fetchall=True)
+
+
+
+    # ===============================================
+    # Métodos de Operações com Habilidades
+    # ===============================================
+
+    def buscar_habilidades_por_arma(self, id_arma):
+        query = """
+            SELECT
+                habilidade.identificador_habilidade,
+            	habilidade.nome,
+                habilidade.descricao,
+                habilidade.tipo_de_ataque,
+                habilidade.tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                efeito.nome AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_arma
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_arma.identificador_habilidade
+            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_arma.identificador_arma = %s;
+        """
+        return self.executar_query(query, (id_arma,), fetchall=True)
+    
+    def buscar_habilidades_por_fruta(self, id_arma):
+        query = """
+            SELECT
+                habilidade.identificador_habilidade,
+            	habilidade.nome,
+                habilidade.descricao,
+                habilidade.tipo_de_ataque,
+                habilidade.tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                efeito.nome AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_fruta
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_fruta.identificador_habilidade
+            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_fruta.identificador_fruta = %s;
+        """
+        return self.executar_query(query, (id_arma,), fetchall=True)
+    
+    def buscar_habilidades_por_personagem(self, id_personagem):
+        query = """
+            SELECT
+                habilidade.identificador_habilidade,
+                habilidade.nome,
+                habilidade.descricao,
+                habilidade.tipo_de_ataque,
+                habilidade.tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                efeito.nome AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_personagem
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_personagem.identificador_habilidade
+                LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_personagem.identificador_personagem = %s;
+        """
+        return self.executar_query(query, (id_personagem,), fetchall=True)
 
