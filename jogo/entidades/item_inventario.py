@@ -74,4 +74,7 @@ class ItemInventario:
             # Você pode adicionar suporte a outros tipos de efeito aqui futuramente
 
     def resumir_efeitos(self):
-        return ", ".join(f"+{e['valor']} {e['nome']}" for e in self.efeitos)
+        return ", ".join(
+            f"+{e['valor']} {e['nome']}" if e.get('valor') is not None else e['nome']
+            for e in self.efeitos
+        )
