@@ -128,11 +128,14 @@ CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
 CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
 
 CHAVE_FONTE_CHERRY_TITULO = 'fonte_cherry_titulo'
+CHAVE_FONTE_CHERRY_SUBTITULO = 'fonte_cherry_subtitulo'
 CHAVE_FONTE_CHERRY_TEXTO = 'fonte_cherry_texto'
 CHAVE_ICONE_CORACAO = 'icone_coracao'
 CHAVE_ICONE_ENERGIA = 'icone_energia'
 CHAVE_ICONE_MOEDA = 'icone_moeda'
 
+CHAVE_MENU_ITENS = 'menu_itens'
+CHAVE_CAIXA_DE_TEXTO = 'caixa_de_texto'
 CHAVE_BARRA_DE_ESTADO = 'barra_de_estado'
 CHAVE_CAMPO_DE_BATALHA_CAMPOS = 'campo_de_batalha_campos'
 
