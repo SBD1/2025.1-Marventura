@@ -57,11 +57,7 @@ class GerenciadorDeTelas:
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
-                               jogador=kwargs.get('jogador'),
-                               coordenadas_de_retorno= kwargs.get('coordenadas_de_retorno'),
-                               dados_da_area=kwargs.get('dados_da_area'),
-                               dados_da_ilha=kwargs.get('dados_da_ilha'),
-                               dados_do_progresso=kwargs.get('dados_do_progresso'))
+                               jogador_iniciou= kwargs.get('jogador_iniciou', False))
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None
