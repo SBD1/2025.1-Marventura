@@ -936,8 +936,9 @@ VALUES
     ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto'),
     ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto'),
     ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto'),
+    ('are034', "Narrador", null, 'hbt', 0, 0, 0, null)
     ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 125, 15, 'campones_a');
-    ('are002', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 125, 15, 'campones_a');
+    ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 2040, 125, 15, 'camponesa_a');
 
 
 
@@ -1172,57 +1173,115 @@ VALUES
 
 
 INSERT INTO missao
-    (identificador_area, identificador_recrutador, descricao, nome)
+    (identificador_area, identificador_missao_dependente, nivel_de_desbloqueio, identificador_recrutador, descricao, nome)
 VALUES
-    ('are001', null, 'Desperte nesse local desconhecido', 'Animal Selvagem'),
-    ('are001', null, 'Derrote o lobo que te atacou de repente no caminho para a vila.', 'Animal Selvagem'),
-    ('are002', null, 'Chegue na vila.', 'Animal Selvagem'),
-    ('are001', 'rct001', 'Espante os corvos da plantação', 'A Fera da Vila'),
-    ('are003', 'rct001', 'Afugente os lobos', 'A Fera da Vila'),
-    ('are003', 'rct002', 'Busque água do poço', 'A Fera da Vila'),
-    ('are003', 'rct001', 'Conserte a cerca danificada', 'A Fera da Vila'),
-    ('are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    -- ('pro001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    -- ('pro001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    -- ('pro001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    -- ('pro001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    -- ('pro001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    -- ('pro001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    -- ('pro001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    -- ('pro001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    -- ('pro001', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    -- ('pro001', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    -- ('pro001', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    -- ('pro001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    -- ('pro001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final'),
-    -- ('pro002', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
-    -- ('pro002', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    -- ('pro002', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    -- ('pro002', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    -- ('pro002', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    -- ('pro002', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    -- ('pro002', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    -- ('pro002', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    -- ('pro002', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    -- ('pro002', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    -- ('pro002', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    -- ('pro002', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    -- ('pro002', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    -- ('pro002', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    -- ('pro002', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final'),
-    -- ('pro003', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
-    -- ('pro003', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    -- ('pro003', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    -- ('pro003', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    -- ('pro003', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    -- ('pro003', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    -- ('pro003', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    -- ('pro003', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    -- ('pro003', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    -- ('pro003', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    -- ('pro003', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    -- ('pro003', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    -- ('pro003', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    -- ('pro003', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    -- ('pro003', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
+    ('are001', 'mis002', 0, null, 'Desperte nesse local desconhecido', 'Acordei e Já Tô Perdido'), -- mis001
+    ('are001', 'mis003', 0, null, 'Derrote o lobo que te atacou de repente no caminho para a vila.', 'Lobicho Maldito!'), -- mis002
+    ('are002', null, 1, null, 'Chegue na vila.', 'Cadê o Waze Medieval?'), -- mis003
+    ('are001', null, 1,'rct001', 'Espante os corvos da plantação', 'Corvo Não Paga Aluguel'), -- mis004
+    ('are003', null, 2,'rct001', 'Conserte a cerca danificada', 'Cercando o Prejuízo'), -- mis005
+    ('are003', null, 3,'rct001', 'Afugente os lobos', 'Sai Pra Lá, Fido!'), -- mis006
+    ('are003', 'mis010', 5, 'rct002', 'Busque água do poço', 'Água Mole, Braço Duro'), -- mis007
+    ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
+    ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
+    ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
+    ('are001', 'mis012', 10, 'rct001', 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
 
+
+
+INSERT INTO estado_missao
+    (identificador_missao, identificador_progresso)
+VALUES
+    ('mis001', 'pro001'),
+    ('mis002', 'pro001'),
+    ('mis003', 'pro001'),
+    ('mis004', 'pro001'),
+    ('mis005', 'pro001'),
+    ('mis006', 'pro001'),
+    ('mis007', 'pro001'),
+    ('mis008', 'pro001'),
+    ('mis009', 'pro001'),
+    ('mis010', 'pro001'),
+    ('mis011', 'pro001'),
+    ('mis012', 'pro001'),
+    ('mis001', 'pro002'),
+    ('mis002', 'pro002'),
+    ('mis003', 'pro002'),
+    ('mis004', 'pro002'),
+    ('mis005', 'pro002'),
+    ('mis006', 'pro002'),
+    ('mis007', 'pro002'),
+    ('mis008', 'pro002'),
+    ('mis009', 'pro002'),
+    ('mis010', 'pro002'),
+    ('mis011', 'pro002'),
+    ('mis012', 'pro002'),
+    ('mis001', 'pro003'),
+    ('mis002', 'pro003'),
+    ('mis003', 'pro003'),
+    ('mis004', 'pro003'),
+    ('mis005', 'pro003'),
+    ('mis006', 'pro003'),
+    ('mis007', 'pro003'),
+    ('mis008', 'pro003'),
+    ('mis009', 'pro003'),
+    ('mis010', 'pro003'),
+    ('mis011', 'pro003'),
+    ('mis012', 'pro003');
+
+
+
+INSERT INTO dialogo
+    (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
+VALUES
+    ('hbt001', 'mis001', 1, 'F', 'O som do vento sussurrava entre as altas folhas douradas. O sol da manhã já aquecia a terra quando uma jovem de cabelos bagunçados abriu os olhos pela primeira vez naquele lugar desconhecido.'),
+    ('hbt001', 'mis001', 1, 'M', 'O som do vento sussurrava entre as altas folhas douradas. O sol da manhã já aquecia a terra quando um jovem de cabelos bagunçados abriu os olhos pela primeira vez naquele lugar desconhecido.'),
+    (null, 'mis001', 2, 'F', 'Ei, garota... está viva?'),
+    (null, 'mis001', 2, 'M', 'Ei, garoto... está vivo?'),
+    ('hbt001', 'mis001', 3, 'F', 'Silvie piscou, ainda meio zonza. Acima dela, um homem de meia-idade, com um grande chapéu de palha e expressão marcada pelo tempo, a observava atentamente.'),
+    ('hbt001', 'mis001', 3, 'M', 'Shuan piscou, ainda meio zonzo. Acima dele, um homem de meia-idade, com um grande chapéu de palha e expressão marcada pelo tempo, o observava atentamente.'),
+    (%s, 'mis001', 4, 'F', 'Você... quem é você?'),
+    (%s, 'mis001', 4, 'M', 'Você... quem é você?'),
+    ('hbt002', 'mis001', 5, 'F', 'Eu quem devia perguntar isso — o homem deu uma risada breve. — Você estava desmaiada bem no meio do campo. Quase te colhi junto com as abóboras!'),
+    ('hbt002', 'mis001', 5, 'M', 'Eu quem devia perguntar isso — o homem deu uma risada breve. — Você estava desmaiado bem no meio do campo. Quase te colhi junto com as abóboras!'),
+    ('hbt001', 'mis001', 6, 'F', 'A jovem olhou ao redor. Tudo era novo. Campos vastos se estendiam em todas as direções, dançando sob a brisa. Ela tentou puxar alguma lembrança... mas nada vinha.'),
+    ('hbt001', 'mis001', 6, 'M', 'O jovem olhou ao redor. Tudo era novo. Campos vastos se estendiam em todas as direções, dançando sob a brisa. Ele tentou puxar alguma lembrança... mas nada vinha.'),
+    (%s, 'mis001', 7, 'F', 'Eu... não sei como vim parar aqui.'),
+    (%s, 'mis001', 7, 'M', 'Eu... não sei como vim parar aqui.'),
+    ('hbt002', 'mis001', 8, 'F', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
+    ('hbt002', 'mis001', 8, 'M', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
+    ('hbt001', 'mis001', 9, 'F', 'Silvie assentiu, ainda atordoada, mas determinada. Pegou a pequena bolsa ao seu lado e começou a andar.'),
+    ('hbt001', 'mis001', 9, 'M', 'Shuan assentiu, ainda atordoado, mas determinado. Pegou a pequena bolsa ao seu lado e começou a andar.'),
+    (%s, 'mis002', 1, 'F', 'Tsc... sério?'),
+    (%s, 'mis002', 1, 'M', 'Tsc... sério?'),
+    ('hbt001', 'mis003', 1, 'F', 'Algumas horas depois, ela chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
+    ('hbt001', 'mis003', 1, 'M', 'Algumas horas depois, ele chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
+    (null, 'mis003', 2, 'F', 'Ora, quem é você, jovem?'),
+    (null, 'mis003', 2, 'M', 'Ora, quem é você, jovem?'),
+    (%s, 'mis003', 3, 'F', 'Só alguém procurando respostas... e talvez um pouco de água.'),
+    (%s, 'mis003', 3, 'M', 'Só alguém procurando respostas... e talvez um pouco de água.'),
+    ('rct002', null, 1, 'F', 'Silvie! Minha musa da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
+    ('rct002', null, 1, 'M', 'Shuan! Meu rei da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
+    ('rct002', 'mis007', 1, 'F', 'Antes de tudo, preciso de água do poço. Mas não qualquer água! Tem que ser aquela que brilha sob o sol das 10h e tem gosto de vitória! Ou... pelo menos que não tenha sapo dentro. Vai lá, guerreira!'),
+    ('rct002', 'mis007', 1, 'M', 'Antes de tudo, preciso de água do poço. Mas não qualquer água! Tem que ser aquela que brilha sob o sol das 10h e tem gosto de vitória! Ou... pelo menos que não tenha sapo dentro. Vai lá, guerreiro!'),
+    ('rct002', 'mis008', 1, 'F', 'Agora o arroz! Mas não é qualquer arroz, é o Arroz do Planalto™ — colhido com suor, lágrimas e, às vezes, picadas de formiga. Traga um punhado... ou dois... ou vinte. Vai queimar umas calorias!'),
+    ('rct002', 'mis008', 1, 'M', 'Agora o arroz! Mas não é qualquer arroz, é o Arroz do Planalto™ — colhido com suor, lágrimas e, às vezes, picadas de formiga. Traga um punhado... ou dois... ou vinte. Vai queimar umas calorias!'),
+    ('rct002', 'mis009', 1, 'F', 'E por fim... os ovos! Mas cuidado: as galinhas dos Campos são temperamentais. Uma vez, uma me perseguiu por meia hora. Leve um escudo. Ou um pão. Elas respeitam carboidratos.'),
+    ('rct002', 'mis009', 1, 'M', 'E por fim... os ovos! Mas cuidado: as galinhas dos Campos são temperamentais. Uma vez, uma me perseguiu por meia hora. Leve um escudo. Ou um pão. Elas respeitam carboidratos.'),
+    ('rct002', 'mis010', 1, 'F', 'Você conseguiu! Água cristalina, arroz digno de poesia e ovos mais frescos que fofoca de vila! Agora... silêncio! É hora da alquimia culinária suprema!'),
+    ('rct002', 'mis010', 1, 'M', 'Você conseguiu! Água cristalina, arroz digno de poesia e ovos mais frescos que fofoca de vila! Agora... silêncio! É hora da alquimia culinária suprema!'),
+    ('hbt001', 'mis010', 2, 'F', 'Ela gira a frigideira com dramaticidade, quase derruba tudo, mas no fim...'),
+    ('hbt001', 'mis010', 2, 'M', 'Ela gira a frigideira com dramaticidade, quase derruba tudo, mas no fim...'),
+    ('rct002', 'mis010', 3, 'F', '…E… ficou bom. Quase perfeito. Mas ainda não é O Omurice Supremo. Falta algo. Um toque. Um tempero místico? Uma gema de dragão? Um fio de cabelo de chef lendário?'),
+    ('rct002', 'mis010', 3, 'M', '…E… ficou bom. Quase perfeito. Mas ainda não é O Omurice Supremo. Falta algo. Um toque. Um tempero místico? Uma gema de dragão? Um fio de cabelo de chef lendário?'),
+    ('hbt001', 'mis010', 4, 'F', 'Ela suspira, mas sorri.'),
+    ('hbt001', 'mis010', 4, 'M', 'Ela suspira, mas sorri.'),
+    ('rct002', 'mis010', 5, 'F', 'Mas não tema, Silvie! A busca continua! Um dia, esse prato vai entrar para os livros de história — ou pelo menos para o cardápio da taverna.'),
+    ('rct002', 'mis010', 5, 'M', 'Mas não tema, Shuan! A busca continua! Um dia, esse prato vai entrar para os livros de história — ou pelo menos para o cardápio da taverna.'),
+    ('rct002', 'mis010', 6, 'F', 'Tome, Silvie. Um Omurice quase supremo. Feito com suor, lágrimas e um leve toque de frustração criativa. Coma com orgulho — e cuidado, ele ainda tá bufando de quente!'),
+    ('rct002', 'mis010', 6, 'M', 'Tome, Shuan. Um Omurice quase supremo. Feito com suor, lágrimas e um leve toque de frustração criativa. Coma com orgulho — e cuidado, ele ainda tá bufando de quente!'),
+    ('hbt001', 'mis010', 7, 'F', 'Ela entrega o prato com um guardanapo dobrado em forma de galinha... com uma lágrima desenhada.'),
+    ('hbt001', 'mis010', 7, 'M', 'Ela entrega o prato com um guardanapo dobrado em forma de galinha... com uma lágrima desenhada.'),
+    ('rct002', 'mis010', 8, 'F', 'Se isso não te der +5 de energia e +1 de esperança, eu nem sou mais Lina Panela!'),
+    ('rct002', 'mis010', 8, 'M', 'Se isso não te der +5 de energia e +1 de esperança, eu nem sou mais Lina Panela!'),

@@ -574,8 +574,10 @@ CREATE TABLE missao (
     identificador_missao ID PRIMARY KEY,
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_recrutador ID REFERENCES habitante(identificador_habitante), 
+    identificador_missao_dependente ID REFERENCES missao(identificador_missao), 
     descricao CHAR(100),
-    nome CHAR(50) NOT NULL
+    nome CHAR(50) NOT NULL,
+    nivel_de_desbloqueio SMALLINT NOT NULL CHECK (nivel BETWEEN 0 AND 60)
 );
 
 CREATE TRIGGER atribui_id_missao
