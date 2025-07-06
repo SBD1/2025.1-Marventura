@@ -134,6 +134,7 @@ class GerenciadorDeRecursos:
         self._carregar_fonte(CHAVE_FONTE_PAYFAIR_TEXTO, caminho_arquivo_fonte_playfair, 20)  # Fonte para nome no cartaz
         self._carregar_fonte(CHAVE_FONTE_HEART_TEXTO, caminho_arquivo_fonte_always, 15)   # Fonte para data/dados no cartaz
         self._carregar_fonte(CHAVE_FONTE_CHERRY_TITULO, fonte_cherry, 48)          # Fonte para barra de estado
+        self._carregar_fonte(CHAVE_FONTE_CHERRY_SUBTITULO, fonte_cherry, 32)       # Fonte para barra de estado
         self._carregar_fonte(CHAVE_FONTE_CHERRY_TEXTO, fonte_cherry, 24)           # Fonte para textos gerais
 
         # --- Carregar Imagens de Interface e Fundos ---
@@ -144,6 +145,8 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
         #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
         self._carregar_imagem(CHAVE_BARRA_DE_ESTADO, 'recursos/imagens/interface/barra_de_estado.png')
+        self._carregar_imagem(CHAVE_CAIXA_DE_TEXTO, 'recursos/imagens/interface/caixa_de_texto.png')
+        self._carregar_imagem(CHAVE_MENU_ITENS, 'recursos/imagens/interface/menu_itens.png')
 
         # --- Carregar planos de fundo para os mapas do jogo ---
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
