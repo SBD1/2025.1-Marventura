@@ -281,6 +281,11 @@ BEFORE INSERT ON obstaculo
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 
+CREATE TABLE progresso_ilha (
+    jogador_id INTEGER NOT NULL,
+    identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
+    PRIMARY KEY (jogador_id, identificador_ilha)
+);
 
 
 CREATE TABLE area_interativa (
