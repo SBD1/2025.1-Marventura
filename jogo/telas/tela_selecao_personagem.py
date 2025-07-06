@@ -88,9 +88,11 @@ class TelaSelecaoPersonagem(TelaModelo):
                     return None
 
                 self.gerenciador_entidades.jogador = Jogador(
+                    self.banco_de_dados,
                     self.gerenciador_recursos,
                     jogador.coordenada_x,
                     jogador.coordenada_y,
+                    jogador.identificador_jogador,
                     jogador.nome,
                     jogador.descricao,
                     jogador.energia,
