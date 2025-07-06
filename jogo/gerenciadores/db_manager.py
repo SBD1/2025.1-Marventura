@@ -450,6 +450,25 @@ class DBManager:
         """
         return self.executar_query(query, (id_habitante,), fetchone=True)
     
+    def buscar_habitante_por_area(self, id_area):
+        """Busca dados de todos os habitante de uma área específica."""
+        query = """
+            SELECT *
+                FROM habitante
+                WHERE identificador_area = %s;
+        """
+        return self.executar_query(query, (id_area,), fetchall=True)
+    
+    def buscar_habitante_por_ilha(self, id_ilha):
+        """Busca dados de todos os habitante de uma ilha específica."""
+        query = """
+            SELECT h.*
+                FROM habitante h
+                JOIN area a ON h.identificador_area = a.identificador_area
+                WHERE a.identificador_ilha = %s;
+        """
+        return self.executar_query(query, (id_ilha,), fetchall=True)
+    
     def buscar_habilidades_por_personagem(self, identificador_personagem):
         """
         Retorna todas as habilidades associadas a um personagem (jogador, aliado, lacaio etc).

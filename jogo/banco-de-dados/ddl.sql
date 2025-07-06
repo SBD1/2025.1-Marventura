@@ -411,6 +411,7 @@ CREATE TABLE habitante (
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(27),
     descricao CHAR(100),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
     tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
@@ -571,12 +572,10 @@ EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE missao (
     identificador_missao ID PRIMARY KEY,
-    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso), 
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_recrutador ID REFERENCES habitante(identificador_habitante), 
     descricao CHAR(100),
-    nome CHAR(50) NOT NULL,
-    estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente'))
+    nome CHAR(50) NOT NULL
 );
 
 CREATE TRIGGER atribui_id_missao
@@ -590,7 +589,8 @@ CREATE TABLE dialogo (
     identificador_dialogo ID PRIMARY KEY,
     identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
     identificador_missao ID REFERENCES missao(identificador_missao),
-    sequencia_local SMALLINT CHECK (sequencia_local > 0)
+    sequencia_local SMALLINT CHECK (sequencia_local > 0),
+    genero CHAR(1) CHECK (genero IN ('M', 'F')),
     dialogo CHAR(500)
 );
 
@@ -599,6 +599,14 @@ BEFORE INSERT ON dialogo
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
 
+
+
+CREATE TABLE estado_missao (
+    identificador_missao ID REFERENCES missao(identificador_missao), 
+    identificador_progresso ID REFERENCES progresso(identificador_progresso), 
+    estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente')),
+    PRIMARY KEY (identificador_missao, identificador_progresso)
+);
 
 
 CREATE TABLE area_interativa (

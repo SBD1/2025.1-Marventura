@@ -3,6 +3,7 @@
 import pygame
 from utilidades.constantes import *
 from entidades import Inimigo
+from entidades import Habitante
 from entidades import Obstaculo
 from entidades import Caminho
 from entidades import AreaInteracao
@@ -10,6 +11,7 @@ from utilidades import Camera
 from interface import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 from gerenciadores import GerenciadorDeEntidades
+import gerenciadores.gerenciador_missoes # Importa o módulo, não a classe diretamente
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
     """
@@ -80,8 +82,23 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.indice_dialogo_atual = 0
         self.dialogo_ativo = False
         
+        # --- NOVO: Gerenciador de Missões ---
+        # Passe referências importantes para o GerenciadorDeMissoes
+        self.gerenciador_missoes = gerenciadores.gerenciador_missoes.GerenciadorDeMissoes(
+            self.banco_de_dados,
+            self.gerenciador_recursos,
+            self.camera, # Passa a instância da câmera
+            self.jogador,
+            self.caixa_dialogo, # Passa a instância da caixa de diálogo
+            self.npcs, # Passa o grupo de NPCs para interação
+            self.gerenciador_telas # Para transições de tela
+        )
+        
         # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
-        self.iniciar_dialogo(["Bem-vindo a esta área!", "Espero que se divirta!"])
+        # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
+        
+        # Exemplo: Tenta carregar uma missão ativa ao iniciar a tela de jogo
+        # self.gerenciador_missoes.carregar_missao_ativa_se_existir(self.dados_do_progresso.identificador_progresso)
 
 
 
@@ -144,6 +161,18 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
             self.areas_interacao.add(area)
 
+        # --- NOVO: Carregar NPCs ---
+        dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
+        for habitante in dados_habitantes:
+            novo_npc = Habitante(
+                self.gerenciador_recursos,
+                habitante.identificador_habitante,
+                habitante.coordenada_x, habitante.coordenada_y,
+                habitante.nome,
+                #habitante.chave_imagem,
+            )
+            self.npcs.add(novo_npc)
+
 
 
     def iniciar_dialogo(self, lista_de_textos):
@@ -177,6 +206,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if transicao_info:
             return transicao_info
         
+        # --- NOVO: Priorizar o gerenciador de missões/eventos para inputs ---
+        # Se o gerenciador de missões estiver em um estado de "cutscene"
+        # ou esperando um input específico que ele controla, ele deve ter prioridade.
+        if self.gerenciador_missoes.esta_em_evento_controlado():
+            self.gerenciador_missoes.handle_input(evento)
+            return None # Consome o evento para evitar que o jogador se mova ou faça outra coisa
+  
+        
         # --- Lógica da Caixa de Diálogo (TEM PRIORIDADE SOBRE OUTROS INPUTS) ---
         if self.dialogo_ativo and self.caixa_dialogo:
             if evento.type == pygame.KEYDOWN:
@@ -190,6 +227,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                         else:
                             self.dialogo_ativo = False # Fim do diálogo
                             self.caixa_dialogo.limpar_dialogo() # Limpa o texto da caixa
+
+            # NOVO: Tratamento do scroll do mouse
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                if self.caixa_dialogo.aguardando_input and not self.caixa_dialogo.esta_digitando:
+                    if evento.button == 4:  # Scroll para cima
+                        self.caixa_dialogo.rolar(-1)
+                    elif evento.button == 5: # Scroll para baixo
+                        self.caixa_dialogo.rolar(1)
             return None # Consome o evento, o jogador não deve se mover enquanto o diálogo está ativo
 
         # --- Lógica do Menu de Viagem (se estiver ativo) ---
@@ -298,43 +343,46 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
     def update(self, dt):
         super().update(dt)
+        dt_ms = dt * 1000 # Converte dt para milissegundos para a câmera e eventos
 
-        # Se o diálogo estiver ativo, apenas atualiza a caixa de diálogo
-        if self.dialogo_ativo:
-            self.caixa_dialogo.atualizar()
-            #return # Não atualiza o jogador ou inimigos enquanto o diálogo está ativo
+        # --- NOVO: Atualiza o Gerenciador de Missões PRIMEIRO ---
+        # Se um evento de missão estiver ativo, ele pode controlar o jogador, a câmera, etc.
+        self.gerenciador_missoes.update(dt_ms) # Passa dt em milissegundos
 
-        if self.menu_viagem_ativo and self.menu_viagem:
-            return None
+        # Se o gerenciador de missões estiver em um evento controlado, desativa o input do jogador
+        if self.gerenciador_missoes.esta_em_evento_controlado():
+            self.jogador.movendo_esquerda = False
+            self.jogador.movendo_direita = False
+            self.jogador.movendo_cima = False
+            self.jogador.movendo_baixo = False
+        else:
+            # Atualiza o jogador SOMENTE SE NÃO HOUVER UM EVENTO CONTROLANDO
+            self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
 
-        # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
-        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
+            # Lógica de clamping do jogador para não sair dos limites do mundo (movimento normal)
+            largura_mundo_atual = self.mapa_fundo_imagem.get_width()
+            altura_mundo_atual = self.mapa_fundo_imagem.get_height()
 
-        # Lógica de clamping do jogador para não sair dos limites do mundo
-        largura_mundo_atual = self.mapa_fundo_imagem.get_width()
-        altura_mundo_atual = self.mapa_fundo_imagem.get_height()
+            if self.jogador.rect.left < 0:
+                self.jogador.rect.left = 0
+            if self.jogador.rect.right > largura_mundo_atual:
+                self.jogador.rect.right = largura_mundo_atual
+            if self.jogador.rect.top < 0:
+                self.jogador.rect.top = 0
+            if self.jogador.rect.bottom > altura_mundo_atual:
+                self.jogador.rect.bottom = altura_mundo_atual
 
-        # Limita a posição X do jogador
-        if self.jogador.rect.left < 0:
-            self.jogador.rect.left = 0
-        if self.jogador.rect.right > largura_mundo_atual:
-            self.jogador.rect.right = largura_mundo_atual
+            self.jogador.mundo_x = self.jogador.rect.x
+            self.jogador.mundo_y = self.jogador.rect.y
 
-        # Limita a posição Y do jogador
-        if self.jogador.rect.top < 0:
-            self.jogador.rect.top = 0
-        if self.jogador.rect.bottom > altura_mundo_atual:
-            self.jogador.rect.bottom = altura_mundo_atual
-
-        # Se o jogador colidiu com obstáculos OU foi aparado pelos limites do mapa,
-        # sua posição `rect` já estará correta. Apenas atualize `mundo_x` e `mundo_y`.
-        self.jogador.mundo_x = self.jogador.rect.x
-        self.jogador.mundo_y = self.jogador.rect.y
 
         # Atualiza a visibilidade do ícone de interação
         self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
         self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
 
+        # Atualiza os NPCs, passando a posição do jogador para a orientação
+        for npc in self.npcs:
+            npc.atualizar(dt, self.jogador.rect)
 
         self.camera.update(self.jogador.rect)
 
@@ -354,9 +402,17 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 )
                 return # Termina o update aqui para não processar mais nada após a transição
             
-        # --- Atualiza a exibição do nome da ilha ---
         if self.exibicao_nome_ilha:
             self.exibicao_nome_ilha.update()
+        
+        # Se o diálogo for controlado pela TelaJogo (não pela missão), atualiza aqui
+        if self.dialogo_ativo and self.caixa_dialogo and not self.gerenciador_missoes.dialogo_controlado_ativo:
+            self.caixa_dialogo.atualizar()
+        
+        # Se o menu de viagem estiver ativo, ele tem prioridade no update
+        if self.menu_viagem_ativo and self.menu_viagem:
+            # Não faz nada aqui no update, pois ele é controlado por handle_input
+            pass
 
         return None
 
@@ -366,6 +422,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Desenha a imagem de fundo
         tela.blit(self.mapa_fundo_imagem, (self.mapa_fundo_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
         
+        # Desenha os NPCs
+        for npc in self.npcs:
+            npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
+
         # Desenha o jogador
         self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)
 
@@ -399,6 +459,17 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 )
                 pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
 
+            # DEBUG para NPCs
+            for npc in self.npcs:
+                debug_rect_npc = pygame.Rect(
+                    npc.rect.x - self.camera.rect.x,
+                    npc.rect.y - self.camera.rect.y,
+                    npc.rect.width,
+                    npc.rect.height
+                )
+                pygame.draw.rect(tela, VERDE, debug_rect_npc, 1) # Cor verde para NPCs
+
+
         # --- Desenha o nome da ilha com fade ---
         if self.exibicao_nome_ilha:
             self.exibicao_nome_ilha.draw(tela)
@@ -410,6 +481,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- Desenha a caixa de diálogo se estiver ativa ---
         if self.dialogo_ativo and self.caixa_dialogo:
             self.caixa_dialogo.desenhar(tela)
+
+        # NOVO: Se o gerenciador de missões estiver ativo e tiver um diálogo para exibir, ele desenha
+        if self.gerenciador_missoes.dialogo_controlado_ativo and self.gerenciador_missoes.caixa_dialogo:
+             self.gerenciador_missoes.caixa_dialogo.desenhar(tela)
 
 
 

@@ -139,6 +139,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
+        self._carregar_imagem(CHAVE_CAIXA_DIALOGO, 'recursos/imagens/interface/caixa_de_dialogo.png')
         #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
 
         # --- Carregar planos de fundo para os mapas do jogo ---

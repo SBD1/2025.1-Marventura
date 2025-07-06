@@ -15,6 +15,7 @@ PRETO = (53, 38, 16)
 VERMELHO = (255, 0, 0)
 VERDE = (0, 255, 0)
 AZUL = (0, 0, 255)
+AZUL_CLARO = (0, 191, 255)
 AMARELO = (255, 255, 0)
 ROXO = (128, 0, 128)
 CINZA = (150, 150, 150)
@@ -124,6 +125,7 @@ CHAVE_ICONE_ALERTA = 'icone_alerta'
 CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
 CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
 CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
+CHAVE_CAIXA_DIALOGO = 'caixa_dialogo'
 
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'

@@ -314,6 +314,7 @@ class Jogador(pygame.sprite.Sprite):
 
         imagem_atual = None
         if self.estado == 'parado' and self.frames_animacao['parado']:
+            #print(self.mundo_x, self.mundo_y)
             imagem_atual = self.frames_animacao['parado'][self.indice_frame]
         elif self.estado == 'caminhando' and self.frames_animacao['caminhando']:
             imagem_atual = self.frames_animacao['caminhando'][self.indice_frame]
@@ -328,10 +329,10 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def draw(self, screen, camera_x, camera_y):
+    def draw(self, tela, camera_x, camera_y):
         """
         Desenha o jogador na tela, ajustando pela posição da câmera.
-        :param screen: A superfície do Pygame onde desenhar.
+        :param tela: A superfície do Pygame onde desenhar.
         :param camera_x: A posição X da câmera.
         :param camera_y: A posição Y da câmera (se o jogo rolar verticalmente).
         """
@@ -339,19 +340,19 @@ class Jogador(pygame.sprite.Sprite):
         posicao_tela_x = self.mundo_x - camera_x
         posicao_tela_y = self.mundo_y - camera_y
         
-        screen.blit(self.image, (int(posicao_tela_x), int(posicao_tela_y)))
+        tela.blit(self.image, (int(posicao_tela_x), int(posicao_tela_y)))
 
         # Desenha o ícone de interação se aplicável
         if self.mostrar_icone_interacao and self.icone_interacao:
             icone_x = posicao_tela_x + self.rect.width // 2 - self.icone_interacao.get_width() // 2
             icone_y = posicao_tela_y - self.icone_interacao.get_height() + 10
-            screen.blit(self.icone_interacao, (int(icone_x), int(icone_y)))
+            tela.blit(self.icone_interacao, (int(icone_x), int(icone_y)))
 
         # DEBUG: Desenha o retângulo de colisão do jogador
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
             debug_rect = pygame.Rect(self.rect.x - camera_x, self.rect.y - camera_y, self.rect.width, self.rect.height)
-            pygame.draw.rect(screen, COR_CAIXA_COLISAO, debug_rect, 1)
+            pygame.draw.rect(tela, COR_CAIXA_COLISAO, debug_rect, 1)
 
             # NOVO: Retângulo dos pés (colisão)
             debug_rect_pes = pygame.Rect(self.pes_rect.x - camera_x, self.pes_rect.y - camera_y, self.pes_rect.width, self.pes_rect.height)
-            pygame.draw.rect(screen, VERMELHO, debug_rect_pes, 2) # Cor e espessura diferentes para destacar
+            pygame.draw.rect(tela, VERMELHO, debug_rect_pes, 2) # Cor e espessura diferentes para destacar
