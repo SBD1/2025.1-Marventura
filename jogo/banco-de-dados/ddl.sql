@@ -26,7 +26,6 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_item();
 
 
-
 CREATE TABLE fruta (
     identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
@@ -252,7 +251,11 @@ CREATE TABLE conexao_entre_areas (
     PRIMARY KEY (identificador_area_origem, identificador_area_destino)
 );
 
-
+CREATE TABLE ilha_visitada (
+    identificador_progresso ID NOT NULL,
+    identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
+    PRIMARY KEY (identificador_progresso, identificador_ilha)
+);
 
 CREATE TABLE tipo_elemento_espacial (
     identificador_elemento_espacial ID PRIMARY KEY,
