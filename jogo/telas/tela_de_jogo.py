@@ -229,12 +229,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.gerenciador_telas.mudar_tela(
                 CHAVE_TRANSICAO_BATALHA,
                 inimigos_na_batalha=ondas,
-                coordenadas_de_retorno=self.coordenadas_de_retorno,
-                dados_da_area=self.dados_da_area,
-                dados_da_ilha=self.dados_da_ilha,
-                jogador=self.jogador,
-                jogador_iniciou=True,
-                dados_do_progresso = self.dados_do_progresso
+                jogador_iniciou=True
             )
 
 
@@ -331,16 +326,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             self.menu_viagem_ativo = True
                             return None # Consome o evento
                     
-                    elif area.tipo_evento == 'iniciar_batalha':
-                        ondas_de_inimigos = self._montar_ondas(self.inimigos_lutando)
-                        print(f"Detectou interação para iniciar batalha com {area.dados_evento.get('inimigos')}")
-                        return {'estado': CHAVE_TRANSICAO_BATALHA,
-                                'inimigos_na_batalha':ondas_de_inimigos,
-                                'coordenadas_de_retorno': self.coordenadas_de_retorno,
-                                'dados_da_area': self.dados_da_area,
-                                'dados_da_ilha': self.dados_da_ilha,
-                                'jogador': self.jogador
-                                }
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
@@ -398,12 +383,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 # Sinaliza para o gerenciador de telas que uma batalha deve começar
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
-                    inimigos_na_batalha=ondas_de_inimigos,
-                    coordenadas_de_retorno = self.coordenadas_de_retorno,
-                    dados_da_area = self.dados_da_area,
-                    dados_da_ilha = self.dados_da_ilha,
-                    jogador=self.jogador,
-                    dados_do_progresso = self.dados_do_progresso
+                    inimigos_na_batalha=ondas_de_inimigos
                 )
                 return # Termina o update aqui para não processar mais nada após a transição
             
