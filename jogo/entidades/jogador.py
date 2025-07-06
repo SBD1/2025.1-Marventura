@@ -2,7 +2,6 @@
 
 import pygame
 from utilidades.constantes import * # Importa as constantes
-from utilidades.db_manager import DBManager
 from entidades.mochila import Mochila
 from entidades.kit import KitDoExplorador
 from entidades.habilidades import Habilidade
@@ -10,11 +9,12 @@ from entidades.habilidades import Habilidade
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, identificador_jogador, nome, descricao,
+    def __init__(self, gerenciador_banco_de_dados, gerenciador_recursos, x_inicial, y_inicial, identificador_jogador, nome, descricao,
                  energia, vida, nivel, sorte, vida_atual, experiencia_atual,
                  orientacao='direita', mochila = [], kit = []):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
+        self.banco_de_dados = gerenciador_banco_de_dados
         # REMOVIDO: self.fator_de_escala = fator_de_escala
 
         # Estado do jogador
@@ -29,8 +29,10 @@ class Jogador(pygame.sprite.Sprite):
         self.vida_maxima = vida
         self.nivel = nivel
         self.sorte = sorte
+        self.energia_atual = energia  # Energia atual do jogador
         self.vida_atual = vida_atual
         self.experiencia_atual = experiencia_atual
+        self.status = []  # Lista de status do jogador, como 'envenenado', 'congelado', etc.
 
         # Animação e estado
         self.estado = 'parado' # 'parado', 'caminhando'
@@ -48,14 +50,14 @@ class Jogador(pygame.sprite.Sprite):
         # Configura o sprite inicial
         # Garante que 'parado' tenha pelo menos um frame
         if self.frames_animacao['parado']: # Verifica se a lista não está vazia
-            self.image = self.frames_animacao[self.estado][self.indice_frame]
+            self.imagem = self.frames_animacao[self.estado][self.indice_frame]
         else:
             # Fallback robusto caso todas as imagens falhem
             print("ERRO GRAVE: frames_animacao['parado'] está vazio no __init__ do Jogador. Criando superfície vazia para evitar crash.")
-            self.image = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR))
-            self.image.fill(AZUL) # Uma cor diferente para indicar um erro mais grave
+            self.imagem = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR))
+            self.imagem.fill(AZUL) # Uma cor diferente para indicar um erro mais grave
         
-        self.rect = self.image.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
+        self.rect = self.imagem.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
 
         altura_pes = 18
         self.pes_rect = pygame.Rect(
@@ -74,8 +76,6 @@ class Jogador(pygame.sprite.Sprite):
         # Variáveis para o ícone de interação
         self.mostrar_icone_interacao = False
         self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO)
-
-        self.banco_de_dados = DBManager()  # Inicializa o gerenciador de banco de dados
 
         self.mochila = Mochila(mochila)  # Lista de itens na mochila do jogador
         self.kit_do_explorador = KitDoExplorador(kit) # Lista de itens equipados pelo jogador
@@ -225,17 +225,23 @@ class Jogador(pygame.sprite.Sprite):
 
     def carregar_habilidades(self):
         identificadores_do_equipamento = self.kit_do_explorador.obter_ids_do_equipamento()
-        print("identificadores_do_equipamento:", identificadores_do_equipamento)
         habilidades_personagem = self.banco_de_dados.buscar_habilidades_por_personagem(self.id) or []
         habilidades_arma = self.banco_de_dados.buscar_habilidades_por_arma(identificadores_do_equipamento["id_arma"]) if identificadores_do_equipamento["id_arma"] else []
-        print(f"Habilidades da arma (id_arma={identificadores_do_equipamento['id_arma']}): {habilidades_arma}")
-
         habilidades_fruta = self.banco_de_dados.buscar_habilidades_por_fruta(identificadores_do_equipamento["id_fruta"]) if identificadores_do_equipamento["id_fruta"] else []
-        print(f"Habilidades da fruta (id_fruta={identificadores_do_equipamento['id_fruta']}): {habilidades_fruta}")
 
-        print(f"Habilidades do personagem: {habilidades_personagem}")
-        print(f"Habilidades da arma: {habilidades_arma}")
-        print(f"Habilidades da fruta: {habilidades_fruta}")
+        print("identificadores_do_equipamento:", identificadores_do_equipamento)
+
+        print("Habilidades do jogador:")
+        for row in habilidades_personagem:
+            print(row)
+
+        print("Habilidades da arma:")
+        for row in habilidades_arma:
+            print(row)
+
+        print("Habilidades da Akuma no Mi:")
+        for row in habilidades_fruta:
+            print(row)
 
         conjunto_de_habilidades = habilidades_personagem + habilidades_arma + habilidades_fruta
 
@@ -353,7 +359,7 @@ class Jogador(pygame.sprite.Sprite):
             self.indice_frame = 0
             self.tempo_desde_ultimo_frame = 0.0
             if hasattr(self, 'frame_parada_apos_caminhada') and self.frame_parada_apos_caminhada:
-                self.image = self.frame_parada_apos_caminhada
+                self.imagem = self.frame_parada_apos_caminhada
                 del self.frame_parada_apos_caminhada
                 pass
 
@@ -369,7 +375,7 @@ class Jogador(pygame.sprite.Sprite):
         if self.orientacao == 'esquerda':
             imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
-        self.image = imagem_atual
+        self.imagem = imagem_atual
 
 
 
@@ -384,7 +390,7 @@ class Jogador(pygame.sprite.Sprite):
         posicao_tela_x = self.mundo_x - camera_x
         posicao_tela_y = self.mundo_y - camera_y
         
-        screen.blit(self.image, (int(posicao_tela_x), int(posicao_tela_y)))
+        screen.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
 
         # Desenha o ícone de interação se aplicável
         if self.mostrar_icone_interacao and self.icone_interacao:
