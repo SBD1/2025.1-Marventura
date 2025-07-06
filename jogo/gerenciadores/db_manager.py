@@ -183,14 +183,25 @@ class DBManager:
 
             # Buscar os efeitos do item usando seu identificador
             efeitos = self.buscar_efeitos_por_item(row.identificador_item)
+            print(f"Efeitos para o item {row.nome_item}: {efeitos}")
 
             for efeito in efeitos:
-                item.adicionar_efeito(efeito["nome"], efeito["valor"])
+                item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
 
             mochila.append(item)
+
+        for item in mochila:
+            print(f"{item.nome}: {item.resumir_efeitos()}")
+
         
-        print("Mochila do jogador:", resultados)
-        print("kit_jogador:", kit_jogador)
+        print("Mochila do jogador:")
+        for row in resultados:
+            print(row)
+        
+        print("Kit do Explorador:")
+        for row in resultados:
+            print(row)
+
         area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
 
         ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
@@ -429,7 +440,7 @@ class DBManager:
     
     def buscar_efeitos_por_item(self, id_item):
         query = """
-            SELECT efeito.nome AS efeito_nome, efeito.valor AS efeito_valor
+            SELECT TRIM(efeito.nome) AS efeito_nome, efeito.valor AS efeito_valor
             FROM efeito
                 JOIN efeito_consumivel ON efeito_consumivel.identificador_efeito = efeito.identificador_efeito
             WHERE efeito_consumivel.identificador_consumivel = %s;
@@ -989,13 +1000,13 @@ class DBManager:
         query = """
             SELECT
                 habilidade.identificador_habilidade,
-            	habilidade.nome,
-                habilidade.descricao,
-                habilidade.tipo_de_ataque,
-                habilidade.tipo_de_alvo,
+            	TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
                 habilidade.dano,
                 habilidade.custo,
-                efeito.nome AS efeito_nome,
+                TRIM(efeito.nome) AS efeito_nome,
                 efeito.valor AS efeito_valor
             FROM habilidade_arma
                 JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_arma.identificador_habilidade
@@ -1008,13 +1019,13 @@ class DBManager:
         query = """
             SELECT
                 habilidade.identificador_habilidade,
-            	habilidade.nome,
-                habilidade.descricao,
-                habilidade.tipo_de_ataque,
-                habilidade.tipo_de_alvo,
+            	TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
                 habilidade.dano,
                 habilidade.custo,
-                efeito.nome AS efeito_nome,
+                TRIM(efeito.nome) AS efeito_nome,
                 efeito.valor AS efeito_valor
             FROM habilidade_fruta
                 JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_fruta.identificador_habilidade
@@ -1027,13 +1038,13 @@ class DBManager:
         query = """
             SELECT
                 habilidade.identificador_habilidade,
-                habilidade.nome,
-                habilidade.descricao,
-                habilidade.tipo_de_ataque,
-                habilidade.tipo_de_alvo,
+                TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
                 habilidade.dano,
                 habilidade.custo,
-                efeito.nome AS efeito_nome,
+                TRIM(efeito.nome) AS efeito_nome,
                 efeito.valor AS efeito_valor
             FROM habilidade_personagem
                 JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_personagem.identificador_habilidade
