@@ -125,6 +125,14 @@ CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
 CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
 CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
 
+CHAVE_MAPA = 'mapa'
+CHAVIC_ASSOM = 'assombrada'
+CHAVIC_CAMP = 'campo'
+CHAVIC_CIDA = 'cidade'
+CHAVIC_DESER = 'deserto'
+CHAVIC_FORTA = 'fortaleza'
+CHAVIC_NEVE = 'neve'
+
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
 

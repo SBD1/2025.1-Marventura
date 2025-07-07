@@ -159,6 +159,14 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
 
+        self._carregar_imagem(CHAVE_MAPA, 'recursos/imagens/mapa/mapa.png')
+        self._carregar_imagem(CHAVIC_CAMP, 'recursos/imagens/mapa/campos.png')
+        self._carregar_imagem(CHAVIC_ASSOM, 'recursos/imagens/mapa/assombrada.png')
+        self._carregar_imagem(CHAVIC_DESER, 'recursos/imagens/mapa/deserto.png')
+        self._carregar_imagem(CHAVIC_CIDA, 'recursos/imagens/mapa/cidade.png')
+        self._carregar_imagem(CHAVIC_FORTA, 'recursos/imagens/mapa/fortaleza.png')
+        self._carregar_imagem(CHAVIC_NEVE, 'recursos/imagens/mapa/neve.png')
+
 
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)

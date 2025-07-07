@@ -1,6 +1,7 @@
 # telas/tela_jogo.py
 
 import pygame
+import math
 import sys
 from utilidades.constantes import *
 from entidades import Jogador
@@ -373,58 +374,161 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
 
 class _MenuViagemFlutuante:
-    def __init__(self, opcoes_viagem):
-        self.opcoes = opcoes_viagem  # Lista de objetos Row com id, nome_ilha, visitada
-        self.indice_selecionado = 0
-        self.fonte_menu = pygame.font.Font(None, 36)
+    def __init__(self, gerenciador_recursos=None, opcoes_viagem=None):
+        self.gerenciador_recursos = gerenciador_recursos
+        self.opcoes = opcoes_viagem if opcoes_viagem else []
+        self.selecionada = None
+        self.ativo = True  # Controle de estado do menu
+        
+        # Configurações de fonte e cores
+        self.fonte = pygame.font.Font(None, 36)
+        self.fonte_pequena = pygame.font.Font(None, 24)
         self.cor_texto_normal = (255, 255, 255)
         self.cor_texto_selecionado = (255, 255, 0)
-        self.cor_fundo_menu = (50, 50, 50, 200)
-        self.cor_borda_menu = (200, 200, 200)
+        self.cor_fundo = (50, 50, 50, 200)
+        
+        # Inicializa recursos gráficos
+        self._inicializar_recursos_graficos()
+        
+        # Prepara as ilhas para exibição
+        self.ilhas_renderizadas = []
+        self.indice_selecionado = 0
+        self._preparar_ilhas()
+    
+    def _inicializar_recursos_graficos(self):
+        """Carrega os recursos gráficos com fallback seguro"""
+        try:
+            print("Tentando carregar mapa:", CHAVE_MAPA)
+            self.imagem_mapa = self.gerenciador_recursos.obter_imagem(CHAVE_MAPA)
+            print("✅ Mapa carregado com sucesso")
+        except Exception as e:
+            self.imagem_mapa = None
+            print(f"❌ AVISO: Não foi possível carregar a imagem do mapa: {e}")
 
-    def handle_input(self, evento):
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_UP:
-                self.indice_selecionado = (self.indice_selecionado - 1) % len(self.opcoes)
-            elif evento.key == pygame.K_DOWN:
-                self.indice_selecionado = (self.indice_selecionado + 1) % len(self.opcoes)
-            elif evento.key == pygame.K_RETURN:
-                if self.opcoes:
-                    return self.opcoes[self.indice_selecionado]  # Retorna o ID da ilha
-                return None
-            elif evento.key == pygame.K_ESCAPE:
-                return "cancelar"
-
-        return None
-
-    def draw(self, tela):
+        try:
+            print("Tentando carregar ícone da ilha:", CHAVIC_CAMP)
+            self.imagem_mapa = self.gerenciador_recursos.obter_imagem(CHAVIC_CAMP)
+            print("✅ Ícone da ilha carregado com sucesso")
+        except Exception as e:
+            self.icone_ilha = None
+            print(f"❌ AVISO: Não foi possível carregar o ícone da ilha: {e}")
+    
+    def _preparar_ilhas(self):
+        """Prepara as ilhas para exibição, com fallback para modo texto"""
         if not self.opcoes:
             return
+            
+        # Se temos mapa e ícone, usamos posições no mapa
+        if self.imagem_mapa and self.icone_ilha:
+            coordenadas_ilhas = {
+                "ilh001": (180, 290),
+                "ilh002": (390, 190),
+                "ilh003": (610, 340),
+            }
+            
+            for ilha in self.opcoes:
+                offset_x = (LARGURA_TELA - self.imagem_mapa.get_width()) // 2 if self.imagem_mapa else 0
+                offset_y = (ALTURA_TELA - self.imagem_mapa.get_height()) // 2 if self.imagem_mapa else 0
 
-        largura_menu = 300
-        altura_linha = self.fonte_menu.get_height() + 10
-        altura_menu = (len(self.opcoes) * altura_linha) + 40
+                pos_raw = coordenadas_ilhas.get(ilha.id, None)
+                if pos_raw:
+                    pos = (pos_raw[0] + offset_x, pos_raw[1] + offset_y)
+                    rect = self.icone_ilha.get_rect(center=pos)
+                    self.ilhas_renderizadas.append({
+                        "ilha": ilha,
+                        "pos": pos,
+                        "rect": rect,
+                        "tipo": "mapa"
+                    })
+        
+        # Fallback para menu textual se não houver recursos gráficos ou ilhas no mapa
+        if not self.ilhas_renderizadas:
+            altura_linha = self.fonte.get_height() + 10
+            for i, ilha in enumerate(self.opcoes):
+                pos_y = 150 + i * altura_linha
+                self.ilhas_renderizadas.append({
+                    "ilha": ilha,
+                    "pos": (LARGURA_TELA//2, pos_y),
+                    "rect": pygame.Rect(LARGURA_TELA//2 - 100, pos_y - 15, 200, 30),
+                    "tipo": "texto"
+                })
+        
+        if self.ilhas_renderizadas:
+            self.selecionada = self.ilhas_renderizadas[0]["ilha"]
+    
+    def handle_input(self, evento):
+        if not self.ativo or not self.ilhas_renderizadas:
+            return None
+            
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_UP:
+                self.indice_selecionado = (self.indice_selecionado - 1) % len(self.ilhas_renderizadas)
+                self.selecionada = self.ilhas_renderizadas[self.indice_selecionado]["ilha"]
+                return "navegacao"
+                
+            elif evento.key == pygame.K_DOWN:
+                self.indice_selecionado = (self.indice_selecionado + 1) % len(self.ilhas_renderizadas)
+                self.selecionada = self.ilhas_renderizadas[self.indice_selecionado]["ilha"]
+                return "navegacao"
+                
+            elif evento.key == pygame.K_RETURN:
+                self.ativo = False
+                return self.selecionada.id if self.selecionada else None
+                
+            elif evento.key == pygame.K_ESCAPE:
+                self.ativo = False
+                return "cancelar"
+        
+        return None
+    
+    def draw(self, tela):
+        if not self.ativo:
+            return
+        
+        # Desenha o mapa se existir
+        if self.imagem_mapa:
+            mapa_x = (LARGURA_TELA - self.imagem_mapa.get_width()) // 2
+            mapa_y = (ALTURA_TELA - self.imagem_mapa.get_height()) // 2
+            tela.blit(self.imagem_mapa, (mapa_x, mapa_y))
 
-        pos_x_menu = (LARGURA_TELA - largura_menu) // 2
-        pos_y_menu = (ALTURA_TELA - altura_menu) // 2
-
-        retangulo_menu = pygame.Rect(pos_x_menu, pos_y_menu, largura_menu, altura_menu)
-
-        s = pygame.Surface((largura_menu, altura_menu), pygame.SRCALPHA)
-        s.fill(self.cor_fundo_menu)
-        tela.blit(s, retangulo_menu.topleft)
-
-        pygame.draw.rect(tela, self.cor_borda_menu, retangulo_menu, 3)
-
-        y_offset = pos_y_menu + 20
-        for i, opcao in enumerate(self.opcoes):
-            nome_ilha = opcao.nome  # Usa o nome da ilha para exibir
-            cor_texto = self.cor_texto_selecionado if i == self.indice_selecionado else self.cor_texto_normal
-            texto_renderizado = self.fonte_menu.render(nome_ilha, True, cor_texto)
-
-            pos_x_texto = pos_x_menu + (largura_menu - texto_renderizado.get_width()) // 2
-            tela.blit(texto_renderizado, (pos_x_texto, y_offset))
-            y_offset += altura_linha
+        overlay = pygame.Surface((LARGURA_TELA, ALTURA_TELA), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 100))  # Usar alpha 100 ao invés de 180
+        tela.blit(overlay, (0, 0))
+                
+        # Desenha as ilhas
+        for i, item in enumerate(self.ilhas_renderizadas):
+            ilha = item["ilha"]
+            pos = item["pos"]
+            
+            # Desenha diferente dependendo do tipo
+            if item["tipo"] == "mapa" and self.icone_ilha:
+                # Modo mapa com ícones
+                tela.blit(self.icone_ilha, item["rect"])
+                
+                if i == self.indice_selecionado:
+                    pygame.draw.rect(tela, self.cor_texto_selecionado, item["rect"], 2)
+                    
+                    # Nome da ilha
+                    texto = self.fonte_pequena.render(ilha.nome, True, self.cor_texto_selecionado)
+                    tela.blit(texto, (pos[0] - texto.get_width()//2, pos[1] - 30))
+            else:
+                # Modo texto simples
+                cor = self.cor_texto_selecionado if i == self.indice_selecionado else self.cor_texto_normal
+                texto = self.fonte.render(ilha.nome, True, cor)
+                tela.blit(texto, (
+                    pos[0] - texto.get_width()//2,
+                    pos[1] - texto.get_height()//2
+                ))
+                
+                if i == self.indice_selecionado:
+                    pygame.draw.rect(tela, self.cor_texto_selecionado, item["rect"], 2)
+        
+        # Instruções
+        instrucoes = self.fonte_pequena.render("↑/↓: Navegar | Enter: Selecionar | ESC: Cancelar", True, self.cor_texto_normal)
+        tela.blit(instrucoes, (
+            (LARGURA_TELA - instrucoes.get_width()) // 2,
+            ALTURA_TELA - 40
+        ))
 
 
 
