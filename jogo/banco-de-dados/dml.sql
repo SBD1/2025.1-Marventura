@@ -868,8 +868,9 @@ INSERT INTO jogador
     (identificador_area, nome, descricao, coordenada_x, coordenada_y,
     energia, vida, nivel, sorte, vida_atual, experiencia_atual, moedas_totais)
 VALUES
-    ('are001', 'Silvie', 'Cheia de sonhos, coragem e um apetite por aventura (e por comida também), ela parte rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!',
-    1950, 140, 5, 10, 0, 1, 10, 0, 0);
+    ('are001', 'Silvie', 'Cheia de sonhos, coragem e um apetite por aventura (e por comida também), ela parte rumo ao desconhecido com um sorriso no rosto e o vento nas costas. Nada como enfrentar piratas, tempestades ou um prato estranho com garra e garfo na mão!', 
+    1950, 140, 5, 10, 0, 1, 10, 0, 0
+    );
 
 
 
@@ -1018,3 +1019,56 @@ VALUES
     ('jog001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
     ('jog001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
 
+-- Adicione vendedores nas áreas das lojas
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, especialidade, moedas_totais)
+VALUES
+    ('are004', 'João das Ferramentas', 'Vendedor de armas e acessórios', 'ven', 400, 300, 'arm', 500),
+    ('are016', 'Vovó Yuba', 'Cozinheira e vendedora de comidas', 'ven', 400, 200, 'com', 300),
+    ('are020', 'Mercador das Dunas', 'Vendedor especializado', 'ven', 400, 300, 'ace', 400),
+    ('are024', 'Comerciante Sombrio', 'Vendedor de itens raros', 'ven', 400, 300, 'com', 600),
+    ('are029', 'Intendente Naval', 'Vendedor militar', 'ven', 400, 300, 'arm', 800);
+
+-- Crie inventários para os vendedores
+INSERT INTO inventario (identificador_personagem, tipo_inventario)
+VALUES 
+    ('ven001', 'ger'),
+    ('ven002', 'ger'),
+    ('ven003', 'ger'),
+    ('ven004', 'ger'),
+    ('ven005', 'ger');
+
+-- Adicione itens aos inventários dos vendedores
+INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+VALUES
+    -- Vendedor de Borabóia (armas básicas)
+    ('inv019', 'arm001', 3),
+    ('inv019', 'arm010', 2),
+    ('inv019', 'ace001', 1),
+    
+    -- Vovó Yuba (ingredientes e comidas)
+    ('inv020', 'ncn001', 10),
+    ('inv020', 'ncn002', 8),
+    ('inv020', 'con012', 5),
+    
+    -- Vendedor do Deserto (itens especiais)
+    ('inv021', 'arm002', 2),
+    ('inv021', 'ace002', 1),
+    
+    -- Vendedor Sombrio (itens raros)
+    ('inv022', 'con020', 3),
+    ('inv022', 'con021', 2),
+    
+    -- Intendente Naval (equipamentos militares)  
+    ('inv023', 'arm001', 5),
+    ('inv023', 'con023', 10);
+
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, especialidade, moedas_totais)
+VALUES
+    ('are004', 'João das Ferramentas', 'Vendedor de armas e acessórios', 'ven', 400, 300, 'arm', 100);
+
+INSERT INTO area_interativa
+    (identificador_area, x, y, largura, altura, tipo_evento)
+VALUES
+    ('are004', 700, 500, 100, 100, 'abrir_loja');

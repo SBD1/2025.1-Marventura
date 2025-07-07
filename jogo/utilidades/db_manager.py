@@ -49,11 +49,21 @@ class DBManager:
 
     def fechar_conexao(self):
         """Fecha a conexão com o banco de dados."""
-        if self.cursor:
-            self.cursor.close()
-        if self.conn:
+        # --- INÍCIO DA MODIFICAÇÃO ---
+        if self.conn and not self.conn.closed:
+            try:
+                # Força o commit de qualquer transação pendente
+                self.conn.commit()
+                print("DBManager: Commit final realizado antes de fechar.")
+            except psycopg.Error as e:
+                print(f"DBManager ERRO ao fazer commit final: {e}")
+            
+            if self.cursor and not self.cursor.closed:
+                self.cursor.close()
+            
             self.conn.close()
             print("DBManager: Conexão com o PostgreSQL fechada.")
+        
         DBManager._instance = None # Reseta a instância Singleton
 
     def executar_query(self, query, params=None, fetchone=False, fetchall=False):
@@ -113,16 +123,18 @@ class DBManager:
             SELECT
                 identificador_jogador,
                 identificador_area,
-                nome,
+                TRIM(nome) AS nome, -- ADICIONE O TRIM() AQUI
                 TRIM(descricao) AS descricao,
                 coordenada_x,
                 coordenada_y,
+                TRIM(orientacao) AS orientacao,
                 energia,
                 vida,
                 nivel,
                 sorte,
                 vida_atual,
-                experiencia_atual
+                experiencia_atual,
+                moedas_totais
             FROM jogador
             WHERE identificador_jogador = %s;
         """
@@ -152,18 +164,159 @@ class DBManager:
         result = self.executar_query(query, params, fetchone=True)
         return result[0] if result else None
     
+    def salvar_progresso_jogador(self, id_jogador, vida_atual, experiencia_atual, nivel, moedas_totais, coordenada_x, coordenada_y, orientacao, identificador_area):
+        """
+        Salva o progresso atual do jogador no banco de dados.
+        Esta operação é executada em uma transação para garantir a atomicidade.
+        """
+        if not self.conn:
+            print("DBManager ERRO: Não há conexão ativa para salvar o progresso.")
+            return False
+
+        query = """
+            UPDATE jogador
+            SET 
+                vida_atual = %s,
+                experiencia_atual = %s,
+                nivel = %s,
+                moedas_totais = %s,
+                coordenada_x = %s,
+                coordenada_y = %s,
+                orientacao = %s,
+                identificador_area = %s
+            WHERE identificador_jogador = %s;
+        """
+        params = (vida_atual, experiencia_atual, nivel, moedas_totais, coordenada_x, coordenada_y, orientacao, identificador_area, id_jogador)
+        
+        try:
+            # Usar uma transação garante que a operação seja atômica.
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    cur.execute(query, params)
+            print(f"Progresso do jogador '{id_jogador}' salvo com sucesso.")
+            return True
+        except psycopg.Error as e:
+            # O rollback é automático ao sair do with self.conn.transaction() em caso de erro.
+            print(f"DBManager ERRO ao salvar progresso do jogador '{id_jogador}': {e}")
+            return False
+
+    def verificar_progresso_existente(self, id_jogador):
+        """
+        Verifica de forma rápida se existe um registro para o jogador.
+        Retorna True se o jogador existe, False caso contrário.
+        """
+        query = "SELECT 1 FROM jogador WHERE identificador_jogador = %s;"
+        resultado = self.executar_query(query, (id_jogador,), fetchone=True)
+        return resultado is not None
+
+    def resetar_ou_criar_jogador(self, jogador_info):
+        """
+        Reseta o estado do jogo para um "Novo Jogo", incluindo vendedores e jogador,
+        dentro de uma única transação para garantir a integridade dos dados.
+        """
+        if not self.conn or self.conn.closed:
+            print("DBManager ERRO: Sem conexão para resetar o jogo.")
+            return False
+
+        update_query = """
+            UPDATE jogador SET
+                nome = %s, descricao = %s, vida_atual = %s, experiencia_atual = %s,
+                nivel = %s, moedas_totais = %s, coordenada_x = %s, coordenada_y = %s,
+                orientacao = %s, identificador_area = %s, vida = %s, energia = %s, sorte = %s
+            WHERE identificador_jogador = %s;
+        """
+        params = (
+            jogador_info.nome, jogador_info.descricao, jogador_info.vida, 0, 1, 
+            jogador_info.moedas_totais, jogador_info.coordenada_x, jogador_info.coordenada_y,
+            'direita', jogador_info.identificador_area, jogador_info.vida, 
+            jogador_info.energia, jogador_info.sorte, jogador_info.identificador_jogador
+        )
+
+        try:
+            # Abre uma transação e cria um cursor LOCAL para ela.
+            with self.conn.transaction():
+                with self.conn.cursor() as cursor:
+                    # --- Executa todas as operações de reset usando o cursor local ---
+                    self._resetar_inventarios_vendedores(cursor)
+                    self._resetar_inventario_jogador(cursor, jogador_info.identificador_jogador)
+                    
+                    # --- Atualiza ou Insere o jogador ---
+                    cursor.execute(update_query, params)
+                    if cursor.rowcount == 0:
+                        insert_query = """
+                            INSERT INTO jogador (identificador_jogador, nome, descricao, vida_atual, experiencia_atual, nivel, moedas_totais, coordenada_x, coordenada_y, orientacao, identificador_area, vida, energia, sorte)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                        """
+                        insert_params = (jogador_info.identificador_jogador,) + params[:-1]
+                        cursor.execute(insert_query, insert_params)
+
+            # O 'commit' é feito automaticamente ao sair do bloco 'with' sem erros.
+            print("SUCESSO: O estado de 'Novo Jogo' foi salvo no banco de dados.")
+            return True
+
+        except psycopg.Error as e:
+            # O 'rollback' é feito automaticamente se ocorrer um erro.
+            print(f"DBManager ERRO CRÍTICO durante o reset. As alterações foram desfeitas: {e}")
+            return False
+
     # ===============================================
     # Métodos de Operações com Inventário e Itens
     # ===============================================
 
     def buscar_inventario_jogador(self, id_jogador):
-        """Acessa o inventário de um jogador e seus atributos."""
+        """Busca os itens no inventário de um jogador específico."""
         query = """
-            SELECT id_inventario, nome, id_jogador
-            FROM inventario
-            WHERE id_jogador = %s;
+            SELECT
+                ii.identificador_item,
+                ii.quantidade,
+                ti.tipo as tipo_item,
+                CASE
+                    WHEN ti.tipo = 'con' THEN TRIM(c.nome)
+                    WHEN ti.tipo = 'ncn' THEN TRIM(nc.nome)
+                    WHEN ti.tipo = 'arm' THEN TRIM(a.nome)
+                    WHEN ti.tipo = 'ace' THEN TRIM(ac.nome)
+                    WHEN ti.tipo = 'fru' THEN TRIM(f.nome)
+                END as nome_item,
+                CASE
+                    WHEN ti.tipo = 'con' THEN TRIM(c.descricao)
+                    WHEN ti.tipo = 'ncn' THEN TRIM(nc.descricao)
+                    WHEN ti.tipo = 'arm' THEN TRIM(a.descricao)
+                    WHEN ti.tipo = 'ace' THEN TRIM(ac.descricao)
+                    WHEN ti.tipo = 'fru' THEN TRIM(f.descricao)
+                END as descricao,
+                CASE
+                    WHEN ti.tipo = 'con' THEN c.preco_de_compra
+                    WHEN ti.tipo = 'ncn' THEN nc.preco_de_compra
+                    WHEN ti.tipo = 'arm' THEN a.preco_de_compra
+                    WHEN ti.tipo = 'ace' THEN ac.preco_de_compra
+                    WHEN ti.tipo = 'fru' THEN NULL
+                END as preco_compra,
+                CASE
+                    WHEN ti.tipo = 'con' THEN c.preco_de_venda
+                    WHEN ti.tipo = 'ncn' THEN nc.preco_de_venda
+                    WHEN ti.tipo = 'arm' THEN NULL
+                    WHEN ti.tipo = 'ace' THEN NULL
+                    WHEN ti.tipo = 'fru' THEN f.preco_de_venda
+                END as preco_venda
+            FROM inventario inv
+            JOIN item_inventario ii ON inv.identificador_inventario = ii.identificador_inventario
+            JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+            LEFT JOIN consumivel c ON ii.identificador_item = c.identificador_consumivel AND ti.tipo = 'con'
+            LEFT JOIN nao_consumivel nc ON ii.identificador_item = nc.identificador_nao_consumivel AND ti.tipo = 'ncn'
+            LEFT JOIN arma a ON ii.identificador_item = a.identificador_arma AND ti.tipo = 'arm'
+            LEFT JOIN acessorio ac ON ii.identificador_item = ac.identificador_acessorio AND ti.tipo = 'ace'
+            LEFT JOIN fruta f ON ii.identificador_item = f.identificador_fruta AND ti.tipo = 'fru'
+            WHERE inv.identificador_personagem = %s
+            AND inv.tipo_inventario = 'ger'
+            AND ii.quantidade > 0
         """
-        return self.executar_query(query, (id_jogador,), fetchone=True)
+        return self.executar_query(query, (id_jogador,), fetchall=True)
+
+    def buscar_id_inventario_por_personagem(self, id_personagem):
+        """Busca o ID do inventário 'ger' de um personagem específico."""
+        query = "SELECT identificador_inventario FROM inventario WHERE identificador_personagem = %s AND tipo_inventario = 'ger'"
+        resultado = self.executar_query(query, (id_personagem,), fetchone=True)
+        return resultado.identificador_inventario if resultado else None
 
     def criar_inventario(self, id_jogador, nome_inventario="Inventário Padrão"):
         """Cria um novo inventário para um jogador e retorna o ID do inventário."""
@@ -778,3 +931,479 @@ class DBManager:
         """
         return self.executar_query(query, fetchall=True)
 
+
+# Dentro da classe DBManager em utilidades/db_manager.py
+
+    def buscar_vendedor_por_area(self, id_area):
+        """Busca vendedores em uma área específica."""
+        query = """
+            SELECT
+                h.identificador_habitante,
+                TRIM(h.nome) as nome,
+                TRIM(h.descricao) as descricao,
+                h.coordenada_x,
+                h.coordenada_y,
+                h.moedas_totais
+            FROM habitante h
+            WHERE h.identificador_area = %s
+            AND h.tipo_habitante = 'ven'
+        """
+        return self.executar_query(query, (id_area,), fetchall=True)
+
+    def buscar_inventario_vendedor(self, id_vendedor):
+        """Busca o inventário de um vendedor específico."""
+        query = """
+            SELECT
+                ii.identificador_item,
+                ii.quantidade,
+                ti.tipo as tipo_item,
+                CASE
+                    WHEN ti.tipo = 'con' THEN TRIM(c.nome)
+                    WHEN ti.tipo = 'ncn' THEN TRIM(nc.nome)
+                    WHEN ti.tipo = 'arm' THEN TRIM(a.nome)
+                    WHEN ti.tipo = 'ace' THEN TRIM(ac.nome)
+                    WHEN ti.tipo = 'fru' THEN TRIM(f.nome)
+                END as nome_item,
+                CASE
+                    WHEN ti.tipo = 'con' THEN TRIM(c.descricao)
+                    WHEN ti.tipo = 'ncn' THEN TRIM(nc.descricao)
+                    WHEN ti.tipo = 'arm' THEN TRIM(a.descricao)
+                    WHEN ti.tipo = 'ace' THEN TRIM(ac.descricao)
+                    WHEN ti.tipo = 'fru' THEN TRIM(f.descricao)
+                END as descricao,
+                CASE
+                    -- Prioriza o preço de compra original, se existir
+                    WHEN ti.tipo = 'con' AND c.preco_de_compra IS NOT NULL THEN c.preco_de_compra
+                    WHEN ti.tipo = 'ncn' AND nc.preco_de_compra IS NOT NULL THEN nc.preco_de_compra
+                    WHEN ti.tipo = 'arm' THEN a.preco_de_compra
+                    WHEN ti.tipo = 'ace' THEN ac.preco_de_compra
+                    
+                    -- AQUI ESTÁ A MÁGICA:
+                    -- Se não houver preço de compra, crie um com base no preço de venda.
+                    -- Vamos definir que a loja revende pelo dobro do preço que pagou.
+                    WHEN ti.tipo = 'con' AND c.preco_de_venda IS NOT NULL THEN c.preco_de_venda * 2
+                    WHEN ti.tipo = 'ncn' AND nc.preco_de_venda IS NOT NULL THEN nc.preco_de_venda * 2
+                    WHEN ti.tipo = 'fru' AND f.preco_de_venda IS NOT NULL THEN f.preco_de_venda * 2
+                    
+                    -- Se o item realmente não tiver preço algum, ele não pode ser comprado.
+                    ELSE NULL 
+                END as preco_compra,
+                CASE
+                    WHEN ti.tipo = 'con' THEN c.preco_de_venda
+                    WHEN ti.tipo = 'ncn' THEN nc.preco_de_venda
+                    WHEN ti.tipo = 'arm' THEN NULL
+                    WHEN ti.tipo = 'ace' THEN NULL
+                    WHEN ti.tipo = 'fru' THEN f.preco_de_venda
+                END as preco_venda
+            FROM inventario inv
+            JOIN item_inventario ii ON inv.identificador_inventario = ii.identificador_inventario
+            JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+            LEFT JOIN consumivel c ON ii.identificador_item = c.identificador_consumivel AND ti.tipo = 'con'
+            LEFT JOIN nao_consumivel nc ON ii.identificador_item = nc.identificador_nao_consumivel AND ti.tipo = 'ncn'
+            LEFT JOIN arma a ON ii.identificador_item = a.identificador_arma AND ti.tipo = 'arm'
+            LEFT JOIN acessorio ac ON ii.identificador_item = ac.identificador_acessorio AND ti.tipo = 'ace'
+            LEFT JOIN fruta f ON ii.identificador_item = f.identificador_fruta AND ti.tipo = 'fru'
+            WHERE inv.identificador_personagem = %s
+            AND inv.tipo_inventario = 'ger'
+            AND ii.quantidade > 0
+        """
+        return self.executar_query(query, (id_vendedor,), fetchall=True)
+
+    def realizar_compra(self, id_jogador, id_vendedor, id_inventario_jogador, id_inventario_vendedor, id_item, quantidade, preco_total):
+        """
+        Realiza uma transação de compra, movendo item do vendedor para o jogador
+        e dinheiro do jogador para o vendedor.
+        """
+        if not self.conn:
+            return {'sucesso': False, 'erro': 'Sem conexão com o banco.'}
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    # 1. Debitar dinheiro do jogador
+                    cur.execute(
+                        "UPDATE jogador SET moedas_totais = moedas_totais - %s WHERE identificador_jogador = %s AND moedas_totais >= %s",
+                        (preco_total, id_jogador, preco_total)
+                    )
+                    if cur.rowcount == 0:
+                        raise Exception("Moedas insuficientes.")
+
+                    # 2. Creditar dinheiro ao vendedor
+                    cur.execute(
+                        "UPDATE habitante SET moedas_totais = moedas_totais + %s WHERE identificador_habitante = %s",
+                        (preco_total, id_vendedor)
+                    )
+
+                    # 3. Diminuir item do inventário do vendedor
+                    cur.execute(
+                        "UPDATE item_inventario SET quantidade = quantidade - %s WHERE identificador_inventario = %s AND identificador_item = %s AND quantidade >= %s",
+                        (quantidade, id_inventario_vendedor, id_item, quantidade)
+                    )
+                    if cur.rowcount == 0:
+                        raise Exception("Vendedor sem estoque suficiente.")
+
+                    # 4. Adicionar item ao inventário do jogador
+                    cur.execute(
+                        "INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade) VALUES (%s, %s, %s) ON CONFLICT (identificador_inventario, identificador_item) DO UPDATE SET quantidade = item_inventario.quantidade + %s",
+                        (id_inventario_jogador, id_item, quantidade, quantidade)
+                    )
+
+                    # 5. Registrar negociação
+                    cur.execute(
+                        "INSERT INTO negociacao (identificador_item, identificador_jogador, identificador_vendedor, quantidade, preco_final, tipo_negociacao) VALUES (%s, %s, %s, %s, %s, 'compra')",
+                        (id_item, id_jogador, id_vendedor, quantidade, preco_total)
+                    )
+            return {'sucesso': True}
+        except Exception as e:
+            print(f"ERRO na transação de compra: {e}")
+            return {'sucesso': False, 'erro': str(e)}
+        
+    def realizar_compra(self, id_jogador, id_vendedor, id_inventario_jogador, id_inventario_vendedor, id_item, quantidade, preco_total):
+        """
+        Realiza uma transação de compra, movendo item do vendedor para o jogador
+        e dinheiro do jogador para o vendedor.
+        """
+        if not self.conn:
+            return {'sucesso': False, 'erro': 'Sem conexão com o banco.'}
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    # 1. Debitar dinheiro do jogador
+                    cur.execute(
+                        "UPDATE jogador SET moedas_totais = moedas_totais - %s WHERE identificador_jogador = %s AND moedas_totais >= %s",
+                        (preco_total, id_jogador, preco_total)
+                    )
+                    if cur.rowcount == 0:
+                        raise Exception("Moedas insuficientes.")
+
+                    # --- INÍCIO DA CORREÇÃO ---
+                    # 2. Creditar dinheiro ao vendedor, limitando o total a 999.
+                    # A função LEAST() garante que o valor nunca ultrapassará o limite da carteira.
+                    cur.execute(
+                        "UPDATE habitante SET moedas_totais = LEAST(999, moedas_totais + %s) WHERE identificador_habitante = %s",
+                        (preco_total, id_vendedor)
+                    )
+                    # --- FIM DA CORREÇÃO ---
+
+                    # 3. Diminuir item do inventário do vendedor
+                    cur.execute(
+                        "UPDATE item_inventario SET quantidade = quantidade - %s WHERE identificador_inventario = %s AND identificador_item = %s AND quantidade >= %s",
+                        (quantidade, id_inventario_vendedor, id_item, quantidade)
+                    )
+                    if cur.rowcount == 0:
+                        raise Exception("Vendedor sem estoque suficiente.")
+
+                    # 4. Adicionar item ao inventário do jogador
+                    cur.execute(
+                        "INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade) VALUES (%s, %s, %s) ON CONFLICT (identificador_inventario, identificador_item) DO UPDATE SET quantidade = item_inventario.quantidade + %s",
+                        (id_inventario_jogador, id_item, quantidade, quantidade)
+                    )
+
+                    # 5. Registrar negociação
+                    cur.execute(
+                        "INSERT INTO negociacao (identificador_item, identificador_jogador, identificador_vendedor, quantidade, preco_final, tipo_negociacao) VALUES (%s, %s, %s, %s, %s, 'compra')",
+                        (id_item, id_jogador, id_vendedor, quantidade, preco_total)
+                    )
+            return {'sucesso': True}
+        except Exception as e:
+            print(f"ERRO na transação de compra: {e}")
+            return {'sucesso': False, 'erro': str(e)}
+
+    def limpar_inventario_jogador(self, id_jogador):
+            """
+            Apaga todos os itens do inventário 'ger' de um jogador específico.
+            """
+            # Primeiro, encontra o ID do inventário do jogador
+            id_inventario = self.buscar_id_inventario_por_personagem(id_jogador)
+            if not id_inventario:
+                print(f"Nenhum inventário encontrado para o jogador {id_jogador}, nada a limpar.")
+                return True # Considera sucesso, pois não há o que limpar
+
+            # Query para deletar todos os itens daquele inventário
+            query = "DELETE FROM item_inventario WHERE identificador_inventario = %s"
+            print(f"Limpando itens do inventário {id_inventario} para o jogador {id_jogador}.")
+            
+            # Usa uma transação para garantir a operação
+            try:
+                with self.conn.transaction():
+                    with self.conn.cursor() as cur:
+                        cur.execute(query, (id_inventario,))
+                return True
+            except psycopg.Error as e:
+                print(f"DBManager ERRO ao limpar inventário do jogador '{id_jogador}': {e}")
+                return False
+
+    def adicionar_itens_iniciais_jogador(self, id_jogador):
+        """
+        Adiciona um conjunto pré-definido de itens ao inventário de um jogador.
+        Ideal para ser usado ao iniciar um "Novo Jogo".
+        """
+        # Define os itens iniciais aqui (ID do item, quantidade)
+        itens_iniciais = [
+            ('con001', 3),  # 3x Fruta do Mar Azul
+            ('con002', 2),  # 2x Fruta do Mar Vermelha
+            ('ncn001', 1)   # 1x Abóbora Redonduda
+        ]
+
+        # Busca o ID do inventário do jogador
+        id_inventario = self.buscar_id_inventario_por_personagem(id_jogador)
+        if not id_inventario:
+            print(f"ERRO: Não foi possível encontrar o inventário para {id_jogador} ao adicionar itens iniciais.")
+            return False
+
+        print(f"Adicionando itens iniciais ao inventário {id_inventario}...")
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    for id_item, quantidade in itens_iniciais:
+                        # Query que insere o item ou atualiza a quantidade se ele já existir
+                        cur.execute("""
+                            INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+                            VALUES (%s, %s, %s)
+                            ON CONFLICT (identificador_inventario, identificador_item)
+                            DO UPDATE SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+                        """, (id_inventario, id_item, quantidade))
+            print("Itens iniciais adicionados com sucesso.")
+            return True
+        except psycopg.Error as e:
+            print(f"DBManager ERRO ao adicionar itens iniciais: {e}")
+            return False
+
+    # ===============================================
+    # Métodos de Operações com Inventário e Itens
+    # ===============================================
+    
+    def _resetar_inventarios_vendedores(self, cursor):
+        """
+        [PRIVADO] Limpa e repopula os inventários de todos os vendedores.
+        Este método deve ser chamado DENTRO de uma transação existente.
+        """
+        print("-> Resetando inventários de vendedores...")
+        inventarios_iniciais = {
+            'ven001': [('arm001', 3), ('arm010', 2), ('ace001', 1)],
+            'ven002': [('ncn001', 10), ('ncn002', 8), ('con012', 5)],
+            'ven003': [('arm002', 2), ('ace002', 1)],
+            'ven004': [('con020', 3), ('con021', 2)],
+            'ven005': [('arm001', 5), ('con023', 10)]
+        }
+        
+        cursor.execute("SELECT identificador_personagem, identificador_inventario FROM inventario WHERE identificador_personagem LIKE 'ven%%'")
+        inventarios_vendedores = {row.identificador_personagem: row.identificador_inventario for row in cursor.fetchall()}
+        
+        if not inventarios_vendedores:
+            print("-> Nenhum inventário de vendedor encontrado.")
+            return
+
+        # --- INÍCIO DA MODIFICAÇÃO ---
+        # Limpa o inventário de cada vendedor individualmente para evitar o erro de sintaxe com 'IN'
+        print("-> Limpando inventários antigos dos vendedores...")
+        for id_inventario in inventarios_vendedores.values():
+            cursor.execute("DELETE FROM item_inventario WHERE identificador_inventario = %s", (id_inventario,))
+        # --- FIM DA MODIFICAÇÃO ---
+        
+        # Repopula os inventários
+        for id_vendedor, itens in inventarios_iniciais.items():
+            id_inventario = inventarios_vendedores.get(id_vendedor)
+            if id_inventario:
+                for id_item, quantidade in itens:
+                    cursor.execute("""
+                        INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+                        VALUES (%s, %s, %s)
+                    """, (id_inventario, id_item, quantidade))
+        print("-> Inventários dos vendedores preparados para o reset.")
+    def _resetar_inventario_jogador(self, cursor, id_jogador):
+        """
+        [PRIVADO] Limpa o inventário do jogador e adiciona os itens iniciais.
+        Este método deve ser chamado DENTRO de uma transação existente.
+        """
+        print(f"-> Resetando inventário do jogador {id_jogador}...")
+        itens_iniciais = [
+            ('con001', 3),
+            ('con002', 2),
+            ('ncn001', 1)
+        ]
+        
+        id_inventario = self.buscar_id_inventario_por_personagem(id_jogador)
+        if not id_inventario:
+            print(f"-> Nenhum inventário para o jogador {id_jogador}, nada a fazer.")
+            return
+
+        cursor.execute("DELETE FROM item_inventario WHERE identificador_inventario = %s", (id_inventario,))
+        
+        for id_item, quantidade in itens_iniciais:
+            # --- INÍCIO DA CORREÇÃO ---
+            # Remova os comentários de dentro desta string
+            cursor.execute("""
+                INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+                VALUES (%s, %s, %s)
+            """, (id_inventario, id_item, quantidade))
+            # --- FIM DA CORREÇÃO ---
+        print("-> Inventário do jogador preparado para o reset.")
+
+    def _carregar_dados_inventario(self):
+        inventario_completo = self.db_manager.buscar_inventario_jogador(self.jogador_id)
+        self.dados_jogador = self.db_manager.buscar_jogador(self.jogador_id)
+
+        # Filtra o inventário em listas separadas
+        self.lista_armas = [item for item in inventario_completo if item.tipo_item == 'arm']
+        self.lista_acessorios = [item for item in inventario_completo if item.tipo_item == 'ace']
+        self.lista_consumiveis = [item for item in inventario_completo if item.tipo_item == 'con']
+        self.lista_outros = [item for item in inventario_completo if item.tipo_item == 'ncn']
+
+        self._resetar_selecao()
+        
+        
+        
+    def equipar_arma(self, id_jogador, id_arma):
+        """
+        Equipa uma arma para um jogador, inserindo ou atualizando o registro
+        na tabela jogador_equipamento. Usa a sintaxe ON CONFLICT (UPSERT).
+        """
+        print(f"Tentando equipar a arma {id_arma} para o jogador {id_jogador}...")
+        query = """
+            INSERT INTO jogador_equipamento (identificador_jogador, identificador_arma)
+            VALUES (%s, %s)
+            ON CONFLICT (identificador_jogador) 
+            DO UPDATE SET identificador_arma = EXCLUDED.identificador_arma;
+        """
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cursor:
+                    cursor.execute(query, (id_jogador, id_arma))
+            print(f"Arma {id_arma} equipada com sucesso para o jogador {id_jogador}.")
+            return True
+        except psycopg.Error as e:
+            print(f"DBManager ERRO ao equipar arma: {e}")
+            return False
+
+    def usar_consumivel(self, id_jogador, id_item_consumivel):
+        """
+        Usa um item consumível, aplicando seus efeitos ao jogador e removendo
+        uma unidade do inventário. A operação é feita em uma única transação.
+        """
+        print(f"Jogador {id_jogador} tentando usar o item {id_item_consumivel}...")
+        
+        # 1. Buscar os efeitos do consumível
+        efeitos_query = """
+            SELECT e.nome, e.valor
+            FROM efeito_consumivel ec
+            JOIN efeito e ON ec.identificador_efeito = e.identificador_efeito
+            WHERE ec.identificador_consumivel = %s;
+        """
+        
+        # 2. Buscar o ID do inventário do jogador
+        id_inventario = self.buscar_id_inventario_por_personagem(id_jogador)
+        if not id_inventario:
+            print("ERRO: Inventário do jogador não encontrado.")
+            return False
+
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cursor:
+                    # Verifica se o jogador possui o item
+                    cursor.execute("""
+                        SELECT quantidade FROM item_inventario 
+                        WHERE identificador_inventario = %s AND identificador_item = %s AND quantidade > 0
+                    """, (id_inventario, id_item_consumivel))
+                    
+                    if cursor.rowcount == 0:
+                        print("ERRO: Jogador não possui o item para consumir.")
+                        return False # A transação será desfeita (rollback)
+
+                    # Busca os efeitos e o estado atual do jogador
+                    cursor.execute(efeitos_query, (id_item_consumivel,))
+                    efeitos = cursor.fetchall()
+                    
+                    cursor.execute("SELECT vida, vida_atual, energia FROM jogador WHERE identificador_jogador = %s", (id_jogador,))
+                    jogador_stats = cursor.fetchone()
+
+                    updates = []
+                    for efeito in efeitos:
+                        nome_efeito = efeito.nome.strip()
+                        if nome_efeito == 'Cura':
+                            # Garante que a vida atual não ultrapasse a vida máxima
+                            nova_vida = min(jogador_stats.vida, jogador_stats.vida_atual + efeito.valor)
+                            updates.append(f"vida_atual = {nova_vida}")
+                        elif nome_efeito == 'Energia':
+                            # Assumindo que o campo 'energia' representa tanto a energia atual quanto a máxima.
+                            # Se você adicionar um campo 'energia_maxima', a lógica seria min(jogador_stats.energia_maxima, ...)
+                            nova_energia = min(jogador_stats.energia, jogador_stats.energia + efeito.valor) # Usa jogador_stats.energia
+                            updates.append(f"energia = {nova_energia}") # Atualiza o campo 'energia'
+                    # Aplica os efeitos no jogador, se houver algum
+                    if updates:
+                        update_jogador_query = f"UPDATE jogador SET {', '.join(updates)} WHERE identificador_jogador = %s"
+                        cursor.execute(update_jogador_query, (id_jogador,))
+                        print(f"Efeitos aplicados ao jogador {id_jogador}.")
+
+                    # Remove uma unidade do item do inventário
+                    cursor.execute("""
+                        UPDATE item_inventario 
+                        SET quantidade = quantidade - 1 
+                        WHERE identificador_inventario = %s AND identificador_item = %s
+                    """, (id_inventario, id_item_consumivel))
+
+                    # Opcional: Remove o item se a quantidade chegar a zero
+                    cursor.execute("""
+                        DELETE FROM item_inventario 
+                        WHERE identificador_inventario = %s AND identificador_item = %s AND quantidade = 0
+                    """, (id_inventario, id_item_consumivel))
+            
+            print(f"Item {id_item_consumivel} consumido com sucesso.")
+            return True
+
+        except psycopg.Error as e:
+            print(f"DBManager ERRO ao usar consumível: {e}")
+            return False
+
+    def realizar_venda(self,
+                  jogador_id,
+                  vendedor_id,
+                  id_inventario_jogador,
+                  id_inventario_vendedor,
+                  identificador_item,
+                  quantidade,
+                  preco_total):
+        """
+        Realiza a venda de um item do jogador para o vendedor
+        """
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    # Remova esta consulta que está causando o erro - não precisamos obter o preço de compra
+                    # já que ele não é usado no restante do método
+                    
+                    # 1. Remover do inventário do jogador
+                    cur.execute(
+                        """UPDATE item_inventario 
+                        SET quantidade = quantidade - %s 
+                        WHERE identificador_inventario = %s AND identificador_item = %s""", 
+                        (quantidade, id_inventario_jogador, identificador_item))
+
+                    # 2. Adicionar ao inventário do vendedor
+                    cur.execute(
+                        """INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+                        VALUES (%s, %s, %s)
+                        ON CONFLICT (identificador_inventario, identificador_item)
+                        DO UPDATE SET quantidade = item_inventario.quantidade + %s""", 
+                        (id_inventario_vendedor, identificador_item, quantidade, quantidade))
+                    
+                    # 3. Atualizar moedas do jogador
+                    cur.execute(
+                        """UPDATE jogador 
+                        SET moedas_totais = moedas_totais + %s 
+                        WHERE identificador_jogador = %s""", 
+                        (preco_total, jogador_id))
+
+                    # 4. Atualizar moedas do vendedor
+                    cur.execute(
+                        """UPDATE habitante 
+                        SET moedas_totais = moedas_totais - %s 
+                        WHERE identificador_habitante = %s""", 
+                        (preco_total, vendedor_id))
+
+                    # 5. Remove itens com quantidade 0
+                    cur.execute(
+                        "DELETE FROM item_inventario WHERE quantidade <= 0")
+
+            return {'sucesso': True}
+        except Exception as e:
+            return {'sucesso': False, 'erro': str(e)}

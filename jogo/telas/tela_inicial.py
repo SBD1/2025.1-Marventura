@@ -20,29 +20,53 @@ class TelaInicial(TelaModelo): # Herda de TelaModelo
             self.imagem_fundo = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.imagem_fundo.fill(CINZA_ESCURO)
 
-        self.botoes = []
-        self._criar_botoes()
+        # Verifica se existe um progresso salvo para decidir quais botões mostrar
+        db_manager = self.gerenciador_telas.gerenciador_banco_de_dados
+        progresso_existe = db_manager.verificar_progresso_existente('jog001')
 
-    def _criar_botoes(self):
+        self.botoes = []
+        self._criar_botoes(progresso_existe)
+
+    def _criar_botoes(self, progresso_existe):
 
         # Posições e dimensões dos botões
         _largura_botao = 300
         _altura_botao = 45
         _x_botao = (LARGURA_TELA - _largura_botao) // 2
-        _y_inicio_botao = ALTURA_TELA - 150
         _espacamento_botao = 60
 
-        self.botoes.append({
-            'rect': pygame.Rect(_x_botao, _y_inicio_botao, _largura_botao, _altura_botao),
-            'texto': "Iniciar",
-            'acao': lambda: self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_SALVAMENTO) # Usa o gerenciador de telas
-        })
+        if progresso_existe:
+            # Layout para 3 botões
+            _y_inicio_botao = ALTURA_TELA - 210
+            self.botoes.append({
+                'rect': pygame.Rect(_x_botao, _y_inicio_botao, _largura_botao, _altura_botao),
+                'texto': "Continuar",
+                'acao': lambda: self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_CARREGAR_JOGO)
+            })
+            self.botoes.append({
+                'rect': pygame.Rect(_x_botao, _y_inicio_botao + _espacamento_botao, _largura_botao, _altura_botao),
+                'texto': "Novo Jogo",
+                'acao': lambda: self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_SELECAO_PERSONAGEM)
+            })
+            self.botoes.append({
+                'rect': pygame.Rect(_x_botao, _y_inicio_botao + 2 * _espacamento_botao, _largura_botao, _altura_botao),
+                'texto': "Fechar",
+                'acao': lambda: sys.exit()
+            })
+        else:
+            # Layout para 2 botões
+            _y_inicio_botao = ALTURA_TELA - 150
+            self.botoes.append({
+                'rect': pygame.Rect(_x_botao, _y_inicio_botao, _largura_botao, _altura_botao),
+                'texto': "Iniciar Jogo",
+                'acao': lambda: self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_SELECAO_PERSONAGEM)
+            })
+            self.botoes.append({
+                'rect': pygame.Rect(_x_botao, _y_inicio_botao + _espacamento_botao, _largura_botao, _altura_botao),
+                'texto': "Fechar",
+                'acao': lambda: sys.exit()
+            })
 
-        self.botoes.append({
-            'rect': pygame.Rect(_x_botao, _y_inicio_botao + _espacamento_botao, _largura_botao, _altura_botao),
-            'texto': "Fechar",
-            'acao': lambda: sys.exit()
-        })
 
     def handle_input(self, evento):
         # Chama o handle_input da base para eventos comuns (ex: QUIT)

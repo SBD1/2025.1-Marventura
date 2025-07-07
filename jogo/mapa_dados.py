@@ -99,7 +99,7 @@ dados_das_ilhas = {
     },
 }
 
-dados_das_salas = {
+dados_das_salas = { # As chaves aqui agora são os IDs curtos (ex: 'are001')
     ID_MAPA_CAMPO_COSTA_OESTE: {
         'nome': 'Costa Oeste',
         'chave_cenario': CHAVE_CENARIO_CAMPO_COSTA_OESTE, # Chave do gerenciador de recursos para a imagem de fundo deste mapa
@@ -218,6 +218,15 @@ dados_das_salas = {
                 'dados_evento': {
                     'id_proximo_mapa': ID_MAPA_CAMPO_LOJA, # O ID do interior da loja
                     'ponto_de_destino': 'porta'
+                }
+            },
+            
+              {
+                'x': 350, 'y': 200, 'largura': 100, 'altura': 100, # Um quadrado em volta do vendedor
+                'tipo_evento': 'abrir_loja', # O evento correto!
+                'dados_evento': {
+                    'id_vendedor': 'ven001', # O ID do vendedor da sua base de dados
+                    'nome_vendedor': 'João das Ferramentas'
                 }
             },
             # Entrada direita

@@ -20,7 +20,7 @@ ROXO = (128, 0, 128)
 CINZA = (150, 150, 150)
 CINZA_ESCURO = (100, 100, 100)
 COR_TEXTO_SALVAR = (53, 38, 16) # Cor específica para texto de salvar
-
+AMARELO_CLARO = (255, 255, 153) 
 # --- Animação do Jogador ---
 VELOCIDADE_ANIMACAO_CAMINHADA = 0.15 # Segundos por frame na animação de caminhada (ajuste conforme quiser)
 FPS = 60 # Quadros por segundo
@@ -51,6 +51,7 @@ CHAVE_TRANSICAO_SALVAMENTO = 'salvamento'
 CHAVE_TRANSICAO_SELECAO_PERSONAGEM = 'selecao_personagem'
 CHAVE_TRANSICAO_NOVO_JOGO = 'novo_jogo'
 CHAVE_TRANSICAO_CARREGAR_JOGO = 'carregar_jogo'
+CHAVE_TRANSICAO_INVENTARIO = 'inventario'
 
 # --- Estados do Inimigo ---
 ESTADO_INIMIGO_PARADO = 'parado'
@@ -79,34 +80,34 @@ INIMIGO_CORVO = 'Corvo'
 # --- Identificadores de Mapas ---
 ID_MAPA_OCEANO = 'oceano'
 
-ID_MAPA_CAMPO_COSTA_OESTE = 'ilha_campo_costa_oeste'
-ID_MAPA_CAMPO_COSTA_LESTE = 'ilha_campo_costa_leste'
-ID_MAPA_CAMPO_VILA = 'ilha_campo_vila'
-ID_MAPA_CAMPO_LOJA = 'ilha_campo_loja'
+ID_MAPA_CAMPO_COSTA_OESTE = 'are001' # Pastos do Sol Dourado
+ID_MAPA_CAMPO_VILA = 'are002' # Vilarejo de Borabóia
+ID_MAPA_CAMPO_COSTA_LESTE = 'are003' # Vale Verdejante (Porto)
+ID_MAPA_CAMPO_LOJA = 'are004' # Loja de Borabóia
 
-ID_MAPA_CIDADE_PORTO = 'ilha_cidade_porto'
-ID_MAPA_CIDADE_CENTRO = 'ilha_cidade_centro'
-ID_MAPA_CIDADE_PRACA = 'ilha_cidade_praca'
-ID_MAPA_CIDADE_LOJA = 'ilha_cidade_loja'
-ID_MAPA_CIDADE_SUBURBIO = 'ilha_cidade_suburbio'
+ID_MAPA_CIDADE_PORTO = 'are007' # Porto de Lurien
+ID_MAPA_CIDADE_CENTRO = 'are008' # Centro
+ID_MAPA_CIDADE_PRACA = 'are009' # Praça de execução
+ID_MAPA_CIDADE_LOJA = 'are010' # Beco (ou loja, ajustar se necessário)
+ID_MAPA_CIDADE_SUBURBIO = 'are011' # Esconderijo (ou suburbio, ajustar se necessário)
 
-ID_MAPA_NEVE_COSTA = 'ilha_neve_costa'
-ID_MAPA_NEVE_VILA = 'ilha_neve_vila'
-ID_MAPA_NEVE_MONTANHA = 'ilha_neve_montanha'
-ID_MAPA_NEVE_COZINHA = 'ilha_neve_cozinha'
+ID_MAPA_NEVE_COSTA = 'are013' # Costa de Frimora
+ID_MAPA_NEVE_VILA = 'are014' # Vila de Frimora
+ID_MAPA_NEVE_MONTANHA = 'are015' # Montanha da Cabra Congelada
+ID_MAPA_NEVE_COZINHA = 'are016' # Cozinha da Vovó Yuba
 
-ID_MAPA_DESERTO_COSTA_OESTE = 'ilha_deserto_costa_oeste'
-ID_MAPA_DESERTO_VILA = 'ilha_deserto_vila'
-ID_MAPA_DESERTO_LOJA = 'ilha_deserto_loja'
-ID_MAPA_DESERTO_COSTA_LESTE = 'ilha_deserto_costa_leste'
+ID_MAPA_DESERTO_COSTA_OESTE = 'are017' # Duna Braba (Porto)
+ID_MAPA_DESERTO_VILA = 'are018' # Cidadela de Cactuaraquara
+ID_MAPA_DESERTO_COSTA_LESTE = 'are019' # Oásis de Ramtak
+ID_MAPA_DESERTO_LOJA = 'are020' # Loja de Cactuaraquara
 
-ID_MAPA_ASSOMBRADA_COSTA_OESTE = 'ilha_assombrada_costa_oeste'
-ID_MAPA_ASSOMBRADA_VILA = 'ilha_assombrada_vila'
-ID_MAPA_ASSOMBRADA_LOJA = 'ilha_assombrada_loja'
+ID_MAPA_ASSOMBRADA_COSTA_OESTE = 'are021' # Penumbra dos Ossudos (Porto)
+ID_MAPA_ASSOMBRADA_VILA = 'are022' # Acampamento de Nublária
+ID_MAPA_ASSOMBRADA_LOJA = 'are024' # Loja de Nublária
 
-ID_MAPA_FORTALEZA_PORTO = 'ilha_fortaleza_porto'
-ID_MAPA_FORTALEZA_INTERIOR = 'ilha_fortaleza_interior'
-ID_MAPA_FORTALEZA_LOJA = 'ilha_fortaleza_loja'
+ID_MAPA_FORTALEZA_PORTO = 'are026' # Porto da Égide
+ID_MAPA_FORTALEZA_INTERIOR = 'are027' # Interior
+ID_MAPA_FORTALEZA_LOJA = 'are029' # Loja da Marinha
 
 # --- Chaves de recursos ---
 CHAVE_LOGO = 'logo'
@@ -161,3 +162,10 @@ CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão
+
+# --- Estados de transição ---
+CHAVE_TRANSICAO_LOJA = 'loja'
+
+
+# --- Eventos de área ---
+EVENTO_TIPO_LOJA = 'abrir_loja'

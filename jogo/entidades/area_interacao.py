@@ -59,3 +59,5 @@ class AreaInteracao(pygame.sprite.Sprite):
             # Desenha o contorno do retângulo de colisão para debug
             # Usa a cor de debug definida em constantes.py
             pygame.draw.rect(superficie, COR_CAIXA_COLISAO, screen_rect, 1) # Desenha apenas o contorno
+            
+            

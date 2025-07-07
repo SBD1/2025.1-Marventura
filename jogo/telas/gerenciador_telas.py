@@ -1,13 +1,17 @@
 # telas/gerenciador_telas.py
 
+from collections import namedtuple
 import pygame
 import sys
-from telas import TelaInicial
-from telas import TelaSalvamento
-from telas import TelaSelecaoPersonagem
-from telas import TelaJogo
-from telas import TelaBatalha
+from .tela_inicial import TelaInicial
+from .tela_salvamento import TelaSalvamento
+from .tela_selecao_personagem import TelaSelecaoPersonagem
+from .tela_de_jogo import TelaJogo
+from .tela_batalha import TelaBatalha
+from .tela_loja import TelaLoja
+from .tela_inventario import TelaInventario # Garanta que esta linha exista
 from utilidades.constantes import *
+
 
 class GerenciadorDeTelas:
     """
@@ -39,10 +43,47 @@ class GerenciadorDeTelas:
         elif estado_desejado == CHAVE_TRANSICAO_SELECAO_PERSONAGEM:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
-            return TelaJogo(self, self.gerenciador_recursos,
-                            id_mapa_atual=ID_MAPA_CAMPO_COSTA_OESTE, # Mapa inicial padrão
-                            personagem=kwargs.get('personagem'),
-                            ponto_de_destino='novo_jogo')
+            # --- Lógica para iniciar um novo jogo ---
+            id_area_inicial = ID_MAPA_CAMPO_COSTA_OESTE
+            nome_personagem = kwargs.get('personagem')
+
+            # Busca os dados da área e da ilha inicial no banco de dados
+            dados_area_inicial = self.gerenciador_banco_de_dados.buscar_info_area(id_area_inicial)
+            dados_ilha_inicial = self.gerenciador_banco_de_dados.buscar_info_ilha(dados_area_inicial.identificador_ilha)
+
+            # Define o ponto de geração inicial para um novo jogo
+            ponto_geracao_inicial = (1950, 140, 'direita')
+
+            # Cria um objeto temporário para o jogador com status iniciais.
+            # A estrutura (campos) deve ser a mesma retornada por `buscar_jogador`.
+            JogadorInfo = namedtuple('JogadorInfo', [
+                'identificador_jogador', 'identificador_area', 'nome', 'descricao',
+                'coordenada_x', 'coordenada_y', 'orientacao', 'energia', 'vida', 'nivel', 'sorte',
+                'vida_atual', 'experiencia_atual', 'moedas_totais'
+            ])
+            jogador_inicial = JogadorInfo(
+                identificador_jogador='jog001',
+                identificador_area=id_area_inicial,
+                nome=nome_personagem,
+                descricao=f"Um(a) jovem aventureiro(a) chamado(a) {nome_personagem}.",
+                coordenada_x=ponto_geracao_inicial[0], coordenada_y=ponto_geracao_inicial[1],
+                orientacao=ponto_geracao_inicial[2],
+                energia=35, vida=70, nivel=1, sorte=5,
+                vida_atual=70, experiencia_atual=0, moedas_totais=100
+            )
+
+            # Salva/Reseta o estado inicial do jogador no banco de dados IMEDIATAMENTE
+            self.gerenciador_banco_de_dados.resetar_ou_criar_jogador(jogador_inicial)
+
+            # Cria a TelaJogo com os dados em memória
+            return TelaJogo(
+                self, self.gerenciador_recursos,
+                dados_da_ilha=dados_ilha_inicial,
+                dados_da_area=dados_area_inicial,
+                gerenciador_banco_de_dados=self.gerenciador_banco_de_dados,
+                jogador=jogador_inicial,
+                ponto_geracao_jogador=ponto_geracao_inicial
+            )
         elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
             jogador, ilha, area = self.gerenciador_banco_de_dados.carregar_dados_do_progresso('jog001')
 
@@ -50,7 +91,7 @@ class GerenciadorDeTelas:
             posicao_jogador = (
                 jogador.coordenada_x,
                 jogador.coordenada_y,
-                'direita'
+                jogador.orientacao
             )
 
             return TelaJogo(self, self.gerenciador_recursos,
@@ -74,6 +115,22 @@ class GerenciadorDeTelas:
                                jogador_y=kwargs.get('jogador_atual_y'),
                                jogador_olhando_direita=kwargs.get('jogador_olhando_direita'),
                                mapa_retorno_id=kwargs.get('mapa_atual_id'))
+        elif estado_desejado == CHAVE_TRANSICAO_LOJA:
+         return TelaLoja(self, self.gerenciador_recursos,
+                        self.gerenciador_banco_de_dados,
+                        kwargs.get('jogador_id'),
+                        kwargs.get('vendedor_id'),
+                        kwargs.get('nome_vendedor'),
+                        kwargs.get('dados_retorno_ilha'),
+                        kwargs.get('dados_retorno_area'),
+                        kwargs.get('ponto_retorno_jogador'))
+        elif estado_desejado == CHAVE_TRANSICAO_INVENTARIO:
+            return TelaInventario(self, self.gerenciador_recursos,
+                                  self.gerenciador_banco_de_dados,
+                                  kwargs.get('jogador_id'),
+                                  kwargs.get('dados_retorno_ilha'),
+                                  kwargs.get('dados_retorno_area'),
+                                  kwargs.get('ponto_retorno_jogador'))
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None
@@ -83,11 +140,14 @@ class GerenciadorDeTelas:
         Define a tela atualmente ativa do jogo.
         Qualquer tela pode chamar este método no gerenciador.
         """
+        if isinstance(self.tela_atual, TelaJogo):
+            self.tela_atual.salvar_progresso()
         nova_tela = self._criar_instancia_tela(novo_estado, **kwargs)
         if nova_tela:
             self.tela_atual = nova_tela
         else:
             print(f"Não foi possível mudar para a tela {novo_estado}. Permanece na tela atual.")
+        
 
     def handle_input(self, evento):
         """
@@ -102,10 +162,6 @@ class GerenciadorDeTelas:
                 del transicao_info['estado']
                 self.mudar_tela(estado_desejado, **transicao_info)
         
-        # Lidar com o evento de sair do Pygame aqui também, para garantir
-        if evento.type == pygame.QUIT:
-            sys.exit()
-
     def update(self, dt):
         """
         Atualiza a tela atualmente ativa.
@@ -126,3 +182,4 @@ class GerenciadorDeTelas:
         """
         if self.tela_atual:
             self.tela_atual.draw(self.tela_principal_surface)
+            

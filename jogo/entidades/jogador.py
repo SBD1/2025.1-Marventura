@@ -203,7 +203,7 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def update(self, dt, obstaculos, lista_de_caminhos): # NOVO: Adicionado 'lista_de_caminhos'
+    def update(self, dt, obstaculos, lista_de_caminhos, largura_mundo, altura_mundo): # NOVO: Adicionado 'lista_de_caminhos'
         """
         Atualiza a posição do jogador e a animação a cada frame do jogo.
         :param dt: Delta time (tempo em segundos desde o último frame).
@@ -279,7 +279,9 @@ class Jogador(pygame.sprite.Sprite):
             self.rect.y = int(self.mundo_y)
             self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
             self.pes_rect.bottom = self.rect.bottom
-
+        self.mundo_x = max(0, min(self.mundo_x, largura_mundo - self.rect.width))
+        self.mundo_y = max(0, min(self.mundo_y, altura_mundo - self.rect.height))
+    
         # --- Atualizar Animação --- (O resto do método permanece idêntico)
         esta_movendo = (self.movendo_esquerda or self.movendo_direita or
                         self.movendo_cima or self.movendo_baixo)

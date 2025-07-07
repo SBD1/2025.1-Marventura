@@ -364,6 +364,7 @@ CREATE TABLE jogador (
     descricao CHAR(250),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    orientacao CHAR(8) DEFAULT 'direita' CHECK (orientacao IN ('esquerda', 'direita')),
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
     vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
@@ -546,4 +547,12 @@ CREATE TABLE item_missao (
     PRIMARY KEY (identificador_missao, identificador_item),
     FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
+);
+
+
+CREATE TABLE jogador_equipamento (
+    identificador_jogador ID PRIMARY KEY REFERENCES jogador(identificador_jogador),
+    identificador_arma ID REFERENCES arma(identificador_arma),
+    identificador_acessorio ID REFERENCES acessorio(identificador_acessorio),
+    identificador_fruta ID REFERENCES fruta(identificador_fruta)
 );
