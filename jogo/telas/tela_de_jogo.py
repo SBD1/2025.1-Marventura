@@ -433,12 +433,15 @@ class _MenuViagemFlutuante:
             "FORTA": CHAVIC_FORTA,
             "NEVE": CHAVIC_NEVE,
         }
+# Define o novo tamanho dos ícones (ex: 48x48)
+        NOVO_TAMANHO = (100, 100)
 
         for nome, chave in icones_para_carregar.items():
             try:
                 print(f"Tentando carregar ícone da ilha: {nome} ({chave})")
                 icone = self.gerenciador_recursos.obter_imagem(chave)
                 if icone:
+                    icone = pygame.transform.scale(icone, NOVO_TAMANHO)  # REDIMENSIONA AQUI
                     self.icones_ilhas[nome] = icone
                     print(f"✅ Ícone '{nome}' carregado com sucesso")
                 else:
@@ -446,6 +449,7 @@ class _MenuViagemFlutuante:
             except Exception as e:
                 self.icones_ilhas[nome] = None
                 print(f"❌ AVISO: Não foi possível carregar o ícone '{nome}': {e}")
+
 
     
     def _preparar_ilhas(self):
@@ -455,12 +459,12 @@ class _MenuViagemFlutuante:
 
         # Mapa de coordenadas para as ilhas (adicione todas que quiser aqui)
         coordenadas_ilhas = {
-            "ilh001": (180, 290),
-            "ilh002": (390, 190),
-            "ilh003": (610, 340),
-            "ilh004": (250, 400),  # exemplo
-            "ilh005": (450, 300),  # exemplo
-            "ilh006": (600, 230),  # exemplo
+            "ilh001": (180, 150),
+            "ilh002": (180, 200),
+            "ilh003": (180, 250),
+            "ilh004": (180, 300),  # exemplo
+            "ilh005": (180, 400),  # exemplo
+            "ilh006": (180, 500),  # exemplo
         }
 
         offset_x = (LARGURA_TELA - self.imagem_mapa.get_width()) // 2 if self.imagem_mapa else 0
