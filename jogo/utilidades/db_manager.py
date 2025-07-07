@@ -604,6 +604,34 @@ class DBManager:
             AND identificador_area_destino = %s;
         """
         return self.executar_query(consulta, (id_area_origem, id_area_destino), fetchone=True)
+    
+    def buscar_todas_ilhas_com_status(self, id_progresso):
+        """
+        Retorna todas as ilhas do jogo com informação se já foram visitadas no progresso informado.
+        """
+        query = """
+            SELECT
+                i.identificador_ilha,
+                TRIM(i.nome) AS nome,
+                CASE 
+                    WHEN iv.identificador_ilha IS NOT NULL THEN TRUE
+                    ELSE FALSE
+                END AS visitada
+            FROM ilha i
+            LEFT JOIN ilha_visitada iv
+                ON iv.identificador_ilha = i.identificador_ilha
+                AND iv.identificador_progresso = %s
+            ORDER BY i.nome;
+        """
+        resultados = self.executar_query(query, (id_progresso,), fetchall=True)
+        return [
+            {
+                'id': linha[0],
+                'nome': linha[1],
+                'visitada': linha[2]
+            }
+            for linha in resultados
+        ]
 
 
     def buscar_pessoas_em_local(self, id_mapa, coord_x=None, coord_y=None):
@@ -829,6 +857,7 @@ class DBManager:
             WHERE a.identificador_arma = %s;
         """
          return self.executar_query(query, (id_arma,), fetchone=True)
+    
     def buscar_consumivel_atributos(self, id_consumivel):
         """
         Ver os atributos de uma comida específica. (Adaptado para Consumivel)
@@ -891,4 +920,3 @@ class DBManager:
             WHERE ti.identificador_item IS NULL; -- Busca itens no inventário que não têm um tipo correspondente
         """
         return self.executar_query(query, fetchall=True)
-

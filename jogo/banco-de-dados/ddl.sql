@@ -26,7 +26,6 @@ FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_item();
 
 
-
 CREATE TABLE fruta (
     identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
@@ -122,7 +121,7 @@ CREATE TABLE ingrediente_nao_consumivel (
 
 CREATE TABLE efeito (
     identificador_efeito ID PRIMARY KEY,
-    nome CHAR(15) UNIQUE NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
     valor SMALLINT CHECK (
         (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
         (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
@@ -281,6 +280,11 @@ BEFORE INSERT ON obstaculo
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 
+CREATE TABLE progresso_ilha (
+    jogador_id INTEGER NOT NULL,
+    identificador_ilha ID NOT NULL REFERENCES ilha(identificador_ilha),
+    PRIMARY KEY (jogador_id, identificador_ilha)
+);
 
 
 CREATE TABLE area_interativa (
@@ -615,10 +619,10 @@ EXECUTE FUNCTION public.gerar_id();
 
 
 CREATE TABLE dialogo (
-    identificador_missao ID PRIMARY KEY,
+    identificador_dialogo ID PRIMARY KEY,
     identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
     identificador_missao ID REFERENCES missao(identificador_missao),
-    sequencia_local SMALLINT CHECK (sequencia_local > 0)
+    sequencia_local SMALLINT CHECK (sequencia_local > 0),
     dialogo CHAR(500)
 );
 
