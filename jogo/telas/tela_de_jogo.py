@@ -243,7 +243,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             print('Embarcando na viagem...')
                             self.ilhas_vizinhas = self.banco_de_dados.buscar_conexoes_ilha(self.dados_da_area.identificador_ilha, self.dados_do_progresso.identificador_progresso)
 
-                            self.menu_viagem = _MenuViagemFlutuante(self.ilhas_vizinhas)
+                            self.menu_viagem = _MenuViagemFlutuante(self.gerenciador_recursos,self.ilhas_vizinhas)
                             self.menu_viagem_ativo = True
                             return None # Consome o evento
                     
@@ -388,6 +388,9 @@ class _MenuViagemFlutuante:
         self.cor_fundo = (50, 50, 50, 200)
         
         # Inicializa recursos gráficos
+
+        self.imagem_mapa = None  # Garante que os atributos existam antes
+        self.icone_ilha = None
         self._inicializar_recursos_graficos()
         
         # Prepara as ilhas para exibição
@@ -395,6 +398,21 @@ class _MenuViagemFlutuante:
         self.indice_selecionado = 0
         self._preparar_ilhas()
     
+    def handle_input(self, evento):
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_UP:
+                self.indice_selecionado = (self.indice_selecionado - 1) % len(self.opcoes)
+            elif evento.key == pygame.K_DOWN:
+                self.indice_selecionado = (self.indice_selecionado + 1) % len(self.opcoes)
+            elif evento.key == pygame.K_RETURN:
+                if self.opcoes:
+                    return self.opcoes[self.indice_selecionado]  # Retorna o ID da ilha
+                return None
+            elif evento.key == pygame.K_ESCAPE:
+                return "cancelar"
+
+        return None
+
     def _inicializar_recursos_graficos(self):
         """Carrega os recursos gráficos com fallback seguro"""
         try:
@@ -405,43 +423,85 @@ class _MenuViagemFlutuante:
             self.imagem_mapa = None
             print(f"❌ AVISO: Não foi possível carregar a imagem do mapa: {e}")
 
-        try:
-            print("Tentando carregar ícone da ilha:", CHAVIC_CAMP)
-            self.imagem_mapa = self.gerenciador_recursos.obter_imagem(CHAVIC_CAMP)
-            print("✅ Ícone da ilha carregado com sucesso")
-        except Exception as e:
-            self.icone_ilha = None
-            print(f"❌ AVISO: Não foi possível carregar o ícone da ilha: {e}")
+        self.icones_ilhas = {}
+
+        icones_para_carregar = {
+            "CAMP": CHAVIC_CAMP,
+            "ASSOM": CHAVIC_ASSOM,
+            "DESER": CHAVIC_DESER,
+            "CIDA": CHAVIC_CIDA,
+            "FORTA": CHAVIC_FORTA,
+            "NEVE": CHAVIC_NEVE,
+        }
+
+        for nome, chave in icones_para_carregar.items():
+            try:
+                print(f"Tentando carregar ícone da ilha: {nome} ({chave})")
+                icone = self.gerenciador_recursos.obter_imagem(chave)
+                if icone:
+                    self.icones_ilhas[nome] = icone
+                    print(f"✅ Ícone '{nome}' carregado com sucesso")
+                else:
+                    raise FileNotFoundError(f"Imagem associada à chave {chave} não encontrada.")
+            except Exception as e:
+                self.icones_ilhas[nome] = None
+                print(f"❌ AVISO: Não foi possível carregar o ícone '{nome}': {e}")
+
     
     def _preparar_ilhas(self):
-        """Prepara as ilhas para exibição, com fallback para modo texto"""
+        """Prepara as ilhas para exibição com ícones específicos"""
         if not self.opcoes:
             return
-            
-        # Se temos mapa e ícone, usamos posições no mapa
-        if self.imagem_mapa and self.icone_ilha:
-            coordenadas_ilhas = {
-                "ilh001": (180, 290),
-                "ilh002": (390, 190),
-                "ilh003": (610, 340),
-            }
-            
-            for ilha in self.opcoes:
-                offset_x = (LARGURA_TELA - self.imagem_mapa.get_width()) // 2 if self.imagem_mapa else 0
-                offset_y = (ALTURA_TELA - self.imagem_mapa.get_height()) // 2 if self.imagem_mapa else 0
 
-                pos_raw = coordenadas_ilhas.get(ilha.id, None)
-                if pos_raw:
-                    pos = (pos_raw[0] + offset_x, pos_raw[1] + offset_y)
-                    rect = self.icone_ilha.get_rect(center=pos)
-                    self.ilhas_renderizadas.append({
-                        "ilha": ilha,
-                        "pos": pos,
-                        "rect": rect,
-                        "tipo": "mapa"
-                    })
-        
-        # Fallback para menu textual se não houver recursos gráficos ou ilhas no mapa
+        # Mapa de coordenadas para as ilhas (adicione todas que quiser aqui)
+        coordenadas_ilhas = {
+            "ilh001": (180, 290),
+            "ilh002": (390, 190),
+            "ilh003": (610, 340),
+            "ilh004": (250, 400),  # exemplo
+            "ilh005": (450, 300),  # exemplo
+            "ilh006": (600, 230),  # exemplo
+        }
+
+        offset_x = (LARGURA_TELA - self.imagem_mapa.get_width()) // 2 if self.imagem_mapa else 0
+        offset_y = (ALTURA_TELA - self.imagem_mapa.get_height()) // 2 if self.imagem_mapa else 0
+
+        for ilha in self.opcoes:
+            id_ilha = getattr(ilha, "id", None) or getattr(ilha, "identificador_ilha", None)
+            nome_ilha = getattr(ilha, "nome", "???")
+
+            pos_raw = coordenadas_ilhas.get(id_ilha)
+            if not pos_raw:
+                continue  # ignora se não tiver coordenada
+
+            pos = (pos_raw[0] + offset_x, pos_raw[1] + offset_y)
+
+            # Determina qual ícone usar com base em palavras-chave do nome
+            nome_maiusculo = nome_ilha.upper()
+            if "CIDADE" in nome_maiusculo:
+                icone = self.icones_ilhas.get("CIDA")
+            elif "CACTU" in nome_maiusculo or "DESERTO" in nome_maiusculo:
+                icone = self.icones_ilhas.get("DESER")
+            elif "NEVE" in nome_maiusculo or "GELO" in nome_maiusculo:
+                icone = self.icones_ilhas.get("NEVE")
+            elif "ASSOM" in nome_maiusculo:
+                icone = self.icones_ilhas.get("ASSOM")
+            elif "FORT" in nome_maiusculo:
+                icone = self.icones_ilhas.get("FORTA")
+            else:
+                icone = self.icones_ilhas.get("CAMP")  # padrão
+
+            if icone:
+                rect = icone.get_rect(center=pos)
+                self.ilhas_renderizadas.append({
+                    "ilha": ilha,
+                    "icone": icone,
+                    "pos": pos,
+                    "rect": rect,
+                    "tipo": "mapa"
+                })
+
+        # Fallback textual
         if not self.ilhas_renderizadas:
             altura_linha = self.fonte.get_height() + 10
             for i, ilha in enumerate(self.opcoes):
@@ -452,35 +512,14 @@ class _MenuViagemFlutuante:
                     "rect": pygame.Rect(LARGURA_TELA//2 - 100, pos_y - 15, 200, 30),
                     "tipo": "texto"
                 })
-        
+
         if self.ilhas_renderizadas:
             self.selecionada = self.ilhas_renderizadas[0]["ilha"]
+
+
     
-    def handle_input(self, evento):
-        if not self.ativo or not self.ilhas_renderizadas:
-            return None
-            
-        if evento.type == pygame.KEYDOWN:
-            if evento.key == pygame.K_UP:
-                self.indice_selecionado = (self.indice_selecionado - 1) % len(self.ilhas_renderizadas)
-                self.selecionada = self.ilhas_renderizadas[self.indice_selecionado]["ilha"]
-                return "navegacao"
-                
-            elif evento.key == pygame.K_DOWN:
-                self.indice_selecionado = (self.indice_selecionado + 1) % len(self.ilhas_renderizadas)
-                self.selecionada = self.ilhas_renderizadas[self.indice_selecionado]["ilha"]
-                return "navegacao"
-                
-            elif evento.key == pygame.K_RETURN:
-                self.ativo = False
-                return self.selecionada.id if self.selecionada else None
-                
-            elif evento.key == pygame.K_ESCAPE:
-                self.ativo = False
-                return "cancelar"
-        
-        return None
     
+
     def draw(self, tela):
         if not self.ativo:
             return
@@ -501,9 +540,9 @@ class _MenuViagemFlutuante:
             pos = item["pos"]
             
             # Desenha diferente dependendo do tipo
-            if item["tipo"] == "mapa" and self.icone_ilha:
-                # Modo mapa com ícones
-                tela.blit(self.icone_ilha, item["rect"])
+            if item["tipo"] == "mapa" and item.get("icone"):
+                tela.blit(item["icone"], item["rect"])
+
                 
                 if i == self.indice_selecionado:
                     pygame.draw.rect(tela, self.cor_texto_selecionado, item["rect"], 2)
