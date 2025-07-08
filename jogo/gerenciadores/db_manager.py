@@ -308,12 +308,17 @@ class DBManager:
                     TRIM(fruta.nome),
                     TRIM(arma.nome)
                 ) AS nome_item,
-                COALESCE(acessorio.raridade, fruta.raridade, arma.raridade) AS raridade,
+                COALESCE(
+                    TRIM(acessorio.raridade),
+                    TRIM(fruta.raridade),
+                    TRIM(arma.raridade)
+                ) AS raridade,
                 COALESCE(
                     TRIM(acessorio.descricao),
                     TRIM(fruta.descricao),
                     TRIM(arma.descricao)
                 ) AS descricao,
+                COALESCE(arma.tipo_arma, '') AS tipo_arma,
                 item_inventario.quantidade
             FROM inventario
             JOIN item_inventario
@@ -348,7 +353,13 @@ class DBManager:
                     TRIM(nao_consumivel.nome),
                     TRIM(arma.nome)
                 ) AS nome_item,
-                COALESCE(acessorio.raridade, fruta.raridade, consumivel.raridade, nao_consumivel.raridade, arma.raridade) AS raridade,
+                COALESCE(
+                    TRIM(acessorio.raridade),
+                    TRIM(fruta.raridade),
+                    TRIM(consumivel.raridade),
+                    TRIM(nao_consumivel.raridade),
+                    TRIM(arma.raridade)
+                ) AS raridade,
                 COALESCE(
                     TRIM(acessorio.descricao),
                     TRIM(fruta.descricao),
