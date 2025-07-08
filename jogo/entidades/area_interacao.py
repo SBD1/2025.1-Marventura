@@ -19,6 +19,13 @@ class AreaInteracao(pygame.sprite.Sprite):
         self.area_destino = area_destino
         self.chave_imagem = chave_imagem
 
+        # Animação de chacoalhar horizontal
+        self.animando = False
+        self.ciclos_restantes = 0
+        self.amplitude_chacoalho = 4  # pixels de deslocamento lateral
+        self.contador_ciclo = 0
+
+
         # Se for usar imagem
         if chave_imagem:
             if not gerenciador_recursos:
@@ -42,8 +49,22 @@ class AreaInteracao(pygame.sprite.Sprite):
         # Define a área de colisão
         self.rect = self.imagem.get_rect(topleft=(x, y))
 
+
+
+    def iniciar_animacao_chacoalhar(self, ciclos=6):
+        self.animando = True
+        self.ciclos_restantes = ciclos  # Total de frames que vai oscilar
+        self.contador_ciclo = 0
+
+
+
     def update(self):
-        pass
+        if self.animando:
+            self.contador_ciclo += 1
+            if self.contador_ciclo >= self.ciclos_restantes:
+                self.animando = False
+
+
 
     def desenhar(self, superficie, camera_x):
         """
@@ -52,6 +73,10 @@ class AreaInteracao(pygame.sprite.Sprite):
         """
         pos_x = self.rect.x - camera_x
         pos_y = self.rect.y
+
+        if self.animando:
+            deslocamento = self.amplitude_chacoalho if self.contador_ciclo % 2 == 0 else -self.amplitude_chacoalho
+            pos_x += deslocamento
 
         if self.imagem:
             superficie.blit(self.imagem, (pos_x, pos_y))

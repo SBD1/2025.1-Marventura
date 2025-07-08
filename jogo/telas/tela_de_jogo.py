@@ -346,6 +346,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 'id_mapa': self.dados_da_area.identificador_area,
                                 'personagem': self.jogador.nome}
                     elif area.tipo_evento == 'investigar':
+                        area.iniciar_animacao_chacoalhar()
                         mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador)
                         print(mensagem)
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
@@ -398,6 +399,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Atualiza os NPCs, passando a posição do jogador para a orientação
         for npc in self.npcs:
             npc.atualizar(dt, self.jogador.rect)
+
+        self.areas_interacao.update()
 
         self.camera.update(dt, self.jogador.rect)
 
