@@ -320,23 +320,18 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # --- Abrir Inventário ---
         if evento.type == pygame.KEYDOWN and evento.key == pygame.K_i:
-            print("DEBUG: Tecla 'I' pressionada, abrindo inventário.")
-            # Coleta os dados necessários para retornar ao jogo depois
-            ponto_retorno_jogador = (
-                self.jogador.mundo_x,
-                self.jogador.mundo_y,
-                self.jogador.orientacao
-            )
+            ponto_retorno_jogador = (self.jogador.mundo_x, self.jogador.mundo_y, self.jogador.orientacao)
+            
+            fundo_para_inventario = self.gerenciador_telas.tela_principal_surface.copy()
+
             return {
                 'estado': CHAVE_TRANSICAO_INVENTARIO,
                 'jogador_id': self.informacoes_jogador.identificador_jogador,
-                # Passa os dados de retorno
                 'dados_retorno_ilha': self.dados_da_ilha,
                 'dados_retorno_area': self.dados_da_area,
-                'ponto_retorno_jogador': ponto_retorno_jogador
+                'ponto_retorno_jogador': ponto_retorno_jogador,
+                'snapshot_fundo': fundo_para_inventario
             }
-
-        return None # Nenhuma transição de tela por eventos de interação
 
 
 

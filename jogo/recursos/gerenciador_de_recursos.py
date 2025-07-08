@@ -172,12 +172,13 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
         self._carregar_imagem('inv_painel_fundo', 'recursos/imagens/cenario/painel_inventario_completo.png')
         self._carregar_imagem('inv_botao_fechar', 'recursos/imagens/cenario/botao_fechar.png')
-
+        self._carregar_imagem('inv_slot_item', 'recursos/imagens/cenario/item.png')
+        self._carregar_imagem('inv_nada_aqui', 'recursos/imagens/cenario/nada.png')
         # Labels e fundo do personagem (usando os nomes corretos)
         self._carregar_imagem('inv_label_equip', 'recursos/imagens/cenario/icone_aba_equip.png')
         self._carregar_imagem('inv_label_estat', 'recursos/imagens/cenario/icone_aba_estat.png')
         self._carregar_imagem('inv_fundo_personagem', 'recursos/imagens/cenario/icone_aba_gemjogador.png')
-        self._carregar_som('som_compra_sucesso', 'recursos/audio/compra_sucesso.mp3') # TIRE O '#' DESTA LINHA
+        self._carregar_som('som_compra_sucesso', 'recursos/audio/compra_sucesso.mp3') 
         self._carregar_som('som_compra_falha', 'recursos/audio/compra_falha.mp3')
         # Abas Verticais
         self._carregar_imagem('inv_tab_status', 'recursos/imagens/cenario/icone_aba_status.png')

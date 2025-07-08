@@ -1407,3 +1407,62 @@ class DBManager:
             return {'sucesso': True}
         except Exception as e:
             return {'sucesso': False, 'erro': str(e)}
+    def buscar_arma_equipada(self, id_jogador):
+        """
+        Busca a arma atualmente equipada por um jogador.
+        Retorna um objeto com os detalhes da arma ou None se nenhuma estiver equipada.
+        """
+        query = """
+            SELECT
+                je.identificador_arma AS identificador_item,
+                'arm' AS tipo_item,
+                TRIM(a.nome) AS nome_item,
+                TRIM(a.descricao) AS descricao,
+                a.raridade,
+                a.preco_de_compra
+            FROM jogador_equipamento je
+            JOIN arma a ON je.identificador_arma = a.identificador_arma
+            WHERE je.identificador_jogador = %s;
+        """
+        return self.executar_query(query, (id_jogador,), fetchone=True)
+    def equipar_acessorio(self, id_jogador, id_acessorio):
+        """
+        Equipa um acessório para um jogador, inserindo ou atualizando o registro
+        na tabela jogador_equipamento. Usa a sintaxe ON CONFLICT (UPSERT).
+        """
+        print(f"Tentando equipar o acessório {id_acessorio} para o jogador {id_jogador}...")
+        query = """
+            INSERT INTO jogador_equipamento (identificador_jogador, identificador_acessorio)
+            VALUES (%s, %s)
+            ON CONFLICT (identificador_jogador) 
+            DO UPDATE SET identificador_acessorio = EXCLUDED.identificador_acessorio;
+        """
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cursor:
+                    cursor.execute(query, (id_jogador, id_acessorio))
+            print(f"Acessório {id_acessorio} equipado com sucesso para o jogador {id_jogador}.")
+            return True
+        except psycopg.Error as e:
+            print(f"DBManager ERRO ao equipar acessório: {e}")
+            return False
+    def desequipar_arma(self, id_jogador):
+            """
+            Desequipa a arma de um jogador, definindo o identificador_arma como NULL
+            na tabela jogador_equipamento.
+            """
+            print(f"Tentando desequipar arma para o jogador {id_jogador}...")
+            query = """
+                UPDATE jogador_equipamento
+                SET identificador_arma = NULL
+                WHERE identificador_jogador = %s;
+            """
+            try:
+                with self.conn.transaction():
+                    with self.conn.cursor() as cursor:
+                        cursor.execute(query, (id_jogador,))
+                print(f"Arma desequipada com sucesso para o jogador {id_jogador}.")
+                return True
+            except psycopg.Error as e:
+                print(f"DBManager ERRO ao desequipar arma: {e}")
+                return False

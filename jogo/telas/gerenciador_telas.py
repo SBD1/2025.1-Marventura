@@ -69,7 +69,7 @@ class GerenciadorDeTelas:
                 coordenada_x=ponto_geracao_inicial[0], coordenada_y=ponto_geracao_inicial[1],
                 orientacao=ponto_geracao_inicial[2],
                 energia=35, vida=70, nivel=1, sorte=5,
-                vida_atual=70, experiencia_atual=0, moedas_totais=100
+                vida_atual=70, experiencia_atual=0, moedas_totais=900
             )
 
             # Salva/Reseta o estado inicial do jogador no banco de dados IMEDIATAMENTE
@@ -130,7 +130,8 @@ class GerenciadorDeTelas:
                                   kwargs.get('jogador_id'),
                                   kwargs.get('dados_retorno_ilha'),
                                   kwargs.get('dados_retorno_area'),
-                                  kwargs.get('ponto_retorno_jogador'))
+                                  kwargs.get('ponto_retorno_jogador'),
+                                  snapshot_fundo=kwargs.get('snapshot_fundo'))
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None
