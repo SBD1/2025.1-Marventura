@@ -147,6 +147,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_BARRA_DE_ESTADO, 'recursos/imagens/interface/barra_de_estado.png')
         self._carregar_imagem(CHAVE_CAIXA_DE_TEXTO, 'recursos/imagens/interface/caixa_de_texto.png')
         self._carregar_imagem(CHAVE_MENU_ITENS, 'recursos/imagens/interface/menu_itens.png')
+        self._carregar_imagem(CHAVE_MENU_SELECAO_HABILIDADE, 'recursos/imagens/interface/caixa_de_habilidades.png')
 
         # --- Carregar planos de fundo para os mapas do jogo ---
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
