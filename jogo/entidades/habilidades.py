@@ -24,4 +24,5 @@ class Habilidade:
         multiplicador_raridade = multiplicadores_raridade.get(raridade, 1.0)
 
         dano_final = self.dano * (1 + (nivel_jogador / escala)) * multiplicador_area * multiplicador_raridade
+        print(f"Dano base: {self.dano}, Nível do Jogador: {nivel_jogador}, Raridade: {raridade}, Dano Final: {dano_final}")
         return int(round(dano_final))
