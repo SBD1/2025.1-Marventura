@@ -99,7 +99,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self
         )
 
-        self.gerenciador_missoes.iniciar_missao('mis001')
+        #self.gerenciador_missoes.iniciar_missao('mis001')
         # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
         # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
         
@@ -158,12 +158,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
         for area_data in areas_interativas:
-            area = AreaInteracao(area_data.x, area_data.y,
+            area = AreaInteracao(area_data.identificador,
+                                area_data.x, area_data.y,
                                 area_data.largura, area_data.altura,
                                 area_data.tipo_evento,
                                 area_data.chance_sucesso,
                                 area_data.area_destino,
-                                area_data.chave_imagem)
+                                area_data.chave_imagem,
+                                gerenciador_recursos=self.gerenciador_recursos if area_data.chave_imagem else None)
 
             self.areas_interacao.add(area)
 
@@ -343,6 +345,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 'olhando_direita': self.jogador.orientacao,
                                 'id_mapa': self.dados_da_area.identificador_area,
                                 'personagem': self.jogador.nome}
+                    elif area.tipo_evento == 'investigar':
+                        mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador)
+                        print(mensagem)
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
@@ -439,6 +444,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             # Desenha os NPCs
             for npc in self.npcs:
                 npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
+
+            for area in self.areas_interacao:
+                area.desenhar(tela, self.camera.rect.x)
 
             # Desenha o jogador
             self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)

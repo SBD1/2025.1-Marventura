@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import psycopg
 from psycopg.rows import namedtuple_row
 from utilidades.constantes import *
+import random
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -392,6 +393,7 @@ class DBManager:
             SELECT
                 identificador_jogador,
                 identificador_area,
+                identificador_progresso,
                 TRIM(nome) AS nome,
                 TRIM(descricao) AS descricao,
                 coordenada_x,
@@ -576,9 +578,9 @@ class DBManager:
                 COALESCE(a.descricao, f.descricao, c.descricao, nc.descricao) AS descricao,
                 ii.quantidade
             FROM inventario inv
-            JOIN item_inventario ii
+            LEFT JOIN item_inventario ii
                 ON ii.identificador_inventario = inv.identificador_inventario
-            JOIN tipo_item ti
+            LEFT JOIN tipo_item ti
                 ON ti.identificador_item = ii.identificador_item
 
             -- Joins para cada subtipo
@@ -596,6 +598,7 @@ class DBManager:
             AND inv.identificador_progresso = %s;
         """
         return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
+
 
 
     def criar_inventario(self, id_jogador, id_progresso, tipo_inventario='moc'):
@@ -626,13 +629,18 @@ class DBManager:
         """
         return self.executar_query(query, (id_inventario,), fetchall=True)
 
-    def adicionar_item_ao_inventario(self, id_inventario, identificador_item_tipo):
-        """Adiciona um tipo de item ao inventário."""
-        query = """
-            INSERT INTO iteminventario (id_inventario, identificador_item)
-            VALUES (%s, %s);
+    def adicionar_item_ao_inventario(self, id_inventario, identificador_item_tipo, quantidade=1):
         """
-        return self.executar_query(query, (id_inventario, identificador_item_tipo))
+        Adiciona um item ao inventário. Se já existir, incrementa a quantidade.
+        """
+        consulta = """
+            INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (identificador_inventario, identificador_item)
+            DO UPDATE SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+        """
+        return self.executar_query(consulta, (id_inventario, identificador_item_tipo, quantidade))
+
 
     def remover_item_do_inventario(self, id_inventario, identificador_item_tipo):
         """Remove um tipo de item específico do inventário."""
@@ -879,7 +887,7 @@ class DBManager:
         """
         consulta = """
             SELECT
-                identificador_area_interativa,
+                identificador_area_interativa AS identificador,
                 identificador_area_origem AS area_origem,
                 identificador_area_destino AS area_destino,
                 TRIM(chave_imagem) AS chave_imagem,
@@ -1004,6 +1012,30 @@ class DBManager:
         """
         return self.executar_query(query, (id_mapa,), fetchall=True)
     
+    def buscar_itens_na_ilha(self, id_ilha, tipo='consumivel'):
+        """
+        Busca todos os itens coletáveis de um tipo ('consumivel' ou 'nao_consumivel') disponíveis na ilha.
+        Compara o campo local_encontrado com o nome da ilha, e exige que e_coletado seja TRUE.
+        """
+        if tipo == 'consumivel':
+            query = """
+                SELECT c.identificador_consumivel AS identificador_item, c.nome AS nome_item
+                FROM consumivel c
+                JOIN ilha i ON c.local_encontrado = i.nome
+                WHERE i.identificador_ilha = %s
+                AND c.e_coletado = TRUE;
+            """
+        else:
+            query = """
+                SELECT nc.identificador_nao_consumivel AS identificador_item, nc.nome AS nome_item
+                FROM nao_consumivel nc
+                JOIN ilha i ON nc.local_encontrado = i.nome
+                WHERE i.identificador_ilha = %s
+                AND nc.e_coletado = TRUE;
+            """
+        return self.executar_query(query, (id_ilha,), fetchall=True)
+
+
     # ===============================================
     # Métodos de Operações de Fabricação (Receitas)
     # ===============================================
@@ -1147,6 +1179,93 @@ class DBManager:
     # ===============================================
     # Métodos de Operações com Tipos de Itens Específicos
     # ===============================================
+
+
+    def tentar_coletar_item_no_mapa(self, id_jogador, id_area_interativa):
+        """
+        Processa a tentativa de coletar recompensa por exploração.
+
+        Passos:
+            - Verifica restrição de tempo (15 min).
+            - Sorteia chance de sucesso.
+            - Se sucesso, busca um item aleatório da ilha atual.
+            - Adiciona item à mochila do jogador.
+        
+        Retorna:
+            str: mensagem de erro ou sucesso.
+        """
+
+        try:
+            # Busca a área atual do jogador
+            jogador = self.buscar_jogador(id_jogador)
+            if not jogador:
+                return "Erro: jogador não encontrado."
+
+            id_area_atual = jogador.identificador_area
+            id_ilha = self.buscar_info_area(id_area_atual, jogador.identificador_progresso).identificador_ilha
+
+            # Tenta atualizar/inserir a tentativa
+            try:
+                self.cursor.execute("""
+                    INSERT INTO recompensa_de_exploracao
+                        (identificador_area_interativa, identificador_jogador)
+                    VALUES
+                        (%s, %s)
+                    ON CONFLICT (identificador_area_interativa, identificador_jogador)
+                    DO UPDATE SET data_da_tentativa = now();
+                """, (id_area_interativa, id_jogador))
+            except psycopg.Error as e:
+                self.conn.rollback()
+                if "precisa esperar 15 minutos" in str(e):
+                    return "Erro: você precisa esperar 15 minutos para interagir novamente."
+                print("[ERRO] Falha ao inserir em recompensa_de_exploracao:", str(e))
+                return "Erro ao registrar tentativa de recompensa."
+
+            # Busca chance de sucesso da área interativa
+            self.cursor.execute("""
+                SELECT chance_sucesso
+                FROM area_interativa
+                WHERE identificador_area_interativa = %s;
+            """, (id_area_interativa,))
+            resultado = self.cursor.fetchone()
+            if not resultado:
+                return "Erro: área interativa não encontrada."
+
+            chance_sucesso = float(resultado.chance_sucesso)
+            if random.random() > chance_sucesso:
+                return "Tentativa registrada, mas nenhum item foi encontrado."
+
+            # Busca todos os itens possíveis da ilha atual
+            consumiveis = self.buscar_itens_na_ilha(id_ilha, tipo="consumivel")
+            nao_consumiveis = self.buscar_itens_na_ilha(id_ilha, tipo="nao_consumivel")
+            todos_itens = consumiveis + nao_consumiveis
+
+            if not todos_itens:
+                return "Nenhum item disponível para ser recebido nesta ilha."
+
+            # Escolhe item aleatório
+            item_escolhido = random.choice(todos_itens)
+            id_item = item_escolhido.identificador_item
+
+            # Pega ID da mochila do jogador
+            print(id_jogador, jogador.identificador_progresso)
+            mochila = self.buscar_inventario(id_jogador, tipo_inventario='moc', identificador_progresso=jogador.identificador_progresso)
+            if not mochila:
+                return "Erro: mochila do jogador não encontrada."
+
+            id_inventario = mochila[0].identificador_inventario
+
+            # Adiciona o item
+            sucesso = self.adicionar_item_ao_inventario(id_inventario, id_item)
+            if sucesso:
+                return f"Item '{item_escolhido.nome_item}' adicionado à mochila!"
+            else:
+                return "Erro ao adicionar o item à mochila."
+        except Exception as e:
+            self.conn.rollback()
+            print(f"[ERRO] executar_recompensa_exploracao: {e}")
+            return "Erro inesperado ao tentar coletar recompensa."
+
 
     def buscar_arma_atributos(self, id_arma):
          query = """

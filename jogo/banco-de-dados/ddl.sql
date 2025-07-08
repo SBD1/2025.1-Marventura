@@ -67,7 +67,8 @@ CREATE TABLE consumivel (
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
     preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
-    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
+    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE)),
+    e_coletado BOOLEAN 
 );
 
 CREATE TRIGGER atribui_id_consumivel
@@ -84,7 +85,8 @@ CREATE TABLE nao_consumivel (
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
-    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    e_coletado BOOLEAN 
 );
 
 CREATE TRIGGER atribui_id_nao_consumivel
@@ -633,15 +635,16 @@ EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 
 
 CREATE TABLE recompensa_de_exploracao (
-    identificador_recompensa ID PRIMARY KEY,
-    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
-    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now()
+    identificador_area_interativa ID REFERENCES area_interativa(identificador_area_interativa),
+    identificador_jogador ID REFERENCES tipo_personagem(identificador_personagem),
+    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now(),
+    PRIMARY KEY (identificador_area_interativa, identificador_jogador)
 );
 
-CREATE TRIGGER atribui_id_recompensa_de_exploracao
+CREATE TRIGGER trigger_registrar_interacao
 BEFORE INSERT ON recompensa_de_exploracao
 FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
+EXECUTE FUNCTION tentar_coletar_item();
 
 
 
