@@ -27,6 +27,10 @@ class TelaBatalha(TelaModelo):
         self.habilidades_visiveis = []
         self.habilidade_selecionada_index = 0
 
+        self.inimigo_da_esquerda = None
+        self.inimigo_do_meio = None
+        self.inimigo_da_direita = None
+
         # Carrega o fundo da batalha
         self.fundo_batalha = self.gerenciador_recursos.obter_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS)
         if not self.fundo_batalha:
@@ -58,31 +62,58 @@ class TelaBatalha(TelaModelo):
         self.x_quadro = LARGURA_TELA // 2 - self.largura_quadro // 2
         self.y_quadro = 144  # ou calcule centralizado em Y também se quiser
 
+        self.menu_de_habilidade = self.gerenciador_recursos.obter_imagem(CHAVE_MENU_SELECAO_HABILIDADE)
+        self.largura_menu_habilidade = self.menu_de_habilidade.get_width()
+        self.altura_menu_habilidade = self.menu_de_habilidade.get_height()
+        self.x_menu_habilidade = LARGURA_TELA / 3
+        self.y_menu_habilidade = ALTURA_TELA / 2
+
         self.rect_quadro = pygame.Rect(
             self.x_quadro, self.y_quadro, self.largura_quadro, self.altura_quadro
         )
 
-
-
         self.jogador_iniciou = jogador_iniciou
 
         # Prepara a lista de inimigos que serão enfrentados
-        self.ondas_pendentes = inimigos_na_batalha
-        self.numero_da_onda = 0
-        self._carregar_proxima_onda()
+        self.inimigos = []
+        self.inimigos_animados = []
+        self.fila_ataques_inimigos = []
 
-        self.imagens_de_inimigos = []
+
+        '''        self.imagens_de_inimigos = []
         for inimigo in self.inimigos:
             self.imagens_de_inimigos.append(self.gerenciador_recursos.obter_imagem(inimigo['imagem']))
             if not self.imagens_de_inimigos:
                 print(f"AVISO: Imagem de batalha para '{inimigo['tipo']}' não encontrada. Usando cor fallback.")
                 self.imagem_inimigo = pygame.Surface((150, 150))
-                self.imagem_inimigo.fill(VERMELHO)
+                self.imagem_inimigo.fill(VERMELHO)'''
+        
+        # Inimigos
+        self.ondas_pendentes = []
+        self.numero_da_onda = 0
 
+        for inimigo_mapa in inimigos_na_batalha:
+            nome = inimigo_mapa.nome
+            vida = inimigo_mapa.vida_total
+            print(f"[DEBUG] Inimigo carregado: {nome} - Vida: {vida}")
+            nivel = inimigo_mapa.nivel
+            experiencia = inimigo_mapa.experiencia
+
+            # Cria 3 clones do mesmo inimigo em versão "batalha"
+            onda = [
+                InimigoBatalha(nome, vida, nivel, experiencia)
+                for _ in range(3)
+            ]
+
+            self.ondas_pendentes.append(onda)
+
+        self._carregar_proxima_onda()
+
+        self.batalha_ja_aconteceu = False
         self.estado_batalha = "turno_jogador"  # outros: "turno_inimigo", "esperando_ataque", "selecionando_habilidade"
         self.tempo_proximo_ataque = 0
         self.inimigo_index_atacando = 0
-
+        
         self.tempo_dano_jogador = 0
         self.danos_flutuantes = []
 
@@ -95,27 +126,96 @@ class TelaBatalha(TelaModelo):
 
 
 
-
+    # Usa um ataque extra se o jogador tiver iniciado a batalha
+    # Executa o ataque básico da arma, estilingue, arco ou soco automaticamente
+    # Não passa a vez para o inimigo
     def _usar_ataque_extra(self):
-        if self.inimigos:
-            inimigo = self.inimigos[0]
-            dano = 2  # ataque básico
-            inimigo["PV"] -= dano
-            print(f"O jogador iniciou com um ataque extra! {inimigo['tipo']} levou {dano} de dano.")
-            self.danos_flutuantes.append(DanoFlutuante(str(dano), self.inimigos_animados[0].pos))
+        if not self.inimigos:
+            return
+
+        jogador = self.entidades.jogador
+
+        # Define prioridades: arma > estilingue/arco > soco
+        habilidades_disponiveis = [
+            h for h in jogador.habilidades
+            if h.tipo_de_ataque in ("espada", "estilingue", "arco", "soco")
+        ]
+
+        if not habilidades_disponiveis:
+            print("[AVISO] Nenhuma habilidade básica disponível para ataque extra.")
+            return
+
+        habilidade = habilidades_disponiveis[0]
+
+        # Determina raridade baseada na arma (ou usa padrão)
+        raridade = "★"
+        if habilidade.tipo_de_ataque != "soco" and jogador.kit_do_explorador.arma:
+            raridade = jogador.kit_do_explorador.armararidade
+
+        dano = habilidade.calcular_dano_final(
+            nivel_jogador=jogador.nivel,
+            raridade=raridade
+        )
+
+        tipo = habilidade.tipo_de_alvo
+        aplicou_dano = False
+
+        if tipo == "fila":
+            # Aplica no primeiro inimigo vivo (geralmente o mais à esquerda)
+            for i, inimigo in enumerate(self.inimigos):
+                if inimigo.vida_atual > 0:
+                    self._aplicar_dano(i, dano)
+                    animado = self.inimigos_animados[i]
+                    self.danos_flutuantes.append(
+                        DanoFlutuante(str(dano), (animado.pos[0], animado.pos[1] - 30))
+                    )
+                    aplicou_dano = True
+                    break
+
+        elif tipo in ("terrestre", "area"):
+            # Aplica em todos os inimigos vivos
+            for i, inimigo in enumerate(self.inimigos):
+                if inimigo.vida_atual > 0:
+                    self._aplicar_dano(i, dano)
+                    animado = self.inimigos_animados[i]
+                    self.danos_flutuantes.append(
+                        DanoFlutuante(str(dano), (animado.pos[0], animado.pos[1] - 30))
+                    )
+                    aplicou_dano = True
+
+        elif tipo in ("alvo_terrestre", "alvo_livre"):
+            # Aplica em um único inimigo vivo (qualquer um, pode ser o primeiro)
+            for i, inimigo in enumerate(self.inimigos):
+                if inimigo.vida_atual > 0:
+                    self._aplicar_dano(i, dano)
+                    animado = self.inimigos_animados[i]
+                    self.danos_flutuantes.append(
+                        DanoFlutuante(str(dano), (animado.pos[0], animado.pos[1] - 30))
+                    )
+                    aplicou_dano = True
+                    break
+
+        else:
+            print(f"[AVISO] Tipo de alvo não reconhecido: {tipo}")
+
+        if aplicou_dano:
+            print(f"[DEBUG] Ataque extra com: {habilidade.nome} ({habilidade.tipo_de_ataque}) → Dano: {dano}")
+
 
 
 
     def _icones_acao_equipaveis(self):
         identificador_de_ataques = self.entidades.jogador.kit_do_explorador.obter_ids_do_equipamento()
-
+        print(f"Identificador de ataques: {identificador_de_ataques}")
         if identificador_de_ataques['id_fruta']:
             self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_FRUTA), acao="fruta"))
 
         if identificador_de_ataques['id_arma']:
-            if identificador_de_ataques['id_arma'][:3] == 'esp':
+            if self.entidades.jogador.kit_do_explorador.arma.tipo_arma == 'esp':
                 self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_ESPADA), acao="espada"))
-            elif identificador_de_ataques['id_arma'][:3] == 'est':
+            elif self.entidades.jogador.kit_do_explorador.arma.tipo_arma == 'est':
+                self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_PROJETIL), acao="projetil"))
+            elif self.entidades.jogador.kit_do_explorador.arma.tipo_arma == 'arco':
                 self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_PROJETIL), acao="projetil"))
         else:
             chave_soco = CHAVE_ACAO_SOCO_SILVIE if self.entidades.jogador.nome == SILVIE else CHAVE_ACAO_SOCO_SHUAN
@@ -125,43 +225,57 @@ class TelaBatalha(TelaModelo):
 
     def _carregar_proxima_onda(self):
         if not self.ondas_pendentes:
-            self.inimigos = []        # força término da batalha
+            self.inimigos = []  # força término da batalha
             return False
 
-        self.inimigos = self.ondas_pendentes.pop(0)            # lista de 3 dicts
-        
-        # Posicionamento dos inimigos (exemplo com 3 posições)
+        # Pega o inimigo base da próxima onda (InimigoBatalha)
+        onda = self.ondas_pendentes.pop(0)
+
+        # Atribui diretamente os três inimigos
+        self.inimigo_da_esquerda = onda[0]
+        self.inimigo_do_meio = onda[1]
+        self.inimigo_da_direita = onda[2]
+
+        # Lista de inimigos em ordem para lógica de batalha
+        self.inimigos = [
+            self.inimigo_da_esquerda,
+            self.inimigo_do_meio,
+            self.inimigo_da_direita
+        ]
+
+        # Posicionamento dos inimigos na tela de batalha
         posicoes = [
-            (LARGURA_TELA - 350, ALTURA_TELA - 225),  # Inimigo 1 (esquerda)
-            (LARGURA_TELA - 250, ALTURA_TELA - 150),  # Inimigo 2 (centro, mais à frente)
-            (LARGURA_TELA - 120, ALTURA_TELA - 200)    # Inimigo 3 (direita)
+            (LARGURA_TELA - 350, ALTURA_TELA - 225),
+            (LARGURA_TELA - 250, ALTURA_TELA - 150),
+            (LARGURA_TELA - 120, ALTURA_TELA - 200),
         ]
 
         self.inimigos_animados = []
+
         for i, inimigo in enumerate(self.inimigos):
-            imagem = self.gerenciador_recursos.obter_imagem(inimigo['imagem'])
-            posicao_final = posicoes[i % len(posicoes)]
-            animado = InimigoAnimado(imagem, posicao_final)
-            self.inimigos_animados.append(animado)
+            imagem = self.gerenciador_recursos.obter_imagem(inimigo.imagem_id)
+            posicao = posicoes[i]
+            sprite_animado = InimigoAnimado(imagem, posicao)
+            self.inimigos_animados.append(sprite_animado)
 
-        """self.imagens_de_inimigos = [
-            self.gerenciador_recursos.obter_imagem(inimigo['imagem'])
-            for inimigo in self.inimigos
-        ]"""
         self.numero_da_onda += 1
-        print(f"🌊 Iniciando onda {self.numero_da_onda} com {self.inimigos[0]['tipo']}")
-        
-        # Mostrar texto "Onda x/n"
         total_ondas = self.numero_da_onda + len(self.ondas_pendentes)
-        self.texto_mensagem_onda = f"Onda {self.numero_da_onda}/{total_ondas}"
-        self.tempo_mensagem_onda = 2.5  # segundos visíveis
 
-        # garantir que o turno recomeça do jogador
+        inimigo_referencia = self.inimigo_da_esquerda  # pode ser qualquer um dos 3
+        print(f"\n=== 🌊 Onda {self.numero_da_onda}/{total_ondas} iniciada ===")
+        print(f"Inimigo base: {inimigo_referencia.nome} — Nível {inimigo_referencia.nivel}")
+
+
+        self.texto_mensagem_onda = f"Onda {self.numero_da_onda}/{total_ondas}"
+        self.tempo_mensagem_onda = 2.5
+
+        # Reinicia o estado da batalha
         self.estado_batalha = "turno_jogador"
         self.tempo_proximo_ataque = 0
         self.inimigo_index_atacando = 0
-        
+
         return True
+
 
 
 
@@ -186,10 +300,10 @@ class TelaBatalha(TelaModelo):
 
 
     def _preparar_habilidade(self):
-        self.habilidade_usando = self.habilidades[self.habilidade_selecionada_index]
-        self.estado_batalha = "selecao_de_alvo" if self.habilidade_usando.tipo_de_alvo in ["alvo_terrestre", "alvo_livre"] else "executando_ataque"
-
+        self.habilidade_usando = self.habilidades_visiveis[self.habilidade_selecionada_index]
         tipo_alvo = self.habilidade_usando.tipo_de_alvo
+
+        print(f"[DEBUG] Preparando habilidade: {self.habilidade_usando.nome} ({tipo_alvo})")
 
         if tipo_alvo in ["alvo_terrestre", "alvo_livre"]:
             self.estado_batalha = "selecao_de_alvo"
@@ -200,6 +314,8 @@ class TelaBatalha(TelaModelo):
 
     def _executar_ataque_manual(self, alvo_index):
         dano = self._calcular_dano(self.habilidade_usando)
+        print(f"[DEBUG] Executando ataque manual em {alvo_index}")
+        
         self._aplicar_dano(alvo_index, dano)
         self._encerrar_turno_jogador()
 
@@ -208,9 +324,14 @@ class TelaBatalha(TelaModelo):
     def _executar_ataque_auto(self):
         dano = self._calcular_dano(self.habilidade_usando)
         tipo = self.habilidade_usando.tipo_de_alvo
+        print(f"[DEBUG] Executando ataque automático com: {self.habilidade_usando.nome}")
 
         if tipo == "fila":
-            self._aplicar_dano(0, dano)
+            alvo = self._proximo_inimigo_vivo()
+            if alvo:
+                self._aplicar_dano(self.inimigos.index(alvo), dano)
+            else:
+                print("[DEBUG] Nenhum inimigo vivo para atacar em fila.")
         else:  # terrestre ou área
             for i in range(len(self.inimigos)):
                 self._aplicar_dano(i, dano)
@@ -224,9 +345,9 @@ class TelaBatalha(TelaModelo):
 
         # Determinar raridade da fonte
         if habilidade.tipo_de_ataque in ["espada", "estilingue", "arco"]:
-            raridade = self.entidades.jogador.kit.arma["raridade"]
+            raridade = self.entidades.jogador.kit_do_explorador.arma.raridade
         elif habilidade.tipo_de_ataque == "fruta":
-            raridade = self.entidades.jogador.kit.fruta["raridade"]
+            raridade = self.entidades.jogador.kit_do_explorador.fruta.raridade
         else:
             raridade = "★"
 
@@ -235,33 +356,88 @@ class TelaBatalha(TelaModelo):
 
 
     def _aplicar_dano(self, index, dano):
-        if 0 <= index < len(self.inimigos):
-            inimigo = self.inimigos[index]
-            inimigo["PV"] -= dano
-            pos = self.inimigos_animados[index].pos
-            self.danos_flutuantes.append(DanoFlutuante(str(dano), (pos[0], pos[1] - 30)))
+        if not (0 <= index < len(self.inimigos)):
+            print(f"[AVISO] Índice de inimigo inválido: {index}")
+            return
 
+        inimigo = self.inimigos[index]
+        animado = self.inimigos_animados[index]
+
+        # Garante que dano mínimo seja 0 (caso algo negativo escape)
+        dano = max(0, dano)
+        inimigo.vida_atual = max(0, inimigo.vida_atual - dano)
+
+        # Adiciona dano flutuante visual
+        x, y = animado.pos
+        self.danos_flutuantes.append(DanoFlutuante(str(dano), (x, y - 30)))
+
+        print(f"💥 {inimigo.nome} recebeu {dano} de dano! Vida restante: {inimigo.vida_atual}/{inimigo.vida_total}")
+
+
+
+    def _proximo_inimigo_vivo(self):
+        for inimigo in self.inimigos:
+            if inimigo.esta_vivo():
+                return inimigo
+        return None
 
 
     def _encerrar_turno_jogador(self):
         self.estado_batalha = "turno_inimigo"
         self.inimigo_index_atacando = 0
         self.tempo_proximo_ataque = 0.7
+        self._preparar_fila_de_ataque_inimiga()
 
 
 
     def inimigos_realizam_turno(self):
-        print("Turno dos inimigos!")
+        print("🔺 Turno dos inimigos!")
         self.estado_batalha = "turno_inimigo"
-        self.fila_turnos = []
+        self._preparar_fila_de_ataque_inimiga()
+        self.tempo_proximo_ataque = 0.5
+        self.inimigo_index_atacando = 0
 
-        # Adiciona todos os inimigos vivos na fila
-        for i, inimigo in enumerate(self.inimigos):
-            if inimigo["PV"] > 0:
-                self.fila_turnos.append(i)
+    def _preparar_fila_de_ataque_inimiga(self):
+        self.fila_ataques_inimigos = [
+            i for i, inimigo in enumerate(self.inimigos) if inimigo.esta_vivo()
+        ]
+    
+    def _executar_ataque_inimigo(self):
+        i = self.fila_ataques_inimigos.pop(0)
 
-        self.tempo_proximo_ataque = 0.5  # tempo de espera antes do primeiro ataque
-        self.inimigo_index_atacando = 0      
+        if i >= len(self.inimigos) or i >= len(self.inimigos_animados):
+            print(f"[ERRO] Índice inválido na fila de inimigos: {i}")
+            return
+
+        inimigo = self.inimigos[i]
+        animado = self.inimigos_animados[i]
+
+        dano = 1  # Por enquanto, dano fixo
+        animado.iniciar_ataque()
+
+        self.entidades.jogador.vida_atual = max(0, self.entidades.jogador.vida_atual - dano)
+
+        pos = self.posicao_jogador
+        self.danos_flutuantes.append(
+            DanoFlutuante(str(dano), (pos[0], pos[1] - 50))
+        )
+
+        print(f"🧟 Inimigo ({inimigo.nome}) atacou! Jogador perdeu {dano} PV.")
+
+        self.barra_de_estado.atualizar_estado(
+            self.entidades.jogador.vida_atual,
+            self.entidades.jogador.vida_maxima,
+            self.entidades.jogador.energia_atual,
+            self.entidades.jogador.energia_maxima,
+            self.entidades.jogador.nivel,
+            self.entidades.jogador.experiencia_atual
+        )
+
+        if self.entidades.jogador.vida_atual <= 0:
+            self.fim_batalha(venceu=False)
+            return
+
+        self.tempo_proximo_ataque = 0.7  # Delay entre ataques
 
         
     
@@ -395,17 +571,55 @@ class TelaBatalha(TelaModelo):
                     efeitos_texto = fonte_info.render(efeitos, True, VERDE_CLARO)
                     tela.blit(efeitos_texto, (LARGURA_TELA / 3, 540))
         
-
-
-
         # Mostrar lista de habilidades
         if self.estado_batalha == "selecionando_habilidade":
-            fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
-            x, y = 50, 400
-            for i, self.entidades.jogador.habilidade in enumerate(self.entidades.jogador.habilidades):
-                cor = (255, 255, 0) if i == self.habilidade_selecionada_index else (255, 255, 255)
-                texto = fonte.render(self.entidades.jogador.habilidade.nome, True, cor)
-                tela.blit(texto, (x, y + i * 30))
+            tela.blit(self.menu_de_habilidade, (self.x_menu_habilidade, self.y_menu_habilidade))
+
+            habilidades = self.habilidades_visiveis
+            inicio = 0  # por agora sem scroll
+            fim = len(habilidades)
+            habilidades_visiveis = habilidades[inicio:fim]
+
+            mouse_pos = pygame.mouse.get_pos()
+            habilidade_em_foco = None
+
+            for i, habilidade in enumerate(habilidades_visiveis):
+                y = self.y_menu_habilidade + 16 + i * 40
+                rect_item = pygame.Rect(self.x_menu_habilidade + 8, y, self.largura_menu_habilidade - 16, 32)
+                mouse_sobre = rect_item.collidepoint(mouse_pos)
+
+                # Hover aumenta fonte
+                tamanho_fonte = 32 if mouse_sobre else 28
+                fonte = self.gerenciador_recursos.obter_fonte(
+                    CHAVE_FONTE_CHERRY_SUBTITULO if mouse_sobre else CHAVE_FONTE_CHERRY_TEXTO
+                )
+
+                if mouse_sobre:
+                    habilidade_em_foco = habilidade
+
+                texto_nome = self.renderizar_texto_limitado(
+                    fonte, habilidade.nome, BRANCO_CLARO, self.largura_menu_habilidade - 32
+                )
+                tela.blit(texto_nome, (self.x_menu_habilidade + 16, y + 4 - (tamanho_fonte - 28) // 2))
+
+            # Mostrar descrição da habilidade em foco
+            if habilidade_em_foco:
+                tela.blit(self.caixa_de_texto, (self.x_central, 447))
+
+                fonte_info = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+                largura_caixa = self.caixa_de_texto.get_width() - 32
+
+                # Quebra a descrição em várias linhas
+                linhas_desc = self.quebrar_texto(habilidade_em_foco.descricao, fonte_info, largura_caixa)
+                for i, linha in enumerate(linhas_desc):
+                    texto = fonte_info.render(linha, True, PRETO)
+                    tela.blit(texto, (self.x_central + 16, 455 + i * 22))
+
+                # Mostrar custo e tipo
+                extra = f"Custo: {habilidade_em_foco.custo} PE | Alvo: {habilidade_em_foco.tipo_de_alvo}"
+                info_extra = fonte_info.render(extra, True, AZUL_CLARO)
+                tela.blit(info_extra, (self.x_central + 16, 455 + len(linhas_desc) * 22 + 10))
+
 
 
 
@@ -438,9 +652,8 @@ class TelaBatalha(TelaModelo):
     def handle_input(self, evento):
         # Chama o handle_input da base para eventos comuns (ex: QUIT)
         super().handle_input(evento)
+        #print(f"[DEBUG] Estado da batalha no clique: {self.estado_batalha}")
 
-        if self.estado_batalha != "turno_jogador":
-            return
         # Se o menu da mochila está aberto, verifica clique nos itens
         if evento.type == pygame.MOUSEBUTTONDOWN and self.menu_mochila_ativo:
             if evento.button != 1:
@@ -483,7 +696,34 @@ class TelaBatalha(TelaModelo):
             # Rola para cima (y > 0) ou para baixo (y < 0)
             self.scroll_offset_mochila = max(0, min(self.scroll_offset_mochila - evento.y, max_offset))
 
-        elif evento.type == pygame.MOUSEBUTTONDOWN:
+        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "selecionando_habilidade":
+            habilidades = self.habilidades_visiveis
+            clicou_em_habilidade = False
+            print(f"[DEBUG] Habilidades visíveis: {[h.nome for h in habilidades]}")
+            for i, habilidade in enumerate(habilidades):
+                y = self.y_menu_habilidade + 16 + i * 40
+                rect_item = pygame.Rect(self.x_menu_habilidade + 8, y, self.largura_menu_habilidade - 16, 32)
+                print(f"[DEBUG] Verificando clique na habilidade: {habilidade.nome} (índice {i})")
+                if rect_item.collidepoint(evento.pos):
+                    print(f"[DEBUG] Clicou na habilidade: {habilidade.nome}")
+                    self.habilidade_selecionada_index = i
+                    self._preparar_habilidade()
+                    clicou_em_habilidade = True
+                    break
+                
+            # Clicou fora do quadro → fecha o menu
+            rect_menu_de_habilidades = pygame.Rect(self.x_menu_habilidade, self.y_menu_habilidade, self.largura_menu_habilidade, self.altura_menu_habilidade)
+            if not rect_menu_de_habilidades.collidepoint(evento.pos) and not clicou_em_habilidade:
+                self.estado_batalha = "turno_jogador"
+
+        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "selecao_de_alvo":
+            for i, animado in enumerate(self.inimigos_animados):
+                rect = animado.imagem.get_rect(topleft=animado.pos)
+                if rect.collidepoint(evento.pos):
+                    self._executar_ataque_manual(i)
+                    break
+
+        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "turno_jogador":
             for icone in self.icones_acao:
                 if icone.rect.collidepoint(evento.pos):
                     match icone.acao:
@@ -503,44 +743,22 @@ class TelaBatalha(TelaModelo):
                             self.habilidades_visiveis = [
                                 h for h in self.entidades.jogador.habilidades if h.tipo_de_ataque == icone.acao
                             ]
-                            if self.entidades.jogador.habilidades:
+                            if self.habilidades_visiveis:
                                 self.estado_batalha = "selecionando_habilidade"
                                 self.habilidade_selecionada_index = 0
 
                         case "espada" | "projetil" | "soco":
                             print(f"Ação de ataque: {icone.acao}")
                             self.habilidades_visiveis = [
-                                h for h in self.habilidades if h.tipo_de_ataque == icone.acao
+                                h for h in self.entidades.jogador.habilidades if h.tipo_de_ataque == icone.acao
                             ]
-                            if self.habilidades:
+                            if self.habilidades_visiveis:
                                 self.estado_batalha = "selecionando_habilidade"
                                 self.habilidade_selecionada_index = 0
 
                         case _:
                             print(f"Ação desconhecida: {icone.acao}")
     
-        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "selecao_de_alvo":
-            for i, animado in enumerate(self.inimigos_animados):
-                rect = animado.imagem.get_rect(topleft=animado.pos)
-                if rect.collidepoint(evento.pos):
-                    self._executar_ataque_manual(i)
-                    break
-                
-        elif evento.type == pygame.KEYDOWN and self.estado_batalha == "selecionando_habilidade":
-            print(self.estado_batalha)
-            print(self.entidades.jogador.habilidades)
-            print(self.habilidade_selecionada_index)
-            if evento.key == pygame.K_UP:
-                self.habilidade_selecionada_index = (self.habilidade_selecionada_index - 1) % len(self.habilidades_visiveis)
-            elif evento.key == pygame.K_DOWN:
-                self.habilidade_selecionada_index = (self.habilidade_selecionada_index + 1) % len(self.habilidades_visiveis)
-            elif evento.key == pygame.K_RETURN:
-                self._preparar_habilidade()
-
-        
-
-
-
         return None
 
 
@@ -551,6 +769,7 @@ class TelaBatalha(TelaModelo):
             self._usar_ataque_extra()
             self.jogador_iniciou = False
 
+        # Atualiza contadores de tempo
         if self.tempo_mensagem_onda > 0:
             self.tempo_mensagem_onda -= dt
 
@@ -559,37 +778,9 @@ class TelaBatalha(TelaModelo):
 
         if self.estado_batalha == "turno_inimigo":
             self.tempo_proximo_ataque -= dt
-            if self.tempo_proximo_ataque <= 0 and self.fila_turnos:
-                i = self.fila_turnos.pop(0)
-                if i < len(self.inimigos) and i < len(self.inimigos_animados):
-                    inimigo = self.inimigos[i]
-                    animado = self.inimigos_animados[i]
-
-                    animado.iniciar_ataque()
-                    dano = 1
-                    self.entidades.jogador.vida_atual -= dano
-                    print(f"{inimigo['tipo']} atacou! Jogador perdeu {dano} PV.")
-                    self.tempo_dano_jogador = 0.25  # dura 0.25s
-                    pos = self.posicao_jogador
-                    self.danos_flutuantes.append(DanoFlutuante(str(dano), (pos[0], pos[1] - 50)))
-
-                    self.barra_de_estado.atualizar_estado(
-                        self.entidades.jogador.vida_atual,
-                        self.entidades.jogador.vida_maxima,
-                        self.entidades.jogador.energia_atual,
-                        self.entidades.jogador.energia_maxima,
-                        self.entidades.jogador.nivel,
-                        self.entidades.jogador.experiencia_atual
-                    )
-
-                    if self.entidades.jogador.vida_atual <= 0:
-                        self.fim_batalha(venceu=False)
-                        return
-
-                    self.tempo_proximo_ataque = 0.7  # tempo entre ataques
-                else:
-                    print(f"Índice inválido na fila de turnos: {i}")
-            elif not self.fila_turnos:
+            if self.tempo_proximo_ataque <= 0 and self.fila_ataques_inimigos:
+                self._executar_ataque_inimigo()
+            elif not self.fila_ataques_inimigos:
                 self.estado_batalha = "turno_jogador"
 
         for dano in self.danos_flutuantes:
@@ -603,30 +794,61 @@ class TelaBatalha(TelaModelo):
 
         # 2) Dispara fade‑out nos inimigos que acabaram de ficar com PV <= 0
         for i, inimigo in enumerate(self.inimigos):
-            if inimigo["PV"] <= 0 and self.inimigos_animados[i].estado == "parado":
+            if inimigo.vida_atual <= 0 and self.inimigos_animados[i].estado == "parado":
                 self.inimigos_animados[i].iniciar_morte()           ### dispara fade
                 # NÃO remova ainda — deixe o fade acontecer
 
         # 3) Constrói novas listas, jogando fora só quem terminou a animação
-        vivos, animados_vivos = [], []
-        for i in range(len(self.inimigos)):
-            if self.inimigos_animados[i].estado != "removido":
-                vivos.append(self.inimigos[i])
-                animados_vivos.append(self.inimigos_animados[i])
-        self.inimigos = vivos
-        self.inimigos_animados = animados_vivos
-        self.imagens_de_inimigos = [a.imagem for a in self.inimigos_animados]
+        if self.batalha_ja_aconteceu:
+            vivos, animados_vivos = [], []
+            for i in range(len(self.inimigos)):
+                if self.inimigos_animados[i].estado != "removido":
+                    vivos.append(self.inimigos[i])
+                    animados_vivos.append(self.inimigos_animados[i])
 
-        # 4) Verifica se a onda acabou
-        if not self.inimigos:
+            self.inimigos = vivos
+            self.inimigos_animados = animados_vivos
+
+        #self.imagens_de_inimigos = [a.imagem for a in self.inimigos_animados]
+
+        # Verifica se todos os inimigos da onda foram derrotados
+        if all(not inimigo.esta_vivo() for inimigo in self.inimigos):
             if not self._carregar_proxima_onda():
                 self.fim_batalha(venceu=True)
+
+
+
+class InimigoBatalha:
+    def __init__(self, nome, vida_total, nivel, experiencia, efeito=None):
+        self.nome = nome
+        self.imagem_id = f"{nome}_0"  # Ex: "Lobo_0"
+        self.vida_total = vida_total
+        self.vida_atual = vida_total
+        self.nivel = nivel
+        self.experiencia = experiencia
+        self.efeito = efeito  # status como 'Envenenado', 'Tontura', etc.
+
+    def clonar(self):
+        return InimigoBatalha(
+            self.nome,
+            self.imagem_id,
+            self.vida_total,
+            self.nivel,
+            self.experiencia
+        )
+    
+    def receber_dano(self, dano):
+        self.vida_atual = max(0, self.vida_atual - dano)
+
+    def esta_vivo(self):
+        return self.vida_atual > 0
 
 
   
 class InimigoAnimado:
     def __init__(self, imagem, posicao_final):
         self.imagem = imagem
+        print(f"[DEBUG] Criando InimigoAnimado com imagem: {imagem} e posição final: {posicao_final}")
         self.pos = [LARGURA_TELA + 150, posicao_final[1]]  # entra da direita
         self.pos_final = posicao_final
         self.velocidade = 300
@@ -637,10 +859,29 @@ class InimigoAnimado:
         self.avanco_total = 80  # pixels que o inimigo avança
         self.avanco_duracao = 0.3  # segundos (ida + volta)
         self.avanco_progresso = 0 
+        self.imagem_base = imagem
+        self.imagem = imagem.copy()
+
     
+
     def iniciar_ataque(self):
         self.atacando = True
         self.avanco_progresso = 0
+
+    def resetar(self, nova_imagem, nova_posicao):
+        self.imagem = nova_imagem.copy()
+        self.pos_final = nova_posicao
+        self.pos = [LARGURA_TELA + 150, nova_posicao[1]]
+        self.alpha = 255
+        self.estado = "entrando"
+        self.atacando = False
+        self.avanco_progresso = 0
+
+
+    def iniciar_morte(self):
+        if self.estado != "morrendo":
+            self.estado = "morrendo"
+
 
 
     def update(self, dt):
@@ -649,19 +890,18 @@ class InimigoAnimado:
             if self.pos[0] <= self.pos_final[0]:
                 self.pos[0] = self.pos_final[0]
                 self.estado = "parado"
-        
+
+        elif self.estado == "morrendo":
+            self.alpha -= 400 * dt
+            if self.alpha <= 0:
+                self.alpha = 0
+                self.estado = "removido"
+
         if self.atacando:
             self.avanco_progresso += dt / self.avanco_duracao
             if self.avanco_progresso >= 1:
                 self.avanco_progresso = 1
                 self.atacando = False
-
-
-        elif self.estado == "morrendo":
-            self.alpha -= 400 * dt  # fade rápido (~0.6s)
-            if self.alpha <= 0:
-                self.alpha = 0
-                self.estado = "removido"
 
     def draw(self, tela):
         if self.estado == "removido":
@@ -676,13 +916,10 @@ class InimigoAnimado:
             else:
                 offset = deslocamento * (1 - (t - 0.5) * 2)  # recua
 
-        img = self.imagem.copy()
-        img.set_alpha(int(self.alpha))
-        tela.blit(img, (self.pos[0] - offset, self.pos[1]))
+        self.imagem.set_alpha(int(self.alpha))
+        tela.blit(self.imagem, (self.pos[0] - offset, self.pos[1]))
 
-    def iniciar_morte(self):
-        if self.estado != "morrendo":
-            self.estado = "morrendo"
+
 
 class DanoFlutuante:
     def __init__(self, texto, pos):
