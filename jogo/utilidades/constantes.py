@@ -22,6 +22,7 @@ CINZA_ESCURO = (100, 100, 100)
 COR_TEXTO_SALVAR = (53, 38, 16) # Cor específica para texto de salvar
 VERDE_CLARO = pygame.Color("#23EA52")
 BRANCO_CLARO = pygame.Color("#F0F0F0")
+AZUL_CLARO = pygame.Color("#4B85C8")
 
 # --- Animação do Jogador ---
 VELOCIDADE_ANIMACAO_CAMINHADA = 0.15 # Segundos por frame na animação de caminhada (ajuste conforme quiser)
@@ -56,7 +57,9 @@ CHAVE_TRANSICAO_CARREGAR_JOGO = 'carregar_jogo'
 
 # --- Estados do Inimigo ---
 ESTADO_INIMIGO_PARADO = 'parado'
-ESTADO_INIMIGO_MOVENDO = 'movendo'
+ESTADO_INIMIGO_PATRULHANDO = 'patrulhando'
+ESTADO_INIMIGO_ALERTA = 'alerta'
+ESTADO_INIMIGO_PERSEGUINDO = 'perseguindo'
 ESTADO_INIMIGO_ATACANDO = 'atacando'
 ESTADO_INIMIGO_RECARGA = 'recarregando'
 
@@ -134,6 +137,7 @@ CHAVE_ICONE_CORACAO = 'icone_coracao'
 CHAVE_ICONE_ENERGIA = 'icone_energia'
 CHAVE_ICONE_MOEDA = 'icone_moeda'
 
+CHAVE_MENU_SELECAO_HABILIDADE = 'menu_selecao_habilidade'
 CHAVE_MENU_ITENS = 'menu_itens'
 CHAVE_CAIXA_DE_TEXTO = 'caixa_de_texto'
 CHAVE_BARRA_DE_ESTADO = 'barra_de_estado'
