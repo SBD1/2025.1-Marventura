@@ -96,6 +96,7 @@ class TelaSalvamento(TelaModelo):
 
                             self.gerenciador_entidades.jogador = Jogador(
                                 self.gerenciador_recursos,
+                                jogador.identificador_jogador,
                                 jogador.coordenada_x,
                                 jogador.coordenada_y,
                                 jogador.nome,

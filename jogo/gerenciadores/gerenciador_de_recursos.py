@@ -139,6 +139,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
+        self._carregar_imagem(CHAVE_CAIXA_DIALOGO, 'recursos/imagens/interface/caixa_de_dialogo.png')
         #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
 
         # --- Carregar planos de fundo para os mapas do jogo ---
@@ -159,6 +160,8 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
 
+        self._carregar_imagem(CENA_SILVIE_NO_CAMPO, 'recursos/imagens/cenas/cena_silvie_no_campo.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CENA_SHUAN_NO_CAMPO, 'recursos/imagens/cenas/cena_shuan_no_campo.png', escalar_para_altura=ALTURA_TELA)
 
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
@@ -180,6 +183,14 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(f"{INIMIGO_LOBO}_2", 'recursos/imagens/inimigos/Lobo_2.png', escalar_para_altura=80)
         self._carregar_imagem(f"{INIMIGO_CORVO}_0", 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
         self._carregar_imagem(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
+
+        # --- Carregar Imagens dos Habitantes ---
+        self._carregar_imagem(BIGODINI, 'recursos/imagens/habitantes/campones_b.png')
+        self._carregar_imagem(TIAO_PALHA, 'recursos/imagens/habitantes/campones_a.png')
+        self._carregar_imagem(LINA_PANELA, 'recursos/imagens/habitantes/camponesa_a.png')
+        self._carregar_imagem(TIA_COTINHA, 'recursos/imagens/habitantes/camponesa_b.png')
+        self._carregar_imagem(SR_LEE, 'recursos/imagens/habitantes/lee.png')
+        self._carregar_imagem(SR_LEE_LOGISTA, 'recursos/imagens/habitantes/lee-busto.png')
 
         # --- Carregar Ícone de Interação ---
         self._carregar_imagem(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)

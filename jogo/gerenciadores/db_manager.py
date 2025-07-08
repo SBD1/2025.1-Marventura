@@ -93,23 +93,31 @@ class DBManager:
         """
         consulta = """
             SELECT
-                p.identificador_progresso,
-                p.numero_do_slot,
-                p.data_ultimo_salvamento,
-                p.ocupado,
-                TRIM(j.nome) AS nome_jogador,
-                j.identificador_jogador,
+                progresso.identificador_progresso,
+                progresso.numero_do_slot,
+                progresso.data_ultimo_salvamento,
+                progresso.ocupado,
+                TRIM(jogador.nome) AS nome_jogador,
+                jogador.identificador_jogador,
                 ROUND(
-                    100.0 * COUNT(CASE WHEN m.estado = 'concluida' THEN 1 END) / NULLIF(COUNT(m.identificador_missao), 0),
+                    100.0 * COUNT(CASE WHEN estado_missao.estado = 'concluida' THEN 1 END) 
+                    / NULLIF(COUNT(estado_missao.identificador_missao), 0),
                     1
                 ) AS percentual_concluido
-            FROM progresso p
-            LEFT JOIN jogador j ON j.identificador_progresso = p.identificador_progresso
-            LEFT JOIN missao m ON m.identificador_progresso = p.identificador_progresso
-            GROUP BY p.identificador_progresso, p.numero_do_slot, p.data_ultimo_salvamento, p.ocupado, j.nome, j.identificador_jogador
-            ORDER BY p.numero_do_slot;
+            FROM progresso
+            LEFT JOIN jogador ON jogador.identificador_progresso = progresso.identificador_progresso
+            LEFT JOIN estado_missao ON estado_missao.identificador_progresso = progresso.identificador_progresso
+            GROUP BY 
+                progresso.identificador_progresso, 
+                progresso.numero_do_slot, 
+                progresso.data_ultimo_salvamento, 
+                progresso.ocupado, 
+                jogador.nome, 
+                jogador.identificador_jogador
+            ORDER BY progresso.numero_do_slot;
         """
         return self.executar_query(consulta, fetchall=True)
+
     
 
     
@@ -142,13 +150,203 @@ class DBManager:
         for habilidade in habilidades_aliado:
             self.inserir_habilidades(id_aliado, habilidade)
 
-        # 3) Inventário
+        dialogos_do_jogador = {
+            SILVIE: [
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'F',
+                    'sequencia': 4,
+                    'dialogo': 'Você... quem é você?',
+                },
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'F',
+                    'sequencia': 7,
+                    'dialogo': 'Eu... não sei como vim parar aqui.',
+                },
+                {
+                    'id_missao': 'mis002',
+                    'genero': 'F',
+                    'sequencia': 1,
+                    'dialogo': 'Tsc... sério?',
+                },
+                {
+                    'id_missao': 'mis003',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'dialogo': 'Só alguém procurando respostas... e talvez um pouco de água.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'dialogo': '(Olhando ao redor): — Gertrudes é... uma senhora?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 6,
+                    'dialogo': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 9,
+                    'dialogo': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 12,
+                    'dialogo': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 14,
+                    'dialogo': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 17,
+                    'dialogo': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 23,
+                    'dialogo': 'E ninguém tentou detê-la?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 26,
+                    'dialogo': 'Eu vou enfrentá-la.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'dialogo': 'Foi por pouco. Mas está feito.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'F',
+                    'sequencia': 5,
+                    'dialogo': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'F',
+                    'sequencia': 7,
+                    'dialogo': 'Isso é ótimo... mas como eu chego lá?',
+                },
+            ],
+            SHUAN: [
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'M',
+                    'sequencia': 4,
+                    'dialogo': 'Você... quem é você?',
+                },
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'M',
+                    'sequencia': 7,
+                    'dialogo': 'Eu... não sei como vim parar aqui.',
+                },
+                {
+                    'id_missao': 'mis002',
+                    'genero': 'M',
+                    'sequencia': 1,
+                    'dialogo': 'Tsc... sério?',
+                },
+                {
+                    'id_missao': 'mis003',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'dialogo': 'Só alguém procurando respostas... e talvez um pouco de água.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'dialogo': '(Olhando ao redor): — Gertrudes é... uma senhora?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 6,
+                    'dialogo': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 9,
+                    'dialogo': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 12,
+                    'dialogo': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 14,
+                    'dialogo': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 17,
+                    'dialogo': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 23,
+                    'dialogo': 'E ninguém tentou detê-la?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 26,
+                    'dialogo': 'Eu vou enfrentá-la.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'dialogo': 'Foi por pouco. Mas está feito.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'M',
+                    'sequencia': 5,
+                    'dialogo': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'M',
+                    'sequencia': 7,
+                    'dialogo': 'Isso é ótimo... mas como eu chego lá?',
+                },
+            ]
+        }
+
+        # 3) Diálogos
+        self.inserir_dialogos_personagem(id_jogador, dialogos_do_jogador[personagem_selecionado])
+
+        # 4) Inventário
         self.criar_inventario(id_jogador, id_progresso)
         self.criar_inventario(id_jogador, id_progresso, 'kit')
 
         self.atualizar_espaco_salvamento(id_progresso)
 
-        # 4) Retorna dados carregados já prontos
+        # 5) Retorna dados carregados já prontos
         return self.carregar_dados_do_progresso(id_jogador, id_progresso)
 
 
@@ -219,6 +417,15 @@ class DBManager:
         """
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
         return self.executar_query(query, params)
+    
+    def atualizar_posicao_jogador(self, identificador_jogador, identificador_area, coordenada_x, coordenada_y):
+        """Atualiza a posição do jogador"""
+        consulta = """
+            UPDATE jogador
+                SET identificador_area = %s, coordenada_x = %s, coordenada_y = %s
+                WHERE identificador_jogador = %s;
+        """
+        return self.executar_query(consulta, (identificador_area, coordenada_x, coordenada_y, identificador_jogador))
 
     def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
         """Insere um novo jogador no banco de dados e retorna o ID gerado."""
@@ -255,6 +462,103 @@ class DBManager:
             RETURNING (identificador_personagem, identificador_habilidade);
         """
         self.executar_query(consulta, (id_personagem, id_habilidade), fetchone=True)
+
+    def inserir_dialogos_personagem(self, id_jogador, dialogos):
+        """
+        Insere uma lista de diálogos para um personagem jogador.
+        :param id_jogador: ID do jogador que falará os diálogos
+        :param dialogos: Lista de dicionários com chaves:
+                        'id_missao', 'sequencia', 'genero', 'dialogo'
+        """
+        consulta = """
+            INSERT INTO dialogo (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING identificador_dialogo;
+        """
+        for dialogo in dialogos:
+            parametros = (
+                id_jogador,
+                dialogo['id_missao'],
+                dialogo['sequencia'],
+                dialogo['genero'],
+                dialogo['dialogo']
+            )
+            self.executar_query(consulta, parametros, fetchone=True)
+
+    
+    def buscar_dialogos_sem_missao(self, id_personagem):
+        """
+        Retorna todos os diálogos de um personagem específico que não estão associados a nenhuma missão (identificador_missao IS NULL).
+        :param id_personagem: ID do personagem (jogador, aliado, etc)
+        :return: Lista de tuplas com (identificador_dialogo, sequencia_local, genero, dialogo)
+        """
+        consulta = """
+            SELECT 
+                identificador_dialogo,
+                sequencia_local,
+                genero,
+                TRIM(dialogo) AS dialogo
+            FROM dialogo
+            WHERE identificador_personagem = %s
+            AND identificador_missao IS NULL
+            ORDER BY sequencia_local;
+        """
+        return self.executar_query(consulta, (id_personagem,), fetchall=True)
+
+
+    def buscar_missoes_aceitas_do_jogador(self, id_jogador):
+        """
+        Retorna todas as missões aceitas atualmente pelo jogador.
+        :param id_jogador: ID do jogador
+        :return: Lista com (identificador_missao, nome, descricao, nivel_de_desbloqueio)
+        """
+        consulta = """
+            SELECT 
+                m.identificador_missao,
+                TRIM(m.nome) AS nome,
+                TRIM(m.descricao) AS descricao,
+                m.nivel_de_desbloqueio
+            FROM jogador j
+            JOIN estado_missao em ON em.identificador_progresso = j.identificador_progresso
+            JOIN missao m ON m.identificador_missao = em.identificador_missao
+            WHERE j.identificador_jogador = %s
+            AND em.estado = 'aceita'
+            ORDER BY m.nivel_de_desbloqueio, m.nome;
+        """
+        return self.executar_query(consulta, (id_jogador,), fetchall=True)
+
+
+    def buscar_dialogos_da_missao(self, id_missao, genero_jogador):
+        """
+        Retorna todos os diálogos de uma missão específica, incluindo falas sem personagem definido.
+        Se identificador_personagem for NULL, o nome será '???'.
+        
+        :param id_missao: ID da missão (ex: 'mis011')
+        :param genero_jogador: 'F' para Silvie, 'M' para Shuan
+        :return: Lista com (identificador_dialogo, nome_personagem, sequencia_local, dialogo)
+        """
+        consulta = """
+            SELECT
+                dialogo.identificador_dialogo,
+                COALESCE(
+                    TRIM(jogador.nome),
+                    TRIM(aliado.nome),
+                    TRIM(habitante.nome),
+                    '???'
+                ) AS nome_personagem,
+                dialogo.sequencia_local,
+                TRIM(dialogo.dialogo) AS dialogo
+            FROM dialogo
+            LEFT JOIN tipo_personagem ON tipo_personagem.identificador_personagem = dialogo.identificador_personagem
+            LEFT JOIN jogador ON tipo_personagem.identificador_personagem = jogador.identificador_jogador
+            LEFT JOIN aliado ON tipo_personagem.identificador_personagem = aliado.identificador_aliado
+            LEFT JOIN habitante ON tipo_personagem.identificador_personagem = habitante.identificador_habitante
+            WHERE dialogo.identificador_missao = %s
+            AND dialogo.genero = %s
+            ORDER BY dialogo.sequencia_local;
+        """
+        return self.executar_query(consulta, (id_missao, genero_jogador), fetchall=True)
+
     
     # ===============================================
     # Métodos de Operações com Inventário e Itens
@@ -440,6 +744,35 @@ class DBManager:
             WHERE id_habitante = %s;
         """
         return self.executar_query(query, (id_habitante,), fetchone=True)
+    
+    def buscar_habitante_por_area(self, id_area):
+        """Busca dados de todos os habitante de uma área específica."""
+        query = """
+            SELECT
+                identificador_habitante,
+                identificador_area,
+                TRIM(nome) AS nome,
+                TRIM(descricao) AS descricao,
+                TRIM(chave_imagem) AS chave_imagem,
+                tipo_habitante,
+                coordenada_x,
+                coordenada_y,
+                especialidade,
+                moedas_totais
+                FROM habitante
+                WHERE identificador_area = %s;
+        """
+        return self.executar_query(query, (id_area,), fetchall=True)
+    
+    def buscar_habitante_por_ilha(self, id_ilha):
+        """Busca dados de todos os habitante de uma ilha específica."""
+        query = """
+            SELECT h.*
+                FROM habitante h
+                JOIN area a ON h.identificador_area = a.identificador_area
+                WHERE a.identificador_ilha = %s;
+        """
+        return self.executar_query(query, (id_ilha,), fetchall=True)
     
     def buscar_habilidades_por_personagem(self, identificador_personagem):
         """
