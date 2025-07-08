@@ -193,7 +193,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         
         return dados_dos_inimigos
 
+    def _detectar_inimigos_acertados(self):
+        """Verifica quais inimigos foram atingidos pelo ataque do jogador."""
+        atingidos = []
 
+        # Define a área de ataque (você pode ter isso em outro lugar)
+        area_ataque = self.jogador.get_area_de_ataque()  # Ex: um retângulo na frente
+
+        for inimigo in self.inimigos:
+            if inimigo.rect.colliderect(area_ataque):
+                #print(f"[DEBUG] Inimigo {inimigo.tipo} atingido!")
+                atingidos.append(inimigo)
+
+        return atingidos
 
     def _ataque_no_mapa(self):
         # Definir posição do efeito baseado na direção do jogador
@@ -212,23 +224,24 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             "tempo_restante": 0.05
         })
 
-
-        # Defina um retângulo de ataque à frente (ex: 40 pixels)
-        if self.jogador.orientacao == "direita":
-            area_ataque = pygame.Rect(x, y - 10, 60, 40)
-        else:
-            area_ataque = pygame.Rect(x - 60, y - 10, 60, 40)
-
-        # Verifica se algum inimigo colidiu com essa área
-        inimigos_acertados = [i for i in self.inimigos if area_ataque.colliderect(i.rect)]
+        # Pega inimigos atingidos
+        inimigos_acertados = self._detectar_inimigos_acertados()
 
         if inimigos_acertados:
             print("Ataque no mapa acertou inimigo!")
-            ondas = self._montar_ondas(inimigos_acertados)
+
+            # Pega todos os inimigos da área (visão ou perseguição)
+            inimigos_reagindo = [
+                inimigo for inimigo in self.inimigos
+                if inimigo.estado in (ESTADO_INIMIGO_ALERTA, ESTADO_INIMIGO_PERSEGUINDO)
+            ]
+
+            # Junta os dois sem repetir
+            inimigos_para_batalha = list({i for i in inimigos_acertados + inimigos_reagindo})
 
             self.gerenciador_telas.mudar_tela(
                 CHAVE_TRANSICAO_BATALHA,
-                inimigos_na_batalha=ondas,
+                inimigos_na_batalha = inimigos_para_batalha,
                 jogador_iniciou=True
             )
 
@@ -330,7 +343,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
 
-            elif evento.key == pygame.K_x:
+            elif evento.key == pygame.K_k:
                 self._ataque_no_mapa()
 
         return None # Nenhuma transição de tela por eventos de interação
@@ -376,14 +389,24 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.camera.update(self.jogador.rect)
 
         for inimigo in self.inimigos:
+            print(f"[DEBUG] Atualizando inimigo: {inimigo.nome}, estado: {inimigo.estado}")
             inimigo.update(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
             if inimigo.atingiu_jogador:
-                ondas_de_inimigos = self._montar_ondas(self.inimigos_lutando)
-                print(f"self.inimigos: {ondas_de_inimigos}")
+                # Pega todos os inimigos da área (visão ou perseguição)
+                print(f"[DEBUG] Inimigo {inimigo.nome} atingiu o jogador!")
+                inimigos_reagindo = [
+                    inimigo for inimigo in self.inimigos
+                    if inimigo.estado in (ESTADO_INIMIGO_ALERTA, ESTADO_INIMIGO_PERSEGUINDO, ESTADO_INIMIGO_ATACANDO)
+                ]
+                print(f"[DEBUG] Inimigos reagindo: {[i.nome for i in inimigos_reagindo]}")
+                # Se ninguém está alerta ainda, adiciona ao menos o atacante
+                if not inimigos_reagindo:
+                    inimigos_reagindo = [inimigo]
+
                 # Sinaliza para o gerenciador de telas que uma batalha deve começar
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
-                    inimigos_na_batalha=ondas_de_inimigos
+                    inimigos_na_batalha = inimigos_reagindo
                 )
                 return # Termina o update aqui para não processar mais nada após a transição
             
