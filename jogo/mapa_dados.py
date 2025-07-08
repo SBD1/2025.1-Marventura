@@ -183,6 +183,7 @@ dados_das_salas = { # As chaves aqui agora são os IDs curtos (ex: 'are001')
         'caminhos': [
             {'x': 0, 'y': 445, 'largura': 3540, 'altura': 155, 'tipo_terreno': 'normal'},
             {'x': 1728, 'y': 412, 'largura': 174, 'altura': 33, 'tipo_terreno': 'normal'},
+            
         ],
         'npcs': [
             # Lista de NPCs para este mapa.
@@ -326,6 +327,10 @@ dados_das_salas = { # As chaves aqui agora são os IDs curtos (ex: 'are001')
             # Limite superior do caminho
             {'x': 0, 'y': 245, 'largura': 900, 'altura': 20},
             # Limite inferior do caminho
+        ],
+        'caminhos': [
+
+            {'x': 0, 'y': 360, 'largura': 900, 'altura': 50, 'tipo_terreno': 'normal'},
         ],
         'npcs': [],
         'inimigos': [],

@@ -106,7 +106,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.obstaculos_caminho.add(obstaculo)
             self.obstaculos_visao.add(obstaculo)
         
-        caminhos = self.banco_de_dados.buscar_caminhos_da_area(id_area_atual)
+        caminhos = self.banco_de_dados.buscar_caminhos_da_area(id_area_atual) 
         caminho_arena = None 
         for dado_do_caminho in caminhos:
             caminho = Caminho(dado_do_caminho.x, dado_do_caminho.y,
