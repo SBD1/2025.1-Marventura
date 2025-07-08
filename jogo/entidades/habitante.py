@@ -10,26 +10,32 @@ class Habitante(pygame.sprite.Sprite):
     Seu sprite se vira para a direção do jogador.
     """
 
-    def __init__(self, gerenciador_recursos, identificador, x_inicial, y_inicial, nome, dialogos = []):
+    def __init__(self, gerenciador_recursos, identificador, area, x_inicial, y_inicial, nome, descricao, tipo, moedas, especialidade = None, chave_imagem = None, dialogos = []):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         self.identificador = identificador
+        self.area = area
         self.nome = nome
-        self.mundo_x = float(x_inicial)
-        self.mundo_y = float(y_inicial)
+        self.descricao = descricao
+        self.tipo = tipo
+        self.moedas = moedas
+        self.especialidade = especialidade
+        self.chave_imagem = chave_imagem
+        self.coordenada_x = float(x_inicial)
+        self.coordenada_y = float(y_inicial)
         self.dialogos = dialogos # Lista de strings para os diálogos
 
         # Carregar a imagem base e configurar o sprite inicial
-        self.imagem_original = self.gerenciador_recursos.obter_imagem(self.nome)
+        self.imagem_original = self.gerenciador_recursos.obter_imagem(self.chave_imagem)
         
         if self.imagem_original:
             self.imagem = self.imagem_original
         else:
-            print(f"AVISO: Imagem '{self.nome}' não encontrada para o habitante '{self.nome}'. Usando fallback padrão.")
+            print(f"AVISO: Imagem '{self.chave_imagem}' não encontrada para o habitante '{self.nome}'. Usando fallback padrão.")
             self.imagem = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA) # Usa tamanho similar ao jogador como fallback
             self.imagem.fill(CINZA) # Cor para indicar um NPC sem imagem
 
-        self.rect = self.imagem.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
+        self.rect = self.imagem.get_rect(topleft=(int(self.coordenada_x), int(self.coordenada_y)))
 
         self.orientacao_atual = 'direita' # Orientação inicial do habitante
 
@@ -42,9 +48,9 @@ class Habitante(pygame.sprite.Sprite):
         """
         # Ajusta a orientação do habitante para encarar o jogador
         if jogador_rect.centerx < self.rect.centerx:
-            self.orientacao_atual = 'esquerda'
-        else:
             self.orientacao_atual = 'direita'
+        else:
+            self.orientacao_atual = 'esquerda'
         
         # Aplica o flip na imagem se necessário
         imagem_para_desenhar = self.imagem_original
@@ -66,8 +72,8 @@ class Habitante(pygame.sprite.Sprite):
         :param camera_x: A posição X da câmera.
         :param camera_y: A posição Y da câmera (se o jogo rolar verticalmente).
         """
-        posicao_tela_x = self.mundo_x - camera_x
-        posicao_tela_y = self.mundo_y - camera_y
+        posicao_tela_x = self.coordenada_x - camera_x
+        posicao_tela_y = self.coordenada_y - camera_y
         
         tela.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
 

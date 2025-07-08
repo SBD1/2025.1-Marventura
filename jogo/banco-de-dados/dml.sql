@@ -848,31 +848,31 @@ VALUES
 
 
 INSERT INTO area_interativa
-    (identificador_area_origem, identificador_area_destino, x, y, largura, altura, tipo_evento)
+    (identificador_area_origem, identificador_area_destino, x, y, largura, altura, tipo_evento, metodo_ativacao)
 VALUES
-    ('are001', 'are002', 4473, 187, 30, 180, 'mudar_area'), -- → vila
-    ('are002', 'are001', 0, 360, 50, 150, 'mudar_area'), -- → pastos
-    ('are002', 'are004', 1716, 300, 200, 40, 'mudar_area'), -- → loja
-    ('are002', 'are003', 3490, 360, 50, 150, 'mudar_area'), -- → vale
-    ('are003', 'are002', 0, 200, 50, 150, 'mudar_area'), -- → vila
-    ('are003', null, 4205, 313, 50, 158, 'embarcar'), -- → navegar
-    ('are004', 'are002', 0, 300, 50, 270, 'mudar_area'), -- → sair da loja
-    ('are007', 'are008', 610, 185, 250, 20, 'mudar_area'), -- → centro
-    ('are007', null, 2472, 375, 93, 67, 'embarcar'), -- → navegar
-    ('are008', 'are007', 0, 480, 50, 150, 'mudar_area'), -- → porto
-    ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area'), -- → praça
-    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area'), -- → centro
-    ('are015', 'are016', 0, 745, 50, 100, 'mudar_area'), -- → vila
-    ('are015', null, 960, 930, 80, 90, 'embarcar'), -- → navegar
-    ('are016', 'are015', 2950, 473, 50, 100, 'mudar_area'), -- → costa
-    ('are016', 'are017', 0, 473, 50, 100, 'mudar_area'), -- → floresta
-    ('are016', 'are019', 695, 273, 78, 108, 'mudar_area'), -- → cozinha
-    ('are016', 'are020', 1449, 269, 95, 108, 'mudar_area'), -- → loja
-    ('are017', 'are016', 1486, 735, 50, 290, 'mudar_area'), -- → vila
-    ('are017', 'are018', 0, 735, 50, 290, 'mudar_area'), -- → montanha
-    ('are018', 'are017', 1486, 735, 50, 172, 'mudar_area'), -- → floresta
-    ('are019', 'are016', 0, 0, 50, 600, 'mudar_area'), -- → vila
-    ('are020', 'are016', 0, 0, 50, 600, 'mudar_area'); -- → vila
+    ('are001', 'are002', 4473, 187, 30, 180, 'mudar_area', 'ativo'), -- → vila
+    ('are002', 'are001', 0, 360, 50, 150, 'mudar_area', 'ativo'), -- → pastos
+    ('are002', 'are004', 1716, 300, 200, 40, 'mudar_area', 'ativo'), -- → loja
+    ('are002', 'are003', 3490, 360, 50, 150, 'mudar_area', 'ativo'), -- → vale
+    ('are003', 'are002', 0, 200, 50, 150, 'mudar_area', 'ativo'), -- → vila
+    ('are003', null, 4205, 313, 50, 158, 'embarcar', 'ativo'), -- → navegar
+    ('are004', 'are002', 0, 300, 50, 270, 'mudar_area', 'ativo'), -- → sair da loja
+    ('are007', 'are008', 610, 185, 250, 20, 'mudar_area', 'ativo'), -- → centro
+    ('are007', null, 2472, 375, 93, 67, 'embarcar', 'ativo'), -- → navegar
+    ('are008', 'are007', 0, 480, 50, 150, 'mudar_area', 'ativo'), -- → porto
+    ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area', 'ativo'), -- → praça
+    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area', 'ativo'), -- → centro
+    ('are015', 'are016', 0, 745, 50, 100, 'mudar_area', 'ativo'), -- → vila
+    ('are015', null, 960, 930, 80, 90, 'embarcar', 'ativo'), -- → navegar
+    ('are016', 'are015', 2950, 473, 50, 100, 'mudar_area', 'ativo'), -- → costa
+    ('are016', 'are017', 0, 473, 50, 100, 'mudar_area', 'ativo'), -- → floresta
+    ('are016', 'are019', 695, 273, 78, 108, 'mudar_area', 'ativo'), -- → cozinha
+    ('are016', 'are020', 1449, 269, 95, 108, 'mudar_area', 'ativo'), -- → loja
+    ('are017', 'are016', 1486, 735, 50, 290, 'mudar_area', 'ativo'), -- → vila
+    ('are017', 'are018', 0, 735, 50, 290, 'mudar_area', 'ativo'), -- → montanha
+    ('are018', 'are017', 1486, 735, 50, 172, 'mudar_area', 'ativo'), -- → floresta
+    ('are019', 'are016', 0, 0, 50, 600, 'mudar_area', 'ativo'), -- → vila
+    ('are020', 'are016', 0, 0, 50, 600, 'mudar_area', 'ativo'); -- → vila
 
 
 
@@ -926,20 +926,27 @@ VALUES
     ('are017', 201, 978, 121, 46);
 
 
+-- Vendedores
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem, especialidade)
+VALUES
+    ('are004', 'Sr. Lee', 'Sr. Lee, o mestre das marmitas rurais! Vende ovos frescos, arroz do planalto e conselhos que parecem saídos de um livro de provérbios... mal traduzido.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven001
+    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 236, 196, 500, 'lee', 'com'), -- ven002
+    ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven003
+    ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven004
+    ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven005
+    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven006
+
+
 
 INSERT INTO habitante
     (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem)
 VALUES
-    ('are004', 'Sr. Lee', 'Sr. Lee, o mestre das marmitas rurais! Vende ovos frescos, arroz do planalto e conselhos que parecem saídos de um livro de provérbios... mal traduzido.', 'ven', 288, 151, 500, 'lee_busto'),
-    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 236, 196, 500, 'lee'),
-    ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 500, 'lee_busto'),
-    ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto'),
-    ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto'),
-    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto'),
-    ('are034', "Narrador", null, 'hbt', 0, 0, 0, null)
-    ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 125, 15, 'campones_a');
-    ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 2040, 125, 15, 'camponesa_a');
-
+    ('are034', 'Narrador', null, 'hbt', 0, 0, 0, null), -- hbt001
+    ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 90, 15, 'campones_a'), -- hbt002
+    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 2252, 336, 15, 'camponesa_b'), -- hbt003
+    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 1600, 340, 15, 'campones_b'), -- rct001
+    ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 15, 'camponesa_a'); -- rct002
 
 
 INSERT INTO lacaio
@@ -1241,26 +1248,18 @@ VALUES
     (null, 'mis001', 2, 'M', 'Ei, garoto... está vivo?'),
     ('hbt001', 'mis001', 3, 'F', 'Silvie piscou, ainda meio zonza. Acima dela, um homem de meia-idade, com um grande chapéu de palha e expressão marcada pelo tempo, a observava atentamente.'),
     ('hbt001', 'mis001', 3, 'M', 'Shuan piscou, ainda meio zonzo. Acima dele, um homem de meia-idade, com um grande chapéu de palha e expressão marcada pelo tempo, o observava atentamente.'),
-    (%s, 'mis001', 4, 'F', 'Você... quem é você?'),
-    (%s, 'mis001', 4, 'M', 'Você... quem é você?'),
     ('hbt002', 'mis001', 5, 'F', 'Eu quem devia perguntar isso — o homem deu uma risada breve. — Você estava desmaiada bem no meio do campo. Quase te colhi junto com as abóboras!'),
     ('hbt002', 'mis001', 5, 'M', 'Eu quem devia perguntar isso — o homem deu uma risada breve. — Você estava desmaiado bem no meio do campo. Quase te colhi junto com as abóboras!'),
     ('hbt001', 'mis001', 6, 'F', 'A jovem olhou ao redor. Tudo era novo. Campos vastos se estendiam em todas as direções, dançando sob a brisa. Ela tentou puxar alguma lembrança... mas nada vinha.'),
     ('hbt001', 'mis001', 6, 'M', 'O jovem olhou ao redor. Tudo era novo. Campos vastos se estendiam em todas as direções, dançando sob a brisa. Ele tentou puxar alguma lembrança... mas nada vinha.'),
-    (%s, 'mis001', 7, 'F', 'Eu... não sei como vim parar aqui.'),
-    (%s, 'mis001', 7, 'M', 'Eu... não sei como vim parar aqui.'),
     ('hbt002', 'mis001', 8, 'F', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
     ('hbt002', 'mis001', 8, 'M', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
     ('hbt001', 'mis001', 9, 'F', 'Silvie assentiu, ainda atordoada, mas determinada. Pegou a pequena bolsa ao seu lado e começou a andar.'),
     ('hbt001', 'mis001', 9, 'M', 'Shuan assentiu, ainda atordoado, mas determinado. Pegou a pequena bolsa ao seu lado e começou a andar.'),
-    (%s, 'mis002', 1, 'F', 'Tsc... sério?'),
-    (%s, 'mis002', 1, 'M', 'Tsc... sério?'),
     ('hbt001', 'mis003', 1, 'F', 'Algumas horas depois, ela chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
     ('hbt001', 'mis003', 1, 'M', 'Algumas horas depois, ele chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
     (null, 'mis003', 2, 'F', 'Ora, quem é você, jovem?'),
     (null, 'mis003', 2, 'M', 'Ora, quem é você, jovem?'),
-    (%s, 'mis003', 3, 'F', 'Só alguém procurando respostas... e talvez um pouco de água.'),
-    (%s, 'mis003', 3, 'M', 'Só alguém procurando respostas... e talvez um pouco de água.'),
     ('rct002', null, 1, 'F', 'Silvie! Minha musa da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
     ('rct002', null, 1, 'M', 'Shuan! Meu rei da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
     ('rct002', 'mis007', 1, 'F', 'Antes de tudo, preciso de água do poço. Mas não qualquer água! Tem que ser aquela que brilha sob o sol das 10h e tem gosto de vitória! Ou... pelo menos que não tenha sapo dentro. Vai lá, guerreira!'),
@@ -1285,3 +1284,59 @@ VALUES
     ('hbt001', 'mis010', 7, 'M', 'Ela entrega o prato com um guardanapo dobrado em forma de galinha... com uma lágrima desenhada.'),
     ('rct002', 'mis010', 8, 'F', 'Se isso não te der +5 de energia e +1 de esperança, eu nem sou mais Lina Panela!'),
     ('rct002', 'mis010', 8, 'M', 'Se isso não te der +5 de energia e +1 de esperança, eu nem sou mais Lina Panela!'),
+    ('rct001', 'mis004', 1, 'F', 'Mamma mia! Esses corvettos tão fazendo piquenique no meu arrozal! Vai lá, bambina, e mostra pra eles que aqui não é trattoria! Vola via, cornacchia!'),
+    ('rct001', 'mis004', 1, 'M', 'Mamma mia! Esses corvettos tão fazendo piquenique no meu arrozal! Vai lá, bambino, e mostra pra eles que aqui não é trattoria! Vola via, cornacchia!'),
+    ('rct001', 'mis005', 1, 'F', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
+    ('rct001', 'mis005', 1, 'M', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
+    ('rct001', 'mis006', 1, 'F', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('hbt001', 'mis011', 1, 'F', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Silvie, ainda meio desconfiada, observa tudo com olhos atentos. É sua primeira noite na vila.'),
+    ('hbt001', 'mis011', 1, 'M', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Shuan, ainda meio desconfiado, observa tudo com olhos atentos. É sua primeira noite na vila.'),
+    ('hbt002', 'mis011', 2, 'F', '(Puxando uma cadeira para ela): — Senta aqui, moça. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
+    ('hbt002', 'mis011', 2, 'M', '(Puxando uma cadeira para ele): — Senta aqui, moço. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
+    ('rct002', 'mis011', 4, 'F', '(Surgindo com uma travessa): — Uma galinha. Temperamental. E com excelente memória para rostos que mexem nos ovos dela.'),
+    ('rct002', 'mis011', 4, 'M', '(Surgindo com uma travessa): — Uma galinha. Temperamental. E com excelente memória para rostos que mexem nos ovos dela.'),
+    ('rct001', 'mis011', 5, 'F', '(Erguendo o bigode com orgulho): — E gosto refinado! Uma vez ela bicou um crítico gastronômico. Ou talvez fosse só o padeiro... mas o ponto é: ela tem instinto!'),
+    ('rct001', 'mis011', 5, 'M', '(Erguendo o bigode com orgulho): — E gosto refinado! Uma vez ela bicou um crítico gastronômico. Ou talvez fosse só o padeiro... mas o ponto é: ela tem instinto!'),
+    ('rct001', 'mis011', 7, 'F', '(Ofendido de brincadeira): — Non è orégano, è tradição! Minha fazenda cheira como a infância... e um pouco como pizza.'),
+    ('rct001', 'mis011', 7, 'M', '(Ofendido de brincadeira): — Non è orégano, è tradição! Minha fazenda cheira como a infância... e um pouco como pizza.'),
+    ('ven001', 'mis011', 8, 'F', '(Calmo, servindo arroz): — A sabedoria está no prato simples. E no silêncio entre duas colheradas.'),
+    ('ven001', 'mis011', 8, 'M', '(Calmo, servindo arroz): — A sabedoria está no prato simples. E no silêncio entre duas colheradas.'),
+    ('rct002', 'mis011', 10, 'F', '(Com brilho nos olhos): — É o Omurice quase supremo! Um prato que beira a perfeição... mas sempre escapa. Como um sonho culinário com asas.'),
+    ('rct002', 'mis011', 10, 'M', '(Com brilho nos olhos): — É o Omurice quase supremo! Um prato que beira a perfeição... mas sempre escapa. Como um sonho culinário com asas.'),
+    ('hbt002', 'mis011', 11, 'F', '(Rindo): — Ou como a Silvie tentando entender o que tá acontecendo desde que chegou.'),
+    ('hbt002', 'mis011', 11, 'M', '(Rindo): — Ou como o Shuan tentando entender o que tá acontecendo desde que chegou.'),
+    ('hbt001', 'mis011', 13, 'F', 'Nesse momento, Gertrudes entra pela porta e encara Silvie.'),
+    ('hbt001', 'mis011', 13, 'M', 'Nesse momento, Gertrudes entra pela porta e encara Shuan.'),
+    ('rct002', 'mis011', 15, 'F', '(Gritando): — Oferece pão! Elas respeitam carboidrato!'),
+    ('rct002', 'mis011', 15, 'M', '(Gritando): — Oferece pão! Elas respeitam carboidrato!'),
+    ('ven001', 'mis011', 16, 'F', '(Entregando um pedaço de pão): — A paz começa com fermento.'),
+    ('ven001', 'mis011', 16, 'M', '(Entregando um pedaço de pão): — A paz começa com fermento.'),
+    ('hbt001', 'mis011', 18, 'F', 'A galinha aceita o pão e sai com dignidade. Todos aplaudem discretamente.'),
+    ('hbt001', 'mis011', 18, 'M', 'A galinha aceita o pão e sai com dignidade. Todos aplaudem discretamente.'),
+    ('rct001', 'mis011', 19, 'F', '(Erguendo um copo): — Um brinde à nova viajante! Que sua estadia seja leve, sua comida quente e suas galinhas... diplomáticas!'),
+    ('rct001', 'mis011', 19, 'M', '(Erguendo um copo): — Um brinde ao novo viajante! Que sua estadia seja leve, sua comida quente e suas galinhas... diplomáticas!'),
+    ('hbt001', 'mis011', 20, 'F', '(Todos): — Viva!'),
+    ('hbt001', 'mis011', 20, 'M', '(Todos): — Viva!'),
+    ('hbt001', 'mis011', 21, 'F', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
+    ('hbt001', 'mis011', 21, 'M', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
+    ('ven001', 'mis011', 22, 'F', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
+    ('ven001', 'mis011', 22, 'M', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
+    ('rct001', 'mis011', 24, 'F', 'Já tentaram espantar, mas voltaram com mais medo que gato em dia de banho! Eu te digo, ragazza... essa criatura não tá ali por acaso. Tá guardando alguma coisa, capisce?'),
+    ('rct001', 'mis011', 24, 'M', 'Já tentaram espantar, mas voltaram com mais medo que gato em dia de banho! Eu te digo, ragazzo... essa criatura não tá ali por acaso. Tá guardando alguma coisa, capisce?'),
+    ('hbt001', 'mis011', 25, 'F', 'A jovem ficou em silêncio por um momento. Depois, se levantou, encarando os aldeões.'),
+    ('hbt001', 'mis011', 25, 'M', 'O jovem ficou em silêncio por um momento. Depois, se levantou, encarando os aldeões.'),
+    ('hbt001', 'mis011', 27, 'F', 'No dia seguinte, ela partiu com as instruções dos moradores.'),
+    ('hbt001', 'mis011', 27, 'M', 'No dia seguinte, ele partiu com as instruções dos moradores.'),
+    ('hbt001', 'mis012', 1, 'F', 'De volta à vila, os moradores a receberam com aplausos e sorrisos.'),
+    ('hbt001', 'mis012', 1, 'M', 'De volta à vila, os moradores o receberam com aplausos e sorrisos.'),
+    ('hbt002', 'mis012', 2, 'F', 'Você... conseguiu mesmo!'),
+    ('hbt002', 'mis012', 2, 'M', 'Você... conseguiu mesmo!'),
+    ('hbt001', 'mis012', 4, 'F', 'Os moradores ofereceram comida, abrigo, até joias antigas como recompensa. Mas Silvie recusou com um sorriso gentil.'),
+    ('hbt001', 'mis012', 4, 'M', 'Os moradores ofereceram comida, abrigo, até joias antigas como recompensa. Mas Shuan recusou com um sorriso gentil.'),
+    ('hbt003', 'mis012', 6, 'F', 'Hmm... ninguém com a sua descrição passou por aqui. Mas dizem que na Cidade de Lurien, em uma ilha próxima, há mais movimento. Talvez encontre pistas por lá.'),
+    ('hbt003', 'mis012', 6, 'M', 'Hmm... ninguém com a sua descrição passou por aqui. Mas dizem que na Cidade de Lurien, em uma ilha próxima, há mais movimento. Talvez encontre pistas por lá.'),
+    ('hbt001', 'mis012', 8, 'F', 'O aldeão de chapéu de palha deu uma risada curta.'),
+    ('hbt001', 'mis012', 8, 'M', 'O aldeão de chapéu de palha deu uma risada curta.'),
+    ('hbt002', 'mis012', 9, 'F', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.'),
+    ('hbt002', 'mis012', 9, 'M', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.');

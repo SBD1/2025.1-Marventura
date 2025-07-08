@@ -77,11 +77,15 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self._carregar_entidades_dos_dados_do_mapa()
 
         # --- Atributos da Caixa de Diálogo ---
-        self.caixa_dialogo = None
+        self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos) # Garante que a caixa de diálogo seja sempre criada
         self.dialogos_atuais = []
         self.indice_dialogo_atual = 0
         self.dialogo_ativo = False
         
+        # --- NOVO: Atributos para cena estática ---
+        self.cena_estatica_ativa = False
+        self.imagem_cena_estatica = None # Imagem da cena (tela cheia)
+
         # --- NOVO: Gerenciador de Missões ---
         # Passe referências importantes para o GerenciadorDeMissoes
         self.gerenciador_missoes = gerenciadores.gerenciador_missoes.GerenciadorDeMissoes(
@@ -91,9 +95,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.jogador,
             self.caixa_dialogo, # Passa a instância da caixa de diálogo
             self.npcs, # Passa o grupo de NPCs para interação
-            self.gerenciador_telas # Para transições de tela
+            self.gerenciador_telas, # Para transições de tela
+            self
         )
-        
+
+        self.gerenciador_missoes.iniciar_missao('mis001')
         # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
         # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
         
@@ -164,12 +170,20 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- NOVO: Carregar NPCs ---
         dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
         for habitante in dados_habitantes:
+            dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante)
             novo_npc = Habitante(
                 self.gerenciador_recursos,
                 habitante.identificador_habitante,
-                habitante.coordenada_x, habitante.coordenada_y,
+                habitante.identificador_area,
+                habitante.coordenada_x,
+                habitante.coordenada_y,
                 habitante.nome,
-                #habitante.chave_imagem,
+                habitante.descricao,
+                habitante.tipo_habitante,
+                habitante.moedas_totais,
+                habitante.especialidade,
+                habitante.chave_imagem,
+                dialogos
             )
             self.npcs.add(novo_npc)
 
@@ -181,12 +195,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.indice_dialogo_atual = 0
         self.dialogo_ativo = True
         
-        # Cria a caixa de diálogo se ainda não existir
-        if not self.caixa_dialogo:
-            self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos)
+        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
         
-        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual], SILVIE)
-
 
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
@@ -223,7 +233,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     elif self.caixa_dialogo.esta_finalizado():
                         self.indice_dialogo_atual += 1
                         if self.indice_dialogo_atual < len(self.dialogos_atuais):
-                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual], SILVIE)
+                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
                         else:
                             self.dialogo_ativo = False # Fim do diálogo
                             self.caixa_dialogo.limpar_dialogo() # Limpa o texto da caixa
@@ -349,8 +359,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Se um evento de missão estiver ativo, ele pode controlar o jogador, a câmera, etc.
         self.gerenciador_missoes.update(dt_ms) # Passa dt em milissegundos
 
-        # Se o gerenciador de missões estiver em um evento controlado, desativa o input do jogador
-        if self.gerenciador_missoes.esta_em_evento_controlado():
+        # Se o gerenciador de missões estiver em um evento controlado OU CENA ESTÁTICA ATIVA, desativa o input do jogador
+        if self.gerenciador_missoes.esta_em_evento_controlado() or self.cena_estatica_ativa: # CENA ESTÁTICA desabilita jogador
             self.jogador.movendo_esquerda = False
             self.jogador.movendo_direita = False
             self.jogador.movendo_cima = False
@@ -384,7 +394,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         for npc in self.npcs:
             npc.atualizar(dt, self.jogador.rect)
 
-        self.camera.update(self.jogador.rect)
+        self.camera.update(dt, self.jogador.rect)
 
         for inimigo in self.inimigos:
             inimigo.update(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
@@ -422,69 +432,96 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Desenha a imagem de fundo
         tela.blit(self.mapa_fundo_imagem, (self.mapa_fundo_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
         
-        # Desenha os NPCs
-        for npc in self.npcs:
-            npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
-
-        # Desenha o jogador
-        self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)
-
-        # Desenha os inimigos
-        for inimigo in self.inimigos:
-            inimigo.draw(tela, self.camera.rect.x)
-
-        # --- Desenhar a camada superior (se existir) ---
-        if self.camada_superior_imagem:
-            tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
-
-        for caminho in self.caminhos:
-            caminho.desenhar(tela, self.camera.rect.x)
-
-        if DEBUG_DESENHAR_CAIXAS_COLISAO:
-            for area in self.areas_interacao:
-                area_rect_tela = pygame.Rect(
-                    area.rect.x - self.camera.rect.x,
-                    area.rect.y - self.camera.rect.y,
-                    area.rect.width,
-                    area.rect.height
-                )
-                pygame.draw.rect(tela, AZUL, area_rect_tela, 2)
-
-            for obstaculo in self.obstaculos_caminho:
-                rect_colisao_tela = pygame.Rect(
-                    obstaculo.rect.x - self.camera.rect.x,
-                    obstaculo.rect.y - self.camera.rect.y,
-                    obstaculo.rect.width,
-                    obstaculo.rect.height
-                )
-                pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
-
-            # DEBUG para NPCs
+        # --- NOVO: Desenha a cena estática SE estiver ativa ---
+        if self.cena_estatica_ativa and self.imagem_cena_estatica:
+            tela.blit(self.imagem_cena_estatica, (0, 0)) # Desenha a cena cobrindo toda a tela
+        else: # Só desenha os elementos do jogo se a cena estática não estiver ativa
+            # Desenha os NPCs
             for npc in self.npcs:
-                debug_rect_npc = pygame.Rect(
-                    npc.rect.x - self.camera.rect.x,
-                    npc.rect.y - self.camera.rect.y,
-                    npc.rect.width,
-                    npc.rect.height
-                )
-                pygame.draw.rect(tela, VERDE, debug_rect_npc, 1) # Cor verde para NPCs
+                npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
+
+            # Desenha o jogador
+            self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)
+
+            # Desenha os inimigos
+            for inimigo in self.inimigos:
+                inimigo.draw(tela, self.camera.rect.x)
+
+            # --- Desenhar a camada superior (se existir) ---
+            if self.camada_superior_imagem:
+                tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
+
+            for caminho in self.caminhos:
+                caminho.desenhar(tela, self.camera.rect.x)
+
+            if DEBUG_DESENHAR_CAIXAS_COLISAO:
+                for area in self.areas_interacao:
+                    area_rect_tela = pygame.Rect(
+                        area.rect.x - self.camera.rect.x,
+                        area.rect.y - self.camera.rect.y,
+                        area.rect.width,
+                        area.rect.height
+                    )
+                    pygame.draw.rect(tela, AZUL, area_rect_tela, 2)
+
+                for obstaculo in self.obstaculos_caminho:
+                    rect_colisao_tela = pygame.Rect(
+                        obstaculo.rect.x - self.camera.rect.x,
+                        obstaculo.rect.y - self.camera.rect.y,
+                        obstaculo.rect.width,
+                        obstaculo.rect.height
+                    )
+                    pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
+
+                # DEBUG para NPCs
+                for npc in self.npcs:
+                    debug_rect_npc = pygame.Rect(
+                        npc.rect.x - self.camera.rect.x,
+                        npc.rect.y - self.camera.rect.y,
+                        npc.rect.width,
+                        npc.rect.height
+                    )
+                    pygame.draw.rect(tela, VERDE, debug_rect_npc, 1) # Cor verde para NPCs
 
 
-        # --- Desenha o nome da ilha com fade ---
-        if self.exibicao_nome_ilha:
-            self.exibicao_nome_ilha.draw(tela)
-        
-        # --- Desenha o menu de viagem se estiver ativo ---
-        if self.menu_viagem_ativo and self.menu_viagem:
-            self.menu_viagem.draw(tela)
+            # --- Desenha o nome da ilha com fade ---
+            if self.exibicao_nome_ilha:
+                self.exibicao_nome_ilha.draw(tela)
+            
+            # --- Desenha o menu de viagem se estiver ativo ---
+            if self.menu_viagem_ativo and self.menu_viagem:
+                self.menu_viagem.draw(tela)
 
-        # --- Desenha a caixa de diálogo se estiver ativa ---
-        if self.dialogo_ativo and self.caixa_dialogo:
-            self.caixa_dialogo.desenhar(tela)
+            # --- Desenha a caixa de diálogo se estiver ativa ---
+            if self.dialogo_ativo and self.caixa_dialogo:
+                self.caixa_dialogo.desenhar(tela)
 
         # NOVO: Se o gerenciador de missões estiver ativo e tiver um diálogo para exibir, ele desenha
         if self.gerenciador_missoes.dialogo_controlado_ativo and self.gerenciador_missoes.caixa_dialogo:
              self.gerenciador_missoes.caixa_dialogo.desenhar(tela)
+
+    
+
+    # --- NOVOS MÉTODOS PARA CENA ESTÁTICA ---
+    def ativar_cena_estatica(self, chave_imagem):
+        """Ativa a exibição de uma imagem de cena estática (tela cheia)."""
+        self.imagem_cena_estatica = self.gerenciador_recursos.obter_imagem(chave_imagem)
+        if self.imagem_cena_estatica:
+            # Redimensiona a imagem para caber na tela se necessário
+            self.imagem_cena_estatica = pygame.transform.scale(self.imagem_cena_estatica, (LARGURA_TELA, ALTURA_TELA))
+            self.cena_estatica_ativa = True
+            print(f"Cena estática '{chave_imagem}' ativada.")
+        else:
+            self.cena_estatica_ativa = False
+            print(f"AVISO: Imagem da cena estática '{chave_imagem}' não encontrada.")
+
+
+
+    def desativar_cena_estatica(self):
+        """Desativa a exibição da imagem de cena estática."""
+        self.cena_estatica_ativa = False
+        self.imagem_cena_estatica = None
+        print("Cena estática desativada.")
 
 
 

@@ -77,6 +77,15 @@ SHUAN = 'Shuan'
 INIMIGO_LOBO = 'Lobo'
 INIMIGO_CORVO = 'Corvo'
 
+# --- Habitantes ---
+BIGODINI = 'campones_b'
+TIAO_PALHA = 'campones_a'
+LINA_PANELA = 'camponesa_a'
+TIA_COTINHA = 'camponesa_b'
+SR_LEE = 'lee'
+SR_LEE_LOGISTA = 'lee_busto'
+
+
 # --- Identificadores de Mapas ---
 ID_MAPA_OCEANO = 'oceano'
 
@@ -161,6 +170,10 @@ CHAVE_CENARIO_ILHA_5_PARTE_3 = 'cenario_nublaria_floresta'
 CHAVE_CENARIO_ILHA_6_PARTE_1 = 'cenario_quartel_porto'
 CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_quartel_interior'
 CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
+
+
+CENA_SILVIE_NO_CAMPO = 'cena_silvie_no_campo'
+CENA_SHUAN_NO_CAMPO = 'cena_shuan_no_campo'
 
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)

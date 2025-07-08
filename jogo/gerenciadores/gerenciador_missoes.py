@@ -5,7 +5,7 @@ import json # Ou outro formato para carregar seus scripts
 from utilidades.constantes import * # Importa as constantes
 
 class GerenciadorDeMissoes:
-    def __init__(self, banco_de_dados, gerenciador_recursos, camera, jogador, caixa_dialogo, npcs, gerenciador_telas):
+    def __init__(self, banco_de_dados, gerenciador_recursos, camera, jogador, caixa_dialogo, npcs, gerenciador_telas, tela_jogo):
         self.banco_de_dados = banco_de_dados
         self.gerenciador_recursos = gerenciador_recursos
         self.camera = camera
@@ -13,8 +13,9 @@ class GerenciadorDeMissoes:
         self.caixa_dialogo = caixa_dialogo # A mesma instância da TelaJogo
         self.npcs = npcs # O grupo de NPCs da TelaJogo
         self.gerenciador_telas = gerenciador_telas # Para mudar de tela se necessário
+        self.tela_jogo = tela_jogo # NOVO: Referência à instância da TelaJogo
 
-        self.scripts_missoes = self._carregar_scripts_missoes() # Carrega os scripts do JSON/dicionário
+        self.scripts_missoes = self._carregar_scripts_missoes(self.jogador.nome) # Carrega os scripts do JSON/dicionário
         self.missao_ativa_id = None
         self.script_em_execucao = None
         self.indice_passo_atual = 0
@@ -27,21 +28,17 @@ class GerenciadorDeMissoes:
         self.proximo_passo_apos_dialogo_controlado = None # O que fazer depois que o diálogo controlado terminar
 
 
-    def _carregar_scripts_missoes(self):
+    def _carregar_scripts_missoes(self, nome_jogador):
         """
         Carrega os scripts das missões de um arquivo JSON (ou pode ser um dicionário direto aqui).
         Este é um exemplo. Em um jogo real, você carregaria de um arquivo.
         """
         # Exemplo de dicionário de scripts (pode ser carregado de um JSON)
         return {
-            'mis001': [
-                {'tipo': 'focar_em_ponto', 'x': 800, 'y': 300}, # Exemplo de ponto no mapa
-                {'tipo': 'dialogo', 'textos': ["Bem-vindo, aventureiro.", "Eu sou Elara, a sábia desta aldeia.", "Uma grande ameaça se aproxima do leste..."]},
-                {'tipo': 'movimento_camera_suave', 'inicio_x': 800, 'inicio_y': 300, 'fim_x': 1200, 'fim_y': 500, 'duracao_ms': 3000}, # 3 segundos
-                {'tipo': 'dialogo', 'textos': ["Observe as terras sombrias à distância...", "Lá reside a fonte do mal.", "Você deve impedi-lo!"], 'foco_npc_id': 'npc_elara'}, # Foco em NPC enquanto fala
-                {'tipo': 'focar_jogador'},
-                {'tipo': 'recompensa', 'xp': 50, 'item_id': 'mapa_antigo'},
-                {'tipo': 'finalizar_missao'} # Marca a missão como concluída, se for o último passo
+            'mis001': [ # Sua primeira missão
+                {'tipo': 'cena_dialogo_missao', 'missao_id': 'mis001', 'chave_imagem_cena': CENA_SILVIE_NO_CAMPO if nome_jogador == SILVIE else CENA_SHUAN_NO_CAMPO},
+                # Os passos para focar no jogador e finalizar a missão serão executados
+                # automaticamente após o diálogo da cena terminar.
             ],
             'mis002': [
                 {'tipo': 'focar_em_ponto', 'x': 500, 'y': 100},
@@ -61,6 +58,7 @@ class GerenciadorDeMissoes:
             self.dialogo_controlado_ativo = False
             print(f"Missão '{identificador_missao}' iniciada.")
             # Você pode querer atualizar o estado_missao no banco de dados para 'aceita'
+            # self.banco_de_dados.atualizar_estado_missao(identificador_missao, self.jogador.identificador_progresso, 'aceita')
         else:
             print(f"Erro: Missão '{identificador_missao}' não encontrada nos scripts.")
 
@@ -135,6 +133,34 @@ class GerenciadorDeMissoes:
             # Atualizar estado_missao no banco de dados para 'concluida'
             self._avancar_passo()
 
+        # NOVO TIPO DE PASSO: Cena estática com diálogo
+        elif tipo_passo == 'cena_dialogo_missao':
+            missao_id = passo['missao_id']
+            chave_imagem_cena = passo['chave_imagem_cena']
+            print(f"DEBUG: Executando passo 'cena_dialogo_missao' para a missão '{missao_id}'.")
+
+            # 1. Exibir a cena estática
+            self.tela_jogo.ativar_cena_estatica(chave_imagem_cena)
+
+            # 2. Carregar e exibir os diálogos da missão
+            genero = 'F' if self.jogador.nome == SILVIE else 'M'
+            
+            dialogos_da_missao = self.banco_de_dados.buscar_dialogos_da_missao(missao_id, genero)
+            if dialogos_da_missao:
+                print(f"DEBUG: Diálogos encontrados para a missão '{missao_id}': {len(dialogos_da_missao)}.")
+                self.iniciar_dialogo_controlado(dialogos_da_missao)
+                self.proximo_passo_apos_dialogo_controlado = 'finalizar_cena_e_missao' # Sinaliza a ação a ser feita após o diálogo
+                print(f"DEBUG: proximo_passo_apos_dialogo_controlado definido como '{self.proximo_passo_apos_dialogo_controlado}'.")
+            else:
+                print(f"AVISO: Nenhun diálogo encontrado para a missão '{missao_id}'.")
+                
+                # Se não houver diálogos, finalizar a cena imediatamente
+                self.tela_jogo.desativar_cena_estatica()
+                self.camera.retornar_para_jogador()
+                self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
+                self._avancar_passo() # Avança para o próximo passo no script (se houver)
+
+
         # Adicione mais tipos de passos conforme necessário:
         # 'mostrar_cena_video', 'spawn_inimigo', 'ativar_area_interacao', etc.
 
@@ -160,7 +186,7 @@ class GerenciadorDeMissoes:
             # self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos) # Descomente se precisar criar aqui
 
         if self.dialogos_controlados_atuais:
-            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado], SILVIE)
+            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].dialogo, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
         else:
             print("Nenhum texto para o diálogo controlado.")
             self._finalizar_dialogo_controlado() # Finaliza imediatamente se não houver textos
@@ -174,14 +200,27 @@ class GerenciadorDeMissoes:
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_SPACE:
                     if self.caixa_dialogo.esta_digitando:
+                        print("DEBUG: Pressionado ESPAÇO - pulando digitação do diálogo.")
                         self.caixa_dialogo.pular_digitacao()
                     elif self.caixa_dialogo.esta_finalizado():
+                        print("DEBUG: Pressionado ESPAÇO - diálogo atual finalizado.")
                         self.indice_dialogo_controlado += 1
                         if self.indice_dialogo_controlado < len(self.dialogos_controlados_atuais):
-                            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado], SILVIE)
+                            print(f"DEBUG: Avançando para o diálogo {self.indice_dialogo_controlado + 1}/{len(self.dialogos_controlados_atuais)}.")
+                            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].dialogo, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
                         else:
+                            print(f"DEBUG: Avançando para o diálogo {self.indice_dialogo_controlado + 1}/{len(self.dialogos_controlados_atuais)}.")
                             self._finalizar_dialogo_controlado()
-                            if self.proximo_passo_apos_dialogo_controlado: # Se este diálogo era parte de um script
+                            if self.proximo_passo_apos_dialogo_controlado == 'finalizar_cena_e_missao':
+                                print("DEBUG: Condição 'finalizar_cena_e_missao' ATENDIDA.")
+                                print("Diálogo da cena de missão terminado. Finalizando cena e missão.")
+                                self.tela_jogo.desativar_cena_estatica()
+                                self.camera.retornar_para_jogador()
+                                #self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
+                                self._avancar_passo() # Avança o script da missão
+                                self.proximo_passo_apos_dialogo_controlado = None # Reseta a flag
+                            elif self.proximo_passo_apos_dialogo_controlado:
+                                print(f"DEBUG: Condição {self.proximo_passo_apos_dialogo_controlado} ATENDIDA. Avançando passo do script.")
                                 self._avancar_passo() # Avança o script da missão
                                 self.proximo_passo_apos_dialogo_controlado = None
             elif evento.type == pygame.MOUSEBUTTONDOWN:
