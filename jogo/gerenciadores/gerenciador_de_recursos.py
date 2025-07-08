@@ -186,6 +186,8 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_INTERROGACAO, 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_MARCADOR_MAPA_SILVIE, 'recursos/imagens/icones/marcador_mapa_silvie.png', escalar_para_altura=48)
+        
+        self._carregar_imagem(ARBUSTO, 'recursos/imagens/itens/arbusto.png')
 
         if not self._tudo_carregado_com_sucesso():
             print("Recursos críticos falharam ao carregar. Saindo.")

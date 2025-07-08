@@ -160,6 +160,8 @@ CHAVE_CENARIO_ILHA_6_PARTE_1 = 'cenario_quartel_porto'
 CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_quartel_interior'
 CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
 
+ARBUSTO = 'arbusto'
+
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão

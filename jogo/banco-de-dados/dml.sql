@@ -876,6 +876,21 @@ VALUES
 
 
 
+INSERT INTO area_interativa
+    (identificador_area_origem, chave_imagem, x, y, chance_sucesso, tipo_evento, metodo_ativacao)
+VALUES
+    ('are001', 'arbusto', 1247, 119, 0.5, 'investigar', 'ativo'),
+    ('are001', 'arbusto', 2955, 111, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 559, 359, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 741, 361, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar', 'ativo'),
+    ('are003', 'arbusto', 817, 138, 0.5, 'investigar', 'ativo'),
+    ('are003', 'arbusto', 2692, 126, 0.5, 'investigar', 'ativo'),
+    ('are003', 'arbusto', 3160, 132, 0.5, 'investigar', 'ativo');
+
+    
+
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
 VALUES
