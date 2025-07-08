@@ -149,6 +149,18 @@ class Jogador(pygame.sprite.Sprite):
         self.frame_parada_apos_caminhada = valid_caminhada_frames[1] if len(valid_caminhada_frames) > 1 else self.frames_animacao['parado'][0]
 
 
+
+    def get_area_de_ataque(self):
+        """Retorna a área de ataque do jogador com base na posição e orientação."""
+        x, y = self.rect.center
+    
+        if self.orientacao == "direita":
+            return pygame.Rect(x, y - 10, 60, 40)
+        else:
+            return pygame.Rect(x - 60, y - 10, 60, 40)
+
+
+
     def handle_input_continuo(self):
         """
         Processa as entradas contínuas do teclado usando pygame.key.get_pressed().
