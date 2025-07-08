@@ -11,6 +11,7 @@ from utilidades import Camera
 from interface import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 from gerenciadores import GerenciadorDeEntidades
+from gerenciadores import GerenciadorNotificacoesItem
 import gerenciadores.gerenciador_missoes # Importa o módulo, não a classe diretamente
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
@@ -98,6 +99,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.gerenciador_telas, # Para transições de tela
             self
         )
+
+        fonte_notificacoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO)
+        self.notificador = GerenciadorNotificacoesItem(fonte_notificacoes, posicao_base=(LARGURA_TELA - 20, 20))
+
 
         #self.gerenciador_missoes.iniciar_missao('mis001')
         # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
@@ -347,8 +352,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 'personagem': self.jogador.nome}
                     elif area.tipo_evento == 'investigar':
                         area.iniciar_animacao_chacoalhar()
-                        mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador)
+                        mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador, self.notificador)
                         print(mensagem)
+
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
@@ -401,6 +407,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             npc.atualizar(dt, self.jogador.rect)
 
         self.areas_interacao.update()
+        self.notificador.atualizar(dt)
 
         self.camera.update(dt, self.jogador.rect)
 
@@ -494,7 +501,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     )
                     pygame.draw.rect(tela, VERDE, debug_rect_npc, 1) # Cor verde para NPCs
 
-
+            self.notificador.desenhar(tela)
             # --- Desenha o nome da ilha com fade ---
             if self.exibicao_nome_ilha:
                 self.exibicao_nome_ilha.draw(tela)

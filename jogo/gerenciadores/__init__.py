@@ -1,4 +1,5 @@
 # __init__.py
+from .gerenciador_de_notificacoes import GerenciadorNotificacoesItem
 from .gerenciador_de_recursos import GerenciadorDeRecursos
 from .gerenciador_de_entidades import GerenciadorDeEntidades
 from .gerenciador_telas import GerenciadorDeTelas

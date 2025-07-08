@@ -1019,7 +1019,9 @@ class DBManager:
         """
         if tipo == 'consumivel':
             query = """
-                SELECT c.identificador_consumivel AS identificador_item, c.nome AS nome_item
+                SELECT
+                    c.identificador_consumivel AS identificador_item,
+                    TRIM(c.nome) AS nome_item
                 FROM consumivel c
                 JOIN ilha i ON c.local_encontrado = i.nome
                 WHERE i.identificador_ilha = %s
@@ -1027,7 +1029,9 @@ class DBManager:
             """
         else:
             query = """
-                SELECT nc.identificador_nao_consumivel AS identificador_item, nc.nome AS nome_item
+                SELECT
+                    nc.identificador_nao_consumivel AS identificador_item,
+                    TRIM(nc.nome) AS nome_item
                 FROM nao_consumivel nc
                 JOIN ilha i ON nc.local_encontrado = i.nome
                 WHERE i.identificador_ilha = %s
@@ -1181,7 +1185,7 @@ class DBManager:
     # ===============================================
 
 
-    def tentar_coletar_item_no_mapa(self, id_jogador, id_area_interativa):
+    def tentar_coletar_item_no_mapa(self, id_jogador, id_area_interativa, notificador):
         """
         Processa a tentativa de coletar recompensa por exploração.
 
@@ -1248,7 +1252,6 @@ class DBManager:
             id_item = item_escolhido.identificador_item
 
             # Pega ID da mochila do jogador
-            print(id_jogador, jogador.identificador_progresso)
             mochila = self.buscar_inventario(id_jogador, tipo_inventario='moc', identificador_progresso=jogador.identificador_progresso)
             if not mochila:
                 return "Erro: mochila do jogador não encontrada."
@@ -1258,6 +1261,7 @@ class DBManager:
             # Adiciona o item
             sucesso = self.adicionar_item_ao_inventario(id_inventario, id_item)
             if sucesso:
+                notificador.adicionar_item(item_escolhido.nome_item, 1)
                 return f"Item '{item_escolhido.nome_item}' adicionado à mochila!"
             else:
                 return "Erro ao adicionar o item à mochila."
