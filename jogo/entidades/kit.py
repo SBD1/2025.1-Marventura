@@ -16,6 +16,7 @@ class KitDoExplorador:
                     self.fruta = item
                 case "arm":
                     self.arma = item
+                    print(f"Arma equipada: {self.arma.nome_item} (ID: {self.arma.identificador_item}) (Tipo: {self.arma.tipo_arma}) (Raridade: {self.arma.raridade})")
 
     def obter_ids_do_equipamento(self):
         return {
