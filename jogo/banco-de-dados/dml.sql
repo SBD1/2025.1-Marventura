@@ -935,7 +935,7 @@ VALUES
     ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven003
     ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven004
     ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven005
-    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven006
+    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto', 'com'); -- ven006
 
 
 
