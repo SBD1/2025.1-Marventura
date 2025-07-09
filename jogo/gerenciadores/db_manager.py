@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import psycopg
 from psycopg.rows import namedtuple_row
 from utilidades.constantes import *
+from typing import Literal
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -346,7 +347,10 @@ class DBManager:
 
         self.atualizar_espaco_salvamento(id_progresso)
 
-        # 5) Retorna dados carregados já prontos
+        # 5) Aceita a primeira missão
+        self.atualizar_estado_missao('mis001', id_progresso, 'aceita')
+
+        # 6) Retorna dados carregados já prontos
         return self.carregar_dados_do_progresso(id_jogador, id_progresso)
 
 
@@ -369,7 +373,9 @@ class DBManager:
         ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
 
         return jogador, mochila_jogador, kit_jogador, ilha, area
-    
+
+
+
     def atualizar_espaco_salvamento(self, identificador_progresso):
         """
         Atualiza a data e hora do último dado salvo
@@ -506,26 +512,66 @@ class DBManager:
         return self.executar_query(consulta, (id_personagem,), fetchall=True)
 
 
-    def buscar_missoes_aceitas_do_jogador(self, id_jogador):
+    def buscar_missoes_aceitas_pelo_jogador(self, id_jogador):
         """
-        Retorna todas as missões aceitas atualmente pelo jogador.
+        Retorna todas as missões aceitas atualmente pelo jogador, incluindo o nome do item de recompensa (se houver).
+        
         :param id_jogador: ID do jogador
-        :return: Lista com (identificador_missao, nome, descricao, nivel_de_desbloqueio)
+        :return: Lista com (id_missao, nome_missao, descricao, nivel_de_desbloqueio, id_item, nome_item)
         """
         consulta = """
             SELECT 
                 m.identificador_missao,
                 TRIM(m.nome) AS nome,
                 TRIM(m.descricao) AS descricao,
-                m.nivel_de_desbloqueio
+                m.nivel_de_desbloqueio,
+                im.identificador_item,
+                COALESCE(
+                    TRIM(a.nome),
+                    TRIM(f.nome),
+                    TRIM(ac.nome),
+                    TRIM(c.nome),
+                    TRIM(nc.nome)
+                ) AS nome_item
             FROM jogador j
             JOIN estado_missao em ON em.identificador_progresso = j.identificador_progresso
             JOIN missao m ON m.identificador_missao = em.identificador_missao
+            LEFT JOIN item_missao im ON im.identificador_missao = m.identificador_missao
+            LEFT JOIN arma a ON a.identificador_arma = im.identificador_item
+            LEFT JOIN fruta f ON f.identificador_fruta = im.identificador_item
+            LEFT JOIN acessorio ac ON ac.identificador_acessorio = im.identificador_item
+            LEFT JOIN consumivel c ON c.identificador_consumivel = im.identificador_item
+            LEFT JOIN nao_consumivel nc ON nc.identificador_nao_consumivel = im.identificador_item
             WHERE j.identificador_jogador = %s
             AND em.estado = 'aceita'
             ORDER BY m.nivel_de_desbloqueio, m.nome;
         """
         return self.executar_query(consulta, (id_jogador,), fetchall=True)
+
+    
+
+
+    def atualizar_estado_missao(self, id_missao, id_progresso, novo_estado: Literal['aceita', 'pendente', 'concluida']):
+        """
+        Atualiza o estado de uma missão específica no progresso do jogador.
+        
+        :param id_missao: ID da missão (ex: 'mis012')
+        :param id_progresso: ID do progresso (vinculado ao jogador)
+        :param novo_estado: Novo estado ('pendente', 'aceita' ou 'concluida')
+        :return: True se atualizado com sucesso, False se falhou
+        """
+        if novo_estado not in ('pendente', 'aceita', 'concluida'):
+            print(f"Estado inválido: {novo_estado}")
+            return False
+
+        consulta = """
+            UPDATE estado_missao
+            SET estado = %s
+            WHERE identificador_missao = %s
+            AND identificador_progresso = %s;
+        """
+        return self.executar_query(consulta, (novo_estado, id_missao, id_progresso))
+
 
 
     def buscar_dialogos_da_missao(self, id_missao, genero_jogador):
@@ -790,6 +836,53 @@ class DBManager:
             WHERE hp.identificador_personagem = %s;
         """
         return self.executar_query(consulta, (identificador_personagem,), fetchall=True)
+    
+    def buscar_lacaio_com_habilidades_por_nome(self, nome_lacaio):
+        """
+        Busca os dados de um lacaio pelo nome (não instância) e retorna suas habilidades.
+        
+        :param nome_lacaio: Nome do lacaio (exato)
+        :return: Lista de tuplas com dados do lacaio + habilidades (uma linha por habilidade)
+        """
+        query = """
+            SELECT
+                l.identificador_lacaio,
+                TRIM(l.nome) AS nome_lacaio,
+                TRIM(l.descricao) AS descricao,
+                l.vida,
+                l.nivel,
+                l.experiencia,
+                h.identificador_habilidade,
+                TRIM(h.nome) AS nome_habilidade,
+                h.dano,
+                h.tipo_de_ataque,
+                h.tipo_de_alvo
+            FROM lacaio l
+            LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identificador_lacaio
+            LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
+            WHERE TRIM(l.nome) = %s;
+        """
+        return self.executar_query(query, (nome_lacaio,), fetchall=True)
+
+
+    def matar_inimigos_da_area(self, id_area_origem):
+        """
+        Marca como mortos todos os lacaios vivos da área especificada,
+        e os move para a área 'are0034'.
+
+        :param id_area_origem: ID da área onde os lacaios estão atualmente
+        """
+        query = """
+            UPDATE estado_instancia_lacaio
+            SET 
+                data_da_morte = now(),
+                identificador_area_atual = 'are0034'
+            WHERE 
+                identificador_area_atual = %s
+                AND data_da_morte IS NULL;
+        """
+        return self.executar_query(query, (id_area_origem,))
+
 
 
     # ===============================================
@@ -882,13 +975,16 @@ class DBManager:
                 identificador_area_interativa,
                 identificador_area_origem AS area_origem,
                 identificador_area_destino AS area_destino,
+                identificador_missao,
                 TRIM(chave_imagem) AS chave_imagem,
                 x,
                 y,
                 largura,
                 altura,
                 chance_sucesso,
-                TRIM(tipo_evento) AS tipo_evento
+                TRIM(tipo_evento) AS tipo_evento,
+                TRIM(metodo_ativacao) AS metodo_ativacao,
+                ativa
             FROM area_interativa
             WHERE identificador_area_origem = %s;
         """

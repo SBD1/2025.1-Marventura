@@ -27,6 +27,11 @@ class GerenciadorDeMissoes:
         
         self.proximo_passo_apos_dialogo_controlado = None # O que fazer depois que o diálogo controlado terminar
 
+        # NOVO: Atributos para controle de movimento
+        self.entidade_em_movimento = None
+        self.destino_movimento = None
+        self.velocidade_movimento_controlado = VELOCIDADE_JOGADOR * 0.8 # Um pouco mais lento para cutscenes
+
 
     def _carregar_scripts_missoes(self, nome_jogador):
         """
@@ -41,9 +46,12 @@ class GerenciadorDeMissoes:
                 # automaticamente após o diálogo da cena terminar.
             ],
             'mis002': [
-                {'tipo': 'focar_em_ponto', 'x': 500, 'y': 100},
-                {'tipo': 'dialogo', 'textos': ["Encontrei o baú perdido!", "Mas está trancado...", "Preciso da chave sagrada."]},
-                {'tipo': 'retornar_para_jogador'}
+                {'tipo': 'remover_inimigos_da_area', 'area_id': 'are001'},
+                {'tipo': 'carregar_inimigo_na_posicao', 'chave_inimigo': 'Lobo', 'x': 2980, 'y': 290, 'id_instancia': 'lobo_missao_002'},
+                {'tipo': 'mover_jogador_para', 'x': 2780, 'y': 170},
+                {'tipo': 'mover_inimigo_para', 'id_instancia': 'lobo_missao_002', 'x': 2900, 'y': 210},
+                {'tipo': 'dialogo', 'missao_id': 'mis002'}, # Precisamos do ID para buscar os diálogos
+                {'tipo': 'batalha', 'inimigos_batalha': ['lobo_missao_002']}
             ]
             # ... outras missões
         }
@@ -62,27 +70,73 @@ class GerenciadorDeMissoes:
         else:
             print(f"Erro: Missão '{identificador_missao}' não encontrada nos scripts.")
 
+
+
     def update(self, dt_ms):
         """
         Atualiza o estado do gerenciador de missões e avança no script.
         :param dt_ms: Delta time em milissegundos.
         """
+
+        # =====================================================================
+        #  PRIMEIRO: Verifique e execute o movimento controlado, se houver.
+        #  Esta lógica precisa rodar MESMO SE o script estiver "pausado".
+        # =====================================================================
+        if self.entidade_em_movimento and self.destino_movimento:
+            entidade = self.entidade_em_movimento
+            destino = self.destino_movimento
+            
+            direcao = destino - pygame.math.Vector2(entidade.mundo_x, entidade.mundo_y)
+
+            # Checa se a entidade chegou ao destino
+            if direcao.length() < 5: # Usamos uma pequena margem de erro
+                entidade.mundo_x, entidade.mundo_y = destino.x, destino.y
+                entidade.estado = 'parado' # Para a animação
+                self.entidade_em_movimento = None
+                self.destino_movimento = None
+                # IMPORTANTE: O próprio movimento, ao terminar, avança o script
+                self._avancar_passo() 
+            else:
+                # Move a entidade
+                direcao.normalize_ip()
+                entidade.mundo_x += direcao.x * self.velocidade_movimento_controlado
+                entidade.mundo_y += direcao.y * self.velocidade_movimento_controlado
+                entidade.estado = 'caminhando' # Ativa a animação de caminhada
+
+                # NOVO E CRUCIAL: Sincronize o rect com as coordenadas de mundo
+                entidade.rect.x = int(entidade.mundo_x)
+                entidade.rect.y = int(entidade.mundo_y)
+                
+                # Atualiza a orientação visual da entidade
+                if hasattr(entidade, 'orientacao'):
+                    entidade.orientacao = 'direita' if direcao.x >= 0 else 'esquerda'
+                elif hasattr(entidade, 'olhando_direita'):
+                    entidade.olhando_direita = direcao.x >= 0
+            
+            # Como o movimento está acontecendo, paramos o resto do update desta frame
+            return 
+
+        # =====================================================================
+        #  SEGUNDO: Agora, verifique as condições de pausa geral (diálogo, etc.)
+        # =====================================================================
         if self.missao_ativa_id is None or self.esta_pausado:
             if self.dialogo_controlado_ativo and self.caixa_dialogo:
-                self.caixa_dialogo.atualizar() # Garante que o diálogo continue a ser atualizado
+                self.caixa_dialogo.atualizar()
             return
 
         # Se há um diálogo controlado ativo, a execução do script está pausada
         if self.dialogo_controlado_ativo:
             self.caixa_dialogo.atualizar()
-            return # A lógica de avanço do diálogo está no handle_input
+            return
 
         # Se o movimento da câmera estiver em andamento, pausa o script
         if self.camera.modo == 'movimento_suave' and not self.camera.is_movimento_suave_completo():
-            self.camera.update(dt_ms) # A câmera se atualiza
-            return # Pausa o avanço do script até o movimento terminar
+            self.camera.update(dt_ms)
+            return
 
-        # Executa o passo atual do script
+        # =====================================================================
+        #  TERCEIRO: Se não há movimento nem pausa, execute o próximo passo
+        # =====================================================================
         if self.indice_passo_atual < len(self.script_em_execucao):
             passo = self.script_em_execucao[self.indice_passo_atual]
             self._executar_passo(passo, dt_ms)
@@ -93,22 +147,91 @@ class GerenciadorDeMissoes:
             self.script_em_execucao = None
             self.indice_passo_atual = 0
             self.esta_pausado = False
-            # Pode ativar a próxima missão, dar recompensas, etc.
-            self.camera.retornar_para_jogador() # Retorna a câmera para o jogador ao fim da missão
+            self.camera.retornar_para_jogador()
+
+
 
     def _executar_passo(self, passo, dt_ms):
         """Executa uma única ação do script da missão."""
         tipo_passo = passo['tipo']
 
+        print(f"Executando passo da missão: {tipo_passo}") # Ótimo para debug
+
         if tipo_passo == 'focar_em_ponto':
             self.camera.focar_em_ponto(passo['x'], passo['y'])
             self._avancar_passo() # Este é instantâneo, então avança imediatamente
 
+        elif tipo_passo == 'remover_inimigos_da_area':
+            # Remove inimigos existentes para garantir um cenário limpo
+            # A melhor forma é fazer isso na TelaJogo, que controla o grupo de inimigos
+            self.tela_jogo.inimigos.empty()
+            self._avancar_passo()
+
+        elif tipo_passo == 'carregar_inimigo_na_posicao':
+            # Pede para a TelaJogo criar e adicionar o inimigo da missão
+            self.tela_jogo.adicionar_inimigo_em_missao(
+                passo['chave_inimigo'],
+                passo['id_instancia'],
+                passo['x'],
+                passo['y']
+            )
+            self._avancar_passo()
+
+        elif tipo_passo == 'mover_jogador_para':
+            self.entidade_em_movimento = self.jogador
+            self.destino_movimento = pygame.math.Vector2(passo['x'], passo['y'])
+            self.esta_pausado = True # Pausa o script até o movimento terminar
+
+        elif tipo_passo == 'mover_inimigo_para':
+            # Encontra o inimigo pelo ID de instância que demos a ele
+            inimigo_alvo = None
+            for inimigo in self.tela_jogo.inimigos:
+                if hasattr(inimigo, 'id_instancia') and inimigo.id_instancia == passo['id_instancia']:
+                    inimigo_alvo = inimigo
+                    break
+            
+            if inimigo_alvo:
+                self.entidade_em_movimento = inimigo_alvo
+                self.destino_movimento = pygame.math.Vector2(passo['x'], passo['y'])
+                self.esta_pausado = True # Pausa o script
+            else:
+                print(f"ERRO: Inimigo com ID '{passo['id_instancia']}' não encontrado para mover.")
+                self._avancar_passo() # Pula o passo se não encontrar
+
         elif tipo_passo == 'dialogo':
-            self.iniciar_dialogo_controlado(passo['textos'])
-            # O avanço do passo acontecerá após o diálogo terminar,
-            # em handle_input quando o usuário pressionar espaço no último texto.
-            self.proximo_passo_apos_dialogo_controlado = True # Sinaliza para avançar o passo do script depois
+            # Seu código de diálogo estava quase certo, só precisa do ID da missão
+            id_missao = passo['missao_id']
+            genero = 'F' if self.jogador.nome == SILVIE else 'M'
+            dialogos = self.banco_de_dados.buscar_dialogos_da_missao(id_missao, genero)
+            if dialogos:
+                self.iniciar_dialogo_controlado(dialogos)
+                self.proximo_passo_apos_dialogo_controlado = True
+            else:
+                print(f"AVISO: Nenhum diálogo encontrado para a missão '{id_missao}'. Pulando.")
+                self._avancar_passo()
+                
+        elif tipo_passo == 'batalha':
+            # Usa o sistema de transição de tela que você já tem
+            print("Iniciando transição para batalha...")
+            
+            # Encontra os inimigos da batalha na lista de inimigos da tela de jogo
+            inimigos_para_batalha = []
+            for id_inimigo in passo['inimigos_batalha']:
+                for inimigo_sprite in self.tela_jogo.inimigos:
+                    if hasattr(inimigo_sprite, 'id_instancia') and inimigo_sprite.id_instancia == id_inimigo:
+                        inimigos_para_batalha.append(inimigo_sprite)
+
+            if inimigos_para_batalha:
+                self.gerenciador_telas.mudar_tela(
+                    CHAVE_TRANSICAO_BATALHA,
+                    inimigos_batalha=inimigos_para_batalha,
+                    # Adicione quaisquer outros dados que sua tela de batalha precise
+                )
+                # A missão será finalizada quando a batalha terminar (ver Passo 3)
+                self.esta_pausado = True # Pausa a missão até o retorno da batalha
+            else:
+                print("ERRO: Inimigos para a batalha não foram encontrados.")
+                self._avancar_passo()
 
         elif tipo_passo == 'movimento_camera_suave':
             self.camera.iniciar_movimento_suave(
@@ -124,7 +247,7 @@ class GerenciadorDeMissoes:
             self._avancar_passo()
 
         elif tipo_passo == 'recompensa':
-            print(f"Recompensa: XP={passo.get('xp', 0)}, Item={passo.get('item_id', 'Nenhum')}")
+            print(f"Recompensa: XP={passo.get('xp', 50)}, Item={passo.get('item_id', 'Nenhum')}")
             # Lógica para adicionar XP e itens ao jogador
             self._avancar_passo()
         
@@ -200,27 +323,20 @@ class GerenciadorDeMissoes:
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_SPACE:
                     if self.caixa_dialogo.esta_digitando:
-                        print("DEBUG: Pressionado ESPAÇO - pulando digitação do diálogo.")
                         self.caixa_dialogo.pular_digitacao()
                     elif self.caixa_dialogo.esta_finalizado():
-                        print("DEBUG: Pressionado ESPAÇO - diálogo atual finalizado.")
                         self.indice_dialogo_controlado += 1
                         if self.indice_dialogo_controlado < len(self.dialogos_controlados_atuais):
-                            print(f"DEBUG: Avançando para o diálogo {self.indice_dialogo_controlado + 1}/{len(self.dialogos_controlados_atuais)}.")
                             self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].dialogo, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
                         else:
-                            print(f"DEBUG: Avançando para o diálogo {self.indice_dialogo_controlado + 1}/{len(self.dialogos_controlados_atuais)}.")
                             self._finalizar_dialogo_controlado()
                             if self.proximo_passo_apos_dialogo_controlado == 'finalizar_cena_e_missao':
-                                print("DEBUG: Condição 'finalizar_cena_e_missao' ATENDIDA.")
-                                print("Diálogo da cena de missão terminado. Finalizando cena e missão.")
                                 self.tela_jogo.desativar_cena_estatica()
                                 self.camera.retornar_para_jogador()
                                 #self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
                                 self._avancar_passo() # Avança o script da missão
                                 self.proximo_passo_apos_dialogo_controlado = None # Reseta a flag
                             elif self.proximo_passo_apos_dialogo_controlado:
-                                print(f"DEBUG: Condição {self.proximo_passo_apos_dialogo_controlado} ATENDIDA. Avançando passo do script.")
                                 self._avancar_passo() # Avança o script da missão
                                 self.proximo_passo_apos_dialogo_controlado = None
             elif evento.type == pygame.MOUSEBUTTONDOWN:

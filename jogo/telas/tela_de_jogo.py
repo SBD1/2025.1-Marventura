@@ -27,7 +27,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados: "gerenciadores.DBManager", iniciar_missao=None):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
         self.gerenciador_entidades = GerenciadorDeEntidades()
 
@@ -35,6 +35,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.dados_da_ilha = self.gerenciador_entidades.ilha_atual
         self.dados_do_progresso = self.gerenciador_entidades.progresso_do_jogo
         self.banco_de_dados = gerenciador_banco_de_dados
+        self.iniciar_missao = iniciar_missao
 
         # --- Atributos para o menu de viagem ---
         self.menu_viagem = None # Será uma instância de _MenuViagemFlutuante quando ativo
@@ -68,6 +69,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.obstaculos_visao = pygame.sprite.Group()
         self.inimigos = pygame.sprite.Group()
         self.areas_interacao = pygame.sprite.Group()
+        self.areas_interacao_passivas = pygame.sprite.Group()
         self.npcs = pygame.sprite.Group()
 
         # --- Variáveis para rastrear áreas de interação ativas ---
@@ -98,8 +100,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.gerenciador_telas, # Para transições de tela
             self
         )
-
-        self.gerenciador_missoes.iniciar_missao('mis001')
+        if self.iniciar_missao:
+            self.gerenciador_missoes.iniciar_missao(self.iniciar_missao.identificador_missao)
         # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
         # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
         
@@ -162,10 +164,16 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 area_data.largura, area_data.altura,
                                 area_data.tipo_evento,
                                 area_data.chance_sucesso,
+                                area_data.metodo_ativacao,
+                                area_data.ativa,
                                 area_data.area_destino,
-                                area_data.chave_imagem)
-
-            self.areas_interacao.add(area)
+                                area_data.chave_imagem,
+                                area_data.identificador_missao)
+            
+            if area_data.metodo_ativacao == 'passivo':
+                self.areas_interacao_passivas.add(area)
+            else:
+                self.areas_interacao.add(area)
 
         # --- NOVO: Carregar NPCs ---
         dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
@@ -196,7 +204,38 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.dialogo_ativo = True
         
         self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
-        
+
+
+
+    def adicionar_inimigo_em_missao(self, nome_inimigo, id_instancia, x, y):
+        """
+        Cria e adiciona um inimigo específico para uma missão.
+        Diferente do carregamento normal do mapa.
+        """
+        print(f"Adicionando inimigo de missão: {nome_inimigo} em ({x}, {y})")
+        # Você precisará buscar os dados base do inimigo (vida, nível etc.) do DB
+        # Aqui, vamos usar valores de exemplo.
+        dados_base_inimigo = self.banco_de_dados.buscar_lacaio_com_habilidades_por_nome(nome_inimigo)[0] # Supondo que você tenha essa função
+
+        novo_inimigo = Inimigo(
+            gerenciador_recursos=self.gerenciador_recursos,
+            x_inicial=x,
+            y_inicial=y,
+            tipo_inimigo=dados_base_inimigo.nome_lacaio, # ou a chave_inimigo
+            descricao=dados_base_inimigo.descricao,
+            vida_atual=dados_base_inimigo.vida,
+            vida_total=dados_base_inimigo.vida,
+            nivel=dados_base_inimigo.nivel,
+            experiencia=dados_base_inimigo.experiencia,
+            habilidade=[], # Busque se necessário
+            inventario=[], # Busque se necessário
+            caminho_container=None
+        )
+        # Adiciona um identificador único para podermos encontrá-lo depois
+        novo_inimigo.id_instancia = id_instancia
+        self.inimigos.add(novo_inimigo)
+
+
 
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
@@ -359,16 +398,16 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Se um evento de missão estiver ativo, ele pode controlar o jogador, a câmera, etc.
         self.gerenciador_missoes.update(dt_ms) # Passa dt em milissegundos
 
-        # Se o gerenciador de missões estiver em um evento controlado OU CENA ESTÁTICA ATIVA, desativa o input do jogador
-        if self.gerenciador_missoes.esta_em_evento_controlado() or self.cena_estatica_ativa: # CENA ESTÁTICA desabilita jogador
-            self.jogador.movendo_esquerda = False
-            self.jogador.movendo_direita = False
-            self.jogador.movendo_cima = False
-            self.jogador.movendo_baixo = False
+        # Verifica se o gerenciador está controlando o jogo
+        if self.gerenciador_missoes.esta_em_evento_controlado() or self.cena_estatica_ativa:
+            self.jogador.movimento_bloqueado = True # Bloqueia o movimento do jogador
         else:
-            # Atualiza o jogador SOMENTE SE NÃO HOUVER UM EVENTO CONTROLANDO
-            self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
+            self.jogador.movimento_bloqueado = False # Libera o movimento do jogador
 
+        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
+
+        # NOVO: Esta lógica toda só deve rodar quando o jogador está no controle
+        if not self.gerenciador_missoes.esta_em_evento_controlado() or not self.cena_estatica_ativa:
             # Lógica de clamping do jogador para não sair dos limites do mundo (movimento normal)
             largura_mundo_atual = self.mapa_fundo_imagem.get_width()
             altura_mundo_atual = self.mapa_fundo_imagem.get_height()
@@ -382,8 +421,18 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             if self.jogador.rect.bottom > altura_mundo_atual:
                 self.jogador.rect.bottom = altura_mundo_atual
 
+            # Sincroniza as coordenadas de mundo com o rect após o clamp
             self.jogador.mundo_x = self.jogador.rect.x
             self.jogador.mundo_y = self.jogador.rect.y
+
+            # Obtém as áreas de interação que estão colidindo com o jogador
+            areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao_passivas, False)
+            
+            for area in areas_colidindo_agora:
+                if area.tipo_evento == 'missao':
+                    if not self.gerenciador_missoes.missao_ativa_id:
+                        self.gerenciador_missoes.iniciar_missao(area.identificador_missao)
+
 
 
         # Atualiza a visibilidade do ícone de interação
@@ -455,7 +504,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 caminho.desenhar(tela, self.camera.rect.x)
 
             if DEBUG_DESENHAR_CAIXAS_COLISAO:
-                for area in self.areas_interacao:
+                for area in list(self.areas_interacao) + list(self.areas_interacao_passivas):
                     area_rect_tela = pygame.Rect(
                         area.rect.x - self.camera.rect.x,
                         area.rect.y - self.camera.rect.y,

@@ -6,6 +6,9 @@ from .tela_modelo import TelaModelo
 from utilidades.constantes import *
 from gerenciadores import GerenciadorDeEntidades
 from entidades import Jogador
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
 
 class TelaSelecaoPersonagem(TelaModelo):
     """
@@ -13,7 +16,7 @@ class TelaSelecaoPersonagem(TelaModelo):
     Ao escolher, solicita ao GerenciadorDeTelas para iniciar o jogo no mapa inicial,
     com o personagem selecionado e o ponto de entrada de "novo jogo".
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados): # Adiciona gerenciador_telas
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados: "DBManager"): # Adiciona gerenciador_telas
         super().__init__(gerenciador_telas, gerenciador_recursos)
         self.gerenciador_entidades = GerenciadorDeEntidades()
 
@@ -107,7 +110,11 @@ class TelaSelecaoPersonagem(TelaModelo):
                 self.gerenciador_entidades.ilha_atual = ilha
                 self.gerenciador_entidades.area_atual = area
 
-                self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO)
+                missao = self.banco_de_dados.buscar_missoes_aceitas_pelo_jogador(jogador.identificador)
+
+                self.gerenciador_telas.mudar_tela(
+                    CHAVE_TRANSICAO_NOVO_JOGO,
+                    iniciar_missao=missao)
         return None
 
     def update(self, dt):

@@ -876,6 +876,11 @@ VALUES
 
 
 
+INSERT INTO area_interativa
+    (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, metodo_ativacao)
+VALUES
+    ('are001', 'mis002', 2560, 220, 180, 133, 'missao', 'passivo');
+
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
 VALUES

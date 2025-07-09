@@ -1,5 +1,10 @@
 # entidades/gerenciador_entidades.py
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from entidades import Jogador
+
+
 class GerenciadorDeEntidades:
     _instance = None # Atributo para armazenar a única instância
 
@@ -15,7 +20,7 @@ class GerenciadorDeEntidades:
         Método de inicialização real da instância.
         Chamado apenas uma vez quando a instância é criada.
         """
-        self._entidade_jogador = None
+        self._entidade_jogador:"Jogador" = None
         self._mochila_jogador = None
         self._kit_jogador = None
 
@@ -31,12 +36,12 @@ class GerenciadorDeEntidades:
 
 
     @property
-    def jogador(self):
+    def jogador(self) -> "Jogador":
         """Retorna a instância do jogador principal."""
         return self._entidade_jogador
 
     @jogador.setter
-    def jogador(self, jogador):
+    def jogador(self, jogador: "Jogador"):
         """Define a instância do jogador principal."""
         self._entidade_jogador = jogador
 

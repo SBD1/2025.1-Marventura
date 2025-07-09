@@ -47,7 +47,8 @@ class GerenciadorDeTelas:
                             self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
             return TelaJogo(self, self.gerenciador_recursos,
-                            self.gerenciador_banco_de_dados)
+                            self.gerenciador_banco_de_dados,
+                            iniciar_missao=kwargs.get('iniciar_missao'))
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados)
