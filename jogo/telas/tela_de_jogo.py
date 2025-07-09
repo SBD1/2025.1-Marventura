@@ -8,7 +8,7 @@ from entidades import Obstaculo
 from entidades import Caminho
 from entidades import AreaInteracao
 from utilidades import Camera
-from interface import CaixaDeDialogo
+from componentes import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 from gerenciadores import GerenciadorDeEntidades
 import gerenciadores.gerenciador_missoes # Importa o módulo, não a classe diretamente
@@ -27,7 +27,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados: "gerenciadores.DBManager", iniciar_missao=None):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados: "gerenciadores.DBManager"):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
         self.gerenciador_entidades = GerenciadorDeEntidades()
 
@@ -35,7 +35,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.dados_da_ilha = self.gerenciador_entidades.ilha_atual
         self.dados_do_progresso = self.gerenciador_entidades.progresso_do_jogo
         self.banco_de_dados = gerenciador_banco_de_dados
-        self.iniciar_missao = iniciar_missao
 
         # --- Atributos para o menu de viagem ---
         self.menu_viagem = None # Será uma instância de _MenuViagemFlutuante quando ativo
@@ -100,8 +99,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.gerenciador_telas, # Para transições de tela
             self
         )
-        if self.iniciar_missao:
-            self.gerenciador_missoes.iniciar_missao(self.iniciar_missao.identificador_missao)
+
+        if self.gerenciador_entidades.iniciar_missao and self.gerenciador_entidades.iniciar_missao.identificador_area == self.dados_da_area.identificador_area:
+            self.gerenciador_missoes.iniciar_missao(self.gerenciador_entidades.iniciar_missao.identificador_missao)
         # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
         # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
         
@@ -194,6 +194,27 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 dialogos
             )
             self.npcs.add(novo_npc)
+
+
+
+    def atualizar_areas_interativas_passivas(self):
+        id_area_atual = self.dados_da_area.identificador_area
+        areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
+
+        self.areas_interacao_passivas.empty()
+
+        for area_data in areas_interativas:
+            area = AreaInteracao(area_data.x, area_data.y,
+                                area_data.largura, area_data.altura,
+                                area_data.tipo_evento,
+                                area_data.chance_sucesso,
+                                area_data.metodo_ativacao,
+                                area_data.ativa,
+                                area_data.area_destino,
+                                area_data.chave_imagem,
+                                area_data.identificador_missao)
+            
+            self.areas_interacao_passivas.add(area)
 
 
 

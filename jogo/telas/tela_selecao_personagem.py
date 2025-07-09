@@ -93,6 +93,7 @@ class TelaSelecaoPersonagem(TelaModelo):
                 self.gerenciador_entidades.jogador = Jogador(
                     self.gerenciador_recursos,
                     jogador.identificador_jogador,
+                    self.dados_slot.identificador_progresso,
                     jogador.coordenada_x,
                     jogador.coordenada_y,
                     jogador.nome,
@@ -110,11 +111,11 @@ class TelaSelecaoPersonagem(TelaModelo):
                 self.gerenciador_entidades.ilha_atual = ilha
                 self.gerenciador_entidades.area_atual = area
 
-                missao = self.banco_de_dados.buscar_missoes_aceitas_pelo_jogador(jogador.identificador)
+                missao = self.banco_de_dados.buscar_missoes_aceitas_pelo_jogador(jogador.identificador_jogador)[0]
 
-                self.gerenciador_telas.mudar_tela(
-                    CHAVE_TRANSICAO_NOVO_JOGO,
-                    iniciar_missao=missao)
+                self.gerenciador_entidades.iniciar_missao = missao
+
+                self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO)
         return None
 
     def update(self, dt):

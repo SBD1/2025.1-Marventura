@@ -23,6 +23,8 @@ class GerenciadorDeEntidades:
         self._entidade_jogador:"Jogador" = None
         self._mochila_jogador = None
         self._kit_jogador = None
+        self._iniciar_missao = None
+
 
         self._ilha_atual = None
         self._area_atual = None
@@ -83,6 +85,18 @@ class GerenciadorDeEntidades:
 
 
 
+    @property
+    def iniciar_missao(self):
+        """Missão atual em andamento do jogador principal."""
+        return self._iniciar_missao
+
+    @iniciar_missao.setter
+    def iniciar_missao(self, iniciar_missao):
+        """Define a missão atual em andamento do jogador principal."""
+        self._iniciar_missao = iniciar_missao
+ 
+ 
+ 
     @property
     def area_atual(self):
         """Retorna a área atual do jogador principal."""

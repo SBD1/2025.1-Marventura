@@ -876,11 +876,6 @@ VALUES
 
 
 
-INSERT INTO area_interativa
-    (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, metodo_ativacao)
-VALUES
-    ('are001', 'mis002', 2560, 220, 180, 133, 'missao', 'passivo');
-
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
 VALUES
@@ -949,8 +944,8 @@ INSERT INTO habitante
 VALUES
     ('are034', 'Narrador', null, 'hbt', 0, 0, 0, null), -- hbt001
     ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 90, 15, 'campones_a'), -- hbt002
-    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 2252, 336, 15, 'camponesa_b'), -- hbt003
-    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 1600, 340, 15, 'campones_b'), -- rct001
+    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 1586, 340, 15, 'camponesa_b'), -- hbt003
+    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 2231, 350, 15, 'campones_b'), -- rct001
     ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 15, 'camponesa_a'); -- rct002
 
 

@@ -58,21 +58,21 @@ class DBManager:
             print("DBManager: Conexão com o PostgreSQL fechada.")
         DBManager._instance = None # Reseta a instância Singleton
 
-    def executar_query(self, query, params=None, fetchone=False, fetchall=False):
+    def executar_query(self, consulta, params=None, fetchone=False, fetchall=False):
         """
-        Executa uma query SQL no banco de dados.
-        :param query: A string SQL a ser executada.
-        :param params: Uma tupla ou lista de parâmetros para a query (para evitar SQL Injection).
+        Executa uma consulta SQL no banco de dados.
+        :param consulta: A string SQL a ser executada.
+        :param params: Uma tupla ou lista de parâmetros para a consulta (para evitar SQL Injection).
         :param fetchone: Se True, retorna apenas uma linha.
         :param fetchall: Se True, retorna todas as linhas.
-        :return: Resultados da query (se for SELECT), True para sucesso, False para falha.
+        :return: Resultados da consulta (se for SELECT), True para sucesso, False para falha.
         """
         if not self.conn:
             print("DBManager ERRO: Não há conexão ativa com o banco de dados.")
             return False
 
         try:
-            self.cursor.execute(query, params)
+            self.cursor.execute(consulta, params)
             if fetchone:
                 return self.cursor.fetchone()
             elif fetchall:
@@ -82,7 +82,7 @@ class DBManager:
                 return True
         except psycopg.Error as e:
             self.conn.rollback()
-            print(f"DBManager ERRO ao executar query '{query}': {e}")
+            print(f"DBManager ERRO ao executar consulta '{consulta}': {e}")
             return False
 
     # ===============================================
@@ -389,12 +389,13 @@ class DBManager:
         return self.executar_query(consulta, (identificador_progresso,))
 
 
+
     # ===============================================
     # Métodos de Operações com Jogador
     # ===============================================
     def buscar_jogador(self, id_jogador):
         """Busca os dados de um jogador pelo ID."""
-        query = """
+        consulta = """
             SELECT
                 identificador_jogador,
                 identificador_area,
@@ -411,18 +412,18 @@ class DBManager:
             FROM jogador
             WHERE identificador_jogador = %s;
         """
-        return self.executar_query(query, (id_jogador,), fetchone=True)
+        return self.executar_query(consulta, (id_jogador,), fetchone=True)
 
     def atualizar_jogador(self, id_jogador, energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa):
         """Atualiza os dados de um jogador."""
-        query = """
+        consulta = """
             UPDATE jogador
             SET energia = %s, vida_atual = %s, nivel = %s, experiencia_atual = %s,
                 coordenada_x = %s, coordenada_y = %s, id_mapa = %s
             WHERE id_jogador = %s;
         """
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
-        return self.executar_query(query, params)
+        return self.executar_query(consulta, params)
     
     def atualizar_posicao_jogador(self, identificador_jogador, identificador_area, coordenada_x, coordenada_y):
         """Atualiza a posição do jogador"""
@@ -435,7 +436,7 @@ class DBManager:
 
     def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
         """Insere um novo jogador no banco de dados e retorna o ID gerado."""
-        query = """
+        consulta = """
             INSERT INTO jogador
                 (identificador_area, identificador_progresso, nome, descricao, coordenada_x, coordenada_y,
                 energia, vida, nivel, sorte, vida_atual, experiencia_atual, moedas_totais)
@@ -443,18 +444,18 @@ class DBManager:
                 ('are001', %s, %s, %s, 1950, 140, 5, 10, 0, 1, 10, 0, 0)
             RETURNING identificador_jogador;
         """
-        return self.executar_query(query, (identificador_progresso, nome, descricao), fetchone=True)[0]
+        return self.executar_query(consulta, (identificador_progresso, nome, descricao), fetchone=True)[0]
 
     def salvar_novo_aliado(self, nome, descricao, identificador_progresso):
         """Insere um novo aliado no banco de dados e retorna o ID gerado."""
-        query = """
+        consulta = """
             INSERT INTO aliado
                 (identificador_area, identificador_progresso, nome, descricao, coordenada_x, coordenada_y, vida, nivel, vida_atual)
             VALUES
                 ('are016', %s, %s, %s, 460, 315, 40, 30, 40)
             RETURNING identificador_aliado;
         """
-        return self.executar_query(query, (identificador_progresso, nome, descricao), fetchone=True)[0]
+        return self.executar_query(consulta, (identificador_progresso, nome, descricao), fetchone=True)[0]
 
     
     def inserir_habilidades(self, id_personagem, id_habilidade):
@@ -514,10 +515,11 @@ class DBManager:
 
     def buscar_missoes_aceitas_pelo_jogador(self, id_jogador):
         """
-        Retorna todas as missões aceitas atualmente pelo jogador, incluindo o nome do item de recompensa (se houver).
+        Retorna todas as missões aceitas atualmente pelo jogador,
+        incluindo o nome do item de recompensa (se houver) e o ID da área da missão.
         
         :param id_jogador: ID do jogador
-        :return: Lista com (id_missao, nome_missao, descricao, nivel_de_desbloqueio, id_item, nome_item)
+        :return: Lista com (id_missao, nome_missao, descricao, nivel_de_desbloqueio, id_area, id_item, nome_item)
         """
         consulta = """
             SELECT 
@@ -525,6 +527,7 @@ class DBManager:
                 TRIM(m.nome) AS nome,
                 TRIM(m.descricao) AS descricao,
                 m.nivel_de_desbloqueio,
+                m.identificador_area,
                 im.identificador_item,
                 COALESCE(
                     TRIM(a.nome),
@@ -548,7 +551,26 @@ class DBManager:
         """
         return self.executar_query(consulta, (id_jogador,), fetchall=True)
 
+
     
+
+    def buscar_estado_da_missao(self, id_missao, id_progresso):
+        """
+        Retorna o estado atual de uma missão específica para um progresso de jogo.
+
+        :param id_missao: ID da missão (ex: 'mis001')
+        :param id_progresso: ID do progresso do jogador
+        :return: Estado da missão (ex: 'pendente', 'aceita', 'concluida') ou None
+        """
+        consulta = """
+            SELECT TRIM(estado) AS estado
+            FROM estado_missao
+            WHERE identificador_missao = %s
+            AND identificador_progresso = %s;
+        """
+        resultado = self.executar_query(consulta, (id_missao, id_progresso), fetchone=True)
+        return resultado.estado if resultado else None
+
 
 
     def atualizar_estado_missao(self, id_missao, id_progresso, novo_estado: Literal['aceita', 'pendente', 'concluida']):
@@ -574,14 +596,19 @@ class DBManager:
 
 
 
-    def buscar_dialogos_da_missao(self, id_missao, genero_jogador):
+    def buscar_dialogos_da_missao(self, id_missao, genero_jogador, id_jogador):
         """
-        Retorna todos os diálogos de uma missão específica, incluindo falas sem personagem definido.
-        Se identificador_personagem for NULL, o nome será '???'.
-        
-        :param id_missao: ID da missão (ex: 'mis011')
-        :param genero_jogador: 'F' para Silvie, 'M' para Shuan
-        :return: Lista com (identificador_dialogo, nome_personagem, sequencia_local, dialogo)
+        Retorna os diálogos da missão com base no gênero do jogador e no identificador do jogador.
+        Inclui:
+        - Falas do jogador atual
+        - Falas de NPCs e do narrador
+        Exclui:
+        - Falas de outros jogadores do mesmo gênero
+
+        :param id_missao: ID da missão
+        :param genero_jogador: 'F' ou 'M'
+        :param id_jogador: ID do jogador atual
+        :return: Lista com (id_dialogo, nome_personagem, sequencia_local, dialogo)
         """
         consulta = """
             SELECT
@@ -601,9 +628,15 @@ class DBManager:
             LEFT JOIN habitante ON tipo_personagem.identificador_personagem = habitante.identificador_habitante
             WHERE dialogo.identificador_missao = %s
             AND dialogo.genero = %s
+            AND (
+                dialogo.identificador_personagem IS NULL
+                OR tipo_personagem.tipo <> 'jog'
+                OR dialogo.identificador_personagem = %s
+            )
             ORDER BY dialogo.sequencia_local;
         """
-        return self.executar_query(consulta, (id_missao, genero_jogador), fetchall=True)
+        return self.executar_query(consulta, (id_missao, genero_jogador, id_jogador), fetchall=True)
+
 
     
     # ===============================================
@@ -612,7 +645,7 @@ class DBManager:
 
     def buscar_inventario(self, identificador_personagem, tipo_inventario='moc', identificador_progresso=None):
         """Acessa o inventário de um personagem e seus atributos, filtrando também por progresso."""
-        query = """
+        consulta = """
             SELECT
                 inv.identificador_inventario,
                 ti.identificador_item,
@@ -641,17 +674,17 @@ class DBManager:
             AND inv.tipo_inventario = %s
             AND inv.identificador_progresso = %s;
         """
-        return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
+        return self.executar_query(consulta, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
 
 
     def criar_inventario(self, id_jogador, id_progresso, tipo_inventario='moc'):
         """Cria um novo inventário para um jogador e retorna o ID do inventário."""
-        query = """
+        consulta = """
             INSERT INTO inventario (identificador_personagem, identificador_progresso, tipo_inventario)
             VALUES (%s, %s, %s)
             RETURNING identificador_inventario;
         """
-        self.executar_query(query, (id_jogador, id_progresso, tipo_inventario), fetchone=True)
+        self.executar_query(consulta, (id_jogador, id_progresso, tipo_inventario), fetchone=True)
 
     def buscar_itens_no_inventario(self, id_inventario):
         """
@@ -661,7 +694,7 @@ class DBManager:
         Os nomes detalhados (ex: "Maçã Lustrosa") não podem ser obtidos diretamente por aqui
         se o ItemInventario só armazena o ID do TIPO de item.
         """
-        query = """
+        consulta = """
             SELECT
                 ii.identificador_item,
                 ti.tipo AS tipo_geral
@@ -670,35 +703,35 @@ class DBManager:
             WHERE ii.id_inventario = %s
             ORDER BY ti.tipo; -- Ordena para melhor visualização
         """
-        return self.executar_query(query, (id_inventario,), fetchall=True)
+        return self.executar_query(consulta, (id_inventario,), fetchall=True)
 
     def adicionar_item_ao_inventario(self, id_inventario, identificador_item_tipo):
         """Adiciona um tipo de item ao inventário."""
-        query = """
+        consulta = """
             INSERT INTO iteminventario (id_inventario, identificador_item)
             VALUES (%s, %s);
         """
-        return self.executar_query(query, (id_inventario, identificador_item_tipo))
+        return self.executar_query(consulta, (id_inventario, identificador_item_tipo))
 
     def remover_item_do_inventario(self, id_inventario, identificador_item_tipo):
         """Remove um tipo de item específico do inventário."""
-        query = """
+        consulta = """
             DELETE FROM iteminventario
             WHERE id_inventario = %s AND identificador_item = %s;
         """
-        return self.executar_query(query, (id_inventario, identificador_item_tipo))
+        return self.executar_query(consulta, (id_inventario, identificador_item_tipo))
     
     def buscar_item_por_tipo_id(self, id_tipo_item):
         """
         Busca o tipo de um item específico na tabela tipo_item.
         Exemplo: SELECT tipo FROM item WHERE id = 1;
         """
-        query = """
+        consulta = """
             SELECT tipo
             FROM tipo_item
             WHERE identificador_item = %s;
         """
-        return self.executar_query(query, (id_tipo_item,), fetchone=True)
+        return self.executar_query(consulta, (id_tipo_item,), fetchone=True)
 
     # ===============================================
     # Métodos de Operações com Personagens (Lacaio, Chefe, Aliado, Habitante)
@@ -709,12 +742,12 @@ class DBManager:
         Ver o tipo de uma pessoa (Personagem).
         Adaptado de: SELECT tipo FROM pessoa WHERE id = 3;
         """
-        query = """
+        consulta = """
             SELECT tipo
             FROM tipo_personagem
             WHERE id_personagem = %s;
         """
-        return self.executar_query(query, (id_personagem,), fetchone=True)
+        return self.executar_query(consulta, (id_personagem,), fetchone=True)
 
     def buscar_lacaio(self, id_lacaio):
         """
@@ -722,12 +755,12 @@ class DBManager:
         Exemplo: SELECT habilidade_briga, vida, forca FROM prisioneiro WHERE id = 3;
         (Adaptado para lacaio)
         """
-        query = """
+        consulta = """
             SELECT nome, dano, vida, nivel, experiencia
             FROM lacaio
             WHERE id_lacaio = %s;
         """
-        return self.executar_query(query, (id_lacaio,), fetchone=True)
+        return self.executar_query(consulta, (id_lacaio,), fetchone=True)
     
     def buscar_lacaios_por_area(self, identificador_progresso, identificador_area):
         """
@@ -764,36 +797,36 @@ class DBManager:
         Ver atributos de um chefe específico.
         Similar a buscar_lacaio.
         """
-        query = """
+        consulta = """
             SELECT nome, dano, vida, nivel, experiencia
             FROM chefe
             WHERE id_chefe = %s;
         """
-        return self.executar_query(query, (id_chefe,), fetchone=True)
+        return self.executar_query(consulta, (id_chefe,), fetchone=True)
 
     def buscar_aliado(self, id_aliado):
         """
         Ver atributos de um aliado específico.
         """
-        query = """
+        consulta = """
             SELECT nome, vida, nivel, vida_atual, dano_base
             FROM aliado
             WHERE id_aliado = %s;
         """
-        return self.executar_query(query, (id_aliado,), fetchone=True)
+        return self.executar_query(consulta, (id_aliado,), fetchone=True)
 
     def buscar_habitante(self, id_habitante):
         """Busca dados de um habitante pelo ID."""
-        query = """
+        consulta = """
             SELECT nome, tipo, especialidade, coordenada_x, coordenada_y
             FROM habitante
             WHERE id_habitante = %s;
         """
-        return self.executar_query(query, (id_habitante,), fetchone=True)
+        return self.executar_query(consulta, (id_habitante,), fetchone=True)
     
     def buscar_habitante_por_area(self, id_area):
         """Busca dados de todos os habitante de uma área específica."""
-        query = """
+        consulta = """
             SELECT
                 identificador_habitante,
                 identificador_area,
@@ -808,17 +841,17 @@ class DBManager:
                 FROM habitante
                 WHERE identificador_area = %s;
         """
-        return self.executar_query(query, (id_area,), fetchall=True)
+        return self.executar_query(consulta, (id_area,), fetchall=True)
     
     def buscar_habitante_por_ilha(self, id_ilha):
         """Busca dados de todos os habitante de uma ilha específica."""
-        query = """
+        consulta = """
             SELECT h.*
                 FROM habitante h
                 JOIN area a ON h.identificador_area = a.identificador_area
                 WHERE a.identificador_ilha = %s;
         """
-        return self.executar_query(query, (id_ilha,), fetchall=True)
+        return self.executar_query(consulta, (id_ilha,), fetchall=True)
     
     def buscar_habilidades_por_personagem(self, identificador_personagem):
         """
@@ -844,7 +877,7 @@ class DBManager:
         :param nome_lacaio: Nome do lacaio (exato)
         :return: Lista de tuplas com dados do lacaio + habilidades (uma linha por habilidade)
         """
-        query = """
+        consulta = """
             SELECT
                 l.identificador_lacaio,
                 TRIM(l.nome) AS nome_lacaio,
@@ -862,7 +895,7 @@ class DBManager:
             LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
             WHERE TRIM(l.nome) = %s;
         """
-        return self.executar_query(query, (nome_lacaio,), fetchall=True)
+        return self.executar_query(consulta, (nome_lacaio,), fetchall=True)
 
 
     def matar_inimigos_da_area(self, id_area_origem):
@@ -872,7 +905,7 @@ class DBManager:
 
         :param id_area_origem: ID da área onde os lacaios estão atualmente
         """
-        query = """
+        consulta = """
             UPDATE estado_instancia_lacaio
             SET 
                 data_da_morte = now(),
@@ -881,7 +914,7 @@ class DBManager:
                 identificador_area_atual = %s
                 AND data_da_morte IS NULL;
         """
-        return self.executar_query(query, (id_area_origem,))
+        return self.executar_query(consulta, (id_area_origem,))
 
 
 
@@ -893,7 +926,7 @@ class DBManager:
         """
          Retorna dados da ilha e se foi visitada no progresso atual.
         """
-        query = """
+        consulta = """
             SELECT
                 i.identificador_ilha,
                 TRIM(i.nome) AS nome,
@@ -903,7 +936,7 @@ class DBManager:
               ON i.identificador_ilha = iv.identificador_ilha AND iv.identificador_progresso = %s
             WHERE i.identificador_ilha = %s;
             """
-        return self.executar_query(query, (identificador_progresso, id_ilha), fetchone=True)
+        return self.executar_query(consulta, (identificador_progresso, id_ilha), fetchone=True)
     
     def buscar_caminhos_da_area(self, area):
         consulta = """
@@ -925,7 +958,7 @@ class DBManager:
         """
         Busca informações de uma sala específica
         """
-        query = """
+        consulta = """
             SELECT
                 a.identificador_area,
                 a.identificador_ilha,
@@ -941,13 +974,13 @@ class DBManager:
             WHERE a.identificador_area = %s;
 
         """
-        return self.executar_query(query, (id_progresso, id_area), fetchone=True)
+        return self.executar_query(consulta, (id_progresso, id_area), fetchone=True)
     
     def buscar_porto_da_ilha(self, id_ilha, id_progresso):
         """
         Busca a área do tipo 'Porto' associada à ilha atual, considerando se já foi visitada no progresso atual.
         """
-        query = """
+        consulta = """
             SELECT
                 a.identificador_area,
                 a.identificador_ilha,
@@ -963,7 +996,7 @@ class DBManager:
             WHERE a.identificador_ilha = %s
             AND a.tipo_area = 'Porto';
         """
-        return self.executar_query(query, (id_progresso, id_ilha), fetchone=True)
+        return self.executar_query(consulta, (id_progresso, id_ilha), fetchone=True)
 
     
     def buscar_areas_interativas_da_area(self, id_area):
@@ -992,12 +1025,57 @@ class DBManager:
 
     
 
+    def inserir_gatilho_de_missao(self, id_area_origem, id_missao, x, y, largura, altura):
+        """
+        Insere uma nova área interativa no banco de dados.
+
+        :param id_area_origem: ID da área onde a interação ocorre
+        :param id_missao: ID da missão associada (ou None)
+        :param x: Posição X da área
+        :param y: Posição Y da área
+        :param largura: Largura da área
+        :param altura: Altura da área
+        :return: ID da nova área interativa inserida
+        """
+        consulta = """
+            INSERT INTO area_interativa
+                (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, metodo_ativacao)
+            VALUES (%s, %s, %s, %s, %s, %s, 'missao', 'passivo')
+            RETURNING identificador_area_interativa;
+        """
+        return self.executar_query(consulta, (id_area_origem, id_missao, x, y, largura, altura), fetchone=True)
+
+
+
+    def remover_gatilho_de_missao(self, id_area_origem, id_missao, x, y, largura, altura):
+        consulta = """
+            WITH alvo AS (
+                SELECT identificador_area_interativa
+                FROM area_interativa
+                WHERE
+                    identificador_area_origem = %s
+                    AND identificador_missao = %s
+                    AND x = %s
+                    AND y = %s
+                    AND largura = %s
+                    AND altura = %s
+                    AND tipo_evento = 'missao'
+                    AND metodo_ativacao = 'passivo'
+                LIMIT 1
+            )
+            DELETE FROM area_interativa
+            WHERE identificador_area_interativa IN (SELECT identificador_area_interativa FROM alvo);
+        """
+        self.executar_query(consulta, (id_area_origem, id_missao, x, y, largura, altura))
+
+
+
 
     def buscar_conexoes_ilha(self, id_ilha_origem, id_progresso):
         """
         Retorna as conexões da ilha atual com outras ilhas, considerando o progresso atual.
         """
-        query = """
+        consulta = """
             SELECT
                 i.identificador_ilha,
                 TRIM(i.nome) AS nome,
@@ -1015,7 +1093,7 @@ class DBManager:
             WHERE %s IN (c.identificador_ilha_a, c.identificador_ilha_b)
             AND c.identificador_progresso = %s;
         """
-        return self.executar_query(query, (id_ilha_origem, id_progresso, id_ilha_origem, id_progresso), fetchall=True)
+        return self.executar_query(consulta, (id_ilha_origem, id_progresso, id_ilha_origem, id_progresso), fetchall=True)
    
     def buscar_conexao_entre_areas(self, id_area_origem, id_area_destino):
         """
@@ -1093,12 +1171,12 @@ class DBManager:
         # Exemplo adaptado: Contar itens chave por mapa.
         # Se você quiser "itens no chão" (world items), seu schema precisaria de uma tabela para isso.
         # Esta função mostra a quantidade de itens chave associados a um mapa.
-        query = """
+        consulta = """
             SELECT m.id_mapa, m.total_item_chave
             FROM mapa m
             WHERE m.id_mapa = %s;
         """
-        return self.executar_query(query, (id_mapa,), fetchall=True)
+        return self.executar_query(consulta, (id_mapa,), fetchall=True)
     
     # ===============================================
     # Métodos de Operações de Fabricação (Receitas)
@@ -1109,7 +1187,7 @@ class DBManager:
         Ver uma fabricação específica. (Adaptado para Receita)
         Retorna o consumível produzido e seus ingredientes.
         """
-        query = """
+        consulta = """
             SELECT
                 r.identificador_receita,
                 cp.nome AS consumivel_produzido,
@@ -1134,7 +1212,7 @@ class DBManager:
             LEFT JOIN nao_consumivel ing_nc ON inc.identificador_nao_consumivel = ing_nc.identificador_nao_consumivel
             WHERE r.identificador_receita = %s;
         """
-        return self.executar_query(query, (id_receita, id_receita), fetchall=True)
+        return self.executar_query(consulta, (id_receita, id_receita), fetchall=True)
 
     def buscar_fabricacoes_por_ingrediente(self, id_item_ingrediente, tipo_item_ingrediente):
         """
@@ -1151,25 +1229,25 @@ class DBManager:
             JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
         """
         if tipo_item_ingrediente == 'consumivel':
-            query = query_base + """
+            consulta = query_base + """
                 JOIN ingrediente_consumivel ic ON r.identificador_receita = ic.identificador_receita
                 WHERE ic.identificador_consumivel = %s;
             """
         elif tipo_item_ingrediente == 'nao_consumivel':
-            query = query_base + """
+            consulta = query_base + """
                 JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
                 WHERE inc.identificador_nao_consumivel = %s;
             """
         else:
             return None
-        return self.executar_query(query, (id_item_ingrediente,), fetchall=True)
+        return self.executar_query(consulta, (id_item_ingrediente,), fetchall=True)
 
     def buscar_fabricacoes_por_jogador(self, id_jogador):
         """
         Ver todas as fabricações de um livro específico. (Adaptado para Receitas de um jogador)
         Assume que 'livro_fabricacao' do seu exemplo é similar a 'receitas aprendidas por jogador'.
         """
-        query = """
+        consulta = """
             SELECT
                 r.identificador_receita,
                 cp.nome AS consumivel_produzido_nome
@@ -1177,26 +1255,26 @@ class DBManager:
             JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
             WHERE r.id_jogador = %s;
         """
-        return self.executar_query(query, (id_jogador,), fetchall=True)
+        return self.executar_query(consulta, (id_jogador,), fetchall=True)
 
     # ===============================================
     # Métodos de Operações com Missões
     # ===============================================
     def buscar_missoes_jogador(self, id_jogador):
         """Busca todas as missões associadas a um jogador."""
-        query = """
+        consulta = """
             SELECT m.nome, m.descricao
             FROM missao m
             WHERE m.id_jogador = %s;
         """
-        return self.executar_query(query, (id_jogador,), fetchall=True)
+        return self.executar_query(consulta, (id_jogador,), fetchall=True)
 
     def buscar_item_recompensa_missao(self, missao_id):
         """
         Ver o item que uma missão X vai dar. (Adaptado para ItemMissao)
         Seu ItemMissao referencia TipoItem.
         """
-        query = """
+        consulta = """
             SELECT
                 im.identificador_item,
                 ti.tipo AS tipo_geral
@@ -1204,13 +1282,13 @@ class DBManager:
             JOIN tipo_item ti ON im.identificador_item = ti.identificador_item
             WHERE im.missao_id = %s;
         """
-        return self.executar_query(query, (missao_id,), fetchall=True)
+        return self.executar_query(consulta, (missao_id,), fetchall=True)
 
     def buscar_local_missao(self, missao_id):
         """
         Ver o lugar que uma missão X está. (Adaptado para Sala de Missão)
         """
-        query = """
+        consulta = """
             SELECT
                 m.nome AS nome_missao,
                 m.tipo_sala,
@@ -1227,25 +1305,25 @@ class DBManager:
             LEFT JOIN vila v ON m.tipo_sala = 'vila' AND m.sala_id = v.sala_id
             WHERE m.missao_id = %s;
         """
-        return self.executar_query(query, (missao_id,), fetchone=True)
+        return self.executar_query(consulta, (missao_id,), fetchone=True)
 
     def buscar_detalhes_missao(self, missao_id):
         """
         Ver o (nome, descrição) de uma missão específica.
         """
-        query = """
+        consulta = """
             SELECT nome, descricao
             FROM missao
             WHERE missao_id = %s;
         """
-        return self.executar_query(query, (missao_id,), fetchone=True)
+        return self.executar_query(consulta, (missao_id,), fetchone=True)
 
     # ===============================================
     # Métodos de Operações com Tipos de Itens Específicos
     # ===============================================
 
     def buscar_arma_atributos(self, id_arma):
-         query = """
+         consulta = """
             SELECT
                 a.nome,
                 a.raridade,
@@ -1257,51 +1335,51 @@ class DBManager:
             LEFT JOIN habilidade h ON a.identificador_habilidade = h.id_habilidade -- This is the correct JOIN for 'dano'
             WHERE a.identificador_arma = %s;
         """
-         return self.executar_query(query, (id_arma,), fetchone=True)
+         return self.executar_query(consulta, (id_arma,), fetchone=True)
     def buscar_consumivel_atributos(self, id_consumivel):
         """
         Ver os atributos de uma comida específica. (Adaptado para Consumivel)
         """
-        query = """
+        consulta = """
             SELECT nome, tipo, raridade, quantidade, preco_compra, preco_venda, efabricavel
             FROM consumivel
             WHERE identificador_consumivel = %s;
         """
-        return self.executar_query(query, (id_consumivel,), fetchone=True)
+        return self.executar_query(consulta, (id_consumivel,), fetchone=True)
 
     def buscar_acessorio_atributos(self, id_acessorio):
         """
         Ver os atributos de um medicamento específico. (Adaptado para Acessorio)
         """
-        query = """
+        consulta = """
             SELECT nome, tipo, raridade, preco_compra, preco_venda
             FROM acessorio
             WHERE identificador_acessorio = %s;
         """
-        return self.executar_query(query, (id_acessorio,), fetchone=True)
+        return self.executar_query(consulta, (id_acessorio,), fetchone=True)
 
     def buscar_nao_consumivel_atributos(self, id_nao_consumivel):
         """
         Ver os atributos de um utilizável específico. (Adaptado para Não-Consumível geral)
         """
-        query = """
+        consulta = """
             SELECT nome, tipo, raridade, quantidade, preco_compra, preco_venda
             FROM nao_consumivel
             WHERE identificador_nao_consumivel = %s;
         """
-        return self.executar_query(query, (id_nao_consumivel,), fetchone=True)
+        return self.executar_query(consulta, (id_nao_consumivel,), fetchone=True)
 
     def buscar_fruta_atributos(self, id_fruta):
         """
         Ver os atributos de uma fruta específica.
         """
-        query = """
+        consulta = """
             SELECT f.nome, f.tipo, f.raridade, f.preco_compra, f.preco_venda, e.nome AS habilidade_nome, e.bravura
             FROM fruta f
             LEFT JOIN efeito e ON f.identificador_habilidade = e.identificador_efeito
             WHERE f.identificador_fruta = %s;
         """
-        return self.executar_query(query, (id_fruta,), fetchone=True)
+        return self.executar_query(consulta, (id_fruta,), fetchone=True)
 
     # ===============================================
     # Outros (Inconsistências)
@@ -1313,11 +1391,11 @@ class DBManager:
         Isto é uma ADAPTAÇÃO conceitual para o seu schema.
         Vamos verificar se há itens no inventário que não têm um 'tipo' válido.
         """
-        query = """
+        consulta = """
             SELECT ii.id_inventario, ii.identificador_item
             FROM iteminventario ii
             LEFT JOIN tipo_item ti ON ii.identificador_item = ti.identificador_item
             WHERE ti.identificador_item IS NULL; -- Busca itens no inventário que não têm um tipo correspondente
         """
-        return self.executar_query(query, fetchall=True)
+        return self.executar_query(consulta, fetchall=True)
 

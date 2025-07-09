@@ -176,5 +176,5 @@ CENA_SILVIE_NO_CAMPO = 'cena_silvie_no_campo'
 CENA_SHUAN_NO_CAMPO = 'cena_shuan_no_campo'
 
 # --- Debugging ---
-DEBUG_DESENHAR_CAIXAS_COLISAO = True # (True para exibir, False para ocultar)
+DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão

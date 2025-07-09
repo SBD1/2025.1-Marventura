@@ -6,7 +6,7 @@ from utilidades.constantes import * # Importa as constantes
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, identificador, x_inicial, y_inicial, nome, descricao,
+    def __init__(self, gerenciador_recursos, identificador, identificador_progresso, x_inicial, y_inicial, nome, descricao,
                  energia, vida, nivel, sorte, vida_atual, experiencia_atual,
                  orientacao='direita'):
         super().__init__()
@@ -20,6 +20,7 @@ class Jogador(pygame.sprite.Sprite):
         self.orientacao = orientacao
         self.nome = nome
         self.identificador_jogador = identificador
+        self.identificador_progresso = identificador_progresso
         self.descricao = descricao
         self.energia = energia
         self.vida = vida
