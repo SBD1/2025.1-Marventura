@@ -20,7 +20,7 @@ class TelaModelo:
         self.gerenciador_recursos = gerenciador_recursos
 
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """
         Processa um evento de entrada.
         Deve ser sobrescrito pelas subclasses para lidar com a lógica específica da tela.
@@ -42,7 +42,7 @@ class TelaModelo:
 
         return None # Por padrão, não faz nada e não solicita transição
 
-    def update(self, dt):
+    def atualizar(self, dt):
         """
         Atualiza a lógica interna da tela (movimento de entidades, timers, etc.).
         Deve ser sobrescrito pelas classes filhas.
@@ -51,7 +51,7 @@ class TelaModelo:
         """
         return None # Implementação padrão não faz nada
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         """
         Desenha os elementos da tela na superfície principal do Pygame.
         Deve ser sobrescrito pelas classes filhas.

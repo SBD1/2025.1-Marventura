@@ -280,7 +280,7 @@ class TelaBatalha(TelaModelo):
 
     def usar_item_da_mochila(self, identificador_item):
         self.entidades.jogador.mochila.usar_item(identificador_item, self.entidades.jogador)
-
+        #self.banco_de_dados.usar_item_do_inventario(self.entidades.jogador.id_mochila, identificador_item)
         # Fecha o menu e passa a vez
         self.menu_mochila_ativo = False
         print("Passa o turno depois de usar o item")
@@ -728,11 +728,15 @@ class TelaBatalha(TelaModelo):
 
         if self.menu_mochila_ativo:
             tela.blit(self.quadro_de_itens, (self.x_quadro, self.y_quadro))
-        
-            itens = self.entidades.jogador.mochila.itens
+
+            itens_con = [
+                item for item in self.entidades.jogador.mochila.itens
+                if item.id.startswith("con")
+            ]
+
             inicio = self.scroll_offset_mochila
             fim = inicio + self.itens_visiveis_por_pagina
-            itens_visiveis = itens[inicio:fim]
+            itens_visiveis = itens_con[inicio:fim]
         
             mouse_pos = pygame.mouse.get_pos()
             item_em_foco = None

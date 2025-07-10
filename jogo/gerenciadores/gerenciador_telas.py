@@ -81,7 +81,7 @@ class GerenciadorDeTelas:
         """
         if self.tela_atual:
             # A tela pode retornar um dicionário de transição ou None
-            transicao_info = self.tela_atual.handle_input(evento)
+            transicao_info = self.tela_atual.processar_eventos(evento)
             if transicao_info and 'estado' in transicao_info:
                 estado_desejado = transicao_info['estado']
                 del transicao_info['estado']
@@ -98,7 +98,7 @@ class GerenciadorDeTelas:
         """
         if self.tela_atual:
             # A tela pode retornar um dicionário de transição ou None
-            transicao_info = self.tela_atual.update(dt)
+            transicao_info = self.tela_atual.atualizar(dt)
             if transicao_info and 'estado' in transicao_info:
                 estado_desejado = transicao_info['estado']
                 del transicao_info['estado']
@@ -110,4 +110,4 @@ class GerenciadorDeTelas:
         Desenha a tela atualmente ativa na superfície principal do Pygame.
         """
         if self.tela_atual:
-            self.tela_atual.draw(self.tela_principal_surface)
+            self.tela_atual.desenhar(self.tela_principal_surface)
