@@ -167,7 +167,7 @@ class DBManager:
         if not jogador:
             return None, None, None
 
-        resultados = self.buscar_inventario(id_jogador, 'ger', identificador_progresso)
+        resultados = self.buscar_inventario(id_jogador, 'moc', identificador_progresso)
         kit_jogador = self.buscar_kit_do_explorador(id_jogador, 'kit')
         mochila = []
 
@@ -199,14 +199,15 @@ class DBManager:
             print(row)
         
         print("Kit do Explorador:")
-        for row in resultados:
+        for row in kit_jogador:
             print(row)
 
         area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
 
         ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
 
-        return jogador, mochila, kit_jogador, ilha, area
+        #print(f"Jogador: {jogador.nome}, Área: {area.nome}, Ilha: {ilha.nome if ilha else 'N/A'}")
+        return jogador, mochila, kit_jogador, ilha, area, resultados[0].identificador_inventario
     
     def atualizar_espaco_salvamento(self, identificador_progresso):
         """
@@ -220,6 +221,19 @@ class DBManager:
         """
         return self.executar_query(consulta, (identificador_progresso,))
 
+
+
+    def matar_inimigo(self, id_inimigo):
+        consulta = """
+            UPDATE estado_instancia_lacaio
+            SET 
+                data_da_morte = now(),
+                identificador_area_atual = 'are034'
+            WHERE 
+                identificador_instancia_lacaio = %s
+                AND data_da_morte IS NULL;
+        """
+        return self.executar_query(consulta, (id_inimigo,))
 
     # ===============================================
     # Métodos de Operações com Jogador
@@ -238,8 +252,10 @@ class DBManager:
                 vida AS vida_maxima,
                 nivel,
                 sorte,
+                energia_atual,
                 vida_atual,
-                experiencia_atual
+                experiencia_atual,
+                moedas_totais
             FROM jogador
             WHERE identificador_jogador = %s;
         """
@@ -254,6 +270,31 @@ class DBManager:
             WHERE id_jogador = %s;
         """
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
+        return self.executar_query(query, params)
+
+    def atualizar_atributos_de_batalha_do_jogador(self, identificador_jogador, energia_maxima, vida_maxima, nivel,
+                                                   sorte, energia_atual, vida_atual,
+                                                   experiencia_atual, moedas_totais):
+        """
+        Atualiza apenas os atributos relevantes de batalha do jogador.
+        """
+        query = """
+            UPDATE jogador
+            SET energia = %s,
+                vida = %s,
+                nivel = %s,
+                sorte = %s,
+                energia_atual = %s,
+                vida_atual = %s,
+                experiencia_atual = %s,
+                moedas_totais = %s
+            WHERE identificador_jogador = %s;
+        """
+        params = (
+            energia_maxima, vida_maxima, nivel, sorte,
+            energia_atual, vida_atual, experiencia_atual, moedas_totais,
+            identificador_jogador
+        )
         return self.executar_query(query, params)
 
     def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
@@ -369,9 +410,9 @@ class DBManager:
                 ) AS descricao,
                 item_inventario.quantidade
             FROM inventario
-            JOIN item_inventario
+            LEFT JOIN item_inventario
                 ON item_inventario.identificador_inventario = inventario.identificador_inventario
-            JOIN tipo_item
+            LEFT JOIN tipo_item
                 ON tipo_item.identificador_item = item_inventario.identificador_item
 
             -- Joins para cada subtipo
@@ -421,13 +462,18 @@ class DBManager:
         """
         return self.executar_query(query, (id_inventario,), fetchall=True)
 
-    def adicionar_item_ao_inventario(self, id_inventario, identificador_item_tipo):
-        """Adiciona um tipo de item ao inventário."""
-        query = """
-            INSERT INTO iteminventario (id_inventario, identificador_item)
-            VALUES (%s, %s);
+    def adicionar_item_ao_inventario_personagem(self, identificador_inventario, identificador_item, quantidade=1):
         """
-        return self.executar_query(query, (id_inventario, identificador_item_tipo))
+        Adiciona um item específico ao inventário de um personagem.
+        Se o item já existir, incrementa a quantidade.
+        """
+        consulta = """
+            INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (identificador_inventario, identificador_item) DO UPDATE
+            SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+        """
+        return self.executar_query(consulta, (identificador_inventario, identificador_item, quantidade))
 
     def remover_item_do_inventario(self, id_inventario, identificador_item_tipo):
         """Remove um tipo de item específico do inventário."""
@@ -457,6 +503,19 @@ class DBManager:
             WHERE efeito_consumivel.identificador_consumivel = %s;
         """
         return self.executar_query(query, (id_item,), fetchall=True)
+    
+    def buscar_efeito_por_acessorio(self, id_acessorio):
+        """
+        Busca os efeitos associados a um acessório específico.
+        Exemplo: SELECT TRIM(efeito.nome) AS efeito_nome, efeito.valor AS efeito_valor FROM efeito WHERE identificador_acessorio = 1;
+        """
+        query = """
+            SELECT TRIM(efeito.nome) AS efeito_nome, efeito.valor AS efeito_valor
+            FROM efeito
+                JOIN efeito_acessorio ON efeito_acessorio.identificador_efeito = efeito.identificador_efeito
+            WHERE efeito_acessorio.identificador_acessorio = %s;
+        """
+        return self.executar_query(query, (id_acessorio,), fetchall=True)
 
 
     # ===============================================
@@ -518,6 +577,21 @@ class DBManager:
         """
         return self.executar_query(consulta, (identificador_progresso, identificador_area), fetchall=True)
 
+    def buscar_item_do_lacaio(self, identificador_lacaio):
+        """
+        Busca os itens que um lacaio específico possui.
+        """
+        consulta = """
+            SELECT
+                item_inventario.identificador_item,
+                item_inventario.quantidade
+        
+            FROM inventario
+                JOIN item_inventario ON item_inventario.identificador_inventario = inventario.identificador_inventario
+             WHERE identificador_personagem = %s;
+            """
+        return self.executar_query(consulta, (identificador_lacaio,), fetchone=True)
+
     def buscar_chefe(self, id_chefe):
         """
         Ver atributos de um chefe específico.
@@ -555,17 +629,23 @@ class DBManager:
         Retorna todas as habilidades associadas a um personagem (jogador, aliado, lacaio etc).
         """
         consulta = """
-            SELECT 
-                h.identificador_habilidade,
-                TRIM(h.nome) AS nome_habilidade,
-                h.dano,
-                h.tipo_de_ataque,
-                h.tipo_de_alvo
-            FROM habilidade_personagem hp
-            JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
-            WHERE hp.identificador_personagem = %s;
+            SELECT
+                habilidade.identificador_habilidade,
+                TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                TRIM(efeito.nome) AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_personagem
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_personagem.identificador_habilidade
+                LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_personagem.identificador_personagem = %s;
         """
         return self.executar_query(consulta, (identificador_personagem,), fetchall=True)
+    
 
 
     # ===============================================
@@ -1044,23 +1124,3 @@ class DBManager:
             WHERE habilidade_fruta.identificador_fruta = %s;
         """
         return self.executar_query(query, (id_arma,), fetchall=True)
-    
-    def buscar_habilidades_por_personagem(self, id_personagem):
-        query = """
-            SELECT
-                habilidade.identificador_habilidade,
-                TRIM(habilidade.nome) AS nome,
-                TRIM(habilidade.descricao) AS descricao,
-                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
-                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
-                habilidade.dano,
-                habilidade.custo,
-                TRIM(efeito.nome) AS efeito_nome,
-                efeito.valor AS efeito_valor
-            FROM habilidade_personagem
-                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_personagem.identificador_habilidade
-                LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
-            WHERE habilidade_personagem.identificador_personagem = %s;
-        """
-        return self.executar_query(query, (id_personagem,), fetchall=True)
-
