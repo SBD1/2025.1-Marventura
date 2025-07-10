@@ -11,7 +11,7 @@ class Habilidade:
 
 
 
-    def calcular_dano_final(self, nivel_jogador, raridade="★", escala=60):
+    def calcular_dano_final(self, nivel_jogador, valor_do_efeito_ataque, raridade="★", escala=60):
         multiplicador_area = 1.0
         if self.tipo_de_alvo in ["area", "terrestre"]:
             multiplicador_area = 0.65  # médio para ataques em área
@@ -24,5 +24,6 @@ class Habilidade:
         multiplicador_raridade = multiplicadores_raridade.get(raridade, 1.0)
 
         dano_final = self.dano * (1 + (nivel_jogador / escala)) * multiplicador_area * multiplicador_raridade
+        dano_final += valor_do_efeito_ataque
         print(f"Dano base: {self.dano}, Nível do Jogador: {nivel_jogador}, Raridade: {raridade}, Dano Final: {dano_final}")
         return int(round(dano_final))
