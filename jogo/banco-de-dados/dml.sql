@@ -280,104 +280,104 @@ VALUES
 
 INSERT INTO nao_consumivel
     (nome, descricao, raridade, local_encontrado,
-     preco_de_compra, preco_de_venda)
+     preco_de_compra, preco_de_venda, e_coletado)
 VALUES
-    ('Abóbora Redonduda', 'Grande, laranja e cheia de personalidade. Ótima para sopas, risos e sustos.', '★', 'Ilha de Borabóia', 15, 6),
-    ('Arroz do Planalto', 'Grãos branquinhos que dançam quando caem na panela. Base de quase tudo!', '★', 'Ilha de Borabóia', 10, 5),
-    ('Ovo dos Campos', 'Um ovo fresquinho, coletado de aves que vivem soltas pelos campos. Dá vontade de fritar, mas também pode virar algo mais sofisticado.', '★', 'Ilha de Borabóia', 10, 5),
-    ('Carne de Ave Brava', 'Um pedaço de ave com gosto de aventura. Cozinhe bem ou corra risco de bicadas!', '★', 'Ilha de Borabóia', NULL, 7),
-    ('Presa de Lobo', 'Um dente afiado arrancado de um lobo valente. Não é comestível, mas é estiloso.', '★★', 'Ilha de Borabóia', NULL, 15),
-    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 10, 5),
-    ('ButterCream de Fuligem', 'O preferido dos confeiteiros da cidade, feito com um toque especial de cana-de-açúcar e... partículas do ar local.', '★★', 'Cidade de Lurien', NULL, 15),
-    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 20, 8),
-    ('Medalha de Marinheiro', 'Símbolo de honra… ou corrupção. Não serve pra comer, mas pode abrir portas.', '★★', 'Cidade de Lurien', NULL, 20),
-    ('Pérola Cantante', 'Emite um som suave quando tocada. Dizem que revive quem ouve sua melodia até o fim.', '★★', 'Ilha Glacial de Frimora', 30, 17),
-    ('Pedaço de Tecido Rasgado', 'Um trapo que já foi parte de um uniforme pirata. Cheira a nostalgia e mofo.', '★', 'Ilha Glacial de Frimora', NULL, 8),
-    ('Lamento Gelado', 'Um fragmento de tristeza congelada. Só aparece quando almas inquietas são libertadas.', '★★', 'Ilha Glacial de Frimora', NULL, 12),
-    ('Faixa de Pirata Estorricado', 'Um pano ressecado de pirata que enfrentou o sol por tempo demais. Ótimo pra rituais e costura.', '★', 'Cactuaraquara', NULL, 10),
-    ('Fragmento de Miragem', 'Um cristal etéreo que brilha e some quando você olha fixo. Nasceu da confusão de mentes perdidas.', '★★', 'Cactuaraquara', NULL, 12),
-    ('Sombra Engarrafada', 'Uma sombra viva que foi capturada. Útil em receitas que assustam até o cozinheiro.', '★★', 'Nublária', NULL, 17),
-    ('Açúcar Estranho', 'Doce, crocante e... será que isso tá brilhando? Ideal para doces perigosamente bons.', '★', 'Nublária', 5, 2),
-    ('Essência de Névoa Doce', 'Um xarope espesso que adoça e assusta. Parece açúcar, mas sussurra nomes perdidos.', '★★', 'Nublária', 10, 4),
-    ('Asa de Morcego Noturno', 'Negra como a meia-noite sem lua. Serve para receitas, poções e decoração gótica.', '★', 'Nublária', NULL, 9),
-    ('Presa Venenosa', 'Brilha com um verde nada confiável. Cuide para não furar o dedo ao manusear.', '★', 'Nublária', NULL,  7),
-    ('Peixe Saltitante', 'Ainda parece se mexer! Ideal para grelhar, cozinhar ou assustar aprendizes.', '★', 'Quartel Naval D-57', NULL, 11),
-    ('Pepino de Salmoura', 'Conservado com tanto sal que chega a arrepiar a alma. Dizem que dura uma década.', '★', 'Quartel Naval D-57', NULL, 5),
-    ('Chapéu de Marinheiro', 'Simboliza status, disciplina e... bom, é só um chapéu suado. Não comestível.', '★★', 'Quartel Naval D-57', NULL, 15);
+    ('Abóbora Redonduda', 'Grande, laranja e cheia de personalidade. Ótima para sopas, risos e sustos.', '★', 'Ilha de Borabóia', 15, 6, FALSE),
+    ('Arroz do Planalto', 'Grãos branquinhos que dançam quando caem na panela. Base de quase tudo!', '★', 'Ilha de Borabóia', 10, 5, FALSE),
+    ('Ovo dos Campos', 'Um ovo fresquinho, coletado de aves que vivem soltas pelos campos. Dá vontade de fritar, mas também pode virar algo mais sofisticado.', '★', 'Ilha de Borabóia', 10, 5, FALSE),
+    ('Carne de Ave Brava', 'Um pedaço de ave com gosto de aventura. Cozinhe bem ou corra risco de bicadas!', '★', 'Ilha de Borabóia', NULL, 7, FALSE),
+    ('Presa de Lobo', 'Um dente afiado arrancado de um lobo valente. Não é comestível, mas é estiloso.', '★★', 'Ilha de Borabóia', NULL, 15, FALSE),
+    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 10, 5, FALSE),
+    ('ButterCream de Fuligem', 'O preferido dos confeiteiros da cidade, feito com um toque especial de cana-de-açúcar e... partículas do ar local.', '★★', 'Cidade de Lurien', NULL, 15, FALSE),
+    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 20, 8, FALSE),
+    ('Medalha de Marinheiro', 'Símbolo de honra… ou corrupção. Não serve pra comer, mas pode abrir portas.', '★★', 'Cidade de Lurien', NULL, 20, FALSE),
+    ('Pérola Cantante', 'Emite um som suave quando tocada. Dizem que revive quem ouve sua melodia até o fim.', '★★', 'Ilha Glacial de Frimora', 30, 17, FALSE),
+    ('Pedaço de Tecido Rasgado', 'Um trapo que já foi parte de um uniforme pirata. Cheira a nostalgia e mofo.', '★', 'Ilha Glacial de Frimora', NULL, 8, FALSE),
+    ('Lamento Gelado', 'Um fragmento de tristeza congelada. Só aparece quando almas inquietas são libertadas.', '★★', 'Ilha Glacial de Frimora', NULL, 12, FALSE),
+    ('Faixa de Pirata Estorricado', 'Um pano ressecado de pirata que enfrentou o sol por tempo demais. Ótimo pra rituais e costura.', '★', 'Cactuaraquara', NULL, 10, FALSE),
+    ('Fragmento de Miragem', 'Um cristal etéreo que brilha e some quando você olha fixo. Nasceu da confusão de mentes perdidas.', '★★', 'Cactuaraquara', NULL, 12, FALSE),
+    ('Sombra Engarrafada', 'Uma sombra viva que foi capturada. Útil em receitas que assustam até o cozinheiro.', '★★', 'Nublária', NULL, 17, TRUE),
+    ('Açúcar Estranho', 'Doce, crocante e... será que isso tá brilhando? Ideal para doces perigosamente bons.', '★', 'Nublária', 5, 2, FALSE),
+    ('Essência de Névoa Doce', 'Um xarope espesso que adoça e assusta. Parece açúcar, mas sussurra nomes perdidos.', '★★', 'Nublária', 10, 4, FALSE),
+    ('Asa de Morcego Noturno', 'Negra como a meia-noite sem lua. Serve para receitas, poções e decoração gótica.', '★', 'Nublária', NULL, 9, FALSE),
+    ('Presa Venenosa', 'Brilha com um verde nada confiável. Cuide para não furar o dedo ao manusear.', '★', 'Nublária', NULL,  7, FALSE),
+    ('Peixe Saltitante', 'Ainda parece se mexer! Ideal para grelhar, cozinhar ou assustar aprendizes.', '★', 'Quartel Naval D-57', NULL, 11, TRUE),
+    ('Pepino de Salmoura', 'Conservado com tanto sal que chega a arrepiar a alma. Dizem que dura uma década.', '★', 'Quartel Naval D-57', NULL, 5, TRUE),
+    ('Chapéu de Marinheiro', 'Simboliza status, disciplina e... bom, é só um chapéu suado. Não comestível.', '★★', 'Quartel Naval D-57', NULL, 15, FALSE);
 
 
 
 INSERT INTO consumivel
     (nome, descricao, raridade, local_encontrado,
-     preco_de_compra, preco_de_venda, e_fabricavel)
+     preco_de_compra, preco_de_venda, e_fabricavel, e_coletado)
 VALUES
-    ('Fruta do Mar Azul', 'Uma frutinha brilhante e saborosa! Recupera energia e pode causar inveja em gaivotas.', '★', 'Ilha de Borabóia', NULL, 5, FALSE),
-    ('Fruta do Mar Vermelha', 'Mais doce e vibrante que sua prima azul. Dizem que aquece até o coração gelado.', '★', 'Ilha de Borabóia', NULL, 5, FALSE),
-    ('Folha de Hortelã', 'Refrescante, cheirosa e ótima em chás ou nas mãos de piratas resfriados.', '★', 'Ilha de Borabóia', NULL, 5, FALSE),
-    ('Maçã Lustrosa', 'Brilha tanto que você se vê nela. Tão docinha quanto promessas de marinheiro.', '★', 'Cidade de Lurien', NULL, 7, FALSE),
-    ('Repolho Redondo', 'Enrola mais que muito pirata mentiroso. Cru ou cozido, sempre útil.', '★', 'Cidade de Lurien',  NULL, 5, FALSE),
-    ('Alga Fresca', 'Parece nojenta, mas dizem que é cheia de nutrientes. Piratas fitness adoram.', '★', 'Cidade de Lurien', NULL, 6, FALSE),
-    ('Chá Enlatado', 'Vendido em latas esquisitas. Tem gosto de “quase chá”, mas funciona.', '★', 'Cidade de Lurien', 15, 6, FALSE),
-    ('Doce Amassado', 'Parece que foi esmagado por um punho gigante. Ainda doce, com gosto de luta.', '★', 'Cidade de Lurien', NULL, 2, FALSE),
-    ('Noz Crocante', 'Pequena, dura e barulhenta. Ideal para mordidas rápidas ou espantar pinguins curiosos.', '★', 'Ilha Glacial de Frimora', NULL, 2, FALSE),
-    ('Ervas Aromáticas', 'Um cheirinho que aquece a alma. Ótimas para chás, sopas ou magias de vovó.', '★', 'Ilha Glacial de Frimora', NULL, 3, FALSE),
-    ('Neve Mágica', 'Parece gelo raspado, mas derrete em cura. Tente não comer tudo de uma vez.', '★★', 'Ilha Glacial de Frimora', NULL, 12, FALSE),
-    ('Leite de Cabra Alpina', 'Quentinho, cremoso e nutritivo. Perfeito para combater o frio e o mau humor.', '★', 'Ilha Glacial de Frimora', 10, 6, FALSE),
-    ('Chocolate Amargo', 'Amargo como a vida no gelo. Derrete o cansaço e o coração congelado.', '★', 'Ilha Glacial de Frimora', 15, 8, FALSE),
-    ('Fruta Cítrica do Oeste', 'Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida.', '★', 'Cactuaraquara', NULL, 4, FALSE),
-    ('Côco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara', NULL, 7, FALSE),
-    ('Areia Mineral', 'Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante.', '★★', 'Cactuaraquara', NULL, 10, FALSE),
-    ('Carne do Deserto', 'Picante o suficiente pra te fazer cuspir fogo. +1 em coragem depois de comer.', '★★', 'Cactuaraquara',  20, 8, FALSE),
-    ('Geleia de Cacto Doce', 'Um docinho raro feito do néctar de um cacto bem zangado. Cuidadosamente colhida!', '★★', 'Cactuaraquara', 11, 6, FALSE),
-    ('Suco Refrescante Solar', 'Tão gelado que parece mágica. Refresca mais que mergulho em fonte sagrada.', '★', 'Cactuaraquara', 7, 4, FALSE),
-    ('Cogumelo Risonho', 'Tem uma carinha feliz. Ninguém sabe por quê. Comer pode causar risos... ou arrependimentos.', '★', 'Nublária', NULL, 9, FALSE),
-    ('Fruta Fluorescente', 'Brilha no escuro! Alguns dizem que tem alma própria.', '★', 'Nublária', NULL, 7, FALSE),
-    ('Doce Fantasmal', 'Derrete na língua e deixa um leve arrepio na espinha. Doces espíritos aprovariam.', '★', 'Nublária', 13, 5, FALSE),
-    ('Ração de Soldado', 'Embalada à vácuo e sem gosto. Mas dá energia e fortalece o espírito patriótico.', '★★', 'Quartel Naval D-57', NULL, 10, FALSE),
-    ('Biscoito de Gengibre', 'Na ala dos oficiais, um confeiteiro reformado da Marinha mantém a tradição de assar biscoitos para “manter a moral da tropa”. Só não conte pros recrutas — é só pros superiores.', '★★', 'Quartel Naval D-57', 12, 7, FALSE),
-    ('Café Turbinado', 'Tão forte que acorda até os mortos e os marinheiros de plantão.', '★', 'Quartel Naval D-57',     8, 3, FALSE),
-    ('Carne de Rei dos Mares', 'Gigantesca, rara e cara. Cheia de proteína e orgulho militar.', '★★★', 'Quartel Naval D-57', 40, 19, FALSE),
-    ('Rosquinha Mordida', 'Quem mordeu e largou? Ainda tá boa. Restaura pouco, mas serve como prova de negligência.', '★', 'Quartel Naval D-57', NULL, 3, FALSE),
-    ('Sushi Enrolado', 'Enrolado com carinho e peixe saltitante! Um lanche leve, mas cheio de sabor.', '★★', 'Cozinha', NULL, 15, TRUE),
-    ('Chá de Algas', 'Um gole desse chá marinho e você sente até as ondas te abraçando por dentro.', '★', 'Cozinha',  NULL, 10, TRUE),
-    ('Pastel de Fruta do Diabo', 'Ardido e adocicado, um quitute perigoso para os mais ousados.', '★★', 'Cozinha', NULL, 18, TRUE),
-    ('Caldo da Vovó Yuba', 'Uma sopa tão boa que parece que te dá um abraço. Feita com amor... e pimenta!', '★★', 'Cozinha', NULL, 22, TRUE),
-    ('Tônico de Areia', 'Tem gosto de areia? Sim. Funciona? Mais do que você imagina!', '★★', 'Cozinha', NULL, 16, TRUE),
-    ('Chá Gelado de Neve', 'Refrescante até congelar os pensamentos. A escolha perfeita pra esfriar os ânimos.', '★★', 'Cozinha', NULL, 15, TRUE),
-    ('Receita Secreta do Capitão', 'Uma mistura poderosa e misteriosa, só os verdadeiros líderes se atrevem a provar.', '★★★', 'Cozinha', NULL, 27, TRUE),
-    ('Carne Grelhada', 'Crocante por fora, suculenta por dentro. Perfeita para qualquer fogueira.', '★★', 'Cozinha', NULL, 18, TRUE),
-    ('Pérola Caramelizada', 'Crocante, mágica e doce. Dizem que revive até o humor de um pirata carrancudo.', '★★', 'Cozinha', NULL, 13, TRUE),
-    ('Pérola da Lua de Inverno', 'Um doce etéreo que brilha como a luz da lua sobre a neve. Quem o come sente o universo piscando para si — e os dados da vida rolando a seu favor.', '★★★', 'Cozinha', NULL, 24, TRUE),
-    ('Pérola do Sol Escaldante', 'Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável.', '★★★', 'Cozinha', NULL, 24, TRUE),
-    ('Gelado de Algas', 'Uma sobremesa geladinha com gosto do mar e um toque de frescor sobrenatural.', '★', 'Cozinha',  NULL, 15, TRUE),
-    ('Omurice de Arroz', 'Receita tradicional dos viajantes do campo, famosa por causar nostalgia e fome ao mesmo tempo.', '★★', 'Cozinha', NULL, 15, TRUE),
-    ('Bolo do Campo', 'Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura!', '★★', 'Cozinha', NULL, 14, TRUE),
-    ('Bombom Nebuloso', 'Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra).', '★★', 'Cozinha', NULL, 12, TRUE),
-    ('Arroz dos Sete Mares', 'Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte.', '★', 'Cozinha', NULL, 9, TRUE),
-    ('Doce da Ilha', 'Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto.', '★★', 'Cozinha', NULL, 12, TRUE),
-    ('Omelete dos 4 Ventos', 'Leve e fofa, com o sabor do campo e a brisa das planícies.', '★★', 'Cozinha', NULL, 13, TRUE),
-    ('Frango Assado Estaladiço', 'Crocante por fora, macio por dentro. Tão bom que até o corvo queria roubar.', '★', 'Cozinha', NULL, 10, TRUE),
-    ('Sopa da Guarda Noturna', 'Revigorante e quentinha, ideal para noites frias e perseguições por becos.', '★', 'Cozinha', NULL, 6, TRUE),
-    ('Doce de Duna Dourada', 'Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos.', '★★', 'Cozinha', NULL, 16, TRUE),
-    ('Bife do Abismo', 'Um corte suculento direto das profundezas do mar. Tão macio que derrete na boca, mas tão forte que faz os músculos tremerem.', '★★★', 'Cozinha', NULL, 35, TRUE),
-    ('Sashimi do Fim do Mundo', 'Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor.', '★★★', 'Cozinha', NULL, 35, TRUE),
-    ('Torta do Marujo Feliz', 'Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação.', '★', 'Cozinha',  NULL, 10, TRUE),
-    ('Doce Assombrado', 'Não se sabe se o sabor é bom ou se é só a maldição agindo. Textura perfeita... demais até.', '★★', 'Cozinha', NULL, 12, TRUE),
-    ('Curry do Capitão Covarde', 'O cheiro é intenso, o sabor é duvidoso, mas nenhum pirata consegue parar de comer.', '★★', 'Cozinha', NULL, 13, TRUE),
-    ('Elixir Sombrio', 'Bebida proibida sussurrada em tavernas assombradas. Quem é que vai querer beber isso...?', '★★', 'Cozinha', NULL, 18, TRUE),
-    ('Poção do Dente Torto', 'Um gole é suficiente para se sentir... diferente. Tem certeza que isso não é veneno?', '★★', 'Cozinha', NULL, 18, TRUE),
-    ('Cookie de Chocolate', 'Crocante por fora, macia por dentro. Derrete na boca como a neve da infância.', '★', 'Cozinha', NULL, 14, TRUE),
-    ('Leite Condensado Alpino', 'Um creme docinho e suave.', '★', 'Cozinha',  NULL, 11, TRUE),
-    ('Chocolate Quente', 'Um gole e você sente como se tivesse abraçado um urso de cachecol... que acabou de sair do banho e decidiu virar seu terapeuta de plantão.', '★★', 'Cozinha',  NULL, 15, TRUE),
-    ('Doce do Silêncio Eterno', 'Um doce que ecoa sussurros antigos. Quem come diz sentir a presença dos que partiram.', '★★', 'Cozinha', NULL, 17, TRUE),
-    ('Cacto-Pop Geladinho', 'Uma explosão refrescante e pegajosa! Perfeito para os dias escaldantes no deserto.', '★★', 'Cozinha', NULL, 16, TRUE),
-    ('Esfera da Miragem', 'Parece sólida, mas será que é? Um doce ilusório que desorienta quem o encara por muito tempo.', '★★', 'Cozinha', NULL, 17, TRUE),
-    ('Pickles Pirata', 'Um prato inusitado e ousado. Os piratas juram que melhora a mira (e o hálito!).', '★', 'Cozinha', NULL, 10, TRUE),
-    ('Torta de Telhado', 'Doce crocante e levemente defumado. Dizem que foi assada nos telhados quentes da cidade durante uma greve dos padeiros.', '★★', 'Cozinha', NULL, 15, TRUE),
-    ('Doce de Fuligem Cítrica', 'Uma sobremesa brilhante com um leve toque de fumaça — parece suspeita, mas é incrivelmente viciante.', '★', 'Cozinha', NULL, 11, TRUE),
-    ('Rosquinha do Quartel Proibida', 'Criada por um marinheiro rebelde com talento para confeitaria e zero noção de higiene. Um sucesso entre os subalternos.', '★★', 'Cozinha', NULL, 16, TRUE),
-    ('Bolo da Chaminé Encantada', 'Dizem que foi feito com açúcar mágico... ou fuligem encantada. Vai saber. Pelo menos é fofo e aquece o coração.', '★★★', 'Cozinha', NULL, 18, TRUE),
-    ('Frankenprato', 'Uma aberração culinária nascida da mistura de ingredientes incompatíveis. Não parece comida... mas tecnicamente é.', '★', 'Cozinha', NULL, 5, TRUE);
+    ('Fruta do Mar Azul', 'Uma frutinha brilhante e saborosa! Recupera energia e pode causar inveja em gaivotas.', '★', 'Ilha de Borabóia', NULL, 5, FALSE, TRUE),
+    ('Fruta do Mar Vermelha', 'Mais doce e vibrante que sua prima azul. Dizem que aquece até o coração gelado.', '★', 'Ilha de Borabóia', NULL, 5, FALSE, TRUE),
+    ('Folha de Hortelã', 'Refrescante, cheirosa e ótima em chás ou nas mãos de piratas resfriados.', '★', 'Ilha de Borabóia', NULL, 5, FALSE, TRUE),
+    ('Maçã Lustrosa', 'Brilha tanto que você se vê nela. Tão docinha quanto promessas de marinheiro.', '★', 'Cidade de Lurien', NULL, 7, FALSE, TRUE),
+    ('Repolho Redondo', 'Enrola mais que muito pirata mentiroso. Cru ou cozido, sempre útil.', '★', 'Cidade de Lurien',  NULL, 5, FALSE, TRUE),
+    ('Alga Fresca', 'Parece nojenta, mas dizem que é cheia de nutrientes. Piratas fitness adoram.', '★', 'Cidade de Lurien', NULL, 6, FALSE, TRUE),
+    ('Chá Enlatado', 'Vendido em latas esquisitas. Tem gosto de “quase chá”, mas funciona.', '★', 'Cidade de Lurien', 15, 6, FALSE, FALSE),
+    ('Doce Amassado', 'Parece que foi esmagado por um punho gigante. Ainda doce, com gosto de luta.', '★', 'Cidade de Lurien', NULL, 2, FALSE, FALSE),
+    ('Noz Crocante', 'Pequena, dura e barulhenta. Ideal para mordidas rápidas ou espantar pinguins curiosos.', '★', 'Ilha Glacial de Frimora', NULL, 2, FALSE, TRUE),
+    ('Ervas Aromáticas', 'Um cheirinho que aquece a alma. Ótimas para chás, sopas ou magias de vovó.', '★', 'Ilha Glacial de Frimora', NULL, 3, FALSE, TRUE),
+    ('Neve Mágica', 'Parece gelo raspado, mas derrete em cura. Tente não comer tudo de uma vez.', '★★', 'Ilha Glacial de Frimora', NULL, 12, FALSE, TRUE),
+    ('Leite de Cabra Alpina', 'Quentinho, cremoso e nutritivo. Perfeito para combater o frio e o mau humor.', '★', 'Ilha Glacial de Frimora', 10, 6, FALSE, FALSE),
+    ('Chocolate Amargo', 'Amargo como a vida no gelo. Derrete o cansaço e o coração congelado.', '★', 'Ilha Glacial de Frimora', 15, 8, FALSE, FALSE),
+    ('Fruta Cítrica do Oeste', 'Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida.', '★', 'Cactuaraquara', NULL, 4, FALSE, TRUE),
+    ('Côco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara', NULL, 7, FALSE, TRUE),
+    ('Areia Mineral', 'Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante.', '★★', 'Cactuaraquara', NULL, 10, FALSE, TRUE),
+    ('Carne do Deserto', 'Picante o suficiente pra te fazer cuspir fogo. +1 em coragem depois de comer.', '★★', 'Cactuaraquara',  20, 8, FALSE, FALSE),
+    ('Geleia de Cacto Doce', 'Um docinho raro feito do néctar de um cacto bem zangado. Cuidadosamente colhida!', '★★', 'Cactuaraquara', 11, 6, FALSE, FALSE),
+    ('Suco Refrescante Solar', 'Tão gelado que parece mágica. Refresca mais que mergulho em fonte sagrada.', '★', 'Cactuaraquara', 7, 4, FALSE, FALSE),
+    ('Cogumelo Risonho', 'Tem uma carinha feliz. Ninguém sabe por quê. Comer pode causar risos... ou arrependimentos.', '★', 'Nublária', NULL, 9, FALSE, TRUE),
+    ('Fruta Fluorescente', 'Brilha no escuro! Alguns dizem que tem alma própria.', '★', 'Nublária', NULL, 7, FALSE, TRUE),
+    ('Doce Fantasmal', 'Derrete na língua e deixa um leve arrepio na espinha. Doces espíritos aprovariam.', '★', 'Nublária', 13, 5, FALSE, FALSE),
+    ('Ração de Soldado', 'Embalada à vácuo e sem gosto. Mas dá energia e fortalece o espírito patriótico.', '★★', 'Quartel Naval D-57', NULL, 10, FALSE, TRUE),
+    ('Biscoito de Gengibre', 'Na ala dos oficiais, um confeiteiro reformado da Marinha mantém a tradição de assar biscoitos para “manter a moral da tropa”. Só não conte pros recrutas — é só pros superiores.', '★★', 'Quartel Naval D-57', 12, 7, FALSE, FALSE),
+    ('Café Turbinado', 'Tão forte que acorda até os mortos e os marinheiros de plantão.', '★', 'Quartel Naval D-57',     8, 3, FALSE, FALSE),
+    ('Carne de Rei dos Mares', 'Gigantesca, rara e cara. Cheia de proteína e orgulho militar.', '★★★', 'Quartel Naval D-57', 40, 19, FALSE, FALSE),
+    ('Rosquinha Mordida', 'Quem mordeu e largou? Ainda tá boa. Restaura pouco, mas serve como prova de negligência.', '★', 'Quartel Naval D-57', NULL, 3, FALSE, FALSE),
+    ('Sushi Enrolado', 'Enrolado com carinho e peixe saltitante! Um lanche leve, mas cheio de sabor.', '★★', 'Cozinha', NULL, 15, TRUE, FALSE),
+    ('Chá de Algas', 'Um gole desse chá marinho e você sente até as ondas te abraçando por dentro.', '★', 'Cozinha',  NULL, 10, TRUE, FALSE),
+    ('Pastel de Fruta do Diabo', 'Ardido e adocicado, um quitute perigoso para os mais ousados.', '★★', 'Cozinha', NULL, 18, TRUE, FALSE),
+    ('Caldo da Vovó Yuba', 'Uma sopa tão boa que parece que te dá um abraço. Feita com amor... e pimenta!', '★★', 'Cozinha', NULL, 22, TRUE, FALSE),
+    ('Tônico de Areia', 'Tem gosto de areia? Sim. Funciona? Mais do que você imagina!', '★★', 'Cozinha', NULL, 16, TRUE, FALSE),
+    ('Chá Gelado de Neve', 'Refrescante até congelar os pensamentos. A escolha perfeita pra esfriar os ânimos.', '★★', 'Cozinha', NULL, 15, TRUE, FALSE),
+    ('Receita Secreta do Capitão', 'Uma mistura poderosa e misteriosa, só os verdadeiros líderes se atrevem a provar.', '★★★', 'Cozinha', NULL, 27, TRUE, FALSE),
+    ('Carne Grelhada', 'Crocante por fora, suculenta por dentro. Perfeita para qualquer fogueira.', '★★', 'Cozinha', NULL, 18, TRUE, FALSE),
+    ('Pérola Caramelizada', 'Crocante, mágica e doce. Dizem que revive até o humor de um pirata carrancudo.', '★★', 'Cozinha', NULL, 13, TRUE, FALSE),
+    ('Pérola da Lua de Inverno', 'Um doce etéreo que brilha como a luz da lua sobre a neve. Quem o come sente o universo piscando para si — e os dados da vida rolando a seu favor.', '★★★', 'Cozinha', NULL, 24, TRUE, FALSE),
+    ('Pérola do Sol Escaldante', 'Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável.', '★★★', 'Cozinha', NULL, 24, TRUE, FALSE),
+    ('Gelado de Algas', 'Uma sobremesa geladinha com gosto do mar e um toque de frescor sobrenatural.', '★', 'Cozinha',  NULL, 15, TRUE, FALSE),
+    ('Omurice de Arroz', 'Receita tradicional dos viajantes do campo, famosa por causar nostalgia e fome ao mesmo tempo.', '★★', 'Cozinha', NULL, 15, TRUE, FALSE),
+    ('Bolo do Campo', 'Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura!', '★★', 'Cozinha', NULL, 14, TRUE, FALSE),
+    ('Bombom Nebuloso', 'Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra).', '★★', 'Cozinha', NULL, 12, TRUE, FALSE),
+    ('Arroz dos Sete Mares', 'Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte.', '★', 'Cozinha', NULL, 9, TRUE, FALSE),
+    ('Doce da Ilha', 'Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto.', '★★', 'Cozinha', NULL, 12, TRUE, FALSE),
+    ('Omelete dos 4 Ventos', 'Leve e fofa, com o sabor do campo e a brisa das planícies.', '★★', 'Cozinha', NULL, 13, TRUE, FALSE),
+    ('Frango Assado Estaladiço', 'Crocante por fora, macio por dentro. Tão bom que até o corvo queria roubar.', '★', 'Cozinha', NULL, 10, TRUE, FALSE),
+    ('Sopa da Guarda Noturna', 'Revigorante e quentinha, ideal para noites frias e perseguições por becos.', '★', 'Cozinha', NULL, 6, TRUE, FALSE),
+    ('Doce de Duna Dourada', 'Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos.', '★★', 'Cozinha', NULL, 16, TRUE, FALSE),
+    ('Bife do Abismo', 'Um corte suculento direto das profundezas do mar. Tão macio que derrete na boca, mas tão forte que faz os músculos tremerem.', '★★★', 'Cozinha', NULL, 35, TRUE, FALSE),
+    ('Sashimi do Fim do Mundo', 'Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor.', '★★★', 'Cozinha', NULL, 35, TRUE, FALSE),
+    ('Torta do Marujo Feliz', 'Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação.', '★', 'Cozinha',  NULL, 10, TRUE, FALSE),
+    ('Doce Assombrado', 'Não se sabe se o sabor é bom ou se é só a maldição agindo. Textura perfeita... demais até.', '★★', 'Cozinha', NULL, 12, TRUE, FALSE),
+    ('Curry do Capitão Covarde', 'O cheiro é intenso, o sabor é duvidoso, mas nenhum pirata consegue parar de comer.', '★★', 'Cozinha', NULL, 13, TRUE, FALSE),
+    ('Elixir Sombrio', 'Bebida proibida sussurrada em tavernas assombradas. Quem é que vai querer beber isso...?', '★★', 'Cozinha', NULL, 18, TRUE, FALSE),
+    ('Poção do Dente Torto', 'Um gole é suficiente para se sentir... diferente. Tem certeza que isso não é veneno?', '★★', 'Cozinha', NULL, 18, TRUE, FALSE),
+    ('Cookie de Chocolate', 'Crocante por fora, macia por dentro. Derrete na boca como a neve da infância.', '★', 'Cozinha', NULL, 14, TRUE, FALSE),
+    ('Leite Condensado Alpino', 'Um creme docinho e suave.', '★', 'Cozinha',  NULL, 11, TRUE, FALSE),
+    ('Chocolate Quente', 'Um gole e você sente como se tivesse abraçado um urso de cachecol... que acabou de sair do banho e decidiu virar seu terapeuta de plantão.', '★★', 'Cozinha',  NULL, 15, TRUE, FALSE),
+    ('Doce do Silêncio Eterno', 'Um doce que ecoa sussurros antigos. Quem come diz sentir a presença dos que partiram.', '★★', 'Cozinha', NULL, 17, TRUE, FALSE),
+    ('Cacto-Pop Geladinho', 'Uma explosão refrescante e pegajosa! Perfeito para os dias escaldantes no deserto.', '★★', 'Cozinha', NULL, 16, TRUE, FALSE),
+    ('Esfera da Miragem', 'Parece sólida, mas será que é? Um doce ilusório que desorienta quem o encara por muito tempo.', '★★', 'Cozinha', NULL, 17, TRUE, FALSE),
+    ('Pickles Pirata', 'Um prato inusitado e ousado. Os piratas juram que melhora a mira (e o hálito!).', '★', 'Cozinha', NULL, 10, TRUE, FALSE),
+    ('Torta de Telhado', 'Doce crocante e levemente defumado. Dizem que foi assada nos telhados quentes da cidade durante uma greve dos padeiros.', '★★', 'Cozinha', NULL, 15, TRUE, FALSE),
+    ('Doce de Fuligem Cítrica', 'Uma sobremesa brilhante com um leve toque de fumaça — parece suspeita, mas é incrivelmente viciante.', '★', 'Cozinha', NULL, 11, TRUE, FALSE),
+    ('Rosquinha do Quartel Proibida', 'Criada por um marinheiro rebelde com talento para confeitaria e zero noção de higiene. Um sucesso entre os subalternos.', '★★', 'Cozinha', NULL, 16, TRUE, FALSE),
+    ('Bolo da Chaminé Encantada', 'Dizem que foi feito com açúcar mágico... ou fuligem encantada. Vai saber. Pelo menos é fofo e aquece o coração.', '★★★', 'Cozinha', NULL, 18, TRUE, FALSE),
+    ('Frankenprato', 'Uma aberração culinária nascida da mistura de ingredientes incompatíveis. Não parece comida... mas tecnicamente é.', '★', 'Cozinha', NULL, 5, TRUE, FALSE);
 
 
 
@@ -840,33 +840,48 @@ VALUES
 
 
 INSERT INTO area_interativa
-    (identificador_area_origem, identificador_area_destino, x, y, largura, altura, tipo_evento)
+    (identificador_area_origem, identificador_area_destino, x, y, largura, altura, tipo_evento, metodo_ativacao)
 VALUES
-    ('are001', 'are002', 4473, 187, 30, 180, 'mudar_area'), -- → vila
-    ('are002', 'are001', 0, 360, 50, 150, 'mudar_area'), -- → pastos
-    ('are002', 'are004', 1716, 300, 200, 40, 'mudar_area'), -- → loja
-    ('are002', 'are003', 3490, 360, 50, 150, 'mudar_area'), -- → vale
-    ('are003', 'are002', 0, 200, 50, 150, 'mudar_area'), -- → vila
-    ('are003', null, 4205, 313, 50, 158, 'embarcar'), -- → navegar
-    ('are004', 'are002', 0, 300, 50, 270, 'mudar_area'), -- → sair da loja
-    ('are007', 'are008', 610, 185, 250, 20, 'mudar_area'), -- → centro
-    ('are007', null, 2472, 375, 93, 67, 'embarcar'), -- → navegar
-    ('are008', 'are007', 0, 480, 50, 150, 'mudar_area'), -- → porto
-    ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area'), -- → praça
-    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area'), -- → centro
-    ('are015', 'are016', 0, 745, 50, 100, 'mudar_area'), -- → vila
-    ('are015', null, 960, 930, 80, 90, 'embarcar'), -- → navegar
-    ('are016', 'are015', 2950, 473, 50, 100, 'mudar_area'), -- → costa
-    ('are016', 'are017', 0, 473, 50, 100, 'mudar_area'), -- → floresta
-    ('are016', 'are019', 695, 273, 78, 108, 'mudar_area'), -- → cozinha
-    ('are016', 'are020', 1449, 269, 95, 108, 'mudar_area'), -- → loja
-    ('are017', 'are016', 1486, 735, 50, 290, 'mudar_area'), -- → vila
-    ('are017', 'are018', 0, 735, 50, 290, 'mudar_area'), -- → montanha
-    ('are018', 'are017', 1486, 735, 50, 172, 'mudar_area'), -- → floresta
-    ('are019', 'are016', 0, 0, 50, 600, 'mudar_area'), -- → vila
-    ('are020', 'are016', 0, 0, 50, 600, 'mudar_area'); -- → vila
+    ('are001', 'are002', 4473, 187, 30, 180, 'mudar_area', 'ativo'), -- → vila
+    ('are002', 'are001', 0, 360, 50, 150, 'mudar_area', 'ativo'), -- → pastos
+    ('are002', 'are004', 1716, 300, 200, 40, 'mudar_area', 'ativo'), -- → loja
+    ('are002', 'are003', 3490, 360, 50, 150, 'mudar_area', 'ativo'), -- → vale
+    ('are003', 'are002', 0, 200, 50, 150, 'mudar_area', 'ativo'), -- → vila
+    ('are003', null, 4205, 313, 50, 158, 'embarcar', 'ativo'), -- → navegar
+    ('are004', 'are002', 0, 300, 50, 270, 'mudar_area', 'ativo'), -- → sair da loja
+    ('are007', 'are008', 610, 185, 250, 20, 'mudar_area', 'ativo'), -- → centro
+    ('are007', null, 2472, 375, 93, 67, 'embarcar', 'ativo'), -- → navegar
+    ('are008', 'are007', 0, 480, 50, 150, 'mudar_area', 'ativo'), -- → porto
+    ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area', 'ativo'), -- → praça
+    ('are009', 'are008', 0, 500, 50, 85, 'mudar_area', 'ativo'), -- → centro
+    ('are015', 'are016', 0, 745, 50, 100, 'mudar_area', 'ativo'), -- → vila
+    ('are015', null, 960, 930, 80, 90, 'embarcar', 'ativo'), -- → navegar
+    ('are016', 'are015', 2950, 473, 50, 100, 'mudar_area', 'ativo'), -- → costa
+    ('are016', 'are017', 0, 473, 50, 100, 'mudar_area', 'ativo'), -- → floresta
+    ('are016', 'are019', 695, 273, 78, 108, 'mudar_area', 'ativo'), -- → cozinha
+    ('are016', 'are020', 1449, 269, 95, 108, 'mudar_area', 'ativo'), -- → loja
+    ('are017', 'are016', 1486, 735, 50, 290, 'mudar_area', 'ativo'), -- → vila
+    ('are017', 'are018', 0, 735, 50, 290, 'mudar_area', 'ativo'), -- → montanha
+    ('are018', 'are017', 1486, 735, 50, 172, 'mudar_area', 'ativo'), -- → floresta
+    ('are019', 'are016', 0, 0, 50, 600, 'mudar_area', 'ativo'), -- → vila
+    ('are020', 'are016', 0, 0, 50, 600, 'mudar_area', 'ativo'); -- → vila
 
 
+
+INSERT INTO area_interativa
+    (identificador_area_origem, chave_imagem, x, y, chance_sucesso, tipo_evento, metodo_ativacao)
+VALUES
+    ('are001', 'arbusto', 1247, 119, 0.5, 'investigar', 'ativo'),
+    ('are001', 'arbusto', 2955, 111, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 559, 359, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 741, 361, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar', 'ativo'),
+    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar', 'ativo'),
+    ('are003', 'arbusto', 817, 138, 0.5, 'investigar', 'ativo'),
+    ('are003', 'arbusto', 2692, 126, 0.5, 'investigar', 'ativo'),
+    ('are003', 'arbusto', 3160, 132, 0.5, 'investigar', 'ativo');
+
+    
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
@@ -918,24 +933,27 @@ VALUES
     ('are017', 201, 978, 121, 46);
 
 
+-- Vendedores
+INSERT INTO habitante
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem, especialidade)
+VALUES
+    ('are004', 'Sr. Lee', 'Sr. Lee, o mestre das marmitas rurais! Vende ovos frescos, arroz do planalto e conselhos que parecem saídos de um livro de provérbios... mal traduzido.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven001
+    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 236, 196, 500, 'lee', 'com'), -- ven002
+    ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven003
+    ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven004
+    ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven005
+    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto', 'com'); -- ven006
+
+
 
 INSERT INTO habitante
-    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais)
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem)
 VALUES
-    ('are001', 'Aldeão', 'Habitante da Ilha de Borabóia', 'rct', 0, 0, 15),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 290, 300, 16),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 615, 330, 14),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1650, 340, 17),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2775, 345, 20),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 2870, 345, 10),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 1000, 450, 13),
-    ('are002', 'Aldeão', 'Habitante da Ilha de Borabóia', 'hbt', 915, 323, 14),
-    ('are007', 'Cidadão', 'Costuma vender frutas no porto da Cidade de Lurien', 'rct', 0, 0, 50),
-    ('are011', 'Revolucionário', 'Oficial do exército revolucionário em missão na Cidade de Lurien', 'rct', 0, 0, 75),
-    ('are016', 'Chefe da vila', 'Chefe da vila da Ilha Glacial de Frimora', 'rct', 0, 0, 40),
-    ('are022', 'Chefe da cidadelA', 'Chefe dA cidadelA de Cactuaraquara', 'rct', 0, 0, 30),
-    ('are031', 'Marinheiro', 'Marinheiro de baixo escalão', 'rct', 0, 0, 70);
-
+    ('are034', 'Narrador', null, 'hbt', 0, 0, 0, null), -- hbt001
+    ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 90, 15, 'campones_a'), -- hbt002
+    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 2252, 336, 15, 'camponesa_b'), -- hbt003
+    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 1600, 340, 15, 'campones_b'), -- rct001
+    ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 15, 'camponesa_a'); -- rct002
 
 
 INSERT INTO lacaio
@@ -1169,51 +1187,163 @@ VALUES
 
 
 INSERT INTO missao
-    (identificador_progresso, identificador_area, identificador_recrutador, descricao, nome)
+    (identificador_area, identificador_missao_dependente, nivel_de_desbloqueio, identificador_recrutador, descricao, nome)
 VALUES
-    ('pro001', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
-    ('pro001', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    ('pro001', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    ('pro001', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    ('pro001', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    ('pro001', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    ('pro001', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    ('pro001', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    ('pro001', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    ('pro001', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    ('pro001', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    ('pro001', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    ('pro001', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    ('pro001', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    ('pro001', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final'),
-    ('pro002', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
-    ('pro002', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    ('pro002', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    ('pro002', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    ('pro002', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    ('pro002', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    ('pro002', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    ('pro002', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    ('pro002', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    ('pro002', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    ('pro002', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    ('pro002', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    ('pro002', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    ('pro002', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    ('pro002', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final'),
-    ('pro003', 'are001', 'rct001', 'Derrotar o animal selvagem que atacou o protagonista no caminho para a vila.', 'Animal Selvagem'),
-    ('pro003', 'are001', 'rct001', 'Enfrentar a fera que esta atacando camponeses e destruindo plantacoes perto da vila.', 'A Fera da Vila'),
-    ('pro003', 'are007', 'rct002', 'Salvar o velho vendedor de frutas sendo agredido no porto da cidade.', 'Vendedor Agressao'),
-    ('pro003', 'are012', 'rct003', 'Invadir os registros da prisao para libertar inocentes e buscar pistas sobre a irma do protagonista.', 'Infiltracao Prisao'),
-    ('pro003', 'are009', null, 'Lutar e derrotar o comandante da Marinha na cidade.', 'Comandante da Marinha'),
-    ('pro003', 'are013', null, 'Lutar contra lobos no caminho para o vilarejo do norte.', 'Ataque de Lobos'),
-    ('pro003', 'are014', 'rct001', 'Defender o vilarejo do norte de um ataque de piratas.', 'Defesa do Vilarejo'),
-    ('pro003', 'are017', null, 'Lutar contra o verme de areia que destruiu o barco no deserto.', 'Verme da Areia'),
-    ('pro003', 'are019', 'rct001', 'Destruir suprimentos e usar ilusoes para diminuir o numero de piratas no deserto.', 'Estrategia do Deserto'),
-    ('pro003', 'are019', 'rct001', 'Lutar e derrotar o lider dos piratas no deserto.', 'Lider Pirata do Deserto'),
-    ('pro003', 'are014', 'rct001', 'Passar por treinamento e coletar materiais para aprender tecnica secreta.', 'Treinamento Secreto'),
-    ('pro003', 'are026', 'rct001', 'Realizar favores para os marinheiros enquanto espera o marinheiro nobre.', 'Favores na Fortaleza'),
-    ('pro003', 'are025', null, 'Derrotar uma besta marinha no caminho para a fortaleza.', 'Besta Marinha'),
-    ('pro003', 'are025', null, 'Lutar contra o marinheiro nobre em sua forma hibrida.', 'Marinheiro Nobre - Hibrido'),
-    ('pro003', 'are025', null, 'Luta final contra o marinheiro nobre em sua forma completa.', 'Marinheiro Nobre - Final');
+    ('are001', 'mis002', 0, null, 'Desperte nesse local desconhecido', 'Acordei e Já Tô Perdido'), -- mis001
+    ('are001', 'mis003', 0, null, 'Derrote o lobo que te atacou de repente no caminho para a vila.', 'Lobicho Maldito!'), -- mis002
+    ('are002', null, 1, null, 'Chegue na vila.', 'Cadê o Waze Medieval?'), -- mis003
+    ('are001', null, 1,'rct001', 'Espante os corvos da plantação', 'Corvo Não Paga Aluguel'), -- mis004
+    ('are003', null, 2,'rct001', 'Conserte a cerca danificada', 'Cercando o Prejuízo'), -- mis005
+    ('are003', null, 3,'rct001', 'Afugente os lobos', 'Sai Pra Lá, Fido!'), -- mis006
+    ('are003', 'mis010', 5, 'rct002', 'Busque água do poço', 'Água Mole, Braço Duro'), -- mis007
+    ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
+    ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
+    ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
+    ('are001', 'mis012', 10, 'rct001', 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
 
+
+
+INSERT INTO estado_missao
+    (identificador_missao, identificador_progresso)
+VALUES
+    ('mis001', 'pro001'),
+    ('mis002', 'pro001'),
+    ('mis003', 'pro001'),
+    ('mis004', 'pro001'),
+    ('mis005', 'pro001'),
+    ('mis006', 'pro001'),
+    ('mis007', 'pro001'),
+    ('mis008', 'pro001'),
+    ('mis009', 'pro001'),
+    ('mis010', 'pro001'),
+    ('mis011', 'pro001'),
+    ('mis012', 'pro001'),
+    ('mis001', 'pro002'),
+    ('mis002', 'pro002'),
+    ('mis003', 'pro002'),
+    ('mis004', 'pro002'),
+    ('mis005', 'pro002'),
+    ('mis006', 'pro002'),
+    ('mis007', 'pro002'),
+    ('mis008', 'pro002'),
+    ('mis009', 'pro002'),
+    ('mis010', 'pro002'),
+    ('mis011', 'pro002'),
+    ('mis012', 'pro002'),
+    ('mis001', 'pro003'),
+    ('mis002', 'pro003'),
+    ('mis003', 'pro003'),
+    ('mis004', 'pro003'),
+    ('mis005', 'pro003'),
+    ('mis006', 'pro003'),
+    ('mis007', 'pro003'),
+    ('mis008', 'pro003'),
+    ('mis009', 'pro003'),
+    ('mis010', 'pro003'),
+    ('mis011', 'pro003'),
+    ('mis012', 'pro003');
+
+
+
+INSERT INTO dialogo
+    (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
+VALUES
+    ('hbt001', 'mis001', 1, 'F', 'O som do vento sussurrava entre as altas folhas douradas. O sol da manhã já aquecia a terra quando uma jovem de cabelos bagunçados abriu os olhos pela primeira vez naquele lugar desconhecido.'),
+    ('hbt001', 'mis001', 1, 'M', 'O som do vento sussurrava entre as altas folhas douradas. O sol da manhã já aquecia a terra quando um jovem de cabelos bagunçados abriu os olhos pela primeira vez naquele lugar desconhecido.'),
+    (null, 'mis001', 2, 'F', 'Ei, garota... está viva?'),
+    (null, 'mis001', 2, 'M', 'Ei, garoto... está vivo?'),
+    ('hbt001', 'mis001', 3, 'F', 'Silvie piscou, ainda meio zonza. Acima dela, um homem de meia-idade, com um grande chapéu de palha e expressão marcada pelo tempo, a observava atentamente.'),
+    ('hbt001', 'mis001', 3, 'M', 'Shuan piscou, ainda meio zonzo. Acima dele, um homem de meia-idade, com um grande chapéu de palha e expressão marcada pelo tempo, o observava atentamente.'),
+    ('hbt002', 'mis001', 5, 'F', 'Eu quem devia perguntar isso — o homem deu uma risada breve. — Você estava desmaiada bem no meio do campo. Quase te colhi junto com as abóboras!'),
+    ('hbt002', 'mis001', 5, 'M', 'Eu quem devia perguntar isso — o homem deu uma risada breve. — Você estava desmaiado bem no meio do campo. Quase te colhi junto com as abóboras!'),
+    ('hbt001', 'mis001', 6, 'F', 'A jovem olhou ao redor. Tudo era novo. Campos vastos se estendiam em todas as direções, dançando sob a brisa. Ela tentou puxar alguma lembrança... mas nada vinha.'),
+    ('hbt001', 'mis001', 6, 'M', 'O jovem olhou ao redor. Tudo era novo. Campos vastos se estendiam em todas as direções, dançando sob a brisa. Ele tentou puxar alguma lembrança... mas nada vinha.'),
+    ('hbt002', 'mis001', 8, 'F', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
+    ('hbt002', 'mis001', 8, 'M', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
+    ('hbt001', 'mis001', 9, 'F', 'Silvie assentiu, ainda atordoada, mas determinada. Pegou a pequena bolsa ao seu lado e começou a andar.'),
+    ('hbt001', 'mis001', 9, 'M', 'Shuan assentiu, ainda atordoado, mas determinado. Pegou a pequena bolsa ao seu lado e começou a andar.'),
+    ('hbt001', 'mis003', 1, 'F', 'Algumas horas depois, ela chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
+    ('hbt001', 'mis003', 1, 'M', 'Algumas horas depois, ele chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
+    (null, 'mis003', 2, 'F', 'Ora, quem é você, jovem?'),
+    (null, 'mis003', 2, 'M', 'Ora, quem é você, jovem?'),
+    ('rct002', null, 1, 'F', 'Silvie! Minha musa da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
+    ('rct002', null, 1, 'M', 'Shuan! Meu rei da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
+    ('rct002', 'mis007', 1, 'F', 'Antes de tudo, preciso de água do poço. Mas não qualquer água! Tem que ser aquela que brilha sob o sol das 10h e tem gosto de vitória! Ou... pelo menos que não tenha sapo dentro. Vai lá, guerreira!'),
+    ('rct002', 'mis007', 1, 'M', 'Antes de tudo, preciso de água do poço. Mas não qualquer água! Tem que ser aquela que brilha sob o sol das 10h e tem gosto de vitória! Ou... pelo menos que não tenha sapo dentro. Vai lá, guerreiro!'),
+    ('rct002', 'mis008', 1, 'F', 'Agora o arroz! Mas não é qualquer arroz, é o Arroz do Planalto™ — colhido com suor, lágrimas e, às vezes, picadas de formiga. Traga um punhado... ou dois... ou vinte. Vai queimar umas calorias!'),
+    ('rct002', 'mis008', 1, 'M', 'Agora o arroz! Mas não é qualquer arroz, é o Arroz do Planalto™ — colhido com suor, lágrimas e, às vezes, picadas de formiga. Traga um punhado... ou dois... ou vinte. Vai queimar umas calorias!'),
+    ('rct002', 'mis009', 1, 'F', 'E por fim... os ovos! Mas cuidado: as galinhas dos Campos são temperamentais. Uma vez, uma me perseguiu por meia hora. Leve um escudo. Ou um pão. Elas respeitam carboidratos.'),
+    ('rct002', 'mis009', 1, 'M', 'E por fim... os ovos! Mas cuidado: as galinhas dos Campos são temperamentais. Uma vez, uma me perseguiu por meia hora. Leve um escudo. Ou um pão. Elas respeitam carboidratos.'),
+    ('rct002', 'mis010', 1, 'F', 'Você conseguiu! Água cristalina, arroz digno de poesia e ovos mais frescos que fofoca de vila! Agora... silêncio! É hora da alquimia culinária suprema!'),
+    ('rct002', 'mis010', 1, 'M', 'Você conseguiu! Água cristalina, arroz digno de poesia e ovos mais frescos que fofoca de vila! Agora... silêncio! É hora da alquimia culinária suprema!'),
+    ('hbt001', 'mis010', 2, 'F', 'Ela gira a frigideira com dramaticidade, quase derruba tudo, mas no fim...'),
+    ('hbt001', 'mis010', 2, 'M', 'Ela gira a frigideira com dramaticidade, quase derruba tudo, mas no fim...'),
+    ('rct002', 'mis010', 3, 'F', '…E… ficou bom. Quase perfeito. Mas ainda não é O Omurice Supremo. Falta algo. Um toque. Um tempero místico? Uma gema de dragão? Um fio de cabelo de chef lendário?'),
+    ('rct002', 'mis010', 3, 'M', '…E… ficou bom. Quase perfeito. Mas ainda não é O Omurice Supremo. Falta algo. Um toque. Um tempero místico? Uma gema de dragão? Um fio de cabelo de chef lendário?'),
+    ('hbt001', 'mis010', 4, 'F', 'Ela suspira, mas sorri.'),
+    ('hbt001', 'mis010', 4, 'M', 'Ela suspira, mas sorri.'),
+    ('rct002', 'mis010', 5, 'F', 'Mas não tema, Silvie! A busca continua! Um dia, esse prato vai entrar para os livros de história — ou pelo menos para o cardápio da taverna.'),
+    ('rct002', 'mis010', 5, 'M', 'Mas não tema, Shuan! A busca continua! Um dia, esse prato vai entrar para os livros de história — ou pelo menos para o cardápio da taverna.'),
+    ('rct002', 'mis010', 6, 'F', 'Tome, Silvie. Um Omurice quase supremo. Feito com suor, lágrimas e um leve toque de frustração criativa. Coma com orgulho — e cuidado, ele ainda tá bufando de quente!'),
+    ('rct002', 'mis010', 6, 'M', 'Tome, Shuan. Um Omurice quase supremo. Feito com suor, lágrimas e um leve toque de frustração criativa. Coma com orgulho — e cuidado, ele ainda tá bufando de quente!'),
+    ('hbt001', 'mis010', 7, 'F', 'Ela entrega o prato com um guardanapo dobrado em forma de galinha... com uma lágrima desenhada.'),
+    ('hbt001', 'mis010', 7, 'M', 'Ela entrega o prato com um guardanapo dobrado em forma de galinha... com uma lágrima desenhada.'),
+    ('rct002', 'mis010', 8, 'F', 'Se isso não te der +5 de energia e +1 de esperança, eu nem sou mais Lina Panela!'),
+    ('rct002', 'mis010', 8, 'M', 'Se isso não te der +5 de energia e +1 de esperança, eu nem sou mais Lina Panela!'),
+    ('rct001', 'mis004', 1, 'F', 'Mamma mia! Esses corvettos tão fazendo piquenique no meu arrozal! Vai lá, bambina, e mostra pra eles que aqui não é trattoria! Vola via, cornacchia!'),
+    ('rct001', 'mis004', 1, 'M', 'Mamma mia! Esses corvettos tão fazendo piquenique no meu arrozal! Vai lá, bambino, e mostra pra eles que aqui não é trattoria! Vola via, cornacchia!'),
+    ('rct001', 'mis005', 1, 'F', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
+    ('rct001', 'mis005', 1, 'M', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
+    ('rct001', 'mis006', 1, 'F', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('hbt001', 'mis011', 1, 'F', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Silvie, ainda meio desconfiada, observa tudo com olhos atentos. É sua primeira noite na vila.'),
+    ('hbt001', 'mis011', 1, 'M', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Shuan, ainda meio desconfiado, observa tudo com olhos atentos. É sua primeira noite na vila.'),
+    ('hbt002', 'mis011', 2, 'F', '(Puxando uma cadeira para ela): — Senta aqui, moça. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
+    ('hbt002', 'mis011', 2, 'M', '(Puxando uma cadeira para ele): — Senta aqui, moço. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
+    ('rct002', 'mis011', 4, 'F', '(Surgindo com uma travessa): — Uma galinha. Temperamental. E com excelente memória para rostos que mexem nos ovos dela.'),
+    ('rct002', 'mis011', 4, 'M', '(Surgindo com uma travessa): — Uma galinha. Temperamental. E com excelente memória para rostos que mexem nos ovos dela.'),
+    ('rct001', 'mis011', 5, 'F', '(Erguendo o bigode com orgulho): — E gosto refinado! Uma vez ela bicou um crítico gastronômico. Ou talvez fosse só o padeiro... mas o ponto é: ela tem instinto!'),
+    ('rct001', 'mis011', 5, 'M', '(Erguendo o bigode com orgulho): — E gosto refinado! Uma vez ela bicou um crítico gastronômico. Ou talvez fosse só o padeiro... mas o ponto é: ela tem instinto!'),
+    ('rct001', 'mis011', 7, 'F', '(Ofendido de brincadeira): — Non è orégano, è tradição! Minha fazenda cheira como a infância... e um pouco como pizza.'),
+    ('rct001', 'mis011', 7, 'M', '(Ofendido de brincadeira): — Non è orégano, è tradição! Minha fazenda cheira como a infância... e um pouco como pizza.'),
+    ('ven001', 'mis011', 8, 'F', '(Calmo, servindo arroz): — A sabedoria está no prato simples. E no silêncio entre duas colheradas.'),
+    ('ven001', 'mis011', 8, 'M', '(Calmo, servindo arroz): — A sabedoria está no prato simples. E no silêncio entre duas colheradas.'),
+    ('rct002', 'mis011', 10, 'F', '(Com brilho nos olhos): — É o Omurice quase supremo! Um prato que beira a perfeição... mas sempre escapa. Como um sonho culinário com asas.'),
+    ('rct002', 'mis011', 10, 'M', '(Com brilho nos olhos): — É o Omurice quase supremo! Um prato que beira a perfeição... mas sempre escapa. Como um sonho culinário com asas.'),
+    ('hbt002', 'mis011', 11, 'F', '(Rindo): — Ou como a Silvie tentando entender o que tá acontecendo desde que chegou.'),
+    ('hbt002', 'mis011', 11, 'M', '(Rindo): — Ou como o Shuan tentando entender o que tá acontecendo desde que chegou.'),
+    ('hbt001', 'mis011', 13, 'F', 'Nesse momento, Gertrudes entra pela porta e encara Silvie.'),
+    ('hbt001', 'mis011', 13, 'M', 'Nesse momento, Gertrudes entra pela porta e encara Shuan.'),
+    ('rct002', 'mis011', 15, 'F', '(Gritando): — Oferece pão! Elas respeitam carboidrato!'),
+    ('rct002', 'mis011', 15, 'M', '(Gritando): — Oferece pão! Elas respeitam carboidrato!'),
+    ('ven001', 'mis011', 16, 'F', '(Entregando um pedaço de pão): — A paz começa com fermento.'),
+    ('ven001', 'mis011', 16, 'M', '(Entregando um pedaço de pão): — A paz começa com fermento.'),
+    ('hbt001', 'mis011', 18, 'F', 'A galinha aceita o pão e sai com dignidade. Todos aplaudem discretamente.'),
+    ('hbt001', 'mis011', 18, 'M', 'A galinha aceita o pão e sai com dignidade. Todos aplaudem discretamente.'),
+    ('rct001', 'mis011', 19, 'F', '(Erguendo um copo): — Um brinde à nova viajante! Que sua estadia seja leve, sua comida quente e suas galinhas... diplomáticas!'),
+    ('rct001', 'mis011', 19, 'M', '(Erguendo um copo): — Um brinde ao novo viajante! Que sua estadia seja leve, sua comida quente e suas galinhas... diplomáticas!'),
+    ('hbt001', 'mis011', 20, 'F', '(Todos): — Viva!'),
+    ('hbt001', 'mis011', 20, 'M', '(Todos): — Viva!'),
+    ('hbt001', 'mis011', 21, 'F', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
+    ('hbt001', 'mis011', 21, 'M', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
+    ('ven001', 'mis011', 22, 'F', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
+    ('ven001', 'mis011', 22, 'M', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
+    ('rct001', 'mis011', 24, 'F', 'Já tentaram espantar, mas voltaram com mais medo que gato em dia de banho! Eu te digo, ragazza... essa criatura não tá ali por acaso. Tá guardando alguma coisa, capisce?'),
+    ('rct001', 'mis011', 24, 'M', 'Já tentaram espantar, mas voltaram com mais medo que gato em dia de banho! Eu te digo, ragazzo... essa criatura não tá ali por acaso. Tá guardando alguma coisa, capisce?'),
+    ('hbt001', 'mis011', 25, 'F', 'A jovem ficou em silêncio por um momento. Depois, se levantou, encarando os aldeões.'),
+    ('hbt001', 'mis011', 25, 'M', 'O jovem ficou em silêncio por um momento. Depois, se levantou, encarando os aldeões.'),
+    ('hbt001', 'mis011', 27, 'F', 'No dia seguinte, ela partiu com as instruções dos moradores.'),
+    ('hbt001', 'mis011', 27, 'M', 'No dia seguinte, ele partiu com as instruções dos moradores.'),
+    ('hbt001', 'mis012', 1, 'F', 'De volta à vila, os moradores a receberam com aplausos e sorrisos.'),
+    ('hbt001', 'mis012', 1, 'M', 'De volta à vila, os moradores o receberam com aplausos e sorrisos.'),
+    ('hbt002', 'mis012', 2, 'F', 'Você... conseguiu mesmo!'),
+    ('hbt002', 'mis012', 2, 'M', 'Você... conseguiu mesmo!'),
+    ('hbt001', 'mis012', 4, 'F', 'Os moradores ofereceram comida, abrigo, até joias antigas como recompensa. Mas Silvie recusou com um sorriso gentil.'),
+    ('hbt001', 'mis012', 4, 'M', 'Os moradores ofereceram comida, abrigo, até joias antigas como recompensa. Mas Shuan recusou com um sorriso gentil.'),
+    ('hbt003', 'mis012', 6, 'F', 'Hmm... ninguém com a sua descrição passou por aqui. Mas dizem que na Cidade de Lurien, em uma ilha próxima, há mais movimento. Talvez encontre pistas por lá.'),
+    ('hbt003', 'mis012', 6, 'M', 'Hmm... ninguém com a sua descrição passou por aqui. Mas dizem que na Cidade de Lurien, em uma ilha próxima, há mais movimento. Talvez encontre pistas por lá.'),
+    ('hbt001', 'mis012', 8, 'F', 'O aldeão de chapéu de palha deu uma risada curta.'),
+    ('hbt001', 'mis012', 8, 'M', 'O aldeão de chapéu de palha deu uma risada curta.'),
+    ('hbt002', 'mis012', 9, 'F', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.'),
+    ('hbt002', 'mis012', 9, 'M', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.');

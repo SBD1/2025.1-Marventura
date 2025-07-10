@@ -15,6 +15,7 @@ PRETO = (53, 38, 16)
 VERMELHO = (255, 0, 0)
 VERDE = (0, 255, 0)
 AZUL = (0, 0, 255)
+AZUL_CLARO = (0, 191, 255)
 AMARELO = (255, 255, 0)
 ROXO = (128, 0, 128)
 CINZA = (150, 150, 150)
@@ -90,6 +91,15 @@ SHUAN = 'Shuan'
 INIMIGO_LOBO = 'Lobo'
 INIMIGO_CORVO = 'Corvo'
 
+# --- Habitantes ---
+BIGODINI = 'campones_b'
+TIAO_PALHA = 'campones_a'
+LINA_PANELA = 'camponesa_a'
+TIA_COTINHA = 'camponesa_b'
+SR_LEE = 'lee'
+SR_LEE_LOGISTA = 'lee_busto'
+
+
 # --- Identificadores de Mapas ---
 ID_MAPA_OCEANO = 'oceano'
 
@@ -138,6 +148,7 @@ CHAVE_ICONE_ALERTA = 'icone_alerta'
 CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
 CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
 CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
+CHAVE_CAIXA_DIALOGO = 'caixa_dialogo'
 
 CHAVE_FONTE_CHERRY_TITULO = 'fonte_cherry_titulo'
 CHAVE_FONTE_CHERRY_SUBTITULO = 'fonte_cherry_subtitulo'
@@ -195,6 +206,12 @@ CHAVE_CENARIO_ILHA_5_PARTE_3 = 'cenario_nublaria_floresta'
 CHAVE_CENARIO_ILHA_6_PARTE_1 = 'cenario_quartel_porto'
 CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_quartel_interior'
 CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
+
+
+CENA_SILVIE_NO_CAMPO = 'cena_silvie_no_campo'
+CENA_SHUAN_NO_CAMPO = 'cena_shuan_no_campo'
+
+ARBUSTO = 'arbusto'
 
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)

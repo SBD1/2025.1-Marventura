@@ -74,7 +74,7 @@ class GerenciadorDeTelas:
         else:
             print(f"Não foi possível mudar para a tela {novo_estado}. Permanece na tela atual.")
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """
         Encaminha os eventos de entrada para a tela atual.
         Se a tela atual retornar uma transição, a muda.
@@ -91,7 +91,7 @@ class GerenciadorDeTelas:
         if evento.type == pygame.QUIT:
             sys.exit()
 
-    def update(self, dt):
+    def atualizar(self, dt):
         """
         Atualiza a tela atualmente ativa.
         Se a tela atual retornar uma transição, a muda.
@@ -105,7 +105,7 @@ class GerenciadorDeTelas:
                 self.mudar_tela(estado_desejado, **transicao_info)
 
 
-    def draw(self):
+    def desenhar(self):
         """
         Desenha a tela atualmente ativa na superfície principal do Pygame.
         """

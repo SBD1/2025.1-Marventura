@@ -3,8 +3,8 @@ class ItemInventario:
         self.id = id_item
         self.nome = nome
         self.descricao = descricao
-        self.tipo = tipo  # Ex: 'fruta', 'consumivel', etc.
-        self.raridade = raridade.strip() if raridade else "★"
+        self.tipo = tipo  # Ex: 'con', 'ncn', etc.
+        self.raridade = raridade
         self.quantidade = quantidade
         self.efeitos = efeitos or []  # Lista de dicionários: [{"nome": "Cura", "valor": 2}, ...]
 

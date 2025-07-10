@@ -143,6 +143,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
+        self._carregar_imagem(CHAVE_CAIXA_DIALOGO, 'recursos/imagens/interface/caixa_de_dialogo.png')
         #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
         self._carregar_imagem(CHAVE_BARRA_DE_ESTADO, 'recursos/imagens/interface/barra_de_estado.png')
         self._carregar_imagem(CHAVE_CAIXA_DE_TEXTO, 'recursos/imagens/interface/caixa_de_texto.png')
@@ -167,6 +168,8 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
 
+        self._carregar_imagem(CENA_SILVIE_NO_CAMPO, 'recursos/imagens/cenas/cena_silvie_no_campo.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CENA_SHUAN_NO_CAMPO, 'recursos/imagens/cenas/cena_shuan_no_campo.png', escalar_para_altura=ALTURA_TELA)
         # --- Carregar Imagens de Campos de Batalha ---
         self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS, 'recursos/imagens/cenario/campo_de_batalha_campos.png')
 
@@ -205,11 +208,21 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(f"{INIMIGO_CORVO}_0", 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
         self._carregar_imagem(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
 
+        # --- Carregar Imagens dos Habitantes ---
+        self._carregar_imagem(BIGODINI, 'recursos/imagens/habitantes/campones_b.png')
+        self._carregar_imagem(TIAO_PALHA, 'recursos/imagens/habitantes/campones_a.png')
+        self._carregar_imagem(LINA_PANELA, 'recursos/imagens/habitantes/camponesa_a.png')
+        self._carregar_imagem(TIA_COTINHA, 'recursos/imagens/habitantes/camponesa_b.png')
+        self._carregar_imagem(SR_LEE, 'recursos/imagens/habitantes/lee.png')
+        self._carregar_imagem(SR_LEE_LOGISTA, 'recursos/imagens/habitantes/lee-busto.png')
+
         # --- Carregar Ícone de Interação ---
         self._carregar_imagem(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_INTERROGACAO, 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_MARCADOR_MAPA_SILVIE, 'recursos/imagens/icones/marcador_mapa_silvie.png', escalar_para_altura=48)
+        
+        self._carregar_imagem(ARBUSTO, 'recursos/imagens/itens/arbusto.png')
 
         if not self._tudo_carregado_com_sucesso():
             print("Recursos críticos falharam ao carregar. Saindo.")

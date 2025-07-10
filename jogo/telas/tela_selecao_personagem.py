@@ -72,13 +72,13 @@ class TelaSelecaoPersonagem(TelaModelo):
 
 
     def processar_eventos(self, evento):
-        super().processar_eventos(evento) # Chama o handle_input da base para eventos comuns (ex: QUIT)
+        super().processar_eventos(evento) # Chama o processar_eventos da base para eventos comuns (ex: QUIT)
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if evento.button == 1: # Clique com o botão esquerdo
                 if self._rect_opcao_menino.collidepoint(evento.pos):
                     print(f"Selecionado {SHUAN}! Iniciando novo jogo...")
-                    jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.criar_novo_jogo(SHUAN, self.dados_slot.identificador_progresso)
+                    jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.criar_novo_jogo(SHUAN, self.dados_slot.identificador_progresso)
                 elif self._rect_opcao_menina.collidepoint(evento.pos):
                     print(f"Selecionado {SILVIE}! Iniciando novo jogo...")
                     jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.criar_novo_jogo(SILVIE, self.dados_slot.identificador_progresso)

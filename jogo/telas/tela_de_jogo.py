@@ -2,14 +2,19 @@
 
 import pygame
 from utilidades.constantes import *
+from entidades.item_inventario import ItemInventario
 from entidades import Inimigo
+from entidades import Habitante
 from entidades import Obstaculo
 from entidades import Caminho
 from entidades import AreaInteracao
 from entidades.habilidades import Habilidade
 from utilidades import Camera
+from interface import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 from gerenciadores import GerenciadorDeEntidades
+from gerenciadores import GerenciadorNotificacoesItem
+import gerenciadores.gerenciador_missoes # Importa o módulo, não a classe diretamente
 from componentes import BarraDeEstado
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
@@ -87,6 +92,40 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             for i in range(5)
         ]
         # print("Sprites de ataque carregadas:", len(self.sprites_efeito_ataque))
+        # --- Atributos da Caixa de Diálogo ---
+        self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos) # Garante que a caixa de diálogo seja sempre criada
+        self.dialogos_atuais = []
+        self.indice_dialogo_atual = 0
+        self.dialogo_ativo = False
+        
+        # --- NOVO: Atributos para cena estática ---
+        self.cena_estatica_ativa = False
+        self.imagem_cena_estatica = None # Imagem da cena (tela cheia)
+
+        # --- NOVO: Gerenciador de Missões ---
+        # Passe referências importantes para o GerenciadorDeMissoes
+        self.gerenciador_missoes = gerenciadores.gerenciador_missoes.GerenciadorDeMissoes(
+            self.banco_de_dados,
+            self.gerenciador_recursos,
+            self.camera, # Passa a instância da câmera
+            self.jogador,
+            self.caixa_dialogo, # Passa a instância da caixa de diálogo
+            self.npcs, # Passa o grupo de NPCs para interação
+            self.gerenciador_telas, # Para transições de tela
+            self
+        )
+
+        fonte_notificacoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO)
+        self.notificador = GerenciadorNotificacoesItem(fonte_notificacoes, posicao_base=(LARGURA_TELA - 20, 20))
+
+
+        #self.gerenciador_missoes.iniciar_missao('mis001')
+        # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
+        # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
+        
+        # Exemplo: Tenta carregar uma missão ativa ao iniciar a tela de jogo
+        # self.gerenciador_missoes.carregar_missao_ativa_se_existir(self.dados_do_progresso.identificador_progresso)
+
 
 
     def _carregar_entidades_dos_dados_do_mapa(self):
@@ -160,16 +199,47 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
         for area_data in areas_interativas:
-            area = AreaInteracao(area_data.x, area_data.y,
+            area = AreaInteracao(area_data.identificador,
+                                area_data.x, area_data.y,
                                 area_data.largura, area_data.altura,
                                 area_data.tipo_evento,
                                 area_data.chance_sucesso,
                                 area_data.area_destino,
-                                area_data.chave_imagem)
+                                area_data.chave_imagem,
+                                gerenciador_recursos=self.gerenciador_recursos if area_data.chave_imagem else None)
 
             self.areas_interacao.add(area)
 
+        # --- NOVO: Carregar NPCs ---
+        dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
+        for habitante in dados_habitantes:
+            dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante)
+            novo_npc = Habitante(
+                self.gerenciador_recursos,
+                habitante.identificador_habitante,
+                habitante.identificador_area,
+                habitante.coordenada_x,
+                habitante.coordenada_y,
+                habitante.nome,
+                habitante.descricao,
+                habitante.tipo_habitante,
+                habitante.moedas_totais,
+                habitante.especialidade,
+                habitante.chave_imagem,
+                dialogos
+            )
+            self.npcs.add(novo_npc)
 
+
+
+    def iniciar_dialogo(self, lista_de_textos):
+        """Inicia uma sequência de diálogos."""
+        self.dialogos_atuais = lista_de_textos
+        self.indice_dialogo_atual = 0
+        self.dialogo_ativo = True
+        
+        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
+        
 
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
@@ -257,9 +327,40 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if transicao_info:
             return transicao_info
         
+        # --- NOVO: Priorizar o gerenciador de missões/eventos para inputs ---
+        # Se o gerenciador de missões estiver em um estado de "cutscene"
+        # ou esperando um input específico que ele controla, ele deve ter prioridade.
+        if self.gerenciador_missoes.esta_em_evento_controlado():
+            self.gerenciador_missoes.processar_eventos(evento)
+            return None # Consome o evento para evitar que o jogador se mova ou faça outra coisa
+  
+        
+        # --- Lógica da Caixa de Diálogo (TEM PRIORIDADE SOBRE OUTROS INPUTS) ---
+        if self.dialogo_ativo and self.caixa_dialogo:
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_SPACE:
+                    if self.caixa_dialogo.esta_digitando:
+                        self.caixa_dialogo.pular_digitacao()
+                    elif self.caixa_dialogo.esta_finalizado():
+                        self.indice_dialogo_atual += 1
+                        if self.indice_dialogo_atual < len(self.dialogos_atuais):
+                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
+                        else:
+                            self.dialogo_ativo = False # Fim do diálogo
+                            self.caixa_dialogo.limpar_dialogo() # Limpa o texto da caixa
+
+            # NOVO: Tratamento do scroll do mouse
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                if self.caixa_dialogo.aguardando_input and not self.caixa_dialogo.esta_digitando:
+                    if evento.button == 4:  # Scroll para cima
+                        self.caixa_dialogo.rolar(-1)
+                    elif evento.button == 5: # Scroll para baixo
+                        self.caixa_dialogo.rolar(1)
+            return None # Consome o evento, o jogador não deve se mover enquanto o diálogo está ativo
+
         # --- Lógica do Menu de Viagem (se estiver ativo) ---
         if self.menu_viagem_ativo and self.menu_viagem:
-            resultado_menu = self.menu_viagem.handle_input(evento)
+            resultado_menu = self.menu_viagem.processar_eventos(evento)
             if resultado_menu is not None:
                 if resultado_menu == "cancelar":
                     self.menu_viagem_ativo = False
@@ -289,10 +390,16 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 informacoes_de_destino.orientacao
                             )
 
-                            self.gerenciador_entidades.ponto_de_renascimento = (
+                            self.banco_de_dados.atualizar_posicao_jogador(
+                                self.gerenciador_entidades.jogador.identificador_jogador,
+                                id_area,
                                 informacoes_de_destino.ponto_geracao_x,
                                 informacoes_de_destino.ponto_geracao_y,
-                                informacoes_de_destino.orientacao
+                            )
+
+                            self.gerenciador_entidades.ponto_de_renascimento = (
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y
                             )
 
                             return {'estado': CHAVE_TRANSICAO_MAPA}
@@ -307,7 +414,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # SOMENTE reage a um evento KEYDOWN, não ao estado contínuo da tecla.
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_e: # Tecla de interação
-                # Verifica colisões APÓS o jogador já ter se movido no último update
+                # Verifica colisões APÓS o jogador já ter se movido no último atualizar
                 # (ou no próximo, dependendo da ordem do loop principal)
                 # O importante é que a interação só aconteça uma vez por apertar de tecla.
                 
@@ -327,10 +434,16 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             informacoes_de_destino.orientacao
                         )
 
-                        self.gerenciador_entidades.ponto_de_renascimento = (
+                        self.banco_de_dados.atualizar_posicao_jogador(
+                            self.gerenciador_entidades.jogador.identificador_jogador,
+                            area.area_destino,
                             informacoes_de_destino.ponto_geracao_x,
                             informacoes_de_destino.ponto_geracao_y,
-                            informacoes_de_destino.orientacao
+                        )
+
+                        self.gerenciador_entidades.ponto_de_renascimento = (
+                            informacoes_de_destino.ponto_geracao_x,
+                            informacoes_de_destino.ponto_geracao_y
                         )
 
                         return {'estado': CHAVE_TRANSICAO_MAPA}
@@ -343,6 +456,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             self.menu_viagem_ativo = True
                             return None # Consome o evento
                     
+                    
+                    elif area.tipo_evento == 'investigar':
+                        area.iniciar_animacao_chacoalhar()
+                        mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador, self.notificador)
+                        if mensagem.startswith("Item"):
+                            self.gerenciador_entidades.jogador.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.gerenciador_entidades.jogador.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+                        print(mensagem)
+
                     # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
@@ -356,16 +477,25 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
     def atualizar(self, dt):
         super().atualizar(dt)
+        dt_ms = dt * 1000 # Converte dt para milissegundos para a câmera e eventos
 
-        if self.menu_viagem_ativo and self.menu_viagem:
-            return None
+        # --- NOVO: Atualiza o Gerenciador de Missões PRIMEIRO ---
+        # Se um evento de missão estiver ativo, ele pode controlar o jogador, a câmera, etc.
+        self.gerenciador_missoes.atualizar(dt_ms) # Passa dt em milissegundos
 
-        # Atualiza o jogador (ele apenas tenta se mover, sem clamping ainda)
-        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos)
+        # Se o gerenciador de missões estiver em um evento controlado OU CENA ESTÁTICA ATIVA, desativa o input do jogador
+        if self.gerenciador_missoes.esta_em_evento_controlado() or self.cena_estatica_ativa: # CENA ESTÁTICA desabilita jogador
+            self.jogador.movendo_esquerda = False
+            self.jogador.movendo_direita = False
+            self.jogador.movendo_cima = False
+            self.jogador.movendo_baixo = False
+        else:
+            # Atualiza o jogador SOMENTE SE NÃO HOUVER UM EVENTO CONTROLANDO
+            self.jogador.atualizar(dt, self.obstaculos_caminho, self.caminhos)
 
-        # Lógica de clamping do jogador para não sair dos limites do mundo
-        largura_mundo_atual = self.mapa_fundo_imagem.get_width()
-        altura_mundo_atual = self.mapa_fundo_imagem.get_height()
+            # Lógica de clamping do jogador para não sair dos limites do mundo (movimento normal)
+            largura_mundo_atual = self.mapa_fundo_imagem.get_width()
+            altura_mundo_atual = self.mapa_fundo_imagem.get_height()
 
         # --- Controle de tempo ocioso ---
         if self.jogador.rect.topleft == self.posicao_anterior_jogador:
@@ -391,22 +521,28 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if self.jogador.rect.bottom > altura_mundo_atual:
             self.jogador.rect.bottom = altura_mundo_atual
 
-        # Se o jogador colidiu com obstáculos OU foi aparado pelos limites do mapa,
-        # sua posição `rect` já estará correta. Apenas atualize `mundo_x` e `mundo_y`.
-        self.jogador.mundo_x = self.jogador.rect.x
-        self.jogador.mundo_y = self.jogador.rect.y
+            self.jogador.mundo_x = self.jogador.rect.x
+            self.jogador.mundo_y = self.jogador.rect.y
+
 
         # Atualiza a visibilidade do ícone de interação
         self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
         self.inimigos_lutando = pygame.sprite.spritecollide(self.jogador, self.inimigos, False)
         self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
 
+        # Atualiza os NPCs, passando a posição do jogador para a orientação
+        for npc in self.npcs:
+            npc.atualizar(dt, self.jogador.rect)
 
-        self.camera.update(self.jogador.rect)
+        for area in self.areas_interacao:
+            area.atualizar()
+        self.notificador.atualizar(dt)
+
+        self.camera.atualizar(dt, self.jogador.rect)
 
         for inimigo in self.inimigos:
             #print(f"[DEBUG] Atualizando inimigo: {inimigo.nome}, estado: {inimigo.estado}")
-            inimigo.update(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
+            inimigo.atualizar(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
             if inimigo.atingiu_jogador:
                 # Pega todos os inimigos da área (visão ou perseguição)
                 print(f"[DEBUG] Inimigo {inimigo.nome} atingiu o jogador!")
@@ -424,11 +560,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     CHAVE_TRANSICAO_BATALHA,
                     inimigos_na_batalha = inimigos_reagindo
                 )
-                return # Termina o update aqui para não processar mais nada após a transição
+                return # Termina o atualizar aqui para não processar mais nada após a transição
             
-        # --- Atualiza a exibição do nome da ilha ---
         if self.exibicao_nome_ilha:
-            self.exibicao_nome_ilha.update()
+            self.exibicao_nome_ilha.atualizar()
+        
+        # Se o diálogo for controlado pela TelaJogo (não pela missão), atualiza aqui
+        if self.dialogo_ativo and self.caixa_dialogo and not self.gerenciador_missoes.dialogo_controlado_ativo:
+            self.caixa_dialogo.atualizar()
+        
+        # Se o menu de viagem estiver ativo, ele tem prioridade no atualizar
+        if self.menu_viagem_ativo and self.menu_viagem:
+            # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
+            pass
 
         # Atualizar duração dos efeitos
         novos_efeitos = []
@@ -456,60 +600,113 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Desenha a imagem de fundo
         tela.blit(self.mapa_fundo_imagem, (self.mapa_fundo_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
         
-        # Desenha o jogador
-        self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)
+        # --- NOVO: Desenha a cena estática SE estiver ativa ---
+        if self.cena_estatica_ativa and self.imagem_cena_estatica:
+            tela.blit(self.imagem_cena_estatica, (0, 0)) # Desenha a cena cobrindo toda a tela
+        else: # Só desenha os elementos do jogo se a cena estática não estiver ativa
+            # Desenha os NPCs
+            for npc in self.npcs:
+                npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
 
-        # Desenha os inimigos
-        for inimigo in self.inimigos:
-            inimigo.draw(tela, self.camera.rect.x)
-
-        # Desenha o efeito do ataque no mapa
-        for efeito in self.efeitos_visuais:
-            # print(f"Desenhando efeito: {efeito['frame']}, Tempo restante: {efeito['tempo_restante']:.2f}s")
-            sprite = efeito["sprites"][efeito["frame"]]
-            sprite = pygame.transform.scale(sprite, (60, 60))
-            if self.jogador.orientacao == "direita":
-                sprite = pygame.transform.flip(sprite, True, False)
-            pos = efeito["pos"]
-            tela.blit(sprite, (pos[0]-self.camera.rect.x, pos[1]-self.camera.rect.y))
-
-        # --- Desenhar a camada superior (se existir) ---
-        if self.camada_superior_imagem:
-            tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
-
-        for caminho in self.caminhos:
-            caminho.desenhar(tela, self.camera.rect.x)
-
-        if DEBUG_DESENHAR_CAIXAS_COLISAO:
             for area in self.areas_interacao:
-                area_rect_tela = pygame.Rect(
-                    area.rect.x - self.camera.rect.x,
-                    area.rect.y - self.camera.rect.y,
-                    area.rect.width,
-                    area.rect.height
-                )
-                pygame.draw.rect(tela, AZUL, area_rect_tela, 2)
+                area.desenhar(tela, self.camera.rect.x)
 
-            for obstaculo in self.obstaculos_caminho:
-                rect_colisao_tela = pygame.Rect(
-                    obstaculo.rect.x - self.camera.rect.x,
-                    obstaculo.rect.y - self.camera.rect.y,
-                    obstaculo.rect.width,
-                    obstaculo.rect.height
-                )
-                pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
+            # Desenha o jogador
+            self.jogador.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
 
-        # --- Desenha o nome da ilha com fade ---
-        if self.exibicao_nome_ilha:
-            self.exibicao_nome_ilha.draw(tela)
-        
-        # --- Desenha o menu de viagem se estiver ativo ---
-        if self.menu_viagem_ativo and self.menu_viagem:
-            self.menu_viagem.draw(tela)
+            # Desenha os inimigos
+            for inimigo in self.inimigos:
+                inimigo.desenhar(tela, self.camera.rect.x)
 
-        if self.barra_de_estado_visivel:
-            self.barra_de_estado.desenhar(tela)
+            # Desenha o efeito do ataque no mapa
+            for efeito in self.efeitos_visuais:
+                # print(f"Desenhando efeito: {efeito['frame']}, Tempo restante: {efeito['tempo_restante']:.2f}s")
+                sprite = efeito["sprites"][efeito["frame"]]
+                sprite = pygame.transform.scale(sprite, (60, 60))
+                if self.jogador.orientacao == "direita":
+                    sprite = pygame.transform.flip(sprite, True, False)
+                pos = efeito["pos"]
+                tela.blit(sprite, (pos[0]-self.camera.rect.x, pos[1]-self.camera.rect.y))
 
+            # --- Desenhar a camada superior (se existir) ---
+            if self.camada_superior_imagem:
+                tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
+
+            for caminho in self.caminhos:
+                caminho.desenhar(tela, self.camera.rect.x)
+
+            if DEBUG_DESENHAR_CAIXAS_COLISAO:
+                for area in self.areas_interacao:
+                    area_rect_tela = pygame.Rect(
+                        area.rect.x - self.camera.rect.x,
+                        area.rect.y - self.camera.rect.y,
+                        area.rect.width,
+                        area.rect.height
+                    )
+                    pygame.draw.rect(tela, AZUL, area_rect_tela, 2)
+
+                for obstaculo in self.obstaculos_caminho:
+                    rect_colisao_tela = pygame.Rect(
+                        obstaculo.rect.x - self.camera.rect.x,
+                        obstaculo.rect.y - self.camera.rect.y,
+                        obstaculo.rect.width,
+                        obstaculo.rect.height
+                    )
+                    pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
+
+                # DEBUG para NPCs
+                for npc in self.npcs:
+                    debug_rect_npc = pygame.Rect(
+                        npc.rect.x - self.camera.rect.x,
+                        npc.rect.y - self.camera.rect.y,
+                        npc.rect.width,
+                        npc.rect.height
+                    )
+                    pygame.draw.rect(tela, VERDE, debug_rect_npc, 1) # Cor verde para NPCs
+
+            self.notificador.desenhar(tela)
+            # --- Desenha o nome da ilha com fade ---
+            if self.exibicao_nome_ilha:
+                self.exibicao_nome_ilha.desenhar(tela)
+            
+            # --- Desenha o menu de viagem se estiver ativo ---
+            if self.menu_viagem_ativo and self.menu_viagem:
+                self.menu_viagem.desenhar(tela)
+
+            if self.barra_de_estado_visivel:
+                self.barra_de_estado.desenhar(tela)
+
+
+            # --- Desenha a caixa de diálogo se estiver ativa ---
+            if self.dialogo_ativo and self.caixa_dialogo:
+                self.caixa_dialogo.desenhar(tela)
+
+        # NOVO: Se o gerenciador de missões estiver ativo e tiver um diálogo para exibir, ele desenha
+        if self.gerenciador_missoes.dialogo_controlado_ativo and self.gerenciador_missoes.caixa_dialogo:
+             self.gerenciador_missoes.caixa_dialogo.desenhar(tela)
+
+    
+
+    # --- NOVOS MÉTODOS PARA CENA ESTÁTICA ---
+    def ativar_cena_estatica(self, chave_imagem):
+        """Ativa a exibição de uma imagem de cena estática (tela cheia)."""
+        self.imagem_cena_estatica = self.gerenciador_recursos.obter_imagem(chave_imagem)
+        if self.imagem_cena_estatica:
+            # Redimensiona a imagem para caber na tela se necessário
+            self.imagem_cena_estatica = pygame.transform.scale(self.imagem_cena_estatica, (LARGURA_TELA, ALTURA_TELA))
+            self.cena_estatica_ativa = True
+            print(f"Cena estática '{chave_imagem}' ativada.")
+        else:
+            self.cena_estatica_ativa = False
+            print(f"AVISO: Imagem da cena estática '{chave_imagem}' não encontrada.")
+
+
+
+    def desativar_cena_estatica(self):
+        """Desativa a exibição da imagem de cena estática."""
+        self.cena_estatica_ativa = False
+        self.imagem_cena_estatica = None
+        print("Cena estática desativada.")
 
 
 
@@ -524,7 +721,7 @@ class _MenuViagemFlutuante:
         self.cor_fundo_menu = (50, 50, 50, 200)
         self.cor_borda_menu = (200, 200, 200)
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_UP:
                 self.indice_selecionado = (self.indice_selecionado - 1) % len(self.opcoes)
@@ -539,7 +736,7 @@ class _MenuViagemFlutuante:
 
         return None
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         if not self.opcoes:
             return
 
@@ -585,7 +782,7 @@ class _ExibicaoNomeIlha:
         self.duracao_fade = 1000 # 1 segundo para fade-in/out
         self.duracao_estatica = 2000 # 2 segundos no máximo de opacidade
 
-    def update(self):
+    def atualizar(self):
         if not self.ativo:
             return
 
@@ -605,7 +802,7 @@ class _ExibicaoNomeIlha:
             self.ativo = False
             self.alpha = 0
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         if not self.ativo or not self.nome_ilha:
             return
 

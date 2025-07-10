@@ -39,15 +39,15 @@ def executar_jogo():
         eventos_pygame = pygame.event.get()
         for evento in eventos_pygame:
             # O gerenciador de telas agora lida com os eventos e a transição de telas
-            gerenciador_telas.handle_input(evento)
+            gerenciador_telas.processar_eventos(evento)
 
         # --- Atualização do Estado dos Elementos ---
         # O gerenciador de telas agora lida com a atualização e a transição de telas
-        gerenciador_telas.update(dt)
+        gerenciador_telas.atualizar(dt)
 
         # --- Desenho ---
         tela_principal.fill(PRETO) # Limpa a tela antes de desenhar
-        gerenciador_telas.draw() # O gerenciador de telas sabe qual tela desenhar
+        gerenciador_telas.desenhar() # O gerenciador de telas sabe qual tela desenhar
 
         # --- Atualização da Tela e Controle de FPS ---
         pygame.display.flip()

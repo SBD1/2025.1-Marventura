@@ -96,7 +96,7 @@ class Inimigo(pygame.sprite.Sprite):
             self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
             self.image.fill(VERMELHO)
 
-    def update(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
+    def atualizar(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
         self.atingiu_jogador = False
 
         inimigo_centro = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
@@ -243,7 +243,7 @@ class Inimigo(pygame.sprite.Sprite):
                 self.rect.y = int(self.mundo_y)
 
 
-    def _verifica_linha_de_visao(self, inimigo_centro, jogador_rect, obstaculos_visao):
+    def _verifica_linha_de_visao(self, inimigo_centro, retangulo_do_jogador, obstaculos_visao):
         # Verifica se o retângulo do jogador está dentro do cone de visão
 
         raio = self.alcance_visao
@@ -265,7 +265,7 @@ class Inimigo(pygame.sprite.Sprite):
         cone_path = pontos_cone
 
         # Verifica se algum ponto do retângulo do jogador está dentro do cone
-        for corner in self._cantos(jogador_rect):
+        for corner in self._cantos(retangulo_do_jogador):
             if self._ponto_dentro_poligono(corner, cone_path):
                 # Verifica linha de visão
                 if all(not o.rect.clipline(origem.x, origem.y, corner[0], corner[1]) for o in obstaculos_visao):
@@ -295,7 +295,7 @@ class Inimigo(pygame.sprite.Sprite):
         return dentro
 
 
-    def draw(self, tela, camera_x):
+    def desenhar(self, tela, camera_x):
         # --- Desenha o campo de visão do inimigo ---
         centro_x = self.mundo_x - camera_x + self.rect.width // 2
         centro_y = self.mundo_y + self.rect.height // 2

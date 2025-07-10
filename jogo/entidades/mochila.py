@@ -5,6 +5,7 @@ class Mochila:
         self.itens = itens or []  # Lista de objetos ItemInventario
 
     def adicionar(self, item: ItemInventario):
+        print(f"Adicionando item: {item}")
         existente = self.encontrar_item_por_id(item.id)
         if existente:
             existente.quantidade += item.quantidade
@@ -14,6 +15,13 @@ class Mochila:
     def remover(self, id_item):
         self.itens = [i for i in self.itens if i.id != id_item]
 
+    def subtrair_quantidade(self, id_item, quantidade):
+        item = self.encontrar_item_por_id(id_item)
+        if item:
+            item.quantidade -= quantidade
+            if item.quantidade <= 0:
+                self.remover(id_item)
+
     def buscar_por_tipo(self, tipo):
         return [i for i in self.itens if i.tipo == tipo]
 
@@ -22,6 +30,7 @@ class Mochila:
 
     def usar_item(self, id_item, jogador):
         item = self.encontrar_item_por_id(id_item)
+        print(f"Usando item: {item}")
         if item:
             jogador.aplicar_efeitos(item.efeitos)
             item.quantidade -= 1

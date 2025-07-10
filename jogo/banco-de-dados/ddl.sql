@@ -67,7 +67,8 @@ CREATE TABLE consumivel (
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
     preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
-    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
+    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE)),
+    e_coletado BOOLEAN 
 );
 
 CREATE TRIGGER atribui_id_consumivel
@@ -84,7 +85,8 @@ CREATE TABLE nao_consumivel (
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
-    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    e_coletado BOOLEAN 
 );
 
 CREATE TRIGGER atribui_id_nao_consumivel
@@ -238,93 +240,6 @@ CREATE TABLE conexao_entre_areas (
 
 
 
-CREATE TABLE tipo_elemento_espacial (
-    identificador_elemento_espacial ID PRIMARY KEY,
-    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ari', 'obs', 'cam'))
-);
-
-CREATE TRIGGER atribui_id_tipo_elemento_espacial
-BEFORE INSERT ON tipo_elemento_espacial
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-
-
-CREATE TABLE obstaculo (
-    identificador_obstaculo ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
-    identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
-    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
-    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
-    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
-    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
-);
-
-CREATE TRIGGER atribui_id_obstaculo
-BEFORE INSERT ON obstaculo
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
-
-
-
-CREATE TABLE area_interativa (
-    identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
-    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
-    identificador_area_destino ID REFERENCES area(identificador_area),
-    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z_]+$'),
-    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
-    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
-    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
-    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
-    chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
-    tipo_evento CHAR(10) NOT NULL CHECK (
-        tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
-    )
-
-    -- Se for evento 'mudar_area', então identificador_area_destino é obrigatório
-    CHECK (
-        tipo_evento = 'mudar_area' OR identificador_area_destino IS NOT NULL OR
-        tipo_evento <> 'mudar_area'
-    )
-);
-
-CREATE TRIGGER atribui_id_area_interativa
-BEFORE INSERT ON area_interativa
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
-
-
-
-CREATE TABLE caminho (
-    identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
-    identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    tipo_terreno CHAR(6) DEFAULT 'normal' CHECK (tipo_terreno IN ('normal', 'neve', 'arena')),
-    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
-    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
-    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
-    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
-);
-
-CREATE TRIGGER atribui_id_caminho
-BEFORE INSERT ON caminho
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
-
-
-
-CREATE TABLE recompensa_de_exploracao (
-    identificador_recompensa ID PRIMARY KEY,
-    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
-    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now()
-);
-
-CREATE TRIGGER atribui_id_recompensa_de_exploracao
-BEFORE INSERT ON recompensa_de_exploracao
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
-
-
-
 CREATE TABLE tipo_personagem (
     identificador_personagem ID PRIMARY KEY,
     tipo CHAR(3) NOT NULL CHECK (tipo IN ('hbt', 'rct', 'coz', 'ven', 'ali', 'jog', 'lac', 'che'))
@@ -423,7 +338,8 @@ CREATE TABLE habitante (
     identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     nome CHAR(27),
-    descricao CHAR(100),
+    descricao CHAR(500),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
     tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
@@ -584,12 +500,12 @@ EXECUTE FUNCTION public.gerar_id();
 
 CREATE TABLE missao (
     identificador_missao ID PRIMARY KEY,
-    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso), 
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
     identificador_recrutador ID REFERENCES habitante(identificador_habitante), 
+    identificador_missao_dependente ID REFERENCES missao(identificador_missao), 
     descricao CHAR(100),
     nome CHAR(50) NOT NULL,
-    estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente'))
+    nivel_de_desbloqueio SMALLINT NOT NULL CHECK (nivel_de_desbloqueio BETWEEN 0 AND 60)
 );
 
 CREATE TRIGGER atribui_id_missao
@@ -604,6 +520,7 @@ CREATE TABLE dialogo (
     identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
     identificador_missao ID REFERENCES missao(identificador_missao),
     sequencia_local SMALLINT CHECK (sequencia_local > 0),
+    genero CHAR(1) CHECK (genero IN ('M', 'F')),
     dialogo CHAR(500)
 );
 
@@ -611,6 +528,108 @@ CREATE TRIGGER atribui_id_dialogo
 BEFORE INSERT ON dialogo
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE estado_missao (
+    identificador_missao ID REFERENCES missao(identificador_missao), 
+    identificador_progresso ID REFERENCES progresso(identificador_progresso), 
+    estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente')),
+    PRIMARY KEY (identificador_missao, identificador_progresso)
+);
+
+
+
+CREATE TABLE tipo_elemento_espacial (
+    identificador_elemento_espacial ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ari', 'obs', 'cam'))
+);
+
+CREATE TRIGGER atribui_id_tipo_elemento_espacial
+BEFORE INSERT ON tipo_elemento_espacial
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
+CREATE TABLE obstaculo (
+    identificador_obstaculo ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+);
+
+CREATE TRIGGER atribui_id_obstaculo
+BEFORE INSERT ON obstaculo
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+
+
+CREATE TABLE caminho (
+    identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    tipo_terreno CHAR(6) DEFAULT 'normal' CHECK (tipo_terreno IN ('normal', 'neve', 'arena')),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+);
+
+CREATE TRIGGER atribui_id_caminho
+BEFORE INSERT ON caminho
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+
+
+CREATE TABLE area_interativa (
+    identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_destino ID REFERENCES area(identificador_area),
+    identificador_missao ID REFERENCES missao(identificador_missao),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
+    chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
+    tipo_evento CHAR(10) NOT NULL CHECK (
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao')
+    ),
+    metodo_ativacao CHAR(7) NOT NULL CHECK (metodo_ativacao IN ('ativo', 'passivo')),
+    ativa BOOLEAN NOT NULL DEFAULT TRUE
+
+    CHECK (
+        -- Se for 'mudar_area', identificador_area_destino é obrigatório
+        (tipo_evento <> 'mudar_area' OR identificador_area_destino IS NOT NULL)
+        AND
+        -- Se for 'missao', identificador_missao é obrigatório
+        (tipo_evento <> 'missao' OR identificador_missao IS NOT NULL)
+    )
+);
+
+CREATE TRIGGER atribui_id_area_interativa
+BEFORE INSERT ON area_interativa
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+
+
+CREATE TABLE recompensa_de_exploracao (
+    identificador_area_interativa ID REFERENCES area_interativa(identificador_area_interativa),
+    identificador_jogador ID REFERENCES tipo_personagem(identificador_personagem),
+    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now(),
+    PRIMARY KEY (identificador_area_interativa, identificador_jogador)
+);
+
+CREATE TRIGGER trigger_registrar_interacao
+BEFORE INSERT ON recompensa_de_exploracao
+FOR EACH ROW
+EXECUTE FUNCTION tentar_coletar_item();
 
 
 

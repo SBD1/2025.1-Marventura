@@ -2,14 +2,18 @@
 
 import pygame
 from utilidades.constantes import * # Importa as constantes
-from entidades.mochila import Mochila
-from entidades.kit import KitDoExplorador
 from entidades.habilidades import Habilidade
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores.db_manager import DBManager
+    from entidades.item_inventario import ItemInventario
+    from entidades.mochila import Mochila
+    from entidades.kit import KitDoExplorador
 
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_banco_de_dados, gerenciador_recursos, x_inicial, y_inicial, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila = [], kit = [], id_inventario = None):
+    def __init__(self, gerenciador_banco_de_dados: 'DBManager', gerenciador_recursos, x_inicial, y_inicial, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila: 'Mochila' = [], kit: 'KitDoExplorador' = [], id_inventario = None):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         self.banco_de_dados = gerenciador_banco_de_dados
@@ -22,6 +26,7 @@ class Jogador(pygame.sprite.Sprite):
         self.orientacao = orientacao
         self.identificador_jogador = identificador_jogador
         self.nome = nome
+        self.identificador_jogador = identificador_jogador
         self.descricao = descricao
         self.energia_maxima = energia_maxima
         self.vida_maxima = vida_maxima
@@ -69,7 +74,7 @@ class Jogador(pygame.sprite.Sprite):
             altura_pes
         )
 
-        # Flags de movimento contínuo (agora gerenciadas internamente por handle_input_continuo)
+        # Flags de movimento contínuo (agora gerenciadas internamente por processar_eventos_continuo)
         self.movendo_esquerda = False
         self.movendo_direita = False
         self.movendo_cima = False
@@ -79,15 +84,71 @@ class Jogador(pygame.sprite.Sprite):
         self.mostrar_icone_interacao = False
         self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO)
 
-        self.mochila = Mochila(mochila)  # Lista de itens na mochila do jogador
-        self.kit_do_explorador = KitDoExplorador(kit) # Lista de itens equipados pelo jogador
+        self.mochila = mochila  # Lista de itens na mochila do jogador
+        self.kit_do_explorador = kit # Lista de itens equipados pelo jogador
         self.habilidades = []  # Lista de habilidades do jogador
         self.aplicar_efeito_do_acessorio()  # Aplica o efeito do acessório equipado, se houver
         self.carregar_habilidades()  # Carrega as habilidades do jogador
 
+
+
+    def inserir_item_na_mochila(self, item: 'ItemInventario', identificador_progresso):
+        if self.banco_de_dados.adicionar_item_ao_inventario(self.id_mochila, item.identificador_item, item.quantidade):
+            self.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.identificador_jogador, identificador_progresso)
+
+
+
+    def usar_item_da_mochila(self, item: 'ItemInventario'):
+        if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, item.id):
+            print(f"[DEBUG] Item {item.id} removido do inventário do jogador {self.identificador_jogador}.")
+            self.mochila.usar_item(item.id, self)
+
+
+
+    def remover_item_da_mochila(self, identificador_item, quantidade=1):
+        if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, identificador_item, quantidade):
+            self.mochila.subtrair_quantidade(identificador_item, quantidade)
+
+
+
+    def equipar_item(self, item: 'ItemInventario', identificador_progresso):
+        if self.banco_de_dados.equipar_item_no_kit(
+            self.identificador_jogador,
+            item.identificador_item,
+            item.tipo,
+            identificador_progresso
+        ):
+            # 1. Remove o item da mochila
+            self.mochila.remover(item.identificador_item)
+
+            # 2. Verifica se já havia item do mesmo tipo no kit
+            item_substituido = None
+
+            match item.tipo:
+                case "arma":
+                    if self.kit.arma:
+                        item_substituido = self.kit.arma
+                    self.kit.arma = item
+                case "fruta":
+                    if self.kit.fruta:
+                        item_substituido = self.kit.fruta
+                    self.kit.fruta = item
+                case "acessorio":
+                    if self.kit.acessorio:
+                        item_substituido = self.kit.acessorio
+                    self.kit.acessorio = item
+
+            # 3. Adiciona item substituído de volta à mochila
+            if item_substituido:
+                self.mochila.adicionar(item_substituido)
+
+
+
     def calcular_nivel(self, experiencia_total):
         return experiencia_total // 100
   
+
+
     def atualizar_atributos_por_nivel(self, jogador):
         novo_nivel = self.calcular_nivel(jogador.experiencia_atual)
         ganho_de_niveis = novo_nivel - jogador.nivel
@@ -99,6 +160,8 @@ class Jogador(pygame.sprite.Sprite):
             jogador.vida_atual = jogador.vida_maxima
             jogador.energia_atual = jogador.energia_maxima
             print(f"O jogador subiu {ganho_de_niveis} nível(s)!")
+
+
 
     def aplicar_efeito_do_acessorio(self):
         ids = self.kit_do_explorador.obter_ids_do_equipamento()
@@ -115,6 +178,8 @@ class Jogador(pygame.sprite.Sprite):
                 ]
                 self.aplicar_efeitos(lista_de_efeitos)
 
+
+
     def aplicar_efeitos(self, efeitos):
         """
         Aplica os efeitos do item ao jogador. A quantidade deve ser controlada fora.
@@ -122,7 +187,7 @@ class Jogador(pygame.sprite.Sprite):
         for efeito in efeitos:
             tipo = efeito["nome"]
             valor = efeito["valor"]
-
+            print(f"[DEBUG] Aplicando efeito: {tipo} com valor {valor} ao jogador {self.nome}")
             match tipo:
                 case "Cura":  # Cura de vida
                     self.vida_atual += valor
@@ -235,6 +300,8 @@ class Jogador(pygame.sprite.Sprite):
 
             # Você pode adicionar suporte a outros tipos de efeito aqui futuramente
 
+
+
     def atualizar_efeitos(self):
         novos = []
         for efeito in self.efeitos_ativos:
@@ -252,6 +319,8 @@ class Jogador(pygame.sprite.Sprite):
                     self.sorte = max(1, self.sorte - efeito["valor"])
                     print(f"[DEBUG] Efeito de sorte expirou (-{efeito['valor']})")
         self.efeitos_ativos = novos
+
+
 
     def aplicar_dano_continuo(self, momento: str):
         """
@@ -352,7 +421,7 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def handle_input_continuo(self):
+    def processar_eventos_continuos(self):
         """
         Processa as entradas contínuas do teclado usando pygame.key.get_pressed().
         Este método substitui a lógica baseada em eventos KEYDOWN/KEYUP para movimento contínuo.
@@ -466,14 +535,14 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def update(self, dt, obstaculos, lista_de_caminhos): # NOVO: Adicionado 'lista_de_caminhos'
+    def atualizar(self, dt, obstaculos, lista_de_caminhos): # NOVO: Adicionado 'lista_de_caminhos'
         """
         Atualiza a posição do jogador e a animação a cada frame do jogo.
         :param dt: Delta time (tempo em segundos desde o último frame).
         :param obstaculos: Um grupo de sprites de obstáculos para colisão.
         :param lista_de_caminhos: Uma lista de objetos Caminho que definem a área andável.
         """
-        self.handle_input_continuo()
+        self.processar_eventos_continuos()
 
         # --- NOVO: LÓGICA DE VELOCIDADE BASEADA NO TERRENO ---
         
@@ -568,6 +637,7 @@ class Jogador(pygame.sprite.Sprite):
 
         imagem_atual = None
         if self.estado == 'parado' and self.frames_animacao['parado']:
+            #print(self.mundo_x, self.mundo_y)
             imagem_atual = self.frames_animacao['parado'][self.indice_frame]
         elif self.estado == 'caminhando' and self.frames_animacao['caminhando']:
             imagem_atual = self.frames_animacao['caminhando'][self.indice_frame]
@@ -582,10 +652,10 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def draw(self, screen, camera_x, camera_y):
+    def desenhar(self, tela, camera_x, camera_y):
         """
         Desenha o jogador na tela, ajustando pela posição da câmera.
-        :param screen: A superfície do Pygame onde desenhar.
+        :param tela: A superfície do Pygame onde desenhar.
         :param camera_x: A posição X da câmera.
         :param camera_y: A posição Y da câmera (se o jogo rolar verticalmente).
         """
@@ -593,19 +663,19 @@ class Jogador(pygame.sprite.Sprite):
         posicao_tela_x = self.mundo_x - camera_x
         posicao_tela_y = self.mundo_y - camera_y
         
-        screen.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
+        tela.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
 
         # Desenha o ícone de interação se aplicável
         if self.mostrar_icone_interacao and self.icone_interacao:
             icone_x = posicao_tela_x + self.rect.width // 2 - self.icone_interacao.get_width() // 2
             icone_y = posicao_tela_y - self.icone_interacao.get_height() + 10
-            screen.blit(self.icone_interacao, (int(icone_x), int(icone_y)))
+            tela.blit(self.icone_interacao, (int(icone_x), int(icone_y)))
 
         # DEBUG: Desenha o retângulo de colisão do jogador
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
             debug_rect = pygame.Rect(self.rect.x - camera_x, self.rect.y - camera_y, self.rect.width, self.rect.height)
-            pygame.draw.rect(screen, COR_CAIXA_COLISAO, debug_rect, 1)
+            pygame.draw.rect(tela, COR_CAIXA_COLISAO, debug_rect, 1)
 
             # NOVO: Retângulo dos pés (colisão)
             debug_rect_pes = pygame.Rect(self.pes_rect.x - camera_x, self.pes_rect.y - camera_y, self.pes_rect.width, self.pes_rect.height)
-            pygame.draw.rect(screen, VERMELHO, debug_rect_pes, 2) # Cor e espessura diferentes para destacar
+            pygame.draw.rect(tela, VERMELHO, debug_rect_pes, 2) # Cor e espessura diferentes para destacar

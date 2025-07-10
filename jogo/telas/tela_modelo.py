@@ -8,7 +8,7 @@ class TelaModelo:
     """
     Classe base para todas as telas do jogo.
     Define a interface comum (contrato) para as telas, incluindo gerenciadores
-    e métodos essenciais como handle_input, update e draw.
+    e métodos essenciais como processar_eventos, update e draw.
     """
     def __init__(self, gerenciador_telas, gerenciador_recursos):
         """

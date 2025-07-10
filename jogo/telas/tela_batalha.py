@@ -114,12 +114,17 @@ class TelaBatalha(TelaModelo):
         
         self.tempo_dano_jogador = 0
         self.danos_flutuantes = []
-
+        
+        self.mochila_batalha = [
+            item for item in self.entidades.jogador.mochila.itens
+            if item.tipo == "con"
+        ]
+        
         self.menu_mochila_ativo = False
         self.item_selecionado = None
 
         self.indice_item_mochila = 0
-        self.itens_visiveis_por_pagina = 6  # pode ajustar
+        self.itens_visiveis_por_pagina = 4  # pode ajustar
         self.scroll_offset_mochila = 0
         
         self.fade_alpha = 0
@@ -278,9 +283,9 @@ class TelaBatalha(TelaModelo):
 
 
 
-    def usar_item_da_mochila(self, identificador_item):
-        self.entidades.jogador.mochila.usar_item(identificador_item, self.entidades.jogador)
-        #self.banco_de_dados.usar_item_do_inventario(self.entidades.jogador.id_mochila, identificador_item)
+    def usar_item_da_mochila(self, item):
+        self.entidades.jogador.usar_item_da_mochila(item)
+        
         # Fecha o menu e passa a vez
         self.menu_mochila_ativo = False
         print("Passa o turno depois de usar o item")
@@ -490,12 +495,12 @@ class TelaBatalha(TelaModelo):
             return
 
         for item in itens:
-            self.banco_de_dados.adicionar_item_ao_inventario_personagem(self.entidades.jogador.id_mochila, item.identificador_item, item.quantidade)
+            self.entidades.jogador.inserir_item_na_mochila(item, self.entidades.progresso_do_jogo.identificador_progresso)
 
 
 
     def processar_eventos(self, evento):
-        # Chama o handle_input da base para eventos comuns (ex: QUIT)
+        # Chama o processar_eventos da base para eventos comuns (ex: QUIT)
         super().processar_eventos(evento)
         #print(f"[DEBUG] Estado da batalha no clique: {self.estado_batalha}")
 
@@ -509,7 +514,7 @@ class TelaBatalha(TelaModelo):
             altura_item = 32
             espacamento = 8
 
-            itens_visiveis = self.entidades.jogador.mochila.itens[
+            itens_visiveis = self.mochila_batalha[
                 self.scroll_offset_mochila : self.scroll_offset_mochila + self.itens_visiveis_por_pagina
             ]
 
@@ -523,10 +528,7 @@ class TelaBatalha(TelaModelo):
                 )
 
                 if rect_item.collidepoint(evento.pos):
-                    index_real = self.scroll_offset_mochila + i
-                    self.indice_item_mochila = index_real
-                    print(f"[DEBUG] Item clicado: {item.nome} (ID {item.id})")
-                    self.usar_item_da_mochila(item.id)
+                    self.usar_item_da_mochila(item)
                     return
 
             if not self.rect_quadro.collidepoint(evento.pos):
@@ -536,7 +538,7 @@ class TelaBatalha(TelaModelo):
 
 
         elif evento.type == pygame.MOUSEWHEEL and self.menu_mochila_ativo:
-            total_itens = len(self.entidades.jogador.mochila.itens)
+            total_itens = len(self.mochila_batalha)
             max_offset = max(0, total_itens - self.itens_visiveis_por_pagina)
 
             # Rola para cima (y > 0) ou para baixo (y < 0)
@@ -672,7 +674,7 @@ class TelaBatalha(TelaModelo):
             self.itens_obtidos.append(inimigo.item)
             inimigo_pop = self.inimigos_lutando.pop(0)
             print(f"Inimigo derrotado: {inimigo_pop.identificador_instancia_lacaio}")
-            self.banco_de_dados.matar_inimigo(inimigo_pop.identificador_instancia_lacaio)
+            self.banco_de_dados.sekishiki_meikai_ha(inimigo_pop.identificador_instancia_lacaio, self.entidades.progresso_do_jogo.identificador_progresso)
             if not self._carregar_proxima_onda():
                 self._finalizar_batalha(venceu=True)
 
@@ -729,14 +731,11 @@ class TelaBatalha(TelaModelo):
         if self.menu_mochila_ativo:
             tela.blit(self.quadro_de_itens, (self.x_quadro, self.y_quadro))
 
-            itens_con = [
-                item for item in self.entidades.jogador.mochila.itens
-                if item.id.startswith("con")
-            ]
+            print(f"[DEBUG] Itens na mochila: {[item.nome for item in self.mochila_batalha]}")
 
             inicio = self.scroll_offset_mochila
             fim = inicio + self.itens_visiveis_por_pagina
-            itens_visiveis = itens_con[inicio:fim]
+            itens_visiveis = self.mochila_batalha[inicio:fim]
         
             mouse_pos = pygame.mouse.get_pos()
             item_em_foco = None
@@ -757,7 +756,7 @@ class TelaBatalha(TelaModelo):
                 if mouse_sobre:
                     item_em_foco = item
                 largura_texto_max = self.largura_quadro - 32  # margem lateral + margem direita
-                texto_nome = self.renderizar_texto_limitado(fonte, item.nome, (255, 255, 255), largura_texto_max)
+                texto_nome = self.renderizar_texto_limitado(fonte, f" {item.nome} x{item.quantidade} ", (255, 255, 255), largura_texto_max)
                 tela.blit(texto_nome, (self.x_quadro + 16, y + 4 - (tamanho_fonte - 28) // 2))  # Compensa o y se a fonte ficar maior
         
             # Mostrar descrição e efeitos do item em foco

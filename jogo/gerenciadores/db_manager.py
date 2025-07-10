@@ -5,7 +5,10 @@ import psycopg
 from psycopg.rows import namedtuple_row
 from utilidades.constantes import *
 from entidades.item_inventario import ItemInventario
+from entidades.mochila import Mochila
+from entidades.kit import KitDoExplorador
 
+import random
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -59,7 +62,7 @@ class DBManager:
             print("DBManager: Conexão com o PostgreSQL fechada.")
         DBManager._instance = None # Reseta a instância Singleton
 
-    def executar_query(self, query, params=None, fetchone=False, fetchall=False):
+    def executar_query(self, query, params=None, fetchone=False, fetchall=False, erro_no_rollback=True):
         """
         Executa uma query SQL no banco de dados.
         :param query: A string SQL a ser executada.
@@ -82,7 +85,8 @@ class DBManager:
                 self.conn.commit()
                 return True
         except psycopg.Error as e:
-            self.conn.rollback()
+            if erro_no_rollback:
+                self.conn.rollback()
             print(f"DBManager ERRO ao executar query '{query}': {e}")
             return False
 
@@ -97,23 +101,31 @@ class DBManager:
         """
         consulta = """
             SELECT
-                p.identificador_progresso,
-                p.numero_do_slot,
-                p.data_ultimo_salvamento,
-                p.ocupado,
-                TRIM(j.nome) AS nome_jogador,
-                j.identificador_jogador,
+                progresso.identificador_progresso,
+                progresso.numero_do_slot,
+                progresso.data_ultimo_salvamento,
+                progresso.ocupado,
+                TRIM(jogador.nome) AS nome_jogador,
+                jogador.identificador_jogador,
                 ROUND(
-                    100.0 * COUNT(CASE WHEN m.estado = 'concluida' THEN 1 END) / NULLIF(COUNT(m.identificador_missao), 0),
+                    100.0 * COUNT(CASE WHEN estado_missao.estado = 'concluida' THEN 1 END) 
+                    / NULLIF(COUNT(estado_missao.identificador_missao), 0),
                     1
                 ) AS percentual_concluido
-            FROM progresso p
-            LEFT JOIN jogador j ON j.identificador_progresso = p.identificador_progresso
-            LEFT JOIN missao m ON m.identificador_progresso = p.identificador_progresso
-            GROUP BY p.identificador_progresso, p.numero_do_slot, p.data_ultimo_salvamento, p.ocupado, j.nome, j.identificador_jogador
-            ORDER BY p.numero_do_slot;
+            FROM progresso
+            LEFT JOIN jogador ON jogador.identificador_progresso = progresso.identificador_progresso
+            LEFT JOIN estado_missao ON estado_missao.identificador_progresso = progresso.identificador_progresso
+            GROUP BY 
+                progresso.identificador_progresso, 
+                progresso.numero_do_slot, 
+                progresso.data_ultimo_salvamento, 
+                progresso.ocupado, 
+                jogador.nome, 
+                jogador.identificador_jogador
+            ORDER BY progresso.numero_do_slot;
         """
         return self.executar_query(consulta, fetchall=True)
+
     
 
     
@@ -146,13 +158,203 @@ class DBManager:
         for habilidade in habilidades_aliado:
             self.inserir_habilidades(id_aliado, habilidade)
 
-        # 3) Inventário
+        dialogos_do_jogador = {
+            SILVIE: [
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'F',
+                    'sequencia': 4,
+                    'dialogo': 'Você... quem é você?',
+                },
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'F',
+                    'sequencia': 7,
+                    'dialogo': 'Eu... não sei como vim parar aqui.',
+                },
+                {
+                    'id_missao': 'mis002',
+                    'genero': 'F',
+                    'sequencia': 1,
+                    'dialogo': 'Tsc... sério?',
+                },
+                {
+                    'id_missao': 'mis003',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'dialogo': 'Só alguém procurando respostas... e talvez um pouco de água.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'dialogo': '(Olhando ao redor): — Gertrudes é... uma senhora?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 6,
+                    'dialogo': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 9,
+                    'dialogo': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 12,
+                    'dialogo': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 14,
+                    'dialogo': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 17,
+                    'dialogo': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 23,
+                    'dialogo': 'E ninguém tentou detê-la?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'F',
+                    'sequencia': 26,
+                    'dialogo': 'Eu vou enfrentá-la.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'dialogo': 'Foi por pouco. Mas está feito.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'F',
+                    'sequencia': 5,
+                    'dialogo': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'F',
+                    'sequencia': 7,
+                    'dialogo': 'Isso é ótimo... mas como eu chego lá?',
+                },
+            ],
+            SHUAN: [
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'M',
+                    'sequencia': 4,
+                    'dialogo': 'Você... quem é você?',
+                },
+                {
+                    'id_missao': 'mis001',
+                    'genero': 'M',
+                    'sequencia': 7,
+                    'dialogo': 'Eu... não sei como vim parar aqui.',
+                },
+                {
+                    'id_missao': 'mis002',
+                    'genero': 'M',
+                    'sequencia': 1,
+                    'dialogo': 'Tsc... sério?',
+                },
+                {
+                    'id_missao': 'mis003',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'dialogo': 'Só alguém procurando respostas... e talvez um pouco de água.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'dialogo': '(Olhando ao redor): — Gertrudes é... uma senhora?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 6,
+                    'dialogo': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 9,
+                    'dialogo': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 12,
+                    'dialogo': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 14,
+                    'dialogo': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 17,
+                    'dialogo': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 23,
+                    'dialogo': 'E ninguém tentou detê-la?',
+                },
+                {
+                    'id_missao': 'mis011',
+                    'genero': 'M',
+                    'sequencia': 26,
+                    'dialogo': 'Eu vou enfrentá-la.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'dialogo': 'Foi por pouco. Mas está feito.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'M',
+                    'sequencia': 5,
+                    'dialogo': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
+                },
+                {
+                    'id_missao': 'mis012',
+                    'genero': 'M',
+                    'sequencia': 7,
+                    'dialogo': 'Isso é ótimo... mas como eu chego lá?',
+                },
+            ]
+        }
+
+        # 3) Diálogos
+        self.inserir_dialogos_personagem(id_jogador, dialogos_do_jogador[personagem_selecionado])
+
+        # 4) Inventário
         self.criar_inventario(id_jogador, id_progresso)
         self.criar_inventario(id_jogador, id_progresso, 'kit')
 
         self.atualizar_espaco_salvamento(id_progresso)
 
-        # 4) Retorna dados carregados já prontos
+        # 5) Retorna dados carregados já prontos
         return self.carregar_dados_do_progresso(id_jogador, id_progresso)
 
 
@@ -167,47 +369,17 @@ class DBManager:
         if not jogador:
             return None, None, None
 
-        resultados = self.buscar_inventario(id_jogador, 'moc', identificador_progresso)
-        kit_jogador = self.buscar_kit_do_explorador(id_jogador, 'kit')
-        mochila = []
-
-        for row in resultados:
-            item = ItemInventario(
-                id_item=row.identificador_item,
-                nome=row.nome_item,
-                descricao=row.descricao,
-                tipo=row.tipo_item,
-                raridade=row.raridade,
-                quantidade=row.quantidade
-            )
-
-            # Buscar os efeitos do item usando seu identificador
-            efeitos = self.buscar_efeitos_por_item(row.identificador_item)
-            print(f"Efeitos para o item {row.nome_item}: {efeitos}")
-
-            for efeito in efeitos:
-                item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
-
-            mochila.append(item)
-
-        for item in mochila:
-            print(f"{item.nome}: {item.resumir_efeitos()}")
-
-        
-        print("Mochila do jogador:")
-        for row in resultados:
-            print(row)
-        
-        print("Kit do Explorador:")
-        for row in kit_jogador:
-            print(row)
+        mochila = self.carregar_mochila_do_jogador(id_jogador, identificador_progresso)
+        kit_jogador = self.carregar_kit_do_jogador(id_jogador)
 
         area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
 
         ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
 
+        identificador_inventario = self.buscar_id_inventario(id_jogador, 'moc', identificador_progresso)
+
         #print(f"Jogador: {jogador.nome}, Área: {area.nome}, Ilha: {ilha.nome if ilha else 'N/A'}")
-        return jogador, mochila, kit_jogador, ilha, area, resultados[0].identificador_inventario
+        return jogador, mochila, kit_jogador, ilha, area, identificador_inventario
     
     def atualizar_espaco_salvamento(self, identificador_progresso):
         """
@@ -221,9 +393,125 @@ class DBManager:
         """
         return self.executar_query(consulta, (identificador_progresso,))
 
+    def carregar_mochila_do_jogador(self, id_jogador, id_progresso):
+        resultados = self.buscar_inventario(id_jogador, 'moc', id_progresso)
+        mochila = Mochila()
+
+        for row in resultados:
+            item = ItemInventario(
+                id_item=row.identificador_item,
+                nome=row.nome_item,
+                descricao=row.descricao,
+                tipo=row.tipo_item,
+                raridade=row.raridade,
+                quantidade=row.quantidade
+            )
+
+            efeitos = self.buscar_efeitos_por_item(row.identificador_item)
+            for efeito in efeitos:
+                item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
+
+            mochila.adicionar(item)
+
+        return mochila
 
 
-    def matar_inimigo(self, id_inimigo):
+    def carregar_kit_do_jogador(self, id_jogador):
+        resultado_kit = self.buscar_kit_do_explorador(id_jogador, 'kit')
+        kit = KitDoExplorador(resultado_kit[0].identificador_inventario)  # Supondo que você tenha uma classe Kit com add_arma, add_fruta, etc.
+        print(resultado_kit)
+        for row in resultado_kit:
+            item = ItemInventario(
+                id_item=row.identificador_item,
+                nome=row.nome_item,
+                descricao=row.descricao,
+                tipo=row.tipo_item,
+                raridade=row.raridade,
+                quantidade=row.quantidade
+            )
+            efeitos = self.buscar_efeitos_por_item(row.identificador_item)
+            for efeito in efeitos:
+                item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
+
+            kit.equipar(item)  # ou separar por tipo, dependendo da implementação
+
+        return kit
+
+    def equipar_item_no_kit(self, identificador_jogador, identificador_item, tipo_item, identificador_progresso):
+        """
+        Move um item da mochila para o kit, substituindo o anterior (se houver).
+        Itens possíveis: arma, fruta, acessório.
+        Tudo feito dentro de uma transação.
+        """
+        if tipo_item not in ("arma", "fruta", "acessorio"):
+            print(f"[ERRO] Tipo de item inválido para equipar: {tipo_item}")
+            return False
+
+        try:
+            with self.conn.transaction():
+                # 1. Buscar inventários
+                id_kit = self.buscar_id_inventario(identificador_jogador, 'kit', identificador_progresso)
+                id_mochila = self.buscar_id_inventario(identificador_jogador, 'moc', identificador_progresso)
+
+                # 2. Verificar se já existe item do mesmo tipo no kit
+                query_busca_existente = f"""
+                    SELECT identificador_item, quantidade
+                    FROM item_inventario
+                    JOIN tipo_item USING (identificador_item)
+                    WHERE identificador_inventario = %s AND tipo_item.tipo = %s;
+                """
+                existente = self.executar_query(query_busca_existente, (id_kit, tipo_item), fetchone=True)
+
+                # 3. Se houver, mover do kit para mochila
+                if existente:
+                    id_antigo = existente.identificador_item
+                    qtd_antiga = existente.quantidade
+
+                    # Remover do kit
+                    self.executar_query("""
+                        DELETE FROM item_inventario
+                        WHERE identificador_inventario = %s AND identificador_item = %s;
+                    """, (id_kit, id_antigo))
+
+                    # Adicionar na mochila
+                    self.executar_query("""
+                        INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+                        VALUES (%s, %s, %s)
+                        ON CONFLICT (identificador_inventario, identificador_item)
+                        DO UPDATE SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+                    """, (id_mochila, id_antigo, qtd_antiga))
+
+                # 4. Remover item da mochila
+                self.remover_item_do_inventario_personagem(id_mochila, identificador_item, quantidade=1)
+
+                # 5. Adicionar item ao kit
+                self.executar_query("""
+                    INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+                    VALUES (%s, %s, 1)
+                    ON CONFLICT (identificador_inventario, identificador_item)
+                    DO UPDATE SET quantidade = 1; -- garante que fique como 1
+                """, (id_kit, identificador_item))
+
+                return True
+
+        except Exception as e:
+            print(f"[ERRO ao equipar item no kit] {e}")
+            self.conn.rollback()
+            return False
+
+    def buscar_id_inventario(self, identificador_personagem, tipo_inventario, identificador_progresso):
+        query = """
+            SELECT identificador_inventario
+            FROM inventario
+            WHERE identificador_personagem = %s AND tipo_inventario = %s AND identificador_progresso = %s
+        """
+        resultado = self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchone=True)
+        return resultado.identificador_inventario if resultado else None
+
+    def sekishiki_meikai_ha(self, id_inimigo, identificador_progresso):
+        """
+        Envia um inimigo para o Yomotsu Hirasaka.
+        """
         consulta = """
             UPDATE estado_instancia_lacaio
             SET 
@@ -231,9 +519,11 @@ class DBManager:
                 identificador_area_atual = 'are034'
             WHERE 
                 identificador_instancia_lacaio = %s
+                AND identificador_progresso = %s
                 AND data_da_morte IS NULL;
         """
-        return self.executar_query(consulta, (id_inimigo,))
+        return self.executar_query(consulta, (id_inimigo, identificador_progresso))
+
 
     # ===============================================
     # Métodos de Operações com Jogador
@@ -244,6 +534,7 @@ class DBManager:
             SELECT
                 identificador_jogador,
                 identificador_area,
+                identificador_progresso,
                 TRIM(nome) AS nome,
                 TRIM(descricao) AS descricao,
                 coordenada_x,
@@ -271,6 +562,15 @@ class DBManager:
         """
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
         return self.executar_query(query, params)
+    
+    def atualizar_posicao_jogador(self, identificador_jogador, identificador_area, coordenada_x, coordenada_y):
+        """Atualiza a posição do jogador"""
+        consulta = """
+            UPDATE jogador
+                SET identificador_area = %s, coordenada_x = %s, coordenada_y = %s
+                WHERE identificador_jogador = %s;
+        """
+        return self.executar_query(consulta, (identificador_area, coordenada_x, coordenada_y, identificador_jogador))
 
     def atualizar_atributos_de_batalha_do_jogador(self, identificador_jogador, energia_maxima, vida_maxima, nivel,
                                                    sorte, energia_atual, vida_atual,
@@ -296,6 +596,8 @@ class DBManager:
             identificador_jogador
         )
         return self.executar_query(query, params)
+
+    
 
     def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
         """Insere um novo jogador no banco de dados e retorna o ID gerado."""
@@ -332,6 +634,103 @@ class DBManager:
             RETURNING (identificador_personagem, identificador_habilidade);
         """
         self.executar_query(consulta, (id_personagem, id_habilidade), fetchone=True)
+
+    def inserir_dialogos_personagem(self, id_jogador, dialogos):
+        """
+        Insere uma lista de diálogos para um personagem jogador.
+        :param id_jogador: ID do jogador que falará os diálogos
+        :param dialogos: Lista de dicionários com chaves:
+                        'id_missao', 'sequencia', 'genero', 'dialogo'
+        """
+        consulta = """
+            INSERT INTO dialogo (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING identificador_dialogo;
+        """
+        for dialogo in dialogos:
+            parametros = (
+                id_jogador,
+                dialogo['id_missao'],
+                dialogo['sequencia'],
+                dialogo['genero'],
+                dialogo['dialogo']
+            )
+            self.executar_query(consulta, parametros, fetchone=True)
+
+    
+    def buscar_dialogos_sem_missao(self, id_personagem):
+        """
+        Retorna todos os diálogos de um personagem específico que não estão associados a nenhuma missão (identificador_missao IS NULL).
+        :param id_personagem: ID do personagem (jogador, aliado, etc)
+        :return: Lista de tuplas com (identificador_dialogo, sequencia_local, genero, dialogo)
+        """
+        consulta = """
+            SELECT 
+                identificador_dialogo,
+                sequencia_local,
+                genero,
+                TRIM(dialogo) AS dialogo
+            FROM dialogo
+            WHERE identificador_personagem = %s
+            AND identificador_missao IS NULL
+            ORDER BY sequencia_local;
+        """
+        return self.executar_query(consulta, (id_personagem,), fetchall=True)
+
+
+    def buscar_missoes_aceitas_do_jogador(self, id_jogador):
+        """
+        Retorna todas as missões aceitas atualmente pelo jogador.
+        :param id_jogador: ID do jogador
+        :return: Lista com (identificador_missao, nome, descricao, nivel_de_desbloqueio)
+        """
+        consulta = """
+            SELECT 
+                m.identificador_missao,
+                TRIM(m.nome) AS nome,
+                TRIM(m.descricao) AS descricao,
+                m.nivel_de_desbloqueio
+            FROM jogador j
+            JOIN estado_missao em ON em.identificador_progresso = j.identificador_progresso
+            JOIN missao m ON m.identificador_missao = em.identificador_missao
+            WHERE j.identificador_jogador = %s
+            AND em.estado = 'aceita'
+            ORDER BY m.nivel_de_desbloqueio, m.nome;
+        """
+        return self.executar_query(consulta, (id_jogador,), fetchall=True)
+
+
+    def buscar_dialogos_da_missao(self, id_missao, genero_jogador):
+        """
+        Retorna todos os diálogos de uma missão específica, incluindo falas sem personagem definido.
+        Se identificador_personagem for NULL, o nome será '???'.
+        
+        :param id_missao: ID da missão (ex: 'mis011')
+        :param genero_jogador: 'F' para Silvie, 'M' para Shuan
+        :return: Lista com (identificador_dialogo, nome_personagem, sequencia_local, dialogo)
+        """
+        consulta = """
+            SELECT
+                dialogo.identificador_dialogo,
+                COALESCE(
+                    TRIM(jogador.nome),
+                    TRIM(aliado.nome),
+                    TRIM(habitante.nome),
+                    '???'
+                ) AS nome_personagem,
+                dialogo.sequencia_local,
+                TRIM(dialogo.dialogo) AS dialogo
+            FROM dialogo
+            LEFT JOIN tipo_personagem ON tipo_personagem.identificador_personagem = dialogo.identificador_personagem
+            LEFT JOIN jogador ON tipo_personagem.identificador_personagem = jogador.identificador_jogador
+            LEFT JOIN aliado ON tipo_personagem.identificador_personagem = aliado.identificador_aliado
+            LEFT JOIN habitante ON tipo_personagem.identificador_personagem = habitante.identificador_habitante
+            WHERE dialogo.identificador_missao = %s
+            AND dialogo.genero = %s
+            ORDER BY dialogo.sequencia_local;
+        """
+        return self.executar_query(consulta, (id_missao, genero_jogador), fetchall=True)
+
     
     # ===============================================
     # Métodos de Operações com Inventário e Itens
@@ -362,9 +761,9 @@ class DBManager:
                 COALESCE(arma.tipo_arma, '') AS tipo_arma,
                 item_inventario.quantidade
             FROM inventario
-            JOIN item_inventario
+            LEFT JOIN item_inventario
                 ON item_inventario.identificador_inventario = inventario.identificador_inventario
-            JOIN tipo_item
+            LEFT JOIN tipo_item
                 ON tipo_item.identificador_item = item_inventario.identificador_item
 
             -- Joins para cada subtipo
@@ -434,6 +833,7 @@ class DBManager:
         return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
 
 
+
     def criar_inventario(self, id_jogador, id_progresso, tipo_inventario='moc'):
         """Cria um novo inventário para um jogador e retorna o ID do inventário."""
         query = """
@@ -462,7 +862,7 @@ class DBManager:
         """
         return self.executar_query(query, (id_inventario,), fetchall=True)
 
-    def adicionar_item_ao_inventario_personagem(self, identificador_inventario, identificador_item, quantidade=1):
+    def adicionar_item_ao_inventario(self, identificador_inventario, identificador_item, quantidade=1):
         """
         Adiciona um item específico ao inventário de um personagem.
         Se o item já existir, incrementa a quantidade.
@@ -470,18 +870,47 @@ class DBManager:
         consulta = """
             INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
             VALUES (%s, %s, %s)
-            ON CONFLICT (identificador_inventario, identificador_item) DO UPDATE
-            SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+            ON CONFLICT (identificador_inventario, identificador_item)
+            DO UPDATE SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
         """
         return self.executar_query(consulta, (identificador_inventario, identificador_item, quantidade))
 
-    def remover_item_do_inventario(self, id_inventario, identificador_item_tipo):
-        """Remove um tipo de item específico do inventário."""
-        query = """
-            DELETE FROM iteminventario
-            WHERE id_inventario = %s AND identificador_item = %s;
+
+
+    def remover_item_do_inventario(self, identificador_inventario, identificador_item, quantidade=1):
         """
-        return self.executar_query(query, (id_inventario, identificador_item_tipo))
+        Reduz a quantidade de um item do inventário. Remove o item se a quantidade chegar a 0 ou menos.
+        """
+        # Primeiro, verificar a quantidade atual
+        consulta_quantidade = """
+            SELECT quantidade FROM item_inventario
+            WHERE identificador_inventario = %s AND identificador_item = %s;
+        """
+        resultado = self.executar_query(consulta_quantidade, (identificador_inventario, identificador_item), fetchone=True)
+
+        if not resultado:
+            print(f"[AVISO] Item {identificador_item} não encontrado no inventário {identificador_inventario}.")
+            return False
+
+        quantidade_atual = resultado.quantidade
+
+        if quantidade_atual > quantidade:
+            # Apenas reduzir a quantidade
+            consulta_update = """
+                UPDATE item_inventario
+                SET quantidade = quantidade - %s
+                WHERE identificador_inventario = %s AND identificador_item = %s;
+            """
+            return self.executar_query(consulta_update, (quantidade, identificador_inventario, identificador_item))
+
+        else:
+            # Remover o item completamente
+            consulta_delete = """
+                DELETE FROM item_inventario
+                WHERE identificador_inventario = %s AND identificador_item = %s;
+            """
+            return self.executar_query(consulta_delete, (identificador_inventario, identificador_item))
+
     
     def buscar_item_por_tipo_id(self, id_tipo_item):
         """
@@ -624,6 +1053,35 @@ class DBManager:
         """
         return self.executar_query(query, (id_habitante,), fetchone=True)
     
+    def buscar_habitante_por_area(self, id_area):
+        """Busca dados de todos os habitante de uma área específica."""
+        query = """
+            SELECT
+                identificador_habitante,
+                identificador_area,
+                TRIM(nome) AS nome,
+                TRIM(descricao) AS descricao,
+                TRIM(chave_imagem) AS chave_imagem,
+                tipo_habitante,
+                coordenada_x,
+                coordenada_y,
+                especialidade,
+                moedas_totais
+                FROM habitante
+                WHERE identificador_area = %s;
+        """
+        return self.executar_query(query, (id_area,), fetchall=True)
+    
+    def buscar_habitante_por_ilha(self, id_ilha):
+        """Busca dados de todos os habitante de uma ilha específica."""
+        query = """
+            SELECT h.*
+                FROM habitante h
+                JOIN area a ON h.identificador_area = a.identificador_area
+                WHERE a.identificador_ilha = %s;
+        """
+        return self.executar_query(query, (id_ilha,), fetchall=True)
+    
     def buscar_habilidades_por_personagem(self, identificador_personagem):
         """
         Retorna todas as habilidades associadas a um personagem (jogador, aliado, lacaio etc).
@@ -735,7 +1193,7 @@ class DBManager:
         """
         consulta = """
             SELECT
-                identificador_area_interativa,
+                identificador_area_interativa AS identificador,
                 identificador_area_origem AS area_origem,
                 identificador_area_destino AS area_destino,
                 TRIM(chave_imagem) AS chave_imagem,
@@ -793,6 +1251,20 @@ class DBManager:
             AND identificador_area_destino = %s;
         """
         return self.executar_query(consulta, (id_area_origem, id_area_destino), fetchone=True)
+
+    def buscar_ponto_de_renascimento(self, id_area_destino):
+        """
+        Retorna uma conexão onde a área de destino é a área atual (ou seja, uma conexão que leva PARA essa área).
+        """
+        consulta = """
+            SELECT
+                ponto_geracao_x AS x,
+                ponto_geracao_y AS y
+            FROM conexao_entre_areas
+            WHERE identificador_area_destino = %s
+            LIMIT 1;
+        """
+        return self.executar_query(consulta, (id_area_destino,), fetchone=True)
 
 
     def buscar_pessoas_em_local(self, id_mapa, coord_x=None, coord_y=None):
@@ -860,6 +1332,34 @@ class DBManager:
         """
         return self.executar_query(query, (id_mapa,), fetchall=True)
     
+    def buscar_itens_na_ilha(self, id_ilha, tipo='consumivel'):
+        """
+        Busca todos os itens coletáveis de um tipo ('consumivel' ou 'nao_consumivel') disponíveis na ilha.
+        Compara o campo local_encontrado com o nome da ilha, e exige que e_coletado seja TRUE.
+        """
+        if tipo == 'consumivel':
+            query = """
+                SELECT
+                    c.identificador_consumivel AS identificador_item,
+                    TRIM(c.nome) AS nome_item
+                FROM consumivel c
+                JOIN ilha i ON c.local_encontrado = i.nome
+                WHERE i.identificador_ilha = %s
+                AND c.e_coletado = TRUE;
+            """
+        else:
+            query = """
+                SELECT
+                    nc.identificador_nao_consumivel AS identificador_item,
+                    TRIM(nc.nome) AS nome_item
+                FROM nao_consumivel nc
+                JOIN ilha i ON nc.local_encontrado = i.nome
+                WHERE i.identificador_ilha = %s
+                AND nc.e_coletado = TRUE;
+            """
+        return self.executar_query(query, (id_ilha,), fetchall=True)
+
+
     # ===============================================
     # Métodos de Operações de Fabricação (Receitas)
     # ===============================================
@@ -1003,6 +1503,93 @@ class DBManager:
     # ===============================================
     # Métodos de Operações com Tipos de Itens Específicos
     # ===============================================
+
+
+    def tentar_coletar_item_no_mapa(self, id_jogador, id_area_interativa, notificador):
+        """
+        Processa a tentativa de coletar recompensa por exploração.
+
+        Passos:
+            - Verifica restrição de tempo (15 min).
+            - Sorteia chance de sucesso.
+            - Se sucesso, busca um item aleatório da ilha atual.
+            - Adiciona item à mochila do jogador.
+        
+        Retorna:
+            str: mensagem de erro ou sucesso.
+        """
+
+        try:
+            # Busca a área atual do jogador
+            jogador = self.buscar_jogador(id_jogador)
+            if not jogador:
+                return "Erro: jogador não encontrado."
+
+            id_area_atual = jogador.identificador_area
+            id_ilha = self.buscar_info_area(id_area_atual, jogador.identificador_progresso).identificador_ilha
+
+            # Tenta atualizar/inserir a tentativa
+            try:
+                self.cursor.execute("""
+                    INSERT INTO recompensa_de_exploracao
+                        (identificador_area_interativa, identificador_jogador)
+                    VALUES
+                        (%s, %s)
+                    ON CONFLICT (identificador_area_interativa, identificador_jogador)
+                    DO UPDATE SET data_da_tentativa = now();
+                """, (id_area_interativa, id_jogador))
+            except psycopg.Error as e:
+                self.conn.rollback()
+                if "precisa esperar 15 minutos" in str(e):
+                    return "Erro: você precisa esperar 15 minutos para interagir novamente."
+                print("[ERRO] Falha ao inserir em recompensa_de_exploracao:", str(e))
+                return "Erro ao registrar tentativa de recompensa."
+
+            # Busca chance de sucesso da área interativa
+            self.cursor.execute("""
+                SELECT chance_sucesso
+                FROM area_interativa
+                WHERE identificador_area_interativa = %s;
+            """, (id_area_interativa,))
+            resultado = self.cursor.fetchone()
+            if not resultado:
+                return "Erro: área interativa não encontrada."
+
+            chance_sucesso = float(resultado.chance_sucesso)
+            if random.random() > chance_sucesso:
+                return "Tentativa registrada, mas nenhum item foi encontrado."
+
+            # Busca todos os itens possíveis da ilha atual
+            consumiveis = self.buscar_itens_na_ilha(id_ilha, tipo="consumivel")
+            nao_consumiveis = self.buscar_itens_na_ilha(id_ilha, tipo="nao_consumivel")
+            todos_itens = consumiveis + nao_consumiveis
+
+            if not todos_itens:
+                return "Nenhum item disponível para ser recebido nesta ilha."
+
+            # Escolhe item aleatório
+            item_escolhido = random.choice(todos_itens)
+            id_item = item_escolhido.identificador_item
+
+            # Pega ID da mochila do jogador
+            mochila = self.buscar_inventario(id_jogador, tipo_inventario='moc', identificador_progresso=jogador.identificador_progresso)
+            if not mochila:
+                return "Erro: mochila do jogador não encontrada."
+
+            id_inventario = mochila[0].identificador_inventario
+
+            # Adiciona o item
+            sucesso = self.adicionar_item_ao_inventario(id_inventario, id_item)
+            if sucesso:
+                notificador.adicionar_item(item_escolhido.nome_item, 1)
+                return f"Item '{item_escolhido.nome_item}' adicionado à mochila!"
+            else:
+                return "Erro ao adicionar o item à mochila."
+        except Exception as e:
+            self.conn.rollback()
+            print(f"[ERRO] executar_recompensa_exploracao: {e}")
+            return "Erro inesperado ao tentar coletar recompensa."
+
 
     def buscar_arma_atributos(self, id_arma):
          query = """
