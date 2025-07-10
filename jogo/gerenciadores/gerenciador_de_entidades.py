@@ -21,6 +21,7 @@ class GerenciadorDeEntidades:
 
         self._ilha_atual = None
         self._area_atual = None
+        self._ponto_de_renascimento = (360, 410)    # Coordenadas da praia
 
         self._entidade_inimigos = None
         # Adicione outros atributos para entidades globais persistentes aqui
@@ -89,6 +90,14 @@ class GerenciadorDeEntidades:
         self._area_atual = area_atual
 
 
+
+    @property
+    def ponto_de_renascimento(self):
+        return self._ponto_de_renascimento
+    
+    @ponto_de_renascimento.setter
+    def ponto_de_renascimento(self, ponto_de_renascimento):
+        self._ponto_de_renascimento = ponto_de_renascimento
 
     # Você pode adicionar métodos para gerenciar outras entidades aqui, por exemplo:
     # def obter_inventario_global(self):
