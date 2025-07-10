@@ -1289,7 +1289,7 @@ VALUES
     ('rct001', 'mis005', 1, 'F', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
     ('rct001', 'mis005', 1, 'M', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
     ('rct001', 'mis006', 1, 'F', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
-    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazzo, e mostra que aqui quem uiva é só o rádio da cozinha!'),
     ('hbt001', 'mis011', 1, 'F', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Silvie, ainda meio desconfiada, observa tudo com olhos atentos. É sua primeira noite na vila.'),
     ('hbt001', 'mis011', 1, 'M', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Shuan, ainda meio desconfiado, observa tudo com olhos atentos. É sua primeira noite na vila.'),
     ('hbt002', 'mis011', 2, 'F', '(Puxando uma cadeira para ela): — Senta aqui, moça. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
