@@ -44,8 +44,10 @@ class GerenciadorNotificacoesItem:
         self.notificacoes = []
 
     def adicionar_item(self, nome, quantidade):
+        print(f"Adicionando notificação: {nome} x{quantidade}")
         nova = _NotificacaoItem(nome, quantidade, altura_linha=self.espaco_vertical)
         nova.posicao_animada = len(self.notificacoes) * self.espaco_vertical  # começa na base
+        print(nova)
         self.notificacoes.append(nova)
 
     def atualizar(self, dt):

@@ -5,11 +5,13 @@ import math
 from utilidades.constantes import *
 
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_inimigo,
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, id_inimigo, identificador_instancia_lacaio, tipo_inimigo,
                  descricao, vida_atual, vida_total, nivel, experiencia, habilidade, inventario, caminho_container):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
-        self.tipo_inimigo = tipo_inimigo
+        self.identificador_inimigo = id_inimigo
+        self.identificador_instancia_lacaio = identificador_instancia_lacaio
+        self.nome = tipo_inimigo
         self.velocidade_caminhada = VELOCIDADE_CAMINHADA_INIMIGO
         self.velocidade_corrida = VELOCIDADE_CORRIDA_INIMIGO
         self.velocidade_atual = VELOCIDADE_CAMINHADA_INIMIGO
@@ -75,7 +77,7 @@ class Inimigo(pygame.sprite.Sprite):
     def _atualiza_animacao(self, dt):
         agora = pygame.time.get_ticks()
         # Se o inimigo estiver se movendo, avança a animação
-        if self.estado == ESTADO_INIMIGO_MOVENDO:
+        if self.estado == ESTADO_INIMIGO_PERSEGUINDO or self.estado == ESTADO_INIMIGO_PATRULHANDO:
             if agora - self.tempo_ultimo_frame > self.velocidade_animacao:
                 self.frame_atual = (self.frame_atual + 1) % len(self.imagens_animacao)
                 self.tempo_ultimo_frame = agora
@@ -94,7 +96,7 @@ class Inimigo(pygame.sprite.Sprite):
             self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
             self.image.fill(VERMELHO)
 
-    def update(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
+    def atualizar(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
         self.atingiu_jogador = False
 
         inimigo_centro = pygame.math.Vector2(self.rect.centerx, self.rect.centery)
@@ -104,23 +106,24 @@ class Inimigo(pygame.sprite.Sprite):
         # Atualiza a direção que o inimigo está olhando com base no jogador
         # Apenas se o inimigo estiver perseguindo ou se houver um alvo identificado.
         # Caso contrário, a direção é definida pela patrulha.
-        if self.alvo_identificado or self.estado == ESTADO_INIMIGO_MOVENDO:
+        if self.alvo_identificado or self.estado == ESTADO_INIMIGO_PERSEGUINDO:
              self.olhando_direita = jogador_centro.x > inimigo_centro.x
 
         # Visão
         if distancia_ao_jogador <= self.alcance_visao:
             self.alvo_identificado = self._verifica_linha_de_visao(inimigo_centro, jogador.rect, obstaculos_visao)
+            self.estado = ESTADO_INIMIGO_ALERTA
         else:
             self.alvo_identificado = False
 
         if self.alvo_identificado:
             self.timer_reacao += dt * 1000
             if self.timer_reacao >= self.tempo_reacao_ms:
-                if self.estado in (ESTADO_INIMIGO_PARADO, ESTADO_INIMIGO_MOVENDO):
+                if self.estado in (ESTADO_INIMIGO_PARADO, ESTADO_INIMIGO_PATRULHANDO, ESTADO_INIMIGO_ALERTA):
                     if distancia_ao_jogador <= self.alcance_ataque:
                         self._tenta_atacar(jogador_centro)
                     else:
-                        self.estado = ESTADO_INIMIGO_MOVENDO # <-- Aqui ele começa a se mover para perseguir
+                        self.estado = ESTADO_INIMIGO_PERSEGUINDO # <-- Aqui ele começa a se mover para perseguir
                         self._perseguir_jogador(dt, jogador_centro, obstaculos_caminho)
                 elif self.estado == ESTADO_INIMIGO_ATACANDO:
                     if pygame.time.get_ticks() - self.ultimo_ataque_tempo > self.duracao_ataque_ms:
@@ -131,14 +134,14 @@ class Inimigo(pygame.sprite.Sprite):
             else: # Durante o tempo de reação, mas ainda não agiu
                 # Adicionar este bloco para garantir que o inimigo pare de se mover
                 # e entre no estado 'parado' durante o tempo de reação
-                if self.estado == ESTADO_INIMIGO_MOVENDO: # Se ele estava se movendo antes de reagir
+                if self.estado == ESTADO_INIMIGO_PERSEGUINDO: # Se ele estava se movendo antes de reagir
                     self.estado = ESTADO_INIMIGO_PARADO # Coloca ele no estado parado
         else: # Sem alvo identificado
             self.timer_reacao = 0
             if self.estado != ESTADO_INIMIGO_RECARGA:
                 # Se o estado não for recarga, patrulha
                 if self.caminho_container: # Só patrulha se tiver um caminho definido
-                    self.estado = ESTADO_INIMIGO_MOVENDO
+                    self.estado = ESTADO_INIMIGO_PATRULHANDO
                     self._patrulhar(dt, obstaculos_caminho)
                 else:
                     self.estado = ESTADO_INIMIGO_PARADO # Fica parado se não tiver onde patrulhar
@@ -219,9 +222,9 @@ class Inimigo(pygame.sprite.Sprite):
 
             if distancia <= self.alcance_ataque:
                 self.atingiu_jogador = True
-                print(f"Inimigo '{self.tipo_inimigo}' atacou e atingiu o jogador!")
+                print(f"Inimigo '{self.nome}' atacou e atingiu o jogador!")
             else:
-                print(f"Inimigo '{self.tipo_inimigo}' atacou, mas o jogador estava fora do alcance.")
+                print(f"Inimigo '{self.nome}' atacou, mas o jogador estava fora do alcance.")
 
     def _resolver_colisoes(self, obstaculos, direcao, delta):
         colisoes = pygame.sprite.spritecollide(self, obstaculos, False)
@@ -240,7 +243,7 @@ class Inimigo(pygame.sprite.Sprite):
                 self.rect.y = int(self.mundo_y)
 
 
-    def _verifica_linha_de_visao(self, inimigo_centro, jogador_rect, obstaculos_visao):
+    def _verifica_linha_de_visao(self, inimigo_centro, retangulo_do_jogador, obstaculos_visao):
         # Verifica se o retângulo do jogador está dentro do cone de visão
 
         raio = self.alcance_visao
@@ -262,7 +265,7 @@ class Inimigo(pygame.sprite.Sprite):
         cone_path = pontos_cone
 
         # Verifica se algum ponto do retângulo do jogador está dentro do cone
-        for corner in self._cantos(jogador_rect):
+        for corner in self._cantos(retangulo_do_jogador):
             if self._ponto_dentro_poligono(corner, cone_path):
                 # Verifica linha de visão
                 if all(not o.rect.clipline(origem.x, origem.y, corner[0], corner[1]) for o in obstaculos_visao):
@@ -292,7 +295,7 @@ class Inimigo(pygame.sprite.Sprite):
         return dentro
 
 
-    def draw(self, tela, camera_x):
+    def desenhar(self, tela, camera_x):
         # --- Desenha o campo de visão do inimigo ---
         centro_x = self.mundo_x - camera_x + self.rect.width // 2
         centro_y = self.mundo_y + self.rect.height // 2
@@ -326,7 +329,7 @@ class Inimigo(pygame.sprite.Sprite):
         icone = None
         if self.alvo_identificado and self.timer_reacao < self.tempo_reacao_ms:
             icone = self.icone_interrogacao
-        elif self.estado == ESTADO_INIMIGO_MOVENDO and self.alvo_identificado:
+        elif self.estado == ESTADO_INIMIGO_PERSEGUINDO and self.alvo_identificado:
             icone = self.icone_alerta
             
         if icone:

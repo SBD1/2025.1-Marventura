@@ -62,7 +62,7 @@ class GerenciadorDeMissoes:
         else:
             print(f"Erro: Missão '{identificador_missao}' não encontrada nos scripts.")
 
-    def update(self, dt_ms):
+    def atualizar(self, dt_ms):
         """
         Atualiza o estado do gerenciador de missões e avança no script.
         :param dt_ms: Delta time em milissegundos.
@@ -75,7 +75,7 @@ class GerenciadorDeMissoes:
         # Se há um diálogo controlado ativo, a execução do script está pausada
         if self.dialogo_controlado_ativo:
             self.caixa_dialogo.atualizar()
-            return # A lógica de avanço do diálogo está no handle_input
+            return # A lógica de avanço do diálogo está no processar_eventos
 
         # Se o movimento da câmera estiver em andamento, pausa o script
         if self.camera.modo == 'movimento_suave' and not self.camera.is_movimento_suave_completo():
@@ -107,7 +107,7 @@ class GerenciadorDeMissoes:
         elif tipo_passo == 'dialogo':
             self.iniciar_dialogo_controlado(passo['textos'])
             # O avanço do passo acontecerá após o diálogo terminar,
-            # em handle_input quando o usuário pressionar espaço no último texto.
+            # em processar_eventos quando o usuário pressionar espaço no último texto.
             self.proximo_passo_apos_dialogo_controlado = True # Sinaliza para avançar o passo do script depois
 
         elif tipo_passo == 'movimento_camera_suave':
@@ -192,7 +192,7 @@ class GerenciadorDeMissoes:
             self._finalizar_dialogo_controlado() # Finaliza imediatamente se não houver textos
 
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """
         Processa inputs relevantes para eventos de missão, como avançar diálogos.
         """

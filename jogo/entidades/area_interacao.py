@@ -58,7 +58,7 @@ class AreaInteracao(pygame.sprite.Sprite):
 
 
 
-    def update(self):
+    def atualizar(self):
         if self.animando:
             self.contador_ciclo += 1
             if self.contador_ciclo >= self.ciclos_restantes:

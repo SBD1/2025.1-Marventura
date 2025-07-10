@@ -21,6 +21,18 @@ ROXO = (128, 0, 128)
 CINZA = (150, 150, 150)
 CINZA_ESCURO = (100, 100, 100)
 COR_TEXTO_SALVAR = (53, 38, 16) # Cor específica para texto de salvar
+VERDE_CLARO = pygame.Color("#23EA52")
+BRANCO_CLARO = pygame.Color("#F0F0F0")
+AZUL_CLARO = pygame.Color("#4B85C8")
+
+# --- Tags de Alvo ---
+TAGS_DE_ALVO = {
+    "fila": ["Alvo Único", "Primeiro", "No Chão"],
+    "alvo_terrestre": ["Alvo Único", "No Chão"],
+    "terrestre": ["Todos", "No Chão"],
+    "alvo_livre": ["Alvo Único", "No Chão", "No Ar"],
+    "area": ["Todos", "No Chão", "No Ar"]
+}
 
 # --- Animação do Jogador ---
 VELOCIDADE_ANIMACAO_CAMINHADA = 0.15 # Segundos por frame na animação de caminhada (ajuste conforme quiser)
@@ -55,7 +67,9 @@ CHAVE_TRANSICAO_CARREGAR_JOGO = 'carregar_jogo'
 
 # --- Estados do Inimigo ---
 ESTADO_INIMIGO_PARADO = 'parado'
-ESTADO_INIMIGO_MOVENDO = 'movendo'
+ESTADO_INIMIGO_PATRULHANDO = 'patrulhando'
+ESTADO_INIMIGO_ALERTA = 'alerta'
+ESTADO_INIMIGO_PERSEGUINDO = 'perseguindo'
 ESTADO_INIMIGO_ATACANDO = 'atacando'
 ESTADO_INIMIGO_RECARGA = 'recarregando'
 
@@ -135,6 +149,28 @@ CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
 CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
 CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
 CHAVE_CAIXA_DIALOGO = 'caixa_dialogo'
+
+CHAVE_FONTE_CHERRY_TITULO = 'fonte_cherry_titulo'
+CHAVE_FONTE_CHERRY_SUBTITULO = 'fonte_cherry_subtitulo'
+CHAVE_FONTE_CHERRY_TEXTO = 'fonte_cherry_texto'
+CHAVE_ICONE_CORACAO = 'icone_coracao'
+CHAVE_ICONE_ENERGIA = 'icone_energia'
+CHAVE_ICONE_MOEDA = 'icone_moeda'
+
+CHAVE_MENU_SELECAO_HABILIDADE = 'menu_selecao_habilidade'
+CHAVE_MENU_ITENS = 'menu_itens'
+CHAVE_CAIXA_DE_TEXTO = 'caixa_de_texto'
+CHAVE_BARRA_DE_ESTADO = 'barra_de_estado'
+CHAVE_CAMPO_DE_BATALHA_CAMPOS = 'campo_de_batalha_campos'
+
+# --- Chaves de Ação em Batalhas ---
+CHAVE_ACAO_ESTRATEGIAS = 'acao_estrategias'
+CHAVE_ACAO_MOCHILA = 'acao_mochila'
+CHAVE_ACAO_FRUTA = 'acao_fruta'
+CHAVE_ACAO_SOCO_SILVIE = 'acao_soco_silvie'
+CHAVE_ACAO_SOCO_SHUAN = 'acao_soco_shuan'
+CHAVE_ACAO_ESPADA = 'acao_espada'
+CHAVE_ACAO_PROJETIL = 'acao_projetil'
 
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'

@@ -80,9 +80,9 @@ class TelaSalvamento(TelaModelo):
         )
         self._texto_botao_voltar = "Voltar"
 
-    def handle_input(self, evento):
-        # Chama o handle_input da base para eventos comuns (ex: QUIT)
-        super().handle_input(evento)
+    def processar_eventos(self, evento):
+        # Chama o processar_eventos da base para eventos comuns (ex: QUIT)
+        super().processar_eventos(evento)
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if evento.button == 1: # Clique com o botão esquerdo do mouse
@@ -92,25 +92,31 @@ class TelaSalvamento(TelaModelo):
                         self.gerenciador_entidades.progresso_do_jogo = self.gerenciador_entidades.dados_salvos[i]
                         if self.gerenciador_entidades.progresso_do_jogo.ocupado:
                             print(f"Carregando jogo do Slot {i+1}...\n{self.gerenciador_entidades.progresso_do_jogo}")
-                            jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
-
+                            jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+                            ponto_de_revive = self.banco_de_dados.buscar_ponto_de_renascimento(area.identificador_area)
+                            self.gerenciador_entidades.ponto_de_renascimento = (ponto_de_revive.x, ponto_de_revive.y)
                             self.gerenciador_entidades.jogador = Jogador(
-                                self.gerenciador_recursos,
-                                jogador.identificador_jogador,
-                                jogador.coordenada_x,
-                                jogador.coordenada_y,
-                                jogador.nome,
-                                jogador.descricao,
-                                jogador.energia,
-                                jogador.vida,
-                                jogador.nivel,
-                                jogador.sorte,
-                                jogador.vida_atual,
-                                jogador.experiencia_atual,
-                                'direita'
+                                gerenciador_banco_de_dados=self.banco_de_dados,
+                                gerenciador_recursos=self.gerenciador_recursos,
+                                x_inicial=jogador.coordenada_x,
+                                y_inicial=jogador.coordenada_y,
+                                identificador_jogador=jogador.identificador_jogador,
+                                nome=jogador.nome,
+                                descricao=jogador.descricao,
+                                energia_maxima=jogador.energia_maxima,
+                                vida_maxima=jogador.vida_maxima,
+                                nivel=jogador.nivel,
+                                sorte=jogador.sorte,
+                                energia_atual=jogador.energia_atual,
+                                vida_atual=jogador.vida_atual,
+                                experiencia_atual=jogador.experiencia_atual,
+                                moedas=jogador.moedas_totais,
+                                orientacao='direita',
+                                mochila=mochila_jogador,
+                                kit=kit_jogador,
+                                id_inventario=id_inventario
                             )
-                            self.gerenciador_entidades.mochila_jogador = mochila_jogador
-                            self.gerenciador_entidades.kit_jogador = kit_jogador
+                            
                             self.gerenciador_entidades.ilha_atual = ilha
                             self.gerenciador_entidades.area_atual = area
 
@@ -127,10 +133,10 @@ class TelaSalvamento(TelaModelo):
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
         return None
 
-    def update(self, dt):
+    def atualizar(self, dt):
         return None
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         # Desenha o fundo
         tela.blit(self.imagem_fundo, (0, 0))
 
