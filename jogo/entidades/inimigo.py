@@ -5,10 +5,12 @@ import math
 from utilidades.constantes import *
 
 class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, tipo_inimigo,
+    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, id_inimigo, identificador_instancia_lacaio, tipo_inimigo,
                  descricao, vida_atual, vida_total, nivel, experiencia, habilidade, inventario, caminho_container):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
+        self.identificador_inimigo = id_inimigo
+        self.identificador_instancia_lacaio = identificador_instancia_lacaio
         self.nome = tipo_inimigo
         self.velocidade_caminhada = VELOCIDADE_CAMINHADA_INIMIGO
         self.velocidade_corrida = VELOCIDADE_CORRIDA_INIMIGO
