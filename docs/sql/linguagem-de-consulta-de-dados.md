@@ -33,287 +33,659 @@ A elaboração deste conteúdo seguiu as seguintes etapas:
 
 ## **DQL - Exemplos de Consultas**
 
-A seguir estão exemplos de consultas aplicadas ao nosso banco de dados final.
+### Consultas de Jogador
 
-### **Tipo de Item**
+```sql
+-- Buscar dados de um jogador pelo ID
+SELECT
+    identificador_jogador,
+    identificador_area,
+    TRIM(nome) AS nome,
+    TRIM(descricao) AS descricao,
+    coordenada_x,
+    coordenada_y,
+    TRIM(orientacao) AS orientacao,
+    energia,
+    vida,
+    nivel,
+    sorte,
+    vida_atual,
+    experiencia_atual,
+    moedas_totais
+FROM jogador
+WHERE identificador_jogador = %s;
+```
 
-* **Ver todos os tipos de itens disponíveis.**
-    ```sql
-    SELECT identificador_item, tipo
-    FROM tipo_item;
-    ```
+```sql
+-- Atualizar os dados de um jogador
+UPDATE jogador
+SET energia = %s, vida_atual = %s, nivel = %s, experiencia_atual = %s,
+    coordenada_x = %s, coordenada_y = %s, id_mapa = %s
+WHERE id_jogador = %s;
+```
 
-* **Contar quantos tipos de itens existem no total.**
-    ```sql
-    SELECT COUNT(*) AS total_de_tipos
-    FROM tipo_item;
-    ```
+```sql
+-- Inserir um novo jogador e retornar o ID
+INSERT INTO jogador (
+    nome, id_personagem, id_habilidade, id_mapa, energia, vida, nivel, sorte,
+    vida_atual, dano_base, experiencia_atual, coordenada_x, coordenada_y
+) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+RETURNING id_jogador;
+```
 
-### **Efeito**
+```sql
+-- Salvar o progresso do jogador
+UPDATE jogador
+SET
+    vida_atual = %s,
+    experiencia_atual = %s,
+    nivel = %s,
+    moedas_totais = %s,
+    coordenada_x = %s,
+    coordenada_y = %s,
+    orientacao = %s,
+    identificador_area = %s
+WHERE identificador_jogador = %s;
+```
 
-* **Ver todos os efeitos e seus valores.**
-    ```sql
-    SELECT nome, valor
-    FROM efeito;
-    ```
+```sql
+-- Verificar se um registro de jogador existe
+SELECT 1 FROM jogador WHERE identificador_jogador = %s;
+```
 
-* **Encontrar os 5 efeitos curativos mais fortes (que restauram PV).**
-    ```sql
-    SELECT nome, valor
-    FROM efeito
-    WHERE nome = 'Restaura PV'
-    ORDER BY valor DESC
-    LIMIT 5;
-    ```
+```sql
+-- Atualizar dados do jogador ao resetar
+UPDATE jogador SET
+    nome = %s, descricao = %s, vida_atual = %s, experiencia_atual = %s,
+    nivel = %s, moedas_totais = %s, coordenada_x = %s, coordenada_y = %s,
+    orientacao = %s, identificador_area = %s, vida = %s, energia = %s, sorte = %s
+WHERE identificador_jogador = %s;
+```
 
-### **Consumível**
+```sql
+-- Inserir um jogador se ele não existir durante o reset
+INSERT INTO jogador (identificador_jogador, nome, descricao, vida_atual, experiencia_atual, nivel, moedas_totais, coordenada_x, coordenada_y, orientacao, identificador_area, vida, energia, sorte)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+```
 
-* **Ver todos os consumíveis que podem ser fabricados.**
-    ```sql
-    SELECT nome, raridade, preco_de_venda, descricao
-    FROM consumivel
-    WHERE e_fabricavel = TRUE;
-    ```
+### Consultas de Inventário e Itens
 
-* **Listar os 10 consumíveis mais caros para vender.**
-    ```sql
+```sql
+-- Buscar o inventário completo de um jogador
+SELECT
+    ii.identificador_item,
+    ii.quantidade,
+    ti.tipo as tipo_item,
+    CASE
+        WHEN ti.tipo = 'con' THEN TRIM(c.nome)
+        WHEN ti.tipo = 'ncn' THEN TRIM(nc.nome)
+        WHEN ti.tipo = 'arm' THEN TRIM(a.nome)
+        WHEN ti.tipo = 'ace' THEN TRIM(ac.nome)
+        WHEN ti.tipo = 'fru' THEN TRIM(f.nome)
+    END as nome_item,
+    CASE
+        WHEN ti.tipo = 'con' THEN TRIM(c.descricao)
+        WHEN ti.tipo = 'ncn' THEN TRIM(nc.descricao)
+        WHEN ti.tipo = 'arm' THEN TRIM(a.descricao)
+        WHEN ti.tipo = 'ace' THEN TRIM(ac.descricao)
+        WHEN ti.tipo = 'fru' THEN TRIM(f.descricao)
+    END as descricao,
+    CASE
+        WHEN ti.tipo = 'con' THEN c.preco_de_compra
+        WHEN ti.tipo = 'ncn' THEN nc.preco_de_compra
+        WHEN ti.tipo = 'arm' THEN a.preco_de_compra
+        WHEN ti.tipo = 'ace' THEN ac.preco_de_compra
+        WHEN ti.tipo = 'fru' THEN NULL
+    END as preco_compra,
+    CASE
+        WHEN ti.tipo = 'con' THEN c.preco_de_venda
+        WHEN ti.tipo = 'ncn' THEN nc.preco_de_venda
+        WHEN ti.tipo = 'arm' THEN NULL
+        WHEN ti.tipo = 'ace' THEN NULL
+        WHEN ti.tipo = 'fru' THEN f.preco_de_venda
+    END as preco_venda
+FROM inventario inv
+JOIN item_inventario ii ON inv.identificador_inventario = ii.identificador_inventario
+JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+LEFT JOIN consumivel c ON ii.identificador_item = c.identificador_consumivel AND ti.tipo = 'con'
+LEFT JOIN nao_consumivel nc ON ii.identificador_item = nc.identificador_nao_consumivel AND ti.tipo = 'ncn'
+LEFT JOIN arma a ON ii.identificador_item = a.identificador_arma AND ti.tipo = 'arm'
+LEFT JOIN acessorio ac ON ii.identificador_item = ac.identificador_acessorio AND ti.tipo = 'ace'
+LEFT JOIN fruta f ON ii.identificador_item = f.identificador_fruta AND ti.tipo = 'fru'
+WHERE inv.identificador_personagem = %s
+AND inv.tipo_inventario = 'ger'
+AND ii.quantidade > 0
+```
 
-    SELECT nome, preco_de_venda, raridade
-    FROM consumivel
-    ORDER BY preco_de_venda DESC
-    LIMIT 10;
-    ```
+```sql
+-- Buscar o ID do inventário geral de um personagem
+SELECT identificador_inventario FROM inventario WHERE identificador_personagem = %s AND tipo_inventario = 'ger'
+```
 
-### **Não-Consumível**
+```sql
+-- Criar um novo inventário para um jogador
+INSERT INTO inventario (id_jogador, nome)
+VALUES (%s, %s)
+RETURNING id_inventario;
+```
 
-* **Ver todos os itens não-consumíveis de raridade '★★'.**
-    ```sql
-  
-    SELECT nome, tipo, preco_de_venda, descricao
-    FROM nao_consumivel
-    WHERE raridade = '★★';
-    ```
+```sql
+-- Buscar os tipos de itens em um inventário
+SELECT
+    ii.identificador_item,
+    ti.tipo AS tipo_geral
+FROM iteminventario ii
+JOIN tipo_item ti ON ii.identificador_item = ti.identificador_item
+WHERE ii.id_inventario = %s
+ORDER BY ti.tipo;
+```
 
-* **Calcular a margem de lucro (venda - compra) para itens que podem ser comprados.**
-    ```sql
-    SELECT nome, (preco_de_venda - preco_de_compra) AS margem_de_lucro
-    FROM nao_consumivel
-    WHERE preco_de_compra > 0
-    ORDER BY margem_de_lucro DESC;
-    ```
+```sql
+-- Adicionar um tipo de item ao inventário
+INSERT INTO iteminventario (id_inventario, identificador_item)
+VALUES (%s, %s);
+```
 
-### **Habilidade**
+```sql
+-- Remover um tipo de item do inventário
+DELETE FROM iteminventario
+WHERE id_inventario = %s AND identificador_item = %s;
+```
 
-* **Encontrar todas as habilidades que não custam energia (custo zero).**
-    ```sql
-    SELECT nome, dano
-    FROM habilidade
-    WHERE custo = 0;
-    ```
+```sql
+-- Buscar o tipo de um item específico
+SELECT tipo
+FROM tipo_item
+WHERE identificador_item = %s;
+```
 
-* **Listar habilidades pela sua "eficiência" (dano por ponto de custo).**
-    ```sql
-    SELECT nome, dano, custo, (dano::decimal / custo) AS eficiencia
-    FROM habilidade
-    WHERE custo > 0
-    ORDER BY eficiencia DESC;
-    ```
+### Consultas de Personagens (NPCs)
 
-### **Receita**
+```sql
+-- Buscar o tipo de um personagem
+SELECT tipo
+FROM tipo_personagem
+WHERE id_personagem = %s;
+```
 
-* **Ver todos os ingredientes para uma receita específica.**
-    ```sql
-    SELECT 'Consumível' AS tipo_ingrediente, ing_c.nome AS nome_ingrediente
-    FROM receita r
-    JOIN ingrediente_consumivel ic ON r.identificador_receita = ic.identificador_receita
-    JOIN consumivel ing_c ON ic.identificador_consumivel = ing_c.identificador_consumivel
-    WHERE r.identificador_receita = 3 
-    
-    UNION ALL
-    
-    SELECT 'Não-Consumível' AS tipo_ingrediente, ing_nc.nome AS nome_ingrediente
-    FROM receita r
-    JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
-    JOIN nao_consumivel ing_nc ON inc.identificador_nao_consumivel = ing_nc.identificador_nao_consumivel
-    WHERE r.identificador_receita = 3;
-    ```
+```sql
+-- Buscar atributos de um lacaio
+SELECT nome, dano, vida, nivel, experiencia
+FROM lacaio
+WHERE id_lacaio = %s;
+```
 
-* **Encontrar todas as receitas que usam um ingrediente específico.**
-    ```sql
-    SELECT
-        r.identificador_receita,
-        c.nome AS item_produzido
-    FROM receita r
-    JOIN consumivel c ON r.consumivel_produzido = c.identificador_consumivel
-    JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
-    WHERE inc.identificador_nao_consumivel = 8; 
-    ```
+```sql
+-- Buscar todos os lacaios em uma área
+SELECT
+    il.identificador_instancia_lacaio,
+    il.coordenada_x AS x,
+    il.coordenada_y AS y,
+    il.vida_atual,
+    il.moedas_totais,
+    l.identificador_lacaio,
+    TRIM(l.nome) AS nome_lacaio,
+    TRIM(l.descricao) AS descricao_lacaio,
+    l.vida AS vida_total,
+    l.nivel,
+    l.experiencia,
+    h.identificador_habilidade,
+    h.nome AS nome_habilidade,
+    h.dano,
+    h.tipo_de_ataque,
+    h.tipo_de_alvo,
+    ti.identificador_item,
+    ti.tipo AS tipo_item,
+    consumivel.nome AS consumivel_saqueavel,
+    nao_consumivel.nome AS nao_consumivel_saqueavel
+FROM instancia_lacaio il
+JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
+LEFT JOIN habilidade_personagem hp ON hp.identificador_personagem = l.identificador_lacaio
+LEFT JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
+LEFT JOIN inventario inv ON inv.identificador_personagem = l.identificador_lacaio AND inv.tipo_inventario = 'ger'
+LEFT JOIN item_inventario ii ON ii.identificador_inventario = inv.identificador_inventario
+LEFT JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+LEFT JOIN consumivel ON consumivel.identificador_consumivel = ti.identificador_item
+LEFT JOIN nao_consumivel ON nao_consumivel.identificador_nao_consumivel = ti.identificador_item
+WHERE il.identificador_area = %s;
+```
 
----
+```sql
+-- Buscar atributos de um chefe
+SELECT nome, dano, vida, nivel, experiencia
+FROM chefe
+WHERE id_chefe = %s;
+```
+
+```sql
+-- Buscar atributos de um aliado
+SELECT nome, vida, nivel, vida_atual, dano_base
+FROM aliado
+WHERE id_aliado = %s;
+```
+
+```sql
+-- Buscar dados de um habitante
+SELECT nome, tipo, especialidade, coordenada_x, coordenada_y
+FROM habitante
+WHERE id_habitante = %s;
+```
+
+### Consultas de Locais (Ilhas, Áreas)
+
+```sql
+-- Buscar informações de uma ilha
+SELECT
+    identificador_ilha,
+    TRIM(nome) AS nome,
+    visitada
+FROM ilha WHERE identificador_ilha = %s;
+```
+
+```sql
+-- Buscar caminhos de uma área
+SELECT TRIM(tipo_terreno) AS tipo_terreno, x, y, largura, altura
+FROM caminho
+WHERE identificador_area = %s;
+```
+
+```sql
+-- Buscar obstáculos de uma área
+SELECT *
+FROM obstaculo
+WHERE identificador_area = %s;
+```
+
+```sql
+-- Buscar informações de uma área
+SELECT
+    identificador_area,
+    identificador_ilha,
+    TRIM(nome) AS nome,
+    TRIM(tipo_area) AS tipo_area,
+    TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+    TRIM(chave_imagem_frente) AS chave_imagem_frente,
+    visitada
+FROM area
+WHERE identificador_area = %s;
+```
+
+```sql
+-- Buscar o porto de uma ilha
+SELECT
+    identificador_area,
+    identificador_ilha,
+    TRIM(nome) AS nome,
+    TRIM(tipo_area) AS tipo_area,
+    TRIM(chave_imagem_fundo) AS chave_imagem_fundo,
+    TRIM(chave_imagem_frente) AS chave_imagem_frente,
+    visitada
+FROM area
+WHERE identificador_ilha = %s AND tipo_area = 'Porto';
+```
+
+```sql
+-- Buscar áreas interativas em uma área
+SELECT
+    identificador_area_interativa,
+    identificador_area,
+    TRIM(chave_imagem) AS chave_imagem,
+    x,
+    y,
+    largura,
+    altura,
+    TRIM(tipo_evento) AS tipo_evento
+FROM area_interativa
+WHERE identificador_area = %s;
+```
+
+```sql
+-- Buscar eventos de embarcar
+SELECT
+    e.identificador_evento,
+    TRIM(e.tipo_evento) AS tipo_evento,
+    e.identificador_porto_destino,
+    e.ponto_geracao_x,
+    e.ponto_geracao_y,
+    TRIM(e.orientacao) AS orientacao
+FROM area_interativa_evento aie
+JOIN evento e ON e.identificador_evento = aie.identificador_evento
+WHERE aie.identificador_area_interativa = %s;
+```
+
+```sql
+-- Buscar evento de mudança de área
+SELECT
+    e.identificador_evento,
+    TRIM(e.tipo_evento) AS tipo_evento,
+    e.ponto_geracao_x,
+    e.ponto_geracao_y,
+    TRIM(e.orientacao) AS orientacao,
+    a_dest.identificador_area AS area_destino
+FROM area_interativa_evento aie
+JOIN evento e ON e.identificador_evento = aie.identificador_evento
+JOIN area_interativa ai ON ai.identificador_area_interativa = aie.identificador_area_interativa
+JOIN area a_dest ON a_dest.identificador_area =
+    CASE
+        WHEN e.identificador_area_a = ai.identificador_area THEN e.identificador_area_b
+        ELSE e.identificador_area_a
+    END
+WHERE aie.identificador_area_interativa = %s;
+```
+
+```sql
+-- Buscar conexões de uma ilha
+SELECT i.identificador_ilha, TRIM(i.nome) AS nome, i.visitada
+FROM conexao_entre_ilhas c
+JOIN ilha i ON i.identificador_ilha =
+    CASE
+        WHEN c.identificador_ilha_a = %s THEN c.identificador_ilha_b
+        ELSE c.identificador_ilha_a
+    END
+WHERE %s IN (c.identificador_ilha_a, c.identificador_ilha_b);
+```
+
+```sql
+-- Buscar todas as "pessoas" (entidades) em um local
+SELECT id_jogador AS id, nome, 'Jogador' AS tipo_entidade, coordenada_x, coordenada_y FROM jogador WHERE id_mapa = %s
+UNION ALL
+SELECT id_lacaio AS id, nome, 'Lacaio' AS tipo_entidade, coordenada_x, coordenada_y FROM lacaio WHERE id_mapa = %s
+UNION ALL
+SELECT id_chefe AS id, nome, 'Chefe' AS tipo_entidade, coordenada_x, coordenada_y FROM chefe WHERE id_mapa = %s
+UNION ALL
+SELECT id_aliado AS id, nome, 'Aliado' AS tipo_entidade, coordenada_x, coordenada_y FROM aliado WHERE id_mapa = %s
+UNION ALL
+SELECT id_habitante AS id, nome, 'Habitante' AS tipo_entidade, coordenada_x, coordenada_y FROM habitante WHERE id_mapa = %s
+ORDER BY tipo_entidade, nome;
+```
+
+```sql
+-- Buscar itens em um local (adaptado para contar itens chave)
+SELECT m.id_mapa, m.total_item_chave
+FROM mapa m
+WHERE m.id_mapa = %s;
+```
+
+### Consultas de Fabricação (Receitas)
+
+```sql
+-- Buscar uma receita específica e seus ingredientes
+SELECT
+    r.identificador_receita,
+    cp.nome AS consumivel_produzido,
+    'Consumível' AS tipo_ingrediente,
+    ic.identificador_consumivel AS id_ingrediente,
+    ing_c.nome AS nome_ingrediente
+FROM receita r
+JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
+LEFT JOIN ingrediente_consumivel ic ON r.identificador_receita = ic.identificador_receita
+LEFT JOIN consumivel ing_c ON ic.identificador_consumivel = ing_c.identificador_consumivel
+WHERE r.identificador_receita = %s
+UNION ALL
+SELECT
+    r.identificador_receita,
+    cp.nome AS consumivel_produzido,
+    'Não-Consumível' AS tipo_ingrediente,
+    inc.identificador_nao_consumivel AS id_ingrediente,
+    ing_nc.nome AS nome_ingrediente
+FROM receita r
+JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
+LEFT JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
+LEFT JOIN nao_consumivel ing_nc ON inc.identificador_nao_consumivel = ing_nc.identificador_nao_consumivel
+WHERE r.identificador_receita = %s;
+```
+
+```sql
+-- Buscar receitas por ingrediente consumível
+SELECT
+    r.identificador_receita,
+    cp.nome AS consumivel_produzido_nome,
+    cp.identificador_consumivel AS consumivel_produzido_id
+FROM receita r
+JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
+JOIN ingrediente_consumivel ic ON r.identificador_receita = ic.identificador_receita
+WHERE ic.identificador_consumivel = %s;
+```
+
+```sql
+-- Buscar receitas por ingrediente não consumível
+SELECT
+    r.identificador_receita,
+    cp.nome AS consumivel_produzido_nome,
+    cp.identificador_consumivel AS consumivel_produzido_id
+FROM receita r
+JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
+JOIN ingrediente_nao_consumivel inc ON r.identificador_receita = inc.identificador_receita
+WHERE inc.identificador_nao_consumivel = %s;
+```
+
+```sql
+-- Buscar receitas aprendidas por um jogador
+SELECT
+    r.identificador_receita,
+    cp.nome AS consumivel_produzido_nome
+FROM receita r
+JOIN consumivel cp ON r.consumivel_produzido = cp.identificador_consumivel
+WHERE r.id_jogador = %s;
+```
+
+### Consultas de Missões
+
+```sql
+-- Buscar missões de um jogador
+SELECT m.nome, m.descricao
+FROM missao m
+WHERE m.id_jogador = %s;
+```
+
+```sql
+-- Buscar item de recompensa de uma missão
+SELECT
+    im.identificador_item,
+    ti.tipo AS tipo_geral
+FROM itemmissao im
+JOIN tipo_item ti ON im.identificador_item = ti.identificador_item
+WHERE im.missao_id = %s;
+```
+
+```sql
+-- Buscar o local de uma missão
+SELECT
+    m.nome AS nome_missao,
+    m.tipo_sala,
+    m.sala_id,
+    CASE
+        WHEN m.tipo_sala = 'campo_batalha' THEN cb.tamanho || ' - ' || cb.tipo_terreno
+        WHEN m.tipo_sala = 'porto' THEN 'Porto - ' || p.capacidade || ' barcos'
+        WHEN m.tipo_sala = 'vila' THEN 'Vila - ' || v.informacoes
+        ELSE 'Local desconhecido'
+    END AS detalhes_local
+FROM missao m
+LEFT JOIN campo_batalha cb ON m.tipo_sala = 'campo_batalha' AND m.sala_id = cb.sala_id
+LEFT JOIN porto p ON m.tipo_sala = 'porto' AND m.sala_id = p.sala_id
+LEFT JOIN vila v ON m.tipo_sala = 'vila' AND m.sala_id = v.sala_id
+WHERE m.missao_id = %s;
+```
+
+```sql
+-- Buscar detalhes de uma missão
+SELECT nome, descricao
+FROM missao
+WHERE missao_id = %s;
+```
+
+### Consultas de Tipos de Itens Específicos
+
+```sql
+-- Buscar atributos de uma arma
+SELECT
+    a.nome,
+    a.raridade,
+    a.preco_compra,
+    a.preco_venda,
+    h.nome AS habilidade_nome,
+    h.dano AS dano_habilidade
+FROM arma a
+LEFT JOIN habilidade h ON a.identificador_habilidade = h.id_habilidade
+WHERE a.identificador_arma = %s;
+```
+
+```sql
+-- Buscar atributos de um consumível
+SELECT nome, tipo, raridade, quantidade, preco_compra, preco_venda, efabricavel
+FROM consumivel
+WHERE identificador_consumivel = %s;
+```
+
+```sql
+-- Buscar atributos de um acessório
+SELECT nome, tipo, raridade, preco_compra, preco_venda
+FROM acessorio
+WHERE identificador_acessorio = %s;
+```
+
+```sql
+-- Buscar atributos de um não consumível
+SELECT nome, tipo, raridade, quantidade, preco_compra, preco_venda
+FROM nao_consumivel
+WHERE identificador_nao_consumivel = %s;
+```
+
+```sql
+-- Buscar atributos de uma fruta
+SELECT f.nome, f.tipo, f.raridade, f.preco_compra, f.preco_venda, e.nome AS habilidade_nome, e.bravura
+FROM fruta f
+LEFT JOIN efeito e ON f.identificador_habilidade = e.identificador_efeito
+WHERE f.identificador_fruta = %s;
+```
+
+### Consultas de Vendedor e Negociação
+
+```sql
+-- Buscar vendedores em uma área
+SELECT
+    h.identificador_habitante,
+    TRIM(h.nome) as nome,
+    TRIM(h.descricao) as descricao,
+    h.coordenada_x,
+    h.coordenada_y,
+    h.moedas_totais
+FROM habitante h
+WHERE h.identificador_area = %s
+AND h.tipo_habitante = 'ven'
+```
+
+```sql
+-- Buscar o inventário de um vendedor
+SELECT
+    ii.identificador_item,
+    ii.quantidade,
+    ti.tipo as tipo_item,
+    CASE
+        WHEN ti.tipo = 'con' THEN TRIM(c.nome)
+        WHEN ti.tipo = 'ncn' THEN TRIM(nc.nome)
+        WHEN ti.tipo = 'arm' THEN TRIM(a.nome)
+        WHEN ti.tipo = 'ace' THEN TRIM(ac.nome)
+        WHEN ti.tipo = 'fru' THEN TRIM(f.nome)
+    END as nome_item,
+    CASE
+        WHEN ti.tipo = 'con' THEN TRIM(c.descricao)
+        WHEN ti.tipo = 'ncn' THEN TRIM(nc.descricao)
+        WHEN ti.tipo = 'arm' THEN TRIM(a.descricao)
+        WHEN ti.tipo = 'ace' THEN TRIM(ac.descricao)
+        WHEN ti.tipo = 'fru' THEN TRIM(f.descricao)
+    END as descricao,
+    CASE
+        WHEN ti.tipo = 'con' AND c.preco_de_compra IS NOT NULL THEN c.preco_de_compra
+        WHEN ti.tipo = 'ncn' AND nc.preco_de_compra IS NOT NULL THEN nc.preco_de_compra
+        WHEN ti.tipo = 'arm' THEN a.preco_de_compra
+        WHEN ti.tipo = 'ace' THEN ac.preco_de_compra
+        WHEN ti.tipo = 'con' AND c.preco_de_venda IS NOT NULL THEN c.preco_de_venda * 2
+        WHEN ti.tipo = 'ncn' AND nc.preco_de_venda IS NOT NULL THEN nc.preco_de_venda * 2
+        WHEN ti.tipo = 'fru' AND f.preco_de_venda IS NOT NULL THEN f.preco_de_venda * 2
+        ELSE NULL
+    END as preco_compra,
+    CASE
+        WHEN ti.tipo = 'con' THEN c.preco_de_venda
+        WHEN ti.tipo = 'ncn' THEN nc.preco_de_venda
+        WHEN ti.tipo = 'arm' THEN NULL
+        WHEN ti.tipo = 'ace' THEN NULL
+        WHEN ti.tipo = 'fru' THEN f.preco_de_venda
+    END as preco_venda
+FROM inventario inv
+JOIN item_inventario ii ON inv.identificador_inventario = ii.identificador_inventario
+JOIN tipo_item ti ON ti.identificador_item = ii.identificador_item
+LEFT JOIN consumivel c ON ii.identificador_item = c.identificador_consumivel AND ti.tipo = 'con'
+LEFT JOIN nao_consumivel nc ON ii.identificador_item = nc.identificador_nao_consumivel AND ti.tipo = 'ncn'
+LEFT JOIN arma a ON ii.identificador_item = a.identificador_arma AND ti.tipo = 'arm'
+LEFT JOIN acessorio ac ON ii.identificador_item = ac.identificador_acessorio AND ti.tipo = 'ace'
+LEFT JOIN fruta f ON ii.identificador_item = f.identificador_fruta AND ti.tipo = 'fru'
+WHERE inv.identificador_personagem = %s
+AND inv.tipo_inventario = 'ger'
+AND ii.quantidade > 0
+```
 
 
-### **Mundo (Salas, Ilhas, Mapas)**
+### Consultas de Equipamento e Uso de Itens
 
-* **Encontrar campos de batalha em um tipo de terreno específico.**
-    ```sql
-    SELECT sala_id, tipo_terreno, tamanho 
-    FROM campo_batalha 
-    WHERE tipo_terreno = 'Floresta';
-    ```
-* **Ver todas as ilhas que pertencem a um mapa específico.**
-    ```sql
-    SELECT i.id AS id_da_ilha
-    FROM ilha i
-    JOIN mapa m ON i.id = m.id_ilha
-    WHERE m.id_mapa = 1; 
-    ```
+```sql
+-- Equipar uma arma (UPSERT)
+INSERT INTO jogador_equipamento (identificador_jogador, identificador_arma)
+VALUES (%s, %s)
+ON CONFLICT (identificador_jogador)
+DO UPDATE SET identificador_arma = EXCLUDED.identificador_arma;
+```
 
-### **Jogador e Aliados**
+```sql
+-- Equipar um acessório (UPSERT)
+INSERT INTO jogador_equipamento (identificador_jogador, identificador_acessorio)
+VALUES (%s, %s)
+ON CONFLICT (identificador_jogador)
+DO UPDATE SET identificador_acessorio = EXCLUDED.identificador_acessorio;
+```
 
-* **Encontrar em qual mapa e ilha um determinado jogador está.**
-    ```sql
-    SELECT j.nome AS nome_jogador, m.id_mapa, m.id_ilha
-    FROM jogador j
-    JOIN mapa m ON j.id_mapa_pk = m.id_mapa_pk
-    WHERE j.id_jogador = 1;
-    ```
-* **Ver todas as habilidades de um aliado específico.**
-    ```sql
-    SELECT a.nome AS nome_aliado, h.nome AS nome_habilidade, h.dano, h.custo
-    FROM habilidade_aliado ha
-    JOIN aliado a ON ha.id_aliado = a.id_aliado
-    JOIN habilidade h ON ha.id_habilidade = h.id_habilidade
-    WHERE a.nome = 'Shuan';
-    ```
+```sql
+-- Desequipar arma
+UPDATE jogador_equipamento
+SET identificador_arma = NULL
+WHERE identificador_jogador = %s;
+```
 
-### **NPCs (Chefes, Lacaios, Habitantes)**
+```sql
+-- Buscar a arma equipada de um jogador
+SELECT
+    je.identificador_arma AS identificador_item,
+    'arm' AS tipo_item,
+    TRIM(a.nome) AS nome_item,
+    TRIM(a.descricao) AS descricao,
+    a.raridade,
+    a.preco_de_compra
+FROM jogador_equipamento je
+JOIN arma a ON je.identificador_arma = a.identificador_arma
+WHERE je.identificador_jogador = %s;
+```
 
-* **Listar todos os NPCs em uma ilha específica.**
-    ```sql
-   
-    SELECT nome, 'Chefe' as tipo FROM chefe WHERE id_mapa_pk = 1
-    UNION ALL
-    SELECT nome, 'Lacaio' as tipo FROM lacaio WHERE id_mapa_pk = 1
-    UNION ALL
-    SELECT nome, 'Aliado' as tipo FROM aliado WHERE id_mapa_pk = 1
-    UNION ALL
-    SELECT nome, 'Habitante' as tipo FROM habitante WHERE id_mapa_pk = 1;
-    ```
 
-* **Encontrar o chefe com a maior quantidade de vida.**
-    ```sql
-    SELECT nome, vida, nivel
-    FROM chefe
-    ORDER BY vida DESC
-    LIMIT 1;
-    ```
+```sql
+-- Adicionar itens iniciais ao jogador 
+INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+VALUES (%s, %s, %s)
+ON CONFLICT (identificador_inventario, identificador_item)
+DO UPDATE SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+```
 
----
+```sql
+-- [Reset] Buscar inventários dos vendedores
+SELECT identificador_personagem, identificador_inventario FROM inventario WHERE identificador_personagem LIKE 'ven%%'
+```
 
-### **Interações e Eventos**
-
-### **Batalha**
-
-* **Ver um registro de batalhas, mostrando jogador e chefe.**
-    ```sql
-    SELECT 
-        b.identificador_batalha, 
-        j.nome AS nome_jogador, 
-        c.nome AS nome_chefe
-    FROM batalha b
-    JOIN jogador j ON b.identificador_jogador = j.id_jogador
-    JOIN chefe c ON b.identificador_chefe = c.id_chefe;
-    ```
-
-* **Listar todos os lacaios que participaram de uma batalha específica.**
-    ```sql
-    SELECT l.nome AS nome_lacaio
-    FROM batalha_instancia_lacaio bil
-    JOIN instancia_lacaio il ON bil.identificador_instancia_lacaio = il.id_instancia_lacaio
-    JOIN lacaio l ON il.identificador_lacaio = l.id_lacaio
-    WHERE bil.identificador_batalha = 1;
-    ```
-
-### **Missão**
-
-* **Encontrar todas as missões dadas por um recrutador específico.**
-    ```sql
-    SELECT m.nome, m.descricao
-    FROM missao m
-    WHERE m.id_recrutador = 1; 
-    ```
-* **Encontrar todas as missões que requerem um item de um tipo específico.**
-    ```sql
-    SELECT m.nome AS nome_missao, ti.tipo AS tipo_item_necessario
-    FROM missao m
-    JOIN ItemMissao im ON m.missao_id = im.missao_id
-    JOIN tipo_item ti ON im.identificador_item = ti.identificador_item
-    WHERE ti.tipo = 'Fruta';
-    ```
-### **Negociação**
-
-* **Ver o histórico de negociações de um jogador.**
-    ```sql
-    SELECT 
-        n.identificador_negociacao,
-        n.tipo,
-        ti.tipo AS tipo_de_item,
-        n.quantidade,
-        n.preco_final,
-        v.nome AS nome_vendedor
-    FROM negociacao n
-    JOIN habitante v ON n.identificador_vendedor = v.identificador_habitante
-    JOIN tipo_item ti ON n.identificador_item = ti.identificador_item
-    WHERE n.identificador_jogador = 1;
-    ```
-
-### **Inventário**
-* **Ver o conteúdo do inventário de um jogador.**
-    ```sql
-    SELECT
-        inv.id_inventario,
-        j.nome AS dono_do_inventario,
-        ti.tipo AS tipo_de_item_no_inventario
-    FROM ItemInventario ii
-    JOIN Inventario inv ON ii.id_inventario = inv.id_inventario
-    JOIN jogador j ON inv.id_jogador = j.id_jogador
-    JOIN tipo_item ti ON ii.identificador_item = ti.identificador_item
-    WHERE j.id_jogador = 1;
-    ```
-
----
-### **Navegação**
-
-* **Ver para quais ilhas é possível navegar a partir de uma ilha específica.**
-    ```sql
-    SELECT 
-        ilha_a.id AS id_origem, 
-        ilha_b.id AS id_destino
-    FROM corredor_maritimo cm
-    JOIN ilha ilha_a ON cm.ilha_a = ilha_a.id
-    JOIN ilha ilha_b ON cm.ilha_b = ilha_b.id
-    WHERE cm.ilha_a = 1; 
-    ```
-
-* **Ver os monstros e obstáculos de um mar que conecta duas ilhas.**
-    ```sql
-    SELECT 
-        cm.ilha_a, 
-        cm.ilha_b, 
-        m.monstro, 
-        m.obstaculo
-    FROM controlador_mar ctm
-    JOIN mar m ON ctm.mar_id = m.mar_id
-    JOIN corredor_maritimo cm ON ctm.maritimo_id = cm.maritimo_id;
-    ```
-
-* **Listar todos os barcos ancorados em um porto específico.**
-    ```sql
-    SELECT b.nome, b.tipo, b.melhoria
-    FROM barco_porto bp
-    JOIN barco b ON bp.barco_id = b.id
-    WHERE bp.sala_id = 16; 
-    ```
+```sql
+-- Verificar inconsistências no inventário
+SELECT ii.id_inventario, ii.identificador_item
+FROM iteminventario ii
+LEFT JOIN tipo_item ti ON ii.identificador_item = ti.identificador_item
+WHERE ti.identificador_item IS NULL;
+```
 
 ---
 ## **📚 Bibliografia**
