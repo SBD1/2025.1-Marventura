@@ -1,5 +1,6 @@
 class KitDoExplorador:
     def __init__(self, kit):
+        self.id_kit = kit[0].identificador_inventario
         self.arma = None  # dict com dados da arma (já carregado do banco)
         self.fruta = None
         self.acessorio = None
