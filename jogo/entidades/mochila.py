@@ -23,7 +23,7 @@ class Mochila:
     def usar_item(self, id_item, jogador):
         item = self.encontrar_item_por_id(id_item)
         if item:
-            item.aplicar_efeitos(jogador)
+            jogador.aplicar_efeitos(item.efeitos)
             item.quantidade -= 1
             if item.quantidade <= 0:
                 self.remover(id_item)
