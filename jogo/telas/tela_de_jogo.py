@@ -178,7 +178,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # --- NOVO: Carregar NPCs ---
         dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
         for habitante in dados_habitantes:
-            dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante)
+            genero = 'F' if self.gerenciador_entidades.jogador.nome == SILVIE else 'M'
+            dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante, genero)
+
+            missoes = []
+
+            if habitante.tipo_habitante == 'rct':
+                missoes = self.banco_de_dados.buscar_missoes_de_habitante_nao_concluidas(habitante.identificador_habitante, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+
             novo_npc = Habitante(
                 self.gerenciador_recursos,
                 habitante.identificador_habitante,
@@ -191,7 +198,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 habitante.moedas_totais,
                 habitante.especialidade,
                 habitante.chave_imagem,
-                dialogos
+                dialogos,
+                missoes
             )
             self.npcs.add(novo_npc)
 
@@ -407,6 +415,26 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     # elif area.tipo_evento == 'dialogo_npc':
                     #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
 
+                 # --- Lógica de Interação com NPCs ---
+                npcs_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.npcs, False)
+                for npc in npcs_colidindo_agora:
+                    # Prioridade: Missões > Diálogos Sem Missão
+                    # 1. Tenta iniciar uma missão
+                    if npc.missoes_pendentes:
+                        missao_iniciada = self.gerenciador_missoes.iniciar_missao(npc.missoes_pendentes[0].identificador_missao)
+                        if missao_iniciada:
+                            # Se a missão foi iniciada com sucesso, remove-a da lista do NPC
+                            # Isso garante que a próxima interação com o mesmo NPC inicie a próxima missão
+                            # Ou inicie os diálogos gerais se as missões acabarem.
+                            npc.missoes_pendentes.pop(0) # Remove a primeira missão da lista
+                            # Atualiza a flag do ícone de interação do NPC
+                            npc._atualizar_icone_interacao()
+                            return None # Consome o evento, o GerenciadorDeMissoes agora controla
+                    
+                    # 2. Se não houver missões ou se a missão falhou ao iniciar (já ativa, etc.), tenta iniciar diálogo sem missão
+                    if not self.dialogo_ativo and npc.dialogos:
+                        self.iniciar_dialogo(npc.dialogos)
+                        return None # Consome o evento
         return None # Nenhuma transição de tela por eventos de interação
 
 

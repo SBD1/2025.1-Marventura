@@ -10,7 +10,7 @@ class Habitante(pygame.sprite.Sprite):
     Seu sprite se vira para a direção do jogador.
     """
 
-    def __init__(self, gerenciador_recursos, identificador, area, x_inicial, y_inicial, nome, descricao, tipo, moedas, especialidade = None, chave_imagem = None, dialogos = []):
+    def __init__(self, gerenciador_recursos, identificador, area, x_inicial, y_inicial, nome, descricao, tipo, moedas, especialidade = None, chave_imagem = None, dialogos = [], missoes = []):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         self.identificador = identificador
@@ -24,6 +24,9 @@ class Habitante(pygame.sprite.Sprite):
         self.coordenada_x = float(x_inicial)
         self.coordenada_y = float(y_inicial)
         self.dialogos = dialogos # Lista de strings para os diálogos
+        self.missoes_pendentes = missoes # Lista de missões associadas ao NPC
+        self.mostrar_icone_interacao = False # Flag para controlar a visibilidade do ícone
+        self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO) # Carrega a imagem do ícone
 
         # Carregar a imagem base e configurar o sprite inicial
         self.imagem_original = self.gerenciador_recursos.obter_imagem(self.chave_imagem)
@@ -38,6 +41,17 @@ class Habitante(pygame.sprite.Sprite):
         self.rect = self.imagem.get_rect(topleft=(int(self.coordenada_x), int(self.coordenada_y)))
 
         self.orientacao_atual = 'direita' # Orientação inicial do habitante
+
+
+
+    def _atualizar_icone_interacao(self):
+            """
+            Verifica se há missões ativas associadas a este habitante
+            e atualiza a flag para mostrar ou esconder o ícone de interação.
+            """
+            self.mostrar_icone_interacao = bool(self.missoes_pendentes) # True se a lista de missões não estiver vazia
+
+
 
     def atualizar(self, dt, jogador_rect):
         """
@@ -64,6 +78,8 @@ class Habitante(pygame.sprite.Sprite):
             self.imagem = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
             self.imagem.fill(CINZA)
 
+        self._atualizar_icone_interacao()
+
 
     def desenhar(self, tela, camera_x, camera_y):
         """
@@ -76,6 +92,13 @@ class Habitante(pygame.sprite.Sprite):
         posicao_tela_y = self.coordenada_y - camera_y
         
         tela.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
+
+        # Desenha o ícone de interação se aplicável
+        if self.mostrar_icone_interacao and self.icone_interacao:
+            # Posição do ícone acima do habitante
+            icone_x = posicao_tela_x + self.rect.width // 2 - self.icone_interacao.get_width() // 2
+            icone_y = posicao_tela_y - self.icone_interacao.get_height() + 10 # Ajuste o +10 conforme necessário para o espaçamento
+            tela.blit(self.icone_interacao, (int(icone_x), int(icone_y)))
 
         # DEBUG: Desenha o retângulo de colisão do habitante
         if DEBUG_DESENHAR_CAIXAS_COLISAO:

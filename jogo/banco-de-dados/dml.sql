@@ -1192,7 +1192,7 @@ VALUES
     ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
     ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
-    ('are001', 'mis012', 10, 'rct001', 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are001', 'mis012', 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
     ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
 
 

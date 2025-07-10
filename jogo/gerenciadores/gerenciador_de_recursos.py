@@ -162,6 +162,7 @@ class GerenciadorDeRecursos:
 
         self._carregar_imagem(CENA_SILVIE_NO_CAMPO, 'recursos/imagens/cenas/cena_silvie_no_campo.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CENA_SHUAN_NO_CAMPO, 'recursos/imagens/cenas/cena_shuan_no_campo.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CENA_JANTAR_COMUNITARIO, 'recursos/imagens/cenas/cena_jantar_comunitario.png', escalar_para_altura=ALTURA_TELA)
 
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)

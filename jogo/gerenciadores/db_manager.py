@@ -493,24 +493,37 @@ class DBManager:
             self.executar_query(consulta, parametros, fetchone=True)
 
     
-    def buscar_dialogos_sem_missao(self, id_personagem):
+    def buscar_dialogos_sem_missao(self, id_personagem, genero):
         """
-        Retorna todos os diálogos de um personagem específico que não estão associados a nenhuma missão (identificador_missao IS NULL).
+        Retorna todos os diálogos de um personagem específico que não estão associados a nenhuma missão.
+        Inclui o nome do personagem que está falando.
+
         :param id_personagem: ID do personagem (jogador, aliado, etc)
-        :return: Lista de tuplas com (identificador_dialogo, sequencia_local, genero, dialogo)
+        :return: Lista de tuplas com (identificador_dialogo, sequencia_local, genero, nome_personagem, dialogo)
         """
         consulta = """
             SELECT 
-                identificador_dialogo,
-                sequencia_local,
-                genero,
-                TRIM(dialogo) AS dialogo
-            FROM dialogo
-            WHERE identificador_personagem = %s
-            AND identificador_missao IS NULL
-            ORDER BY sequencia_local;
+                d.identificador_dialogo,
+                d.sequencia_local,
+                d.genero,
+                COALESCE(
+                    TRIM(j.nome),
+                    TRIM(a.nome),
+                    TRIM(h.nome),
+                    '???'
+                ) AS nome_personagem,
+                TRIM(d.dialogo) AS dialogo
+            FROM dialogo d
+            LEFT JOIN jogador j ON d.identificador_personagem = j.identificador_jogador
+            LEFT JOIN aliado a ON d.identificador_personagem = a.identificador_aliado
+            LEFT JOIN habitante h ON d.identificador_personagem = h.identificador_habitante
+            WHERE d.identificador_personagem = %s
+                AND d.identificador_missao IS NULL
+                AND d.genero = %s
+            ORDER BY d.sequencia_local;
         """
-        return self.executar_query(consulta, (id_personagem,), fetchall=True)
+        return self.executar_query(consulta, (id_personagem, genero), fetchall=True)
+
 
 
     def buscar_missoes_aceitas_pelo_jogador(self, id_jogador):
@@ -1268,6 +1281,35 @@ class DBManager:
             WHERE m.id_jogador = %s;
         """
         return self.executar_query(consulta, (id_jogador,), fetchall=True)
+    
+    def buscar_missoes_de_habitante_nao_concluidas(self, id_habitante, id_progresso):
+        """
+        Retorna todas as missões oferecidas por um habitante que ainda não foram concluídas
+        por um determinado jogador (progresso).
+
+        :param id_habitante: ID do habitante (recrutador)
+        :param id_progresso: ID do progresso do jogador
+        :return: Lista com (id_missao, nome, descricao, nivel_de_desbloqueio, id_area)
+        """
+        consulta = """
+            SELECT
+                m.identificador_missao,
+                TRIM(m.nome) AS nome,
+                TRIM(m.descricao) AS descricao,
+                m.nivel_de_desbloqueio,
+                m.identificador_area
+            FROM missao m
+            WHERE m.identificador_recrutador = %s
+            AND m.identificador_missao NOT IN (
+                SELECT em.identificador_missao
+                FROM estado_missao em
+                WHERE em.identificador_progresso = %s
+                    AND em.estado = 'concluida'
+            )
+            ORDER BY m.nivel_de_desbloqueio, m.identificador_missao;
+        """
+        return self.executar_query(consulta, (id_habitante, id_progresso), fetchall=True)
+
 
     def buscar_item_recompensa_missao(self, missao_id):
         """

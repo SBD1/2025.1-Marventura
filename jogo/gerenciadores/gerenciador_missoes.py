@@ -69,7 +69,43 @@ class GerenciadorDeMissoes:
                 {'tipo': 'dialogo', 'missao_id': 'mis003'},
                 {'tipo': 'remover_gatilho_de_missao', 'id_area': 'are002', 'id_missao': 'mis003', 'x': 0, 'y': 0, 'largura': 150, 'altura': 600},
                 {'tipo': 'finalizar_missao'},
+            ],
+            'mis004': [
+                {'tipo': 'dialogo', 'missao_id': 'mis004'},
+                #{'tipo': 'escutar_vitoria_batalha'},
+                {'tipo': 'finalizar_missao'}
+            ],
+            'mis005': [
+                {'tipo': 'dialogo', 'missao_id': 'mis005'},
+                #{'tipo': 'escutar_interacao', 'tipo_evento_alvo': 'investigar'},
+                {'tipo': 'finalizar_missao'}
+            ],
+            'mis006': [
+                {'tipo': 'dialogo', 'missao_id': 'mis006'},
+                {'tipo': 'finalizar_missao'}
+            ],
+            'mis007': [
+                {'tipo': 'dialogo', 'missao_id': 'mis007'},
+                {'tipo': 'finalizar_missao'}
+            ],
+            'mis008': [
+                {'tipo': 'dialogo', 'missao_id': 'mis008'},
+                {'tipo': 'finalizar_missao'}
+            ],
+            'mis009': [
+                {'tipo': 'dialogo', 'missao_id': 'mis009'},
+                {'tipo': 'finalizar_missao'}
+            ],
+            'mis010': [
+                {'tipo': 'dialogo', 'missao_id': 'mis010'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'ativar_proxima_missao', 'id_missao': 'mis011'},
+            ],
+            'mis011':[
+                {'tipo': 'cena_dialogo_missao', 'missao_id': 'mis011', 'chave_imagem_cena': CENA_JANTAR_COMUNITARIO},
             ]
+
+
             # ... outras missões
         }
 
@@ -89,8 +125,10 @@ class GerenciadorDeMissoes:
             print(f"Missão '{identificador_missao}' iniciada.")
             # Você pode querer atualizar o estado_missao no banco de dados para 'aceita'
             self.banco_de_dados.atualizar_estado_missao(identificador_missao, self.jogador.identificador_progresso, 'aceita')
+            return True
         else:
             print(f"Erro: Missão '{identificador_missao}' não encontrada nos scripts.")
+            return False
 
 
 
@@ -290,8 +328,7 @@ class GerenciadorDeMissoes:
         elif tipo_passo == 'ativar_proxima_missao':
             
             self.banco_de_dados.atualizar_estado_missao(passo.get('id_missao'), self.jogador.identificador_progresso, 'aceita')
-            self.tela_jogo.gerenciador_entidades.iniciar_missao = self.banco_de_dados.buscar_missoes_aceitas_pelo_jogador(self.jogador.identificador_jogador)[0]
-            self._avancar_passo()
+            self.iniciar_missao(passo.get('id_missao'))
 
         elif tipo_passo == 'finalizar_missao':
             print(f"Missão '{self.missao_ativa_id}' marcada como finalizada.")
