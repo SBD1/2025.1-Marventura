@@ -3,13 +3,7 @@
 from collections import namedtuple
 import pygame
 import sys
-from .tela_inicial import TelaInicial
-from .tela_salvamento import TelaSalvamento
-from .tela_selecao_personagem import TelaSelecaoPersonagem
-from .tela_de_jogo import TelaJogo
-from .tela_batalha import TelaBatalha
-from .tela_loja import TelaLoja
-from .tela_inventario import TelaInventario # Garanta que esta linha exista
+from telas import TelaInicial, TelaSalvamento, TelaSelecaoPersonagem, TelaJogo, TelaBatalha, TelaLoja, TelaInventario
 from utilidades.constantes import *
 
 

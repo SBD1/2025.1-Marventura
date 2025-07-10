@@ -1,8 +1,7 @@
 import pygame
 import sys
 from utilidades.constantes import *
-from recursos import GerenciadorDeRecursos
-from utilidades import db_manager
+from gerenciadores import GerenciadorDeRecursos, db_manager
 from telas import TelaLoja
 # Inicializa o Pygame
 pygame.init()

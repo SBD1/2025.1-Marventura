@@ -306,7 +306,7 @@ CREATE TABLE area_interativa (
     largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
     tipo_evento CHAR(10) NOT NULL CHECK (
-        tipo_evento IN ('embarcar', 'investigar', 'mudar_area')
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'abrir_loja')
     )
 );
 
