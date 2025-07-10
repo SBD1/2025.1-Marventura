@@ -122,24 +122,8 @@ CREATE TABLE ingrediente_nao_consumivel (
 
 CREATE TABLE efeito (
     identificador_efeito ID PRIMARY KEY,
-    nome CHAR(15) UNIQUE NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
-    valor SMALLINT CHECK (
-        (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
-        (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
-        (nome = 'Vida Máxima' AND valor BETWEEN 1 AND 15) OR
-        (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
-        (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
-        (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
-        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Purificação' AND valor IS NULL)
-    )
+    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    valor SMALLINT CHECK (valor BETWEEN 1 AND 20)
 );
 
 CREATE TRIGGER atribui_id_efeito
@@ -362,6 +346,7 @@ CREATE TABLE jogador (
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
+    energia_atual SMALLINT DEFAULT 5 CHECK (energia_atual BETWEEN 0 AND energia),
     vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
     sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
@@ -615,10 +600,10 @@ EXECUTE FUNCTION public.gerar_id();
 
 
 CREATE TABLE dialogo (
-    identificador_missao ID PRIMARY KEY,
+    identificador_dialogo ID PRIMARY KEY,
     identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
     identificador_missao ID REFERENCES missao(identificador_missao),
-    sequencia_local SMALLINT CHECK (sequencia_local > 0)
+    sequencia_local SMALLINT CHECK (sequencia_local > 0),
     dialogo CHAR(500)
 );
 

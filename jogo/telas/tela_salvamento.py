@@ -3,6 +3,8 @@
 import pygame
 from .tela_modelo import TelaModelo
 from utilidades.constantes import *
+from gerenciadores import GerenciadorDeEntidades
+from entidades import Jogador
 
 class TelaSalvamento(TelaModelo):
     """
@@ -14,10 +16,10 @@ class TelaSalvamento(TelaModelo):
     """
     def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados):
         super().__init__(gerenciador_telas, gerenciador_recursos)
-
+        self.gerenciador_entidades = GerenciadorDeEntidades()
         self.banco_de_dados = gerenciador_banco_de_dados
 
-        self.dados_salvos = self.banco_de_dados.carregar_dados_dos_slots()
+        self.gerenciador_entidades.dados_salvos = gerenciador_banco_de_dados.carregar_dados_dos_slots()
 
         # --- Recursos específicos da Tela de Salvamento ---
         self.imagem_cartaz_procurado = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADO)
@@ -78,29 +80,51 @@ class TelaSalvamento(TelaModelo):
         )
         self._texto_botao_voltar = "Voltar"
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         # Chama o handle_input da base para eventos comuns (ex: QUIT)
-        super().handle_input(evento)
+        super().processar_eventos(evento)
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if evento.button == 1: # Clique com o botão esquerdo do mouse
                 # Verifica clique nos slots de salvamento
                 for i, rect_slot in enumerate(self._rects_slots):
                     if rect_slot.collidepoint(evento.pos):
-                        slot_data = self.dados_salvos[i]
-                        if slot_data.ocupado:
-                            print(f"Carregando jogo do Slot {i+1}...\n{slot_data}")
-                            self.gerenciador_telas.mudar_tela(
-                                CHAVE_TRANSICAO_CARREGAR_JOGO,
-                                identificador_jogador=slot_data.identificador_jogador,
-                                identificador_progresso=slot_data.identificador_progresso,
-                                dados_slot = slot_data
+                        self.gerenciador_entidades.progresso_do_jogo = self.gerenciador_entidades.dados_salvos[i]
+                        if self.gerenciador_entidades.progresso_do_jogo.ocupado:
+                            print(f"Carregando jogo do Slot {i+1}...\n{self.gerenciador_entidades.progresso_do_jogo}")
+                            jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+
+                            self.gerenciador_entidades.jogador = Jogador(
+                                gerenciador_banco_de_dados=self.banco_de_dados,
+                                gerenciador_recursos=self.gerenciador_recursos,
+                                x_inicial=jogador.coordenada_x,
+                                y_inicial=jogador.coordenada_y,
+                                identificador_jogador=jogador.identificador_jogador,
+                                nome=jogador.nome,
+                                descricao=jogador.descricao,
+                                energia_maxima=jogador.energia_maxima,
+                                vida_maxima=jogador.vida_maxima,
+                                nivel=jogador.nivel,
+                                sorte=jogador.sorte,
+                                energia_atual=jogador.energia_atual,
+                                vida_atual=jogador.vida_atual,
+                                experiencia_atual=jogador.experiencia_atual,
+                                moedas=jogador.moedas_totais,
+                                orientacao='direita',
+                                mochila=mochila_jogador,
+                                kit=kit_jogador,
+                                id_inventario=id_inventario
                             )
+                            
+                            self.gerenciador_entidades.ilha_atual = ilha
+                            self.gerenciador_entidades.area_atual = area
+
+                            print("progresso_do_jogo:",self.gerenciador_entidades.progresso_do_jogo)
+                            
+                            self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_CARREGAR_JOGO)
                         else:
                             print(f"Slot {i+1} vazio. Iniciando novo jogo a partir daqui (ou indo para seleção de personagem).")
-                            self.gerenciador_telas.mudar_tela(
-                                CHAVE_TRANSICAO_SELECAO_PERSONAGEM,
-                                dados_slot = slot_data) # Ou CHAVE_TRANSICAO_NOVO_JOGO se for direto
+                            self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_SELECAO_PERSONAGEM) # Ou CHAVE_TRANSICAO_NOVO_JOGO se for direto
 
                 # Verifica clique no botão "Voltar"
                 if self._rect_botao_voltar.collidepoint(evento.pos):
@@ -108,10 +132,10 @@ class TelaSalvamento(TelaModelo):
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
         return None
 
-    def update(self, dt):
+    def atualizar(self, dt):
         return None
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         # Desenha o fundo
         tela.blit(self.imagem_fundo, (0, 0))
 
@@ -122,7 +146,7 @@ class TelaSalvamento(TelaModelo):
             )
 
         # --- Desenha os slots de salvamento (imagem e textos) ---
-        for i, dados_slot in enumerate(self.dados_salvos):
+        for i, dados_slot in enumerate(self.gerenciador_entidades.dados_salvos):
             rect_slot = self._rects_slots[i] # Obtém o retângulo de posicionamento para este slot
 
             # --- Seleciona a imagem do cartaz com base no status do slot e tipo de personagem ---

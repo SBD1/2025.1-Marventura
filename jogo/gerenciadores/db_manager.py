@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import psycopg
 from psycopg.rows import namedtuple_row
 from utilidades.constantes import *
+from entidades.item_inventario import ItemInventario
+
 
 # Carrega as variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -84,6 +86,8 @@ class DBManager:
             print(f"DBManager ERRO ao executar query '{query}': {e}")
             return False
 
+
+
     # ===============================================
     # Métodos de Operações com progresso salvo
     # ===============================================
@@ -163,14 +167,47 @@ class DBManager:
         if not jogador:
             return None, None, None
 
-        mochila_jogador = self.buscar_inventario(id_jogador, 'moc')
-        kit_jogador = self.buscar_inventario(id_jogador, 'kit')
+        resultados = self.buscar_inventario(id_jogador, 'moc', identificador_progresso)
+        kit_jogador = self.buscar_kit_do_explorador(id_jogador, 'kit')
+        mochila = []
+
+        for row in resultados:
+            item = ItemInventario(
+                id_item=row.identificador_item,
+                nome=row.nome_item,
+                descricao=row.descricao,
+                tipo=row.tipo_item,
+                raridade=row.raridade,
+                quantidade=row.quantidade
+            )
+
+            # Buscar os efeitos do item usando seu identificador
+            efeitos = self.buscar_efeitos_por_item(row.identificador_item)
+            print(f"Efeitos para o item {row.nome_item}: {efeitos}")
+
+            for efeito in efeitos:
+                item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
+
+            mochila.append(item)
+
+        for item in mochila:
+            print(f"{item.nome}: {item.resumir_efeitos()}")
+
+        
+        print("Mochila do jogador:")
+        for row in resultados:
+            print(row)
+        
+        print("Kit do Explorador:")
+        for row in kit_jogador:
+            print(row)
 
         area = self.buscar_info_area(jogador.identificador_area, identificador_progresso)
 
         ilha = self.buscar_info_ilha(area.identificador_ilha, identificador_progresso)
 
-        return jogador, mochila_jogador, kit_jogador, ilha, area
+        #print(f"Jogador: {jogador.nome}, Área: {area.nome}, Ilha: {ilha.nome if ilha else 'N/A'}")
+        return jogador, mochila, kit_jogador, ilha, area, resultados[0].identificador_inventario
     
     def atualizar_espaco_salvamento(self, identificador_progresso):
         """
@@ -185,6 +222,19 @@ class DBManager:
         return self.executar_query(consulta, (identificador_progresso,))
 
 
+
+    def matar_inimigo(self, id_inimigo):
+        consulta = """
+            UPDATE estado_instancia_lacaio
+            SET 
+                data_da_morte = now(),
+                identificador_area_atual = 'are034'
+            WHERE 
+                identificador_instancia_lacaio = %s
+                AND data_da_morte IS NULL;
+        """
+        return self.executar_query(consulta, (id_inimigo,))
+
     # ===============================================
     # Métodos de Operações com Jogador
     # ===============================================
@@ -198,12 +248,14 @@ class DBManager:
                 TRIM(descricao) AS descricao,
                 coordenada_x,
                 coordenada_y,
-                energia,
-                vida,
+                energia AS energia_maxima,
+                vida AS vida_maxima,
                 nivel,
                 sorte,
+                energia_atual,
                 vida_atual,
-                experiencia_atual
+                experiencia_atual,
+                moedas_totais
             FROM jogador
             WHERE identificador_jogador = %s;
         """
@@ -218,6 +270,31 @@ class DBManager:
             WHERE id_jogador = %s;
         """
         params = (energia, vida_atual, nivel, experiencia_atual, coord_x, coord_y, id_mapa, id_jogador)
+        return self.executar_query(query, params)
+
+    def atualizar_atributos_de_batalha_do_jogador(self, identificador_jogador, energia_maxima, vida_maxima, nivel,
+                                                   sorte, energia_atual, vida_atual,
+                                                   experiencia_atual, moedas_totais):
+        """
+        Atualiza apenas os atributos relevantes de batalha do jogador.
+        """
+        query = """
+            UPDATE jogador
+            SET energia = %s,
+                vida = %s,
+                nivel = %s,
+                sorte = %s,
+                energia_atual = %s,
+                vida_atual = %s,
+                experiencia_atual = %s,
+                moedas_totais = %s
+            WHERE identificador_jogador = %s;
+        """
+        params = (
+            energia_maxima, vida_maxima, nivel, sorte,
+            energia_atual, vida_atual, experiencia_atual, moedas_totais,
+            identificador_jogador
+        )
         return self.executar_query(query, params)
 
     def salvar_novo_jogador(self, nome, descricao, identificador_progresso):
@@ -260,36 +337,99 @@ class DBManager:
     # Métodos de Operações com Inventário e Itens
     # ===============================================
 
+    def buscar_kit_do_explorador(self, identificador_jogador, tipo_inventario='kit'):
+        """Busca o inventário do kit do explorador de um jogador."""
+        query = """
+            SELECT
+                inventario.identificador_inventario,
+                tipo_item.identificador_item,
+                tipo_item.tipo AS tipo_item,
+                COALESCE(
+                    TRIM(acessorio.nome),
+                    TRIM(fruta.nome),
+                    TRIM(arma.nome)
+                ) AS nome_item,
+                COALESCE(
+                    TRIM(acessorio.raridade),
+                    TRIM(fruta.raridade),
+                    TRIM(arma.raridade)
+                ) AS raridade,
+                COALESCE(
+                    TRIM(acessorio.descricao),
+                    TRIM(fruta.descricao),
+                    TRIM(arma.descricao)
+                ) AS descricao,
+                COALESCE(arma.tipo_arma, '') AS tipo_arma,
+                item_inventario.quantidade
+            FROM inventario
+            JOIN item_inventario
+                ON item_inventario.identificador_inventario = inventario.identificador_inventario
+            JOIN tipo_item
+                ON tipo_item.identificador_item = item_inventario.identificador_item
+
+            -- Joins para cada subtipo
+            LEFT JOIN acessorio
+                ON acessorio.identificador_acessorio = tipo_item.identificador_item
+            LEFT JOIN fruta
+                ON fruta.identificador_fruta = tipo_item.identificador_item
+            LEFT JOIN arma
+                ON arma.identificador_arma = tipo_item.identificador_item
+
+			WHERE inventario.identificador_personagem = %s
+            AND inventario.tipo_inventario = %s;
+        """
+        return self.executar_query(query, (identificador_jogador, tipo_inventario), fetchall=True)
+        
     def buscar_inventario(self, identificador_personagem, tipo_inventario='moc', identificador_progresso=None):
         """Acessa o inventário de um personagem e seus atributos, filtrando também por progresso."""
         query = """
             SELECT
-                inv.identificador_inventario,
-                ti.identificador_item,
-                ti.tipo AS tipo_item,
-                COALESCE(a.nome, f.nome, c.nome, nc.nome) AS nome_item,
-                COALESCE(a.raridade, f.raridade, c.raridade, nc.raridade) AS raridade,
-                COALESCE(a.descricao, f.descricao, c.descricao, nc.descricao) AS descricao,
-                ii.quantidade
-            FROM inventario inv
-            JOIN item_inventario ii
-                ON ii.identificador_inventario = inv.identificador_inventario
-            JOIN tipo_item ti
-                ON ti.identificador_item = ii.identificador_item
+                inventario.identificador_inventario,
+                tipo_item.identificador_item,
+                tipo_item.tipo AS tipo_item,
+                COALESCE(
+                    TRIM(acessorio.nome),
+                    TRIM(fruta.nome),
+                    TRIM(consumivel.nome),
+                    TRIM(nao_consumivel.nome),
+                    TRIM(arma.nome)
+                ) AS nome_item,
+                COALESCE(
+                    TRIM(acessorio.raridade),
+                    TRIM(fruta.raridade),
+                    TRIM(consumivel.raridade),
+                    TRIM(nao_consumivel.raridade),
+                    TRIM(arma.raridade)
+                ) AS raridade,
+                COALESCE(
+                    TRIM(acessorio.descricao),
+                    TRIM(fruta.descricao),
+                    TRIM(consumivel.descricao),
+                    TRIM(nao_consumivel.descricao),
+                    TRIM(arma.descricao)
+                ) AS descricao,
+                item_inventario.quantidade
+            FROM inventario
+            LEFT JOIN item_inventario
+                ON item_inventario.identificador_inventario = inventario.identificador_inventario
+            LEFT JOIN tipo_item
+                ON tipo_item.identificador_item = item_inventario.identificador_item
 
             -- Joins para cada subtipo
-            LEFT JOIN acessorio a
-                ON a.identificador_acessorio = ti.identificador_item
-            LEFT JOIN fruta f
-                ON f.identificador_fruta = ti.identificador_item
-            LEFT JOIN consumivel c
-                ON c.identificador_consumivel = ti.identificador_item
-            LEFT JOIN nao_consumivel nc
-                ON nc.identificador_nao_consumivel = ti.identificador_item
-
-            WHERE inv.identificador_personagem = %s
-            AND inv.tipo_inventario = %s
-            AND inv.identificador_progresso = %s;
+            LEFT JOIN acessorio
+                ON acessorio.identificador_acessorio = tipo_item.identificador_item
+            LEFT JOIN fruta
+                ON fruta.identificador_fruta = tipo_item.identificador_item
+            LEFT JOIN consumivel
+                ON consumivel.identificador_consumivel = tipo_item.identificador_item
+            LEFT JOIN nao_consumivel
+                ON nao_consumivel.identificador_nao_consumivel = tipo_item.identificador_item
+			LEFT JOIN arma
+				ON arma.identificador_arma = tipo_item.identificador_item
+            
+            WHERE inventario.identificador_personagem = %s
+            AND inventario.tipo_inventario = %s
+            AND inventario.identificador_progresso = %s;
         """
         return self.executar_query(query, (identificador_personagem, tipo_inventario, identificador_progresso), fetchall=True)
 
@@ -322,13 +462,18 @@ class DBManager:
         """
         return self.executar_query(query, (id_inventario,), fetchall=True)
 
-    def adicionar_item_ao_inventario(self, id_inventario, identificador_item_tipo):
-        """Adiciona um tipo de item ao inventário."""
-        query = """
-            INSERT INTO iteminventario (id_inventario, identificador_item)
-            VALUES (%s, %s);
+    def adicionar_item_ao_inventario_personagem(self, identificador_inventario, identificador_item, quantidade=1):
         """
-        return self.executar_query(query, (id_inventario, identificador_item_tipo))
+        Adiciona um item específico ao inventário de um personagem.
+        Se o item já existir, incrementa a quantidade.
+        """
+        consulta = """
+            INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (identificador_inventario, identificador_item) DO UPDATE
+            SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
+        """
+        return self.executar_query(consulta, (identificador_inventario, identificador_item, quantidade))
 
     def remover_item_do_inventario(self, id_inventario, identificador_item_tipo):
         """Remove um tipo de item específico do inventário."""
@@ -349,6 +494,29 @@ class DBManager:
             WHERE identificador_item = %s;
         """
         return self.executar_query(query, (id_tipo_item,), fetchone=True)
+    
+    def buscar_efeitos_por_item(self, id_item):
+        query = """
+            SELECT TRIM(efeito.nome) AS efeito_nome, efeito.valor AS efeito_valor
+            FROM efeito
+                JOIN efeito_consumivel ON efeito_consumivel.identificador_efeito = efeito.identificador_efeito
+            WHERE efeito_consumivel.identificador_consumivel = %s;
+        """
+        return self.executar_query(query, (id_item,), fetchall=True)
+    
+    def buscar_efeito_por_acessorio(self, id_acessorio):
+        """
+        Busca os efeitos associados a um acessório específico.
+        Exemplo: SELECT TRIM(efeito.nome) AS efeito_nome, efeito.valor AS efeito_valor FROM efeito WHERE identificador_acessorio = 1;
+        """
+        query = """
+            SELECT TRIM(efeito.nome) AS efeito_nome, efeito.valor AS efeito_valor
+            FROM efeito
+                JOIN efeito_acessorio ON efeito_acessorio.identificador_efeito = efeito.identificador_efeito
+            WHERE efeito_acessorio.identificador_acessorio = %s;
+        """
+        return self.executar_query(query, (id_acessorio,), fetchall=True)
+
 
     # ===============================================
     # Métodos de Operações com Personagens (Lacaio, Chefe, Aliado, Habitante)
@@ -409,6 +577,21 @@ class DBManager:
         """
         return self.executar_query(consulta, (identificador_progresso, identificador_area), fetchall=True)
 
+    def buscar_item_do_lacaio(self, identificador_lacaio):
+        """
+        Busca os itens que um lacaio específico possui.
+        """
+        consulta = """
+            SELECT
+                item_inventario.identificador_item,
+                item_inventario.quantidade
+        
+            FROM inventario
+                JOIN item_inventario ON item_inventario.identificador_inventario = inventario.identificador_inventario
+             WHERE identificador_personagem = %s;
+            """
+        return self.executar_query(consulta, (identificador_lacaio,), fetchone=True)
+
     def buscar_chefe(self, id_chefe):
         """
         Ver atributos de um chefe específico.
@@ -446,17 +629,23 @@ class DBManager:
         Retorna todas as habilidades associadas a um personagem (jogador, aliado, lacaio etc).
         """
         consulta = """
-            SELECT 
-                h.identificador_habilidade,
-                TRIM(h.nome) AS nome_habilidade,
-                h.dano,
-                h.tipo_de_ataque,
-                h.tipo_de_alvo
-            FROM habilidade_personagem hp
-            JOIN habilidade h ON h.identificador_habilidade = hp.identificador_habilidade
-            WHERE hp.identificador_personagem = %s;
+            SELECT
+                habilidade.identificador_habilidade,
+                TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                TRIM(efeito.nome) AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_personagem
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_personagem.identificador_habilidade
+                LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_personagem.identificador_personagem = %s;
         """
         return self.executar_query(consulta, (identificador_personagem,), fetchall=True)
+    
 
 
     # ===============================================
@@ -892,3 +1081,46 @@ class DBManager:
         """
         return self.executar_query(query, fetchall=True)
 
+
+
+    # ===============================================
+    # Métodos de Operações com Habilidades
+    # ===============================================
+
+    def buscar_habilidades_por_arma(self, id_arma):
+        query = """
+            SELECT
+                habilidade.identificador_habilidade,
+            	TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                TRIM(efeito.nome) AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_arma
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_arma.identificador_habilidade
+            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_arma.identificador_arma = %s;
+        """
+        return self.executar_query(query, (id_arma,), fetchall=True)
+    
+    def buscar_habilidades_por_fruta(self, id_arma):
+        query = """
+            SELECT
+                habilidade.identificador_habilidade,
+            	TRIM(habilidade.nome) AS nome,
+                TRIM(habilidade.descricao) AS descricao,
+                TRIM(habilidade.tipo_de_ataque) AS tipo_de_ataque,
+                TRIM(habilidade.tipo_de_alvo) AS tipo_de_alvo,
+                habilidade.dano,
+                habilidade.custo,
+                TRIM(efeito.nome) AS efeito_nome,
+                efeito.valor AS efeito_valor
+            FROM habilidade_fruta
+                JOIN habilidade   ON  habilidade.identificador_habilidade = habilidade_fruta.identificador_habilidade
+            	LEFT JOIN efeito  ON  efeito.identificador_efeito = habilidade.identificador_efeito
+            WHERE habilidade_fruta.identificador_fruta = %s;
+        """
+        return self.executar_query(query, (id_arma,), fetchall=True)

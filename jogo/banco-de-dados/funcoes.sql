@@ -141,6 +141,13 @@ Gera ID automaticamente inserindo entrada em tipo_elemento_espacial e atribui ao
 
 
 
+/**********************************************************************************************
+* FUNÇÃO TRIGGER PARA GERAR IDS EM TABELAS ESPECÍFICAS DE tipo_item
+* ─ Disparada ANTES do INSERT nas tabelas: acessorio, arma, fruta, consumivel e nao_consumivel.
+* ─ Insere linha correspondente em tipo_item e recupera o ID gerado.
+* ─ Atribui o ID gerado à coluna identificador_{nome_da_tabela} da linha a ser inserida.
+**********************************************************************************************/
+
 CREATE FUNCTION public.gerar_id_tabelas_item()
 RETURNS trigger
 LANGUAGE plpgsql AS $$

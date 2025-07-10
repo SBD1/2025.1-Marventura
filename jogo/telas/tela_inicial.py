@@ -44,9 +44,9 @@ class TelaInicial(TelaModelo): # Herda de TelaModelo
             'acao': lambda: sys.exit()
         })
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         # Chama o handle_input da base para eventos comuns (ex: QUIT)
-        super().handle_input(evento)
+        super().processar_eventos(evento)
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
             for botao in self.botoes:
@@ -55,11 +55,11 @@ class TelaInicial(TelaModelo): # Herda de TelaModelo
                     return # Não retorna transição de tela aqui, a ação já a lida
         return None # Nenhuma transição de tela a ser reportada ao main.py
 
-    def update(self, dt):
+    def atualizar(self, dt):
         # Nenhuma lógica de atualização contínua para a tela inicial
         return None
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         # Desenha o fundo
         tela.blit(self.imagem_fundo, (0, 0))
 
