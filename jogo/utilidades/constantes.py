@@ -24,6 +24,15 @@ VERDE_CLARO = pygame.Color("#23EA52")
 BRANCO_CLARO = pygame.Color("#F0F0F0")
 AZUL_CLARO = pygame.Color("#4B85C8")
 
+# --- Tags de Alvo ---
+TAGS_DE_ALVO = {
+    "fila": ["Alvo Único", "Primeiro", "No Chão"],
+    "alvo_terrestre": ["Alvo Único", "No Chão"],
+    "terrestre": ["Todos", "No Chão"],
+    "alvo_livre": ["Alvo Único", "No Chão", "No Ar"],
+    "area": ["Todos", "No Chão", "No Ar"]
+}
+
 # --- Animação do Jogador ---
 VELOCIDADE_ANIMACAO_CAMINHADA = 0.15 # Segundos por frame na animação de caminhada (ajuste conforme quiser)
 FPS = 60 # Quadros por segundo
