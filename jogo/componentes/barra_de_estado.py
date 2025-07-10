@@ -6,12 +6,16 @@ from utilidades.constantes import *
 class BarraDeEstado:
     def __init__(self, gerenciador_recursos, jogador):
         self.gerenciador_recursos = gerenciador_recursos
+        self.jogador = jogador
         
         self.imagem_barra = self.gerenciador_recursos.obter_imagem(CHAVE_BARRA_DE_ESTADO)
         self.rect_barra = self.imagem_barra.get_rect(topleft=(0, 0))
         
         self.titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TITULO)
         self.texto = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+
+        self.texto_nivel = self.texto.render(f"Nv. {self.jogador.nivel}", True, BRANCO_CLARO)
+        self.rect_texto_nivel = self.texto_nivel.get_rect(topleft=(10, 80))
 
         # Verifica se a imagem foi carregada corretamente
         if not self.imagem_barra:
@@ -36,31 +40,6 @@ class BarraDeEstado:
             print("AVISO: Ícone de moeda não encontrado. Usando ícone padrão.")
             self.moeda = pygame.Surface((20, 20))
             self.moeda.fill(AMARELO)
-
-        # Inicializa os valores de estado (ATUALIZAR DEPOIS COM OS DADOS DO JOGADOR)
-        self.jogador = jogador
-        self.energia_atual = jogador.energia_maxima
-        self.xp_para_proximo = 100
-
-        self.texto_nivel = self.texto.render(f"Nv. {self.jogador.nivel}", True, BRANCO_CLARO)
-        self.rect_texto_nivel = self.texto_nivel.get_rect(topleft=(10, 80))
-
-    
-    
-    def atualizar_estado(self, vida_atual = None, vida_maxima = None, energia_atual = None, energia_maxima = None, nivel = None, experiencia = None):
-        if vida_atual:
-            self.jogador.vida_atual = vida_atual
-        if vida_maxima:
-            self.jogador.vida_maxima = vida_maxima
-        if energia_atual:
-            self.energia_atual = energia_atual
-        if energia_maxima:
-            self.jogador.energia_maxima = energia_maxima
-        if nivel:
-            self.jogador.nivel = nivel
-        if experiencia:
-            self.jogador.experiencia_atual += experiencia
-        #self.moeda_atual = moeda_atual
 
 
 
@@ -98,13 +77,13 @@ class BarraDeEstado:
         # Desenha PV ❤️
         largura_pv = self.desenhar_texto_com_icone(
             tela,
-            "PV",                                       # Texto
-            self.coracao,                               # Ícone
+            "PV",                                                       # Texto
+            self.coracao,                                               # Ícone
             f"{self.jogador.vida_atual}/{self.jogador.vida_maxima}",    # Estado atual
-            self.titulo,                                # Fonte
-            BRANCO_CLARO,                               # Cor do texto
-            x,                                          # X inicial
-            y                                           # Y
+            self.titulo,                                                # Fonte
+            BRANCO_CLARO,                                               # Cor do texto
+            x,                                                          # X inicial
+            y                                                           # Y
         )
 
         # Próxima linha
@@ -115,7 +94,7 @@ class BarraDeEstado:
             tela,
             "PE",
             self.energia,
-            f"{self.energia_atual}/{self.jogador.energia_maxima}",
+            f"{self.jogador.energia_atual}/{self.jogador.energia_maxima}",
             self.titulo,
             BRANCO_CLARO,
             x,
@@ -123,14 +102,14 @@ class BarraDeEstado:
         )
 
         # Próxima linha
-        x += largura_pe + 100
+        x += largura_pe + 150
 
         # Desenha moedas 🪙
         largura_moeda = self.desenhar_texto_com_icone(
             tela,
-            "",
+            "x",
             self.moeda,
-            "x999",
+            f"{self.jogador.moedas}",
             self.titulo,
             BRANCO_CLARO,
             x,
@@ -147,7 +126,7 @@ class BarraDeEstado:
         y_barra = self.rect_texto_nivel.top + (self.texto_nivel.get_height() - altura_barra) // 2
 
         # Calcula o preenchimento
-        proporcao = self.jogador.experiencia_atual / self.xp_para_proximo
+        proporcao = self.jogador.experiencia_atual / self.jogador.experiencia_por_nivel
         largura_preenchida = int(largura_barra_total * proporcao)
 
         # Fundo da barra
