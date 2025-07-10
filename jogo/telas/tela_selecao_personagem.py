@@ -81,27 +81,32 @@ class TelaSelecaoPersonagem(TelaModelo):
                     jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.criar_novo_jogo(SHUAN, self.dados_slot.identificador_progresso)
                 elif self._rect_opcao_menina.collidepoint(evento.pos):
                     print(f"Selecionado {SILVIE}! Iniciando novo jogo...")
-                    jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.criar_novo_jogo(SILVIE, self.dados_slot.identificador_progresso)
+                    jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.criar_novo_jogo(SILVIE, self.dados_slot.identificador_progresso)
                 elif self._rect_botao_voltar.collidepoint(evento.pos):
                     print("Voltando ao Menu Principal...")
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
                     return None
 
                 self.gerenciador_entidades.jogador = Jogador(
-                    self.banco_de_dados,
-                    self.gerenciador_recursos,
-                    jogador.coordenada_x,
-                    jogador.coordenada_y,
-                    jogador.identificador_jogador,
-                    jogador.nome,
-                    jogador.descricao,
-                    jogador.energia,
-                    jogador.vida,
-                    jogador.nivel,
-                    jogador.sorte,
-                    jogador.vida_atual,
-                    jogador.experiencia_atual,
-                    'direita'
+                    gerenciador_banco_de_dados=self.banco_de_dados,
+                    gerenciador_recursos=self.gerenciador_recursos,
+                    x_inicial=jogador.coordenada_x,
+                    y_inicial=jogador.coordenada_y,
+                    identificador_jogador=jogador.identificador_jogador,
+                    nome=jogador.nome,
+                    descricao=jogador.descricao,
+                    energia_maxima=jogador.energia_maxima,
+                    vida_maxima=jogador.vida_maxima,
+                    nivel=jogador.nivel,
+                    sorte=jogador.sorte,
+                    energia_atual=jogador.energia_atual,
+                    vida_atual=jogador.vida_atual,
+                    experiencia_atual=jogador.experiencia_atual,
+                    moedas=jogador.moedas_totais,
+                    orientacao='direita',
+                    mochila=mochila_jogador,
+                    kit=kit_jogador,
+                    id_inventario=id_inventario
                 )
                 self.gerenciador_entidades.mochila_jogador = mochila_jogador
                 self.gerenciador_entidades.kit_jogador = kit_jogador

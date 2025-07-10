@@ -92,25 +92,28 @@ class TelaSalvamento(TelaModelo):
                         self.gerenciador_entidades.progresso_do_jogo = self.gerenciador_entidades.dados_salvos[i]
                         if self.gerenciador_entidades.progresso_do_jogo.ocupado:
                             print(f"Carregando jogo do Slot {i+1}...\n{self.gerenciador_entidades.progresso_do_jogo}")
-                            jogador, mochila_jogador, kit_jogador, ilha, area = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+                            jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
 
                             self.gerenciador_entidades.jogador = Jogador(
-                                self.banco_de_dados,
-                                self.gerenciador_recursos,
-                                jogador.coordenada_x,
-                                jogador.coordenada_y,
-                                jogador.identificador_jogador,
-                                jogador.nome,
-                                jogador.descricao,
-                                jogador.energia_maxima,
-                                jogador.vida_maxima,
-                                jogador.nivel,
-                                jogador.sorte,
-                                jogador.vida_atual,
-                                jogador.experiencia_atual,
-                                'direita',
-                                mochila_jogador,
-                                kit_jogador
+                                gerenciador_banco_de_dados=self.banco_de_dados,
+                                gerenciador_recursos=self.gerenciador_recursos,
+                                x_inicial=jogador.coordenada_x,
+                                y_inicial=jogador.coordenada_y,
+                                identificador_jogador=jogador.identificador_jogador,
+                                nome=jogador.nome,
+                                descricao=jogador.descricao,
+                                energia_maxima=jogador.energia_maxima,
+                                vida_maxima=jogador.vida_maxima,
+                                nivel=jogador.nivel,
+                                sorte=jogador.sorte,
+                                energia_atual=jogador.energia_atual,
+                                vida_atual=jogador.vida_atual,
+                                experiencia_atual=jogador.experiencia_atual,
+                                moedas=jogador.moedas_totais,
+                                orientacao='direita',
+                                mochila=mochila_jogador,
+                                kit=kit_jogador,
+                                id_inventario=id_inventario
                             )
                             
                             self.gerenciador_entidades.ilha_atual = ilha
