@@ -56,6 +56,7 @@ class GerenciadorDeTelas:
                             self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
+                               self.gerenciador_banco_de_dados,
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
                                jogador_iniciou= kwargs.get('jogador_iniciou', False))
         else:
