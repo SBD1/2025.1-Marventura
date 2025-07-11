@@ -691,3 +691,19 @@ VALUES (@id_jogador, 'efe091', 3); -- Aplica Tontura por 3 turnos
 
 COMMIT;
 ```
+---
+## **📚 Bibliografia**
+
+  * ELMASRI, R.; NAVATHE, S. B. *Sistemas de Banco de Dados*. 7. ed. Pearson Education do Brasil, 2018.
+  * DATE, C. J. *An Introduction to Database Systems*. 8. ed. Addison-Wesley, 2003.
+  * SILBERSCHATZ, A.; KORTH, H. F.; SUDARSHAN, S. *Database System Concepts*. 7. ed. McGraw-Hill Education, 2019.
+  * PostgreSQL Documentation. Disponível em: [https://www.postgresql.org/docs/](https://www.postgresql.org/docs/) (Acesso em 18 de junho de 2025).
+  * Microsoft SQL Server Documentation. Disponível em: [https://docs.microsoft.com/en-us/sql/sql-server/](https://docs.microsoft.com/en-us/sql/sql-server/) (Acesso em 18 de junho de 2025).
+
+---
+
+## **📑 Histórico de Versões**
+
+| Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
+| :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
+| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 08/07/2025 |  |  |

@@ -704,3 +704,4 @@ WHERE ti.identificador_item IS NULL;
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 29/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
 | `1.1` | adicionado as consultas | [Pablo Serra](https://github.com/Pabloserrapxx) | 16/06/2025 |  |  |
+| `1.2` | atualizado o documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 08/07/2025 |  |  |

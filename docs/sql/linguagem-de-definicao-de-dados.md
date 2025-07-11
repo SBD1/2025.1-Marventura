@@ -24,13 +24,6 @@ Revisão Técnica: Verificação e validação do conteúdo por especialistas em
 
 </CENTER>
 
-
-Claro\! Aqui estão todos os seus comandos `CREATE TABLE` formatados para uso em MkDocs ou Docsify.
-
-Claro, entendi. Preparando cada comando `CREATE TABLE` e `CREATE TRIGGER` em seu próprio bloco de código, no formato para MkDocs/Docsify.
-
-Aqui está:
-
 ```sql
 CREATE TABLE tipo_item (
     identificador_item ID PRIMARY KEY,
@@ -196,13 +189,6 @@ CREATE TABLE progresso (
     data_ultimo_salvamento TIMESTAMP DEFAULT now(),
     ocupado BOOLEAN NOT NULL DEFAULT FALSE
 );
-```
-
-```sql
-CREATE TRIGGER atribui_id_progresso
-BEFORE INSERT ON progresso
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
 ```
 
 ```sql
