@@ -126,7 +126,7 @@ class BarraDeEstado:
         y_barra = self.rect_texto_nivel.top + (self.texto_nivel.get_height() - altura_barra) // 2
 
         # Calcula o preenchimento
-        proporcao = self.jogador.experiencia_atual / self.jogador.experiencia_por_nivel
+        proporcao = (self.jogador.experiencia_atual % self.jogador.experiencia_por_nivel) / 100
         largura_preenchida = int(largura_barra_total * proporcao)
 
         # Fundo da barra

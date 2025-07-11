@@ -210,6 +210,7 @@ CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
 
 CENA_SILVIE_NO_CAMPO = 'cena_silvie_no_campo'
 CENA_SHUAN_NO_CAMPO = 'cena_shuan_no_campo'
+CENA_JANTAR_COMUNITARIO = 'cena_jantar_comunitario'
 
 ARBUSTO = 'arbusto'
 

@@ -59,6 +59,7 @@ class Inimigo(pygame.sprite.Sprite):
         self.icone_alerta = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_ALERTA)
         self.icone_interrogacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERROGACAO)
 
+
     def carregar_animacoes(self, chave_base):
         # Carrega as imagens de animação com base na chave_base (ex: 'lobo', 'corvo')
         # e os sufixos '_0', '_1', etc.
@@ -244,6 +245,10 @@ class Inimigo(pygame.sprite.Sprite):
 
 
     def _verifica_linha_de_visao(self, inimigo_centro, retangulo_do_jogador, obstaculos_visao):
+        # NOVO: Só enxerga se o jogador estiver dentro do mesmo caminho_container
+        if self.caminho_container and not self.caminho_container.colliderect(retangulo_do_jogador):
+            return False
+        
         # Verifica se o retângulo do jogador está dentro do cone de visão
 
         raio = self.alcance_visao

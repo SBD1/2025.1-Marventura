@@ -8,16 +8,29 @@ class AreaInteracao(pygame.sprite.Sprite):
     Representa uma área no mundo do jogo que ativa um evento quando o jogador a sobrepõe
     e interage (ex: pressiona uma tecla). Não é um obstáculo sólido.
     """
-    def __init__(self, identificador, x, y, largura=None, altura=None, tipo_evento=None,
-                 chance_sucesso=1.0, area_destino=None,
-                 chave_imagem=None, gerenciador_recursos=None):
+    def __init__(self, identificador, x, y, largura, altura, tipo_evento, chance_sucesso, metodo_ativacao,
+                ativa, area_destino=None, chave_imagem=None, identificador_missao=None, gererenciador_recursos=None):
+        """
+        Inicializa uma Área de Interação.
+        :param x: Posição X no mundo do jogo (canto superior esquerdo).
+        :param y: Posição Y no mundo do jogo (canto superior esquerdo).
+        :param largura: Largura da área.
+        :param altura: Altura da área.
+        :param tipo_evento: Uma string que define o tipo de evento (ex: 'mudar_mapa', 'dialogo').
+        :param dados_evento: Um dicionário ou objeto contendo dados específicos para o evento (ex: {'mapa_id': 'outra_ilha'}).
+        :param resource_manager: O gerenciador de recursos (opcional, pode ser necessário para carregar ícones).
+        """
         super().__init__()
 
-        self.identificador = identificador
         self.tipo_evento = tipo_evento
         self.chance_sucesso = chance_sucesso
         self.area_destino = area_destino
+        self.metodo_ativacao = metodo_ativacao
+        self.ativa = ativa
+        self.identificador_missao = identificador_missao
         self.chave_imagem = chave_imagem
+        self.gerenciador_recursos = gererenciador_recursos
+        self.identificador = identificador
 
         # Animação de chacoalhar horizontal
         self.animando = False
@@ -28,10 +41,10 @@ class AreaInteracao(pygame.sprite.Sprite):
 
         # Se for usar imagem
         if chave_imagem:
-            if not gerenciador_recursos:
+            if not self.gerenciador_recursos:
                 raise ValueError("gerenciador_recursos é obrigatório se chave_imagem for usada.")
 
-            imagem = gerenciador_recursos.obter_imagem(chave_imagem)
+            imagem = self.gerenciador_recursos.obter_imagem(chave_imagem)
             if imagem:
                 self.imagem = imagem.convert_alpha()
                 largura = imagem.get_width()
@@ -43,6 +56,8 @@ class AreaInteracao(pygame.sprite.Sprite):
         else:
             if largura is None or altura is None:
                 raise ValueError("largura e altura são obrigatórios se nenhuma imagem for usada.")
+            
+            print(f"Largura: {largura}, Altura: {altura}")
             self.imagem = pygame.Surface((largura, altura), pygame.SRCALPHA)
             self.imagem.fill((0, 0, 0, 0))  # transparente
 

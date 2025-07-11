@@ -438,7 +438,7 @@ class TelaBatalha(TelaModelo):
     
             # Ganha experiência e retorna ao mapa
             self.entidades.jogador.experiencia_atual += self.experiencia_acumulada
-            self.entidades.jogador.atualizar_atributos_por_nivel(self.entidades.jogador)
+            self.entidades.jogador.atualizar_atributos_por_nivel()
 
             self._adiconar_item_ao_invetario_do_jogador(self.itens_obtidos)
     
@@ -471,7 +471,7 @@ class TelaBatalha(TelaModelo):
     
             # Salva o progresso
             self.entidades.jogador.experiencia_atual += self.experiencia_acumulada
-            self.entidades.jogador.atualizar_atributos_por_nivel(self.entidades.jogador)
+            self.entidades.jogador.atualizar_atributos_por_nivel()
 
             self._adiconar_item_ao_invetario_do_jogador(self.itens_obtidos)
     

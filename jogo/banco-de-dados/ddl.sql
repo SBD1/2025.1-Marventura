@@ -263,10 +263,10 @@ CREATE TABLE jogador (
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
     energia_atual SMALLINT DEFAULT 5 CHECK (energia_atual BETWEEN 0 AND energia),
     vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
-    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    nivel SMALLINT CHECK (nivel BETWEEN 1 AND 60),
     sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
-    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600),
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 6000),
     moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
@@ -636,6 +636,7 @@ EXECUTE FUNCTION tentar_coletar_item();
 CREATE TABLE item_missao (
     identificador_missao ID,
     identificador_item ID,
+    quantidade SMALLINT DEFAULT 1 CHECK (quantidade BETWEEN 1 AND 99),
     PRIMARY KEY (identificador_missao, identificador_item),
     FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)

@@ -99,6 +99,7 @@ class TelaSalvamento(TelaModelo):
                                 gerenciador_banco_de_dados=self.banco_de_dados,
                                 gerenciador_recursos=self.gerenciador_recursos,
                                 x_inicial=jogador.coordenada_x,
+                                progresso=self.gerenciador_entidades.progresso_do_jogo.identificador_progresso,
                                 y_inicial=jogador.coordenada_y,
                                 identificador_jogador=jogador.identificador_jogador,
                                 nome=jogador.nome,

@@ -9,13 +9,16 @@ from telas import TelaJogo
 from telas import TelaBatalha
 from gerenciadores import GerenciadorDeEntidades
 from utilidades.constantes import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
 
 class GerenciadorDeTelas:
     """
     Gerencia as diferentes telas (estados) do jogo.
     Responsável por criar, armazenar e transitar entre as telas.
     """
-    def __init__(self, tela_principal_surface, gerenciador_recursos, gerenciador_banco_de_dados):
+    def __init__(self, tela_principal_surface, gerenciador_recursos, gerenciador_banco_de_dados: "DBManager"):
         self.tela_principal_surface = tela_principal_surface
         self.gerenciador_recursos = gerenciador_recursos
         self.gerenciador_banco_de_dados = gerenciador_banco_de_dados
@@ -41,7 +44,7 @@ class GerenciadorDeTelas:
                                   self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_SELECAO_PERSONAGEM:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos,
-                                         self.gerenciador_banco_de_dados,)
+                                         self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados)

@@ -951,8 +951,8 @@ INSERT INTO habitante
 VALUES
     ('are034', 'Narrador', null, 'hbt', 0, 0, 0, null), -- hbt001
     ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 90, 15, 'campones_a'), -- hbt002
-    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 2252, 336, 15, 'camponesa_b'), -- hbt003
-    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 1600, 340, 15, 'campones_b'), -- rct001
+    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 1586, 340, 15, 'camponesa_b'), -- hbt003
+    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 2231, 350, 15, 'campones_b'), -- rct001
     ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 15, 'camponesa_a'); -- rct002
 
 
@@ -1199,7 +1199,7 @@ VALUES
     ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
     ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
-    ('are001', 'mis012', 10, 'rct001', 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are001', 'mis012', 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
     ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
 
 
@@ -1245,6 +1245,13 @@ VALUES
     ('mis012', 'pro003');
 
 
+
+INSERT INTO item_missao
+    (identificador_missao, identificador_item, quantidade)
+VALUES
+    ('mis010', 'con040', 1);
+
+    
 
 INSERT INTO dialogo
     (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
@@ -1296,7 +1303,7 @@ VALUES
     ('rct001', 'mis005', 1, 'F', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
     ('rct001', 'mis005', 1, 'M', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
     ('rct001', 'mis006', 1, 'F', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
-    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazzo, e mostra que aqui quem uiva é só o rádio da cozinha!'),
     ('hbt001', 'mis011', 1, 'F', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Silvie, ainda meio desconfiada, observa tudo com olhos atentos. É sua primeira noite na vila.'),
     ('hbt001', 'mis011', 1, 'M', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Shuan, ainda meio desconfiado, observa tudo com olhos atentos. É sua primeira noite na vila.'),
     ('hbt002', 'mis011', 2, 'F', '(Puxando uma cadeira para ela): — Senta aqui, moça. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
