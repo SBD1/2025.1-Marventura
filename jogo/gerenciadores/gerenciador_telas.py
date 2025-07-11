@@ -51,17 +51,17 @@ class GerenciadorDeTelas:
         elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados)
+
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
+            print(f"Tela: {kwargs.get('ponto_geracao_jogador')}")
+            
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
-                               inimigo_tipo=kwargs.get('inimigo_batalha'),
-                               personagem=kwargs.get('personagem'),
-                               jogador_x=kwargs.get('jogador_atual_x'),
-                               jogador_y=kwargs.get('jogador_atual_y'),
-                               jogador_olhando_direita=kwargs.get('jogador_olhando_direita'),
-                               mapa_retorno_id=kwargs.get('mapa_atual_id'))
+                               self.gerenciador_banco_de_dados,
+                               inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
+                               jogador_iniciou= kwargs.get('jogador_iniciou', False))
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None
@@ -77,14 +77,14 @@ class GerenciadorDeTelas:
         else:
             print(f"Não foi possível mudar para a tela {novo_estado}. Permanece na tela atual.")
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """
         Encaminha os eventos de entrada para a tela atual.
         Se a tela atual retornar uma transição, a muda.
         """
         if self.tela_atual:
             # A tela pode retornar um dicionário de transição ou None
-            transicao_info = self.tela_atual.handle_input(evento)
+            transicao_info = self.tela_atual.processar_eventos(evento)
             if transicao_info and 'estado' in transicao_info:
                 estado_desejado = transicao_info['estado']
                 del transicao_info['estado']
@@ -94,23 +94,23 @@ class GerenciadorDeTelas:
         if evento.type == pygame.QUIT:
             sys.exit()
 
-    def update(self, dt):
+    def atualizar(self, dt):
         """
         Atualiza a tela atualmente ativa.
         Se a tela atual retornar uma transição, a muda.
         """
         if self.tela_atual:
             # A tela pode retornar um dicionário de transição ou None
-            transicao_info = self.tela_atual.update(dt)
+            transicao_info = self.tela_atual.atualizar(dt)
             if transicao_info and 'estado' in transicao_info:
                 estado_desejado = transicao_info['estado']
                 del transicao_info['estado']
                 self.mudar_tela(estado_desejado, **transicao_info)
 
 
-    def draw(self):
+    def desenhar(self):
         """
         Desenha a tela atualmente ativa na superfície principal do Pygame.
         """
         if self.tela_atual:
-            self.tela_atual.draw(self.tela_principal_surface)
+            self.tela_atual.desenhar(self.tela_principal_surface)

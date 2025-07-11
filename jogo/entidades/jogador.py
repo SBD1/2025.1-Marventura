@@ -2,15 +2,23 @@
 
 import pygame
 from utilidades.constantes import * # Importa as constantes
+from entidades.habilidades import Habilidade
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores.db_manager import DBManager
+    from entidades.item_inventario import ItemInventario
+    from entidades.mochila import Mochila
+    from entidades.kit import KitDoExplorador
 
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_recursos, identificador, identificador_progresso, x_inicial, y_inicial, nome, descricao,
-                 energia, vida, nivel, sorte, vida_atual, experiencia_atual,
-                 orientacao='direita'):
+    def __init__(self, gerenciador_banco_de_dados: 'DBManager', gerenciador_recursos, progresso, x_inicial, y_inicial, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila: 'Mochila' = [], kit: 'KitDoExplorador' = [], id_inventario = None):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
+        self.banco_de_dados = gerenciador_banco_de_dados
+        self.gerenciador_missoes = None
         # REMOVIDO: self.fator_de_escala = fator_de_escala
 
         # Estado do jogador
@@ -18,16 +26,23 @@ class Jogador(pygame.sprite.Sprite):
         self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.velocidade = VELOCIDADE_JOGADOR
         self.orientacao = orientacao
+        self.identificador_jogador = identificador_jogador
         self.nome = nome
-        self.identificador_jogador = identificador
-        self.identificador_progresso = identificador_progresso
+        self.identificador_jogador = identificador_jogador
+        self.identificador_progresso = progresso
         self.descricao = descricao
-        self.energia = energia
-        self.vida = vida
+        self.energia_maxima = energia_maxima
+        self.vida_maxima = vida_maxima
         self.nivel = nivel
         self.sorte = sorte
+        self.energia_atual = energia_atual  # Energia atual do jogador
         self.vida_atual = vida_atual
         self.experiencia_atual = experiencia_atual
+        self.moedas = moedas                # Quantidade de moedas do jogador
+        self.experiencia_por_nivel = 100    # Experiência necessária para subir de nível
+        self.efeitos_ativos = []            # Cada efeito será um dicionário
+        self.aumento_de_ataque = 0          # Efeito de ataque, que pode ser aumentado com itens e/ou acessórios, será somado ao dano final da habilidade
+        self.id_mochila = id_inventario     # ID da mochila do jogador, usado para persistência no banco de dados
 
         # Animação e estado
         self.estado = 'parado' # 'parado', 'caminhando'
@@ -45,14 +60,14 @@ class Jogador(pygame.sprite.Sprite):
         # Configura o sprite inicial
         # Garante que 'parado' tenha pelo menos um frame
         if self.frames_animacao['parado']: # Verifica se a lista não está vazia
-            self.image = self.frames_animacao[self.estado][self.indice_frame]
+            self.imagem = self.frames_animacao[self.estado][self.indice_frame]
         else:
             # Fallback robusto caso todas as imagens falhem
             print("ERRO GRAVE: frames_animacao['parado'] está vazio no __init__ do Jogador. Criando superfície vazia para evitar crash.")
-            self.image = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR))
-            self.image.fill(AZUL) # Uma cor diferente para indicar um erro mais grave
+            self.imagem = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR))
+            self.imagem.fill(AZUL) # Uma cor diferente para indicar um erro mais grave
         
-        self.rect = self.image.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
+        self.rect = self.imagem.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
 
         altura_pes = 18
         self.pes_rect = pygame.Rect(
@@ -62,7 +77,7 @@ class Jogador(pygame.sprite.Sprite):
             altura_pes
         )
 
-        # Flags de movimento contínuo (agora gerenciadas internamente por handle_input_continuo)
+        # Flags de movimento contínuo (agora gerenciadas internamente por processar_eventos_continuo)
         self.movendo_esquerda = False
         self.movendo_direita = False
         self.movendo_cima = False
@@ -75,9 +90,269 @@ class Jogador(pygame.sprite.Sprite):
         # NOVO: Flag para bloquear o movimento controlado pelo jogador
         self.movimento_bloqueado = False 
 
+        self.mochila = mochila  # Lista de itens na mochila do jogador
+        self.kit_do_explorador = kit # Lista de itens equipados pelo jogador
+        self.habilidades = []  # Lista de habilidades do jogador
+        self.aplicar_efeito_do_acessorio()  # Aplica o efeito do acessório equipado, se houver
+        self.carregar_habilidades()  # Carrega as habilidades do jogador
 
 
-    def atualizar_posicao_jogador(self, x_inicial, y_inicial, orientacao):
+
+    def inserir_item_na_mochila(self, item: 'ItemInventario', identificador_progresso):
+        if self.banco_de_dados.adicionar_item_ao_inventario(self.id_mochila, item.identificador_item, item.quantidade):
+            self.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.identificador_jogador, identificador_progresso)
+
+
+
+    def usar_item_da_mochila(self, item: 'ItemInventario'):
+        if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, item.identificador_item):
+            print(f"[DEBUG] Item {item.identificador_item} removido do inventário do jogador {self.identificador_jogador}.")
+            self.mochila.usar_item(item.identificador_item, self)
+
+
+
+    def remover_item_da_mochila(self, identificador_item, quantidade=1):
+        if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, identificador_item, quantidade):
+            self.mochila.subtrair_quantidade(identificador_item, quantidade)
+
+
+
+    def equipar_item(self, item: 'ItemInventario', identificador_progresso):
+        if self.banco_de_dados.equipar_item_no_kit(
+            self.identificador_jogador,
+            item.identificador_item,
+            item.tipo,
+            identificador_progresso
+        ):
+            # 1. Remove o item da mochila
+            self.mochila.remover(item.identificador_item)
+
+            # 2. Verifica se já havia item do mesmo tipo no kit
+            item_substituido = None
+
+            match item.tipo:
+                case "arma":
+                    if self.kit.arma:
+                        item_substituido = self.kit.arma
+                    self.kit.arma = item
+                case "fruta":
+                    if self.kit.fruta:
+                        item_substituido = self.kit.fruta
+                    self.kit.fruta = item
+                case "acessorio":
+                    if self.kit.acessorio:
+                        item_substituido = self.kit.acessorio
+                    self.kit.acessorio = item
+
+            # 3. Adiciona item substituído de volta à mochila
+            if item_substituido:
+                self.mochila.adicionar(item_substituido)
+
+
+
+    def calcular_nivel(self, experiencia_total):
+        return experiencia_total // 100
+  
+
+
+    def atualizar_atributos_por_nivel(self):
+        novo_nivel = self.calcular_nivel(self.experiencia_atual)
+        ganho_de_niveis = novo_nivel - self.nivel
+
+        if ganho_de_niveis > 0:
+            self.nivel = novo_nivel
+            self.vida_maxima += ganho_de_niveis
+            self.energia_maxima += ganho_de_niveis
+            self.vida_atual = self.vida_maxima
+            self.energia_atual = self.energia_maxima
+            print(f"O jogador subiu {ganho_de_niveis} nível(s)!")
+            if self.gerenciador_missoes and self.nivel == 10:
+                self.gerenciador_missoes.iniciar_missao('mis011')
+
+
+
+    def aplicar_efeito_do_acessorio(self):
+        ids = self.kit_do_explorador.obter_ids_do_equipamento()
+        if ids["id_acessorio"]:
+            efeito_acessorio = self.banco_de_dados.buscar_efeito_por_acessorio(ids["id_acessorio"])
+            print(f"[DEBUG] Efeito do acessório encontrado: {efeito_acessorio}")
+            if efeito_acessorio:
+                lista_de_efeitos = [
+                    {
+                        "nome": efeito.efeito_nome,
+                        "valor": efeito.efeito_valor
+                    }
+                    for efeito in efeito_acessorio
+                ]
+                self.aplicar_efeitos(lista_de_efeitos)
+
+
+
+    def aplicar_efeitos(self, efeitos):
+        """
+        Aplica os efeitos do item ao jogador. A quantidade deve ser controlada fora.
+        """
+        for efeito in efeitos:
+            tipo = efeito["nome"]
+            valor = efeito["valor"]
+            print(f"[DEBUG] Aplicando efeito: {tipo} com valor {valor} ao jogador {self.nome}")
+            match tipo:
+                case "Cura":  # Cura de vida
+                    self.vida_atual += valor
+                    self.vida_atual = min(self.vida_atual, self.vida_maxima)
+
+                case "Energia":  # Recupera de energia
+                    self.energia_atual += valor
+                    self.energia_atual = min(self.energia_atual, self.energia_maxima)
+
+                case "Vida Máxima":  # Aumenta a vida máxima
+                    self.vida_maxima += valor
+
+                case "Energia Máxima":  # Aumenta a energia máxima
+                    self.energia_maxima += valor
+                
+                case "Ataque":  # Aumenta o ataque
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 3,  # duração em turnos
+                        "tipo": "buff"
+                    })
+                    self.aumento_de_ataque += valor
+
+                case "Sorte":  # Aumenta a sorte
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 3,  # duração em turnos
+                        "tipo": "buff"
+                    })
+                    self.sorte += valor
+
+                case "Eletrificado":  # Aplica o status eletrificado
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Congelado":  # Aplica o status congelado
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 1,
+                        "tipo": "status"
+                    })
+
+                case "Molhado":  # Aplica o status molhado
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Envenenado":  # Aplica o status envenenado
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Sangramento":  # Aplica o status sangramento
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Queimadura":  # Aplica o status queimadura
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Tontura":  # Aplica o status tontura
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Cegueira":  # Aplica o status cegueira
+                    self.efeitos_ativos.append({
+                        "nome": tipo,
+                        "valor": valor,
+                        "duracao": 2,
+                        "tipo": "status"
+                    })
+
+                case "Purificação":
+                    efeitos_aplicados = [
+                        "Eletrificado", "Molhado", "Envenenado", 
+                        "Sangramento", "Queimadura",
+                        "Tontura", "Cegueira"
+                    ]
+                    self.efeitos_ativos = [
+                        e for e in self.efeitos_ativos if e["nome"] not in efeitos_aplicados
+                    ]
+
+                case _:  # Caso o efeito não seja reconhecido
+                    print(f"Efeito desconhecido: {tipo}")
+
+            # Você pode adicionar suporte a outros tipos de efeito aqui futuramente
+
+
+
+    def atualizar_efeitos(self):
+        novos = []
+        for efeito in self.efeitos_ativos:
+            efeito["duracao"] -= 1
+            if efeito["duracao"] > 0:
+                novos.append(efeito)
+            else:
+                # Efeito expirou
+                if efeito["nome"] == "Ataque":
+                    self.aumento_de_ataque = max(0, self.aumento_de_ataque - efeito["valor"])
+
+                    print(f"[DEBUG] Efeito de ataque expirou (-{efeito['valor']})")
+
+                elif efeito["nome"] == "Sorte":
+                    self.sorte = max(1, self.sorte - efeito["valor"])
+                    print(f"[DEBUG] Efeito de sorte expirou (-{efeito['valor']})")
+        self.efeitos_ativos = novos
+
+
+
+    def aplicar_dano_continuo(self, momento: str):
+        """
+        Aplica dano de efeitos por turno com base no momento:
+        - "antes": antes da ação da unidade (ex: Queimadura)
+        - "depois": após a ação da unidade (ex: Envenenado, Sangramento)
+        """
+        for efeito in self.efeitos_ativos:
+            nome = efeito["nome"]
+            valor = efeito["valor"]
+    
+            if momento == "antes" and nome == "Queimadura":
+                self.vida_atual -= valor
+                self.vida_atual = max(0, self.vida_atual)  # Garante que a vida não fique negativa
+                print(f"{self.nome} sofreu {valor} de dano por {nome} (antes de agir).")
+    
+            elif momento == "depois" and nome in ["Envenenado", "Sangramento"]:
+                self.vida_atual -= valor
+                self.vida_atual = max(0, self.vida_atual)  # Garante que a vida não fique negativa
+                print(f"{self.nome} sofreu {valor} de dano por {nome} (após agir).")
+
+
+
+    def atualizar_posicao_jogador(self, x_inicial, y_inicial, orientacao='direita'):
         self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.orientacao = orientacao
@@ -143,7 +418,18 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def handle_input_continuo(self):
+    def get_area_de_ataque(self):
+        """Retorna a área de ataque do jogador com base na posição e orientação."""
+        x, y = self.rect.center
+    
+        if self.orientacao == "direita":
+            return pygame.Rect(x, y - 10, 60, 40)
+        else:
+            return pygame.Rect(x - 60, y - 10, 60, 40)
+
+
+
+    def processar_eventos_continuos(self):
         """
         Processa as entradas contínuas do teclado usando pygame.key.get_pressed().
         Este método substitui a lógica baseada em eventos KEYDOWN/KEYUP para movimento contínuo.
@@ -217,7 +503,47 @@ class Jogador(pygame.sprite.Sprite):
 
 
 
-    def update(self, dt, obstaculos, lista_de_caminhos): # NOVO: Adicionado 'lista_de_caminhos'
+    def carregar_habilidades(self):
+        identificadores_do_equipamento = self.kit_do_explorador.obter_ids_do_equipamento()
+        habilidades_personagem = self.banco_de_dados.buscar_habilidades_por_personagem(self.identificador_jogador) or []
+        habilidades_arma = self.banco_de_dados.buscar_habilidades_por_arma(identificadores_do_equipamento["id_arma"]) if identificadores_do_equipamento["id_arma"] else []
+        habilidades_fruta = self.banco_de_dados.buscar_habilidades_por_fruta(identificadores_do_equipamento["id_fruta"]) if identificadores_do_equipamento["id_fruta"] else []
+
+        print("identificadores_do_equipamento:", identificadores_do_equipamento)
+
+        print("Habilidades do jogador:")
+        for row in habilidades_personagem:
+            print(row)
+
+        print("Habilidades da arma:")
+        for row in habilidades_arma:
+            print(row)
+
+        print("Habilidades da Akuma no Mi:")
+        for row in habilidades_fruta:
+            print(row)
+
+        conjunto_de_habilidades = habilidades_personagem + habilidades_arma + habilidades_fruta
+
+        self.habilidades = [
+            Habilidade(
+                id=h.identificador_habilidade,
+                nome=h.nome.strip(),  # Remove espaços extras
+                descricao=h.descricao.strip(),
+                tipo_de_ataque=h.tipo_de_ataque.strip(),
+                tipo_de_alvo=h.tipo_de_alvo.strip(),
+                dano=h.dano,
+                custo=h.custo,
+                efeito=(
+                    {"nome": h.efeito_nome.strip(), "valor": h.efeito_valor} if h.efeito_nome else None
+                )
+            )
+            for h in conjunto_de_habilidades
+        ]
+
+
+
+    def atualizar(self, dt, obstaculos, lista_de_caminhos): # NOVO: Adicionado 'lista_de_caminhos'
         """
         Atualiza a posição do jogador e a animação a cada frame do jogo.
         :param dt: Delta time (tempo em segundos desde o último frame).
@@ -228,7 +554,7 @@ class Jogador(pygame.sprite.Sprite):
 
         # Só processa input e movimento se não estiver bloqueado
         if not self.movimento_bloqueado:
-            self.handle_input_continuo()
+            self.processar_eventos_continuos()
 
             # --- NOVO: LÓGICA DE VELOCIDADE BASEADA NO TERRENO ---
             
@@ -320,7 +646,7 @@ class Jogador(pygame.sprite.Sprite):
             self.indice_frame = 0
             self.tempo_desde_ultimo_frame = 0.0
             if hasattr(self, 'frame_parada_apos_caminhada') and self.frame_parada_apos_caminhada:
-                self.image = self.frame_parada_apos_caminhada
+                self.imagem = self.frame_parada_apos_caminhada
                 del self.frame_parada_apos_caminhada
                 pass
 
@@ -337,11 +663,11 @@ class Jogador(pygame.sprite.Sprite):
         if self.orientacao == 'esquerda':
             imagem_atual = pygame.transform.flip(imagem_atual, True, False)
 
-        self.image = imagem_atual
+        self.imagem = imagem_atual
 
 
 
-    def draw(self, tela, camera_x, camera_y):
+    def desenhar(self, tela, camera_x, camera_y):
         """
         Desenha o jogador na tela, ajustando pela posição da câmera.
         :param tela: A superfície do Pygame onde desenhar.
@@ -352,7 +678,7 @@ class Jogador(pygame.sprite.Sprite):
         posicao_tela_x = self.mundo_x - camera_x
         posicao_tela_y = self.mundo_y - camera_y
         
-        tela.blit(self.image, (int(posicao_tela_x), int(posicao_tela_y)))
+        tela.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
 
         # Desenha o ícone de interação se aplicável
         if self.mostrar_icone_interacao and self.icone_interacao:

@@ -141,6 +141,13 @@ Gera ID automaticamente inserindo entrada em tipo_elemento_espacial e atribui ao
 
 
 
+/**********************************************************************************************
+* FUNÇÃO TRIGGER PARA GERAR IDS EM TABELAS ESPECÍFICAS DE tipo_item
+* ─ Disparada ANTES do INSERT nas tabelas: acessorio, arma, fruta, consumivel e nao_consumivel.
+* ─ Insere linha correspondente em tipo_item e recupera o ID gerado.
+* ─ Atribui o ID gerado à coluna identificador_{nome_da_tabela} da linha a ser inserida.
+**********************************************************************************************/
+
 CREATE FUNCTION public.gerar_id_tabelas_item()
 RETURNS trigger
 LANGUAGE plpgsql AS $$
@@ -211,3 +218,23 @@ $$;
 COMMENT ON FUNCTION public.gerar_id_tabelas_item() IS
 'Usada como BEFORE INSERT nas tabelas acessorio, arma, fruta, consumivel e nao_consumivel.
 Gera ID automaticamente inserindo entrada em tipo_item e atribui ao NEW.identificador_{nome_da_tabela}';
+
+
+
+CREATE FUNCTION tentar_coletar_item()
+RETURNS TRIGGER AS $$
+DECLARE
+  tentativa_antiga TIMESTAMP;
+BEGIN
+  SELECT data_da_tentativa INTO tentativa_antiga
+  FROM recompensa_de_exploracao
+  WHERE identificador_area_interativa = NEW.identificador_area_interativa
+    AND identificador_jogador = NEW.identificador_jogador;
+
+  IF tentativa_antiga IS NOT NULL AND now() - tentativa_antiga < interval '15 minutes' THEN
+    RAISE EXCEPTION 'Você precisa esperar 15 minutos para interagir com esta área novamente.';
+  END IF;
+
+  RETURN NEW; -- Permite o INSERT seguir
+END;
+$$ LANGUAGE plpgsql;

@@ -67,7 +67,8 @@ CREATE TABLE consumivel (
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
     preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
-    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
+    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE)),
+    e_coletado BOOLEAN 
 );
 
 CREATE TRIGGER atribui_id_consumivel
@@ -84,7 +85,8 @@ CREATE TABLE nao_consumivel (
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
-    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    e_coletado BOOLEAN 
 );
 
 CREATE TRIGGER atribui_id_nao_consumivel
@@ -123,23 +125,7 @@ CREATE TABLE ingrediente_nao_consumivel (
 CREATE TABLE efeito (
     identificador_efeito ID PRIMARY KEY,
     nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
-    valor SMALLINT CHECK (
-        (nome = 'Cura' AND valor BETWEEN 1 AND 20) OR
-        (nome = 'Energia' AND valor BETWEEN 1 AND 15) OR
-        (nome = 'Vida Máxima' AND valor BETWEEN 1 AND 15) OR
-        (nome = 'Energia Máxima' AND valor BETWEEN 1 AND 10) OR
-        (nome = 'Ataque' AND valor BETWEEN 1 AND 10) OR
-        (nome = 'Sorte' AND valor BETWEEN 1 AND 7) OR
-        (nome = 'Eletrificado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Congelado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Molhado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Envenenado' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Sangramento' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Queimadura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Tontura' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Cegueira' AND valor BETWEEN 0 AND 1) OR
-        (nome = 'Purificação' AND valor IS NULL)
-    )
+    valor SMALLINT CHECK (valor BETWEEN 1 AND 20)
 );
 
 CREATE TRIGGER atribui_id_efeito
@@ -275,11 +261,12 @@ CREATE TABLE jogador (
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
+    energia_atual SMALLINT DEFAULT 5 CHECK (energia_atual BETWEEN 0 AND energia),
     vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
-    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    nivel SMALLINT CHECK (nivel BETWEEN 1 AND 60),
     sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
-    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600),
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 6000),
     moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
@@ -633,21 +620,23 @@ EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
 
 
 CREATE TABLE recompensa_de_exploracao (
-    identificador_recompensa ID PRIMARY KEY,
-    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
-    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now()
+    identificador_area_interativa ID REFERENCES area_interativa(identificador_area_interativa),
+    identificador_jogador ID REFERENCES tipo_personagem(identificador_personagem),
+    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now(),
+    PRIMARY KEY (identificador_area_interativa, identificador_jogador)
 );
 
-CREATE TRIGGER atribui_id_recompensa_de_exploracao
+CREATE TRIGGER trigger_registrar_interacao
 BEFORE INSERT ON recompensa_de_exploracao
 FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
+EXECUTE FUNCTION tentar_coletar_item();
 
 
 
 CREATE TABLE item_missao (
     identificador_missao ID,
     identificador_item ID,
+    quantidade SMALLINT DEFAULT 1 CHECK (quantidade BETWEEN 1 AND 99),
     PRIMARY KEY (identificador_missao, identificador_item),
     FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)

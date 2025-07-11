@@ -3,6 +3,7 @@
 import pygame
 import json # Ou outro formato para carregar seus scripts
 from utilidades.constantes import * # Importa as constantes
+from entidades.item_inventario import ItemInventario
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from gerenciadores import DBManager, GerenciadorDeRecursos, GerenciadorDeTelas
@@ -62,6 +63,7 @@ class GerenciadorDeMissoes:
                 {'tipo': 'finalizar_missao'},
                 {'tipo': 'remover_gatilho_de_missao', 'id_area': 'are001', 'id_missao': 'mis002', 'x': 2560, 'y': 220, 'largura': 180, 'altura': 133},
                 {'tipo': 'inserir_gatilho_de_missao', 'id_area': 'are002', 'id_missao': 'mis003', 'x': 0, 'y': 0, 'largura': 150, 'altura': 600},
+                {'tipo': 'recompensa'},
                 {'tipo': 'batalha', 'inimigos_batalha': ['lobo_missao_002']},
             ],
             'mis003': [
@@ -69,37 +71,44 @@ class GerenciadorDeMissoes:
                 {'tipo': 'dialogo', 'missao_id': 'mis003'},
                 {'tipo': 'remover_gatilho_de_missao', 'id_area': 'are002', 'id_missao': 'mis003', 'x': 0, 'y': 0, 'largura': 150, 'altura': 600},
                 {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa'}
             ],
             'mis004': [
                 {'tipo': 'dialogo', 'missao_id': 'mis004'},
                 #{'tipo': 'escutar_vitoria_batalha'},
-                {'tipo': 'finalizar_missao'}
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis005': [
                 {'tipo': 'dialogo', 'missao_id': 'mis005'},
                 #{'tipo': 'escutar_interacao', 'tipo_evento_alvo': 'investigar'},
-                {'tipo': 'finalizar_missao'}
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis006': [
                 {'tipo': 'dialogo', 'missao_id': 'mis006'},
-                {'tipo': 'finalizar_missao'}
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis007': [
                 {'tipo': 'dialogo', 'missao_id': 'mis007'},
-                {'tipo': 'finalizar_missao'}
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis008': [
                 {'tipo': 'dialogo', 'missao_id': 'mis008'},
-                {'tipo': 'finalizar_missao'}
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis009': [
                 {'tipo': 'dialogo', 'missao_id': 'mis009'},
-                {'tipo': 'finalizar_missao'}
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis010': [
                 {'tipo': 'dialogo', 'missao_id': 'mis010'},
                 {'tipo': 'finalizar_missao'},
-                {'tipo': 'ativar_proxima_missao', 'id_missao': 'mis011'},
+                {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis011':[
                 {'tipo': 'cena_dialogo_missao', 'missao_id': 'mis011', 'chave_imagem_cena': CENA_JANTAR_COMUNITARIO},
@@ -132,7 +141,7 @@ class GerenciadorDeMissoes:
 
 
 
-    def update(self, dt_ms):
+    def atualizar(self, dt_ms):
         """
         Atualiza o estado do gerenciador de missões e avança no script.
         :param dt_ms: Delta time em milissegundos.
@@ -246,7 +255,7 @@ class GerenciadorDeMissoes:
             # Encontra o inimigo pelo ID de instância que demos a ele
             inimigo_alvo = None
             for inimigo in self.tela_jogo.inimigos:
-                if hasattr(inimigo, 'id_instancia') and inimigo.id_instancia == passo['id_instancia']:
+                if hasattr(inimigo, 'identificador_instancia_lacaio') and inimigo.identificador_instancia_lacaio == passo['id_instancia']:
                     inimigo_alvo = inimigo
                     break
             
@@ -278,13 +287,14 @@ class GerenciadorDeMissoes:
             inimigos_para_batalha = []
             for id_inimigo in passo['inimigos_batalha']:
                 for inimigo_sprite in self.tela_jogo.inimigos:
-                    if hasattr(inimigo_sprite, 'id_instancia') and inimigo_sprite.id_instancia == id_inimigo:
+                    if hasattr(inimigo_sprite, 'identificador_instancia_lacaio') and inimigo_sprite.identificador_instancia_lacaio == id_inimigo:
                         inimigos_para_batalha.append(inimigo_sprite)
+                        print(inimigos_para_batalha)
 
             if inimigos_para_batalha:
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
-                    inimigos_batalha=inimigos_para_batalha,
+                    inimigos_na_batalha=inimigos_para_batalha,
                     # Adicione quaisquer outros dados que sua tela de batalha precise
                 )
                 # A missão será finalizada quando a batalha terminar (ver Passo 3)
@@ -309,11 +319,47 @@ class GerenciadorDeMissoes:
         elif tipo_passo == 'recompensa':
             print(f"Recompensa: XP={passo.get('xp', 50)}, Item={passo.get('item_id', 'Nenhum')}")
             # Lógica para adicionar XP e itens ao jogador
+            self.jogador.experiencia_atual += passo.get('xp', 50)
+            self.jogador.atualizar_atributos_por_nivel()
+    
+            dados_do_item = self.banco_de_dados.buscar_item_recompensa_missao(self.missao_ativa_id)
+            if dados_do_item:
+                efeitos = self.banco_de_dados.buscar_efeitos_por_item(dados_do_item.identificador_item)
+            
+                item = ItemInventario(
+                    dados_do_item.identificador_item,
+                    dados_do_item.nome_item,
+                    dados_do_item.descricao_item,
+                    dados_do_item.tipo,
+                    dados_do_item.raridade,
+                    dados_do_item.quantidade
+                )
+                for efeito in efeitos:
+                    item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
+    
+                self.jogador.inserir_item_na_mochila(item, self.tela_jogo.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+                self.jogador.moedas += passo.get('moedas', 0)
+    
+                self.tela_jogo.notificador.adicionar_item(dados_do_item.nome_item, dados_do_item.quantidade)
+
+            self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
+                self.jogador.identificador_jogador,
+                self.jogador.energia_maxima,
+                self.jogador.vida_maxima,
+                self.jogador.nivel,
+                self.jogador.sorte,
+                self.jogador.energia_atual,
+                self.jogador.vida_atual,
+                self.jogador.experiencia_atual,
+                self.jogador.moedas
+            )
             self._avancar_passo()
 
         elif tipo_passo == 'inserir_gatilho_de_missao':
-            self.banco_de_dados.inserir_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'))
-
+            resultado = self.banco_de_dados.inserir_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'))
+            print(resultado)
+            if resultado:
+                print(f"Gatilho de missão inserido na área '{passo.get('id_area')}' para a missão '{passo.get('id_missao')}'.")
             self.tela_jogo.atualizar_areas_interativas_passivas()
 
             self._avancar_passo()
@@ -397,7 +443,7 @@ class GerenciadorDeMissoes:
             self._finalizar_dialogo_controlado() # Finaliza imediatamente se não houver textos
 
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """
         Processa inputs relevantes para eventos de missão, como avançar diálogos.
         """

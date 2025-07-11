@@ -48,10 +48,6 @@ BEGIN
         IF NEW.identificador_elemento_espacial IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_elemento_espacial" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    ELSIF TG_TABLE_NAME = 'recompensa_de_exploracao' THEN
-        IF NEW.identificador_recompensa IS NOT NULL THEN
-            RAISE EXCEPTION 'A coluna "identificador_recompensa" é gerada automaticamente; não forneça valor manualmente.';
-        END IF;
     ELSIF TG_TABLE_NAME = 'tipo_personagem' THEN
         IF NEW.identificador_personagem IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_personagem" é gerada automaticamente; não forneça valor manualmente.';
@@ -127,8 +123,6 @@ BEGIN
         NEW.identificador_area := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'tipo_elemento_espacial' THEN
         NEW.identificador_elemento_espacial := prefixo || lpad(numero_serial::text, 3, '0');
-    ELSIF TG_TABLE_NAME = 'recompensa_de_exploracao' THEN
-        NEW.identificador_recompensa := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'tipo_personagem' THEN
         NEW.identificador_personagem := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'instancia_lacaio' THEN

@@ -64,7 +64,7 @@ class Camera:
         self.offset_x = self.rect.x
         self.offset_y = self.rect.y
 
-    def update(self, dt_ms, target_rect=None): # dt_ms é delta time em milissegundos
+    def atualizar(self, dt_ms, target_rect=None): # dt_ms é delta time em milissegundos
         """
         Atualiza a posição da câmera com base no modo atual.
         :param dt_ms: Delta time em milissegundos (pygame.time.get_ticks() - último_tick).
@@ -126,7 +126,7 @@ class Camera:
         self.modo = 'movimento_suave'
         self.movimento_completo = False
 
-    def is_movimento_suave_completo(self):
+    def movimento_suave_completo(self):
         """Retorna True se o movimento suave da câmera terminou."""
         return self.movimento_completo
 
@@ -136,7 +136,7 @@ class Camera:
         self.movimento_completo = True # Reseta flag
 
 
-    def apply(self, entity_rect):
+    def aplicar_deslocamento_da_camera(self, retangulo_da_entidade):
         """
         Aplica o offset da câmera a um pygame.Rect de uma entidade,
         retornando a posição na tela.
@@ -149,9 +149,9 @@ class Camera:
         :param entity_rect: O pygame.Rect da entidade na coordenada do mundo.
         :return: Um novo pygame.Rect representando a posição da entidade na tela.
         """
-        return entity_rect.move(-self.rect.x, -self.rect.y)
+        return retangulo_da_entidade.move(-self.rect.x, -self.rect.y)
 
-    def apply_point(self, point_x, point_y):
+    def aplicar_deslocamento_por_ponto(self, ponto_x, ponto_y):
         """
         Aplica o offset da câmera a um ponto (x, y) do mundo,
         retornando a posição na tela.
@@ -160,4 +160,4 @@ class Camera:
         :param point_y: Coordenada Y do mundo.
         :return: Uma tupla (x_tela, y_tela) com a posição na tela.
         """
-        return point_x - self.rect.x, point_y - self.rect.y
+        return ponto_x - self.rect.x, ponto_y - self.rect.y
