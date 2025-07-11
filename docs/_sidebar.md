@@ -1,5 +1,14 @@
 <!-- docs/_sidebar.md -->
 
+- **História**
+  - [Capítulo 1](historia/capitulo01.md)
+  - [Capítulo 2](historia/capitulo02.md)
+  - [Capítulo 3](historia/capitulo03.md)
+  - [Capítulo 4](historia/capitulo04.md)
+  - [Interlúdio](historia/capitulo4.5.md)
+  - [Capítulo 5](historia/capitulo05.md)
+  - [Capítulo 6](historia/capitulo06.md)
+
 - **Módulo 1**
   - [Modelo Entidade-Relacionamento](modelagem/modelo-entidade-relacionamento.md)
   - [Modelo Relacional](modelagem/Modelo-Relacional.md)
