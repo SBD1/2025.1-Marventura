@@ -1177,6 +1177,403 @@ As tabelas 1 a 41 a seguir representam o dicionário de dados do jogo **Marventu
   </div>
 </details>
 
+### Tabela: `barco`
+
+<details>
+  <summary>Tabela 30 – Dicionário de Dados da Tabela Barco</summary>
+  <div align="center">
+    <p><strong>Tabela 30 – Dicionário de Dados da Tabela Barco</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_barco</code></td>
+          <td>Identificador único da tabela barco.</td>
+          <td>ID</td>
+          <td></td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Not NULL / Unique / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome do barco.</td>
+          <td>CHAR</td>
+          <td>40</td>
+          <td>-</td>
+          <td></td>
+          <td>Not NULL / Unique</td>
+        </tr>
+        <tr>
+          <td><code>tipo</code></td>
+          <td>Classificação do tipo de barco.</td>
+          <td>CHAR</td>
+          <td>30</td>
+          <td>ex: navio, jangada, escuna</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `negociacao`
+
+<details>
+  <summary>Tabela 31 – Dicionário de Dados da Tabela Negociacao</summary>
+  <div align="center">
+    <p><strong>Tabela 31 – Dicionário de Dados da Tabela Negociacao</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_negociacao</code></td>
+          <td>Identificador único da negociação.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs únicos</td>
+          <td>PK</td>
+          <td>Not NULL / Unique</td>
+        </tr>
+        <tr>
+          <td><code>id_progresso</code></td>
+          <td>Referência ao progresso que realiza a negociação.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela Progresso</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>id_npc</code></td>
+          <td>Referência ao NPC com quem a negociação foi feita.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela NPC</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>data_negociacao</code></td>
+          <td>Data e hora da negociação.</td>
+          <td>TIMESTAMP</td>
+          <td></td>
+          <td>Data e hora válida</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p>
+  </div>
+</details>
+
+
+### Tabela: `habilidade_fruta`
+
+<details>
+  <summary>Tabela 32 – Dicionário de Dados da Tabela Habilidade_fruta</summary>
+  <div align="center">
+    <p><strong>Tabela 32 – Dicionário de Dados da Tabela Habilidade_fruta</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_habilidade_fruta</code></td>
+          <td>Identificador único da habilidade proveniente de fruta.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs únicos</td>
+          <td>PK</td>
+          <td>Not NULL / Unique</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da habilidade da fruta.</td>
+          <td>CHAR</td>
+          <td>50</td>
+          <td>-</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p>
+  </div>
+</details>
+
+---
+
+### Tabela: `habilidade_arma`
+
+<details>
+  <summary>Tabela 33 – Dicionário de Dados da Tabela Habilidade_arma</summary>
+  <div align="center">
+    <p><strong>Tabela 33 – Dicionário de Dados da Tabela Habilidade_arma</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_habilidade_arma</code></td>
+          <td>Identificador único da habilidade associada à arma.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs únicos</td>
+          <td>PK</td>
+          <td>Not NULL / Unique</td>
+        </tr>
+        <tr>
+          <td><code>nome</code></td>
+          <td>Nome da habilidade da arma.</td>
+          <td>CHAR</td>
+          <td>50</td>
+          <td>-</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p>
+  </div>
+</details>
+
+---
+
+
+### Tabela: `estado_instancia_lacaio`
+
+<details>
+  <summary>Tabela 34 – Dicionário de Dados da Tabela Estado_instancia_lacaio</summary>
+  <div align="center">
+    <p><strong>Tabela 34 – Dicionário de Dados da Tabela Estado_instancia_lacaio</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_progresso</code></td>
+          <td>Referência ao progresso do jogador.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela Progresso</td>
+          <td>PK / FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>id_instancia_lacaio</code></td>
+          <td>Referência à instância do lacaio.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela Instancia_lacaio</td>
+          <td>PK / FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>vida_atual</code></td>
+          <td>Quantidade de vida atual do lacaio nessa instância.</td>
+          <td>SMALLINT</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>data_da_morte</code></td>
+          <td>Momento em que o lacaio morreu nessa instância, se aplicável.</td>
+          <td>TIMESTAMP</td>
+          <td></td>
+          <td>Data válida</td>
+          <td></td>
+          <td>NULL se não morreu</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p> 
+  </div>
+</details>
+
+---
+
+### Tabela: `recompensa_exploracao`
+
+<details>
+  <summary>Tabela 35 – Dicionário de Dados da Tabela Recompensa_exploracao</summary>
+  <div align="center">
+    <p><strong>Tabela 35 – Dicionário de Dados da Tabela Recompensa_exploracao</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_recompensa_exploracao</code></td>
+          <td>Identificador único da recompensa gerada pela exploração.</td>
+          <td>ID</td>
+          <td></td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Not NULL / Unique / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_area_interacao</code></td>
+          <td>Referência à área interativa onde a recompensa foi gerada.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela Area_interacao</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>data_da_tentativa</code></td>
+          <td>Data e hora da tentativa de exploração.</td>
+          <td>TIMESTAMP</td>
+          <td></td>
+          <td>Data e hora válida</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p> 
+  </div>
+</details>
+
+---
+
+### Tabela: `instancia_lacaio`
+
+<details>
+  <summary>Tabela 36 – Dicionário de Dados da Tabela Instancia_lacaio</summary>
+  <div align="center">
+    <p><strong>Tabela 36 – Dicionário de Dados da Tabela Instancia_lacaio</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome do Atributo</th>
+          <th>Descrição</th>
+          <th>Tipo de Dados</th>
+          <th>Tamanho</th>
+          <th>Valores Permitidos</th>
+          <th>É chave?</th>
+          <th>Outras Restrições</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>id_instancia_lacaio</code></td>
+          <td>Identificador único da instância do lacaio no mapa.</td>
+          <td>ID</td>
+          <td></td>
+          <td>Padrão do tipo ID</td>
+          <td>PK</td>
+          <td>Not NULL / Unique / CHECK</td>
+        </tr>
+        <tr>
+          <td><code>id_lacaio</code></td>
+          <td>Referência ao tipo base do lacaio.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela Lacaio</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>id_area</code></td>
+          <td>Referência à área onde o lacaio está posicionado.</td>
+          <td>ID</td>
+          <td></td>
+          <td>IDs da tabela Area</td>
+          <td>FK</td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_x</code></td>
+          <td>Posição horizontal do lacaio dentro da área.</td>
+          <td>SMALLINT</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+        <tr>
+          <td><code>coordenada_y</code></td>
+          <td>Posição vertical do lacaio dentro da área.</td>
+          <td>SMALLINT</td>
+          <td>3</td>
+          <td>0 a 999</td>
+          <td></td>
+          <td>Not NULL</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Autor: <a href="https://github.com/Diaxiz">Diassis</a>.</p> 
+  </div>
+</details>
+
+
+
+
 ---
 
 
