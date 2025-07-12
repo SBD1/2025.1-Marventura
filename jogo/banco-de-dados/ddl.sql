@@ -211,7 +211,7 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE area (
     identificador_area ID PRIMARY KEY,
     identificador_ilha ID REFERENCES ilha(identificador_ilha),
-    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\\-]+$'),
+    nome CHAR(30),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
     chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z _]+$'),
     chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z _]+$'),
