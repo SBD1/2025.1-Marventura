@@ -621,7 +621,7 @@ LEFT JOIN arma a ON ii.identificador_item = a.identificador_arma AND ti.tipo = '
 LEFT JOIN acessorio ac ON ii.identificador_item = ac.identificador_acessorio AND ti.tipo = 'ace'
 LEFT JOIN fruta f ON ii.identificador_item = f.identificador_fruta AND ti.tipo = 'fru'
 WHERE inv.identificador_personagem = %s
-AND inv.tipo_inventario = 'ger'
+AND inv.tipo_inventario = 'moc'
 AND ii.quantidade > 0
 ```
 
@@ -703,5 +703,5 @@ WHERE ti.identificador_item IS NULL;
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 29/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
-| `1.1` | adicionado as consultas | [Pablo Serra](https://github.com/Pabloserrapxx) | 16/06/2025 |  |  |
-| `1.2` | atualizado o documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 08/07/2025 |  |  |
+| `1.1` | adicionado as consultas | [Pablo Serra](https://github.com/Pabloserrapxx) | 16/06/2025 | - | - |
+| `1.2` | atualizado o documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 08/07/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 11/07/2025 |

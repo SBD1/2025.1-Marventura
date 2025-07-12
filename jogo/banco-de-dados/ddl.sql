@@ -209,7 +209,7 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE area (
     identificador_area ID PRIMARY KEY,
     identificador_ilha ID REFERENCES ilha(identificador_ilha),
-    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\\-]+$'),
+    nome CHAR(30),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
     chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z _]+$'),
     chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z _]+$'),
@@ -351,7 +351,7 @@ CREATE TABLE jogador (
     nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
     sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
-    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600),
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 6000),
     moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 

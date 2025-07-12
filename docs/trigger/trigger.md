@@ -706,4 +706,4 @@ COMMIT;
 
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
-| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 08/07/2025 |  |  |
+| `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 08/07/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 11/07/2025 |
