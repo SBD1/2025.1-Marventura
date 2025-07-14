@@ -4,7 +4,9 @@
 import pygame
 import sys
 from utilidades.constantes import *
-from gerenciadores import GerenciadorDeRecursos, GerenciadorDeTelas, DBManager
+from gerenciadores import GerenciadorDeRecursos
+from gerenciadores import DBManager
+from gerenciadores import GerenciadorDeTelas
 from telas import TelaJogo
 
 # Inicializa o Pygame (DEVE VIR ANTES DE CARREGAR FONTES/IMAGENS)
@@ -48,17 +50,15 @@ def executar_jogo():
                 rodando = False
                 continue # Pula o resto do loop para este evento
             # O gerenciador de telas lida com os eventos e a transição de telas
-            gerenciador_telas.handle_input(evento)
+            gerenciador_telas.processar_eventos(evento)
 
         # --- Atualização do Estado dos Elementos ---
         # O gerenciador de telas atualiza a tela ativa, que por sua vez atualiza suas entidades.
-        gerenciador_telas.update(dt)
+        gerenciador_telas.atualizar(dt)
 
         # --- Desenho ---
-        # Limpa a tela com uma cor de fundo antes de desenhar a nova cena
-        tela_principal.fill(PRETO)
-        # O gerenciador de telas sabe qual tela desenhar
-        gerenciador_telas.draw()
+        tela_principal.fill(PRETO) # Limpa a tela antes de desenhar
+        gerenciador_telas.desenhar() # O gerenciador de telas sabe qual tela desenhar
 
         # --- Atualização da Tela ---
         # pygame.display.flip() atualiza toda a superfície da tela para o que foi desenhado.

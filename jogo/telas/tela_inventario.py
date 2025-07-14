@@ -1,715 +1,843 @@
-# ARQUIVO CORRIGIDO E COMPLETO: jogo/telas/tela_inventario.py
+# telas/tela_inventario.py
 
 import pygame
-from .tela_modelo import TelaModelo
 from utilidades.constantes import *
+from .tela_modelo import TelaModelo
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
+    from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeTelas
+    from gerenciadores import GerenciadorDeEntidades
 
 class TelaInventario(TelaModelo):
     """
-    Representa a interface do inventário do jogador, com abas para status,
-    equipamentos e itens.
+    Representa a tela de inventário do jogo, onde o jogador pode visualizar seus itens.
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, db_manager, jogador_id,
-                 dados_retorno_ilha, dados_retorno_area, ponto_retorno_jogador, snapshot_fundo=None):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager', gerenciador_entidades: 'GerenciadorDeEntidades'):
         super().__init__(gerenciador_telas, gerenciador_recursos)
-        # --- Atributos essenciais ---
-        self.db_manager = db_manager
-        self.jogador_id = jogador_id
-        self.dados_retorno_ilha = dados_retorno_ilha
-        self.dados_retorno_area = dados_retorno_area
-        self.ponto_retorno_jogador = ponto_retorno_jogador
-        self.snapshot_fundo = snapshot_fundo  # Armazena a imagem de fundo que veio da tela de jogo
-        
-        # --- Estado da UI ---
-        self.aba_ativa_index = 0
-        self.item_selecionado = None
-        self.indice_item_selecionado = -1
-        self.scroll_offset = 0
-        
-        # --- Feedback de interface ---
-        self.feedback_message = ""
-        self.feedback_timer = 0
-        self.feedback_duration = 3 # Segundos
+        self.gerenciador_banco_de_dados = gerenciador_banco_de_dados
+        self.entidades = gerenciador_entidades
 
-        # --- NOVO: Estado do painel de informações do item ---
-        self.showing_item_info = False
-        self.item_details_to_show = None # Dicionário ou objeto com os detalhes do item
+        # Imagens de UI
+        self.fundo_inventario = None # Será carregado em _carregar_recursos
+        self.quadro_item_detalhes = self.gerenciador_recursos.obter_imagem(CHAVE_CAIXA_DE_TEXTO)
+        self.largura_quadro_detalhes = self.quadro_item_detalhes.get_width()
+        self.altura_quadro_detalhes = self.quadro_item_detalhes.get_height()
+        self.x_quadro_detalhes = (LARGURA_TELA - self.largura_quadro_detalhes) // 2
+        self.y_quadro_detalhes = ALTURA_TELA - self.altura_quadro_detalhes - 20 # Posição na parte inferior
 
-        # --- Carregamento e Configuração ---
+        # Dados do inventário
+        self.mochila = []
+        self.dados_jogador = None
+        self.lista_armas = []
+        self.lista_acessorios = []
+        self.lista_consumiveis = []
+        self.lista_outros = []
+        self.item_em_foco = None # Item atualmente sob o mouse
+
+        # Fontes
+        self.font_size_titulo = 30 # Tamanho base para títulos
+        self.font_size_texto_normal = 20 # Tamanho base para texto de item
+        self.font_size_texto_hover = 25 # Tamanho para texto de item em foco
+
+        self.fonte_titulo = None
+        self.fonte_texto = None
+        self.fonte_texto_hover = None
+        self.fonte_raridade = None # Nova fonte para a raridade
+
+        # Scroll
+        self.scroll_offset_armas = 0
+        self.scroll_offset_acessorios = 0
+        self.scroll_offset_consumiveis = 0
+        self.scroll_offset_outros = 0
+        self.itens_visiveis_por_coluna = 8 # Quantos itens visíveis por vez em cada categoria
+
+        # Posições base para o conteúdo do painel central (dentro do fundo_inventario)
+        self.x_painel_central = 114 # x do fundo_inventario + margem esquerda
+        self.y_painel_central = 88  # y do fundo_inventario + margem superior
+        self.largura_painel_central = 400 # Largura estimada do painel de itens
+        self.altura_painel_central = 400 # Altura estimada do painel de itens
+
+        # Posição para as listas de itens dentro do painel central
+        # Ajustado para deixar espaço para os botões de filtro
+        self.pos_lista_itens = (self.x_painel_central + 140, self.y_painel_central + 120) # 140, 120 pixels a partir do painel central
+        self.largura_coluna = self.largura_painel_central # A lista de itens ocupará a largura do painel central
+        self.altura_linha_item = 30
+
+        # Estado da aba atual
+        self.current_tab = "estado" # 'estado', 'armas', 'acessorios', 'consumiveis', 'especial'
+
+        # Estados dos filtros - Agora iniciam com um dos tipos específicos
+        self.current_filter_armas = 'espada' # 'espada', 'projetil'
+        self.current_filter_consumiveis = 'consumivel' # 'consumivel', 'nao_consumivel'
+        self.current_filter_acessorios = 'acessorio' # Apenas um tipo de filtro para esta aba
+        self.current_filter_especial = 'especial' # Apenas um tipo de filtro para esta aba
+
+        # Estado do menu de informações do item
+        self.showing_item_details_popup = False
+        self.item_details_to_show = None
+        self.menu_info_image = None
+        self.rect_menu_info = None
+        self.botao_fechar_menu_info = None
+        self.rect_botao_fechar_menu_info = None
+        self.botao_usar_item = None
+        self.rect_botao_usar_item = None
+
+
+        # Carrega os recursos e dados iniciais
         self._carregar_recursos()
-        self._carregar_dados() # Já chama _resetar_selecao()
-        self._definir_layout() 
 
-        # --- Carregamento e Configuração ---
-        self._carregar_recursos()
-        self._carregar_dados() # Já chama _resetar_selecao()
-        self._definir_layout()
 
     def _carregar_recursos(self):
-        """Carrega todas as fontes e imagens da UI de uma vez."""
-        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
-        self.fonte_stats = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO)
-        self.fonte_texto = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO)
-        self.fonte_botao = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO) # Adicionado se estava faltando
+        """
+        Carrega os recursos necessários para a tela de inventário, incluindo imagens dos botões e seus retângulos.
+        """
+        self.fundo_inventario = self.gerenciador_recursos.obter_imagem('inv_painel_fundo')
+        if not self.fundo_inventario:
+            print("[ERRO] Imagem de fundo do inventário 'inv_painel_fundo' não encontrada.")
+            self.fundo_inventario = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
+            self.fundo_inventario.fill(CINZA_ESCURO)
 
-        dados_jogador_temp = self.db_manager.buscar_jogador(self.jogador_id)
-        self.img_jogador_sprite = self.gerenciador_recursos.obter_imagem(f'{dados_jogador_temp.nome.strip()}_inventario')
-        
-        self.imagens_ui = {
-            'painel_fundo': self.gerenciador_recursos.obter_imagem('inv_painel_fundo'),
-            'botao_fechar': self.gerenciador_recursos.obter_imagem('inv_botao_fechar'),
-            'label_equip': self.gerenciador_recursos.obter_imagem('inv_label_equip'),
-            'label_estat': self.gerenciador_recursos.obter_imagem('inv_label_estat'),
-            'fundo_personagem': self.gerenciador_recursos.obter_imagem('inv_fundo_personagem'),
-            'inv_slot_item': self.gerenciador_recursos.obter_imagem('inv_slot_item'),
-            'inv_nada_aqui': self.gerenciador_recursos.obter_imagem('inv_nada_aqui'),
-            'inv_slot_arma_equipada': self.gerenciador_recursos.obter_imagem('inv_slot_arma_equipada'),
-            # NOVO: Imagem padrão para itens se não encontrada
-            'item_padrao': pygame.Surface((64, 64), pygame.SRCALPHA), # Um quadrado cinza transparente como fallback
+        # Novas imagens para os painéis de itens
+        self.painel_itens = self.gerenciador_recursos.obter_imagem('inv_painel_itens')
+        if not self.painel_itens:
+            print("[ERRO] Imagem 'inv_painel_itens' não encontrada. Usando fundo cinza.")
+            self.painel_itens = pygame.Surface((self.largura_painel_central, self.altura_painel_central))
+            self.painel_itens.fill(CINZA)
+
+        self.painel_vazio = self.gerenciador_recursos.obter_imagem('inv_vazio')
+        if not self.painel_vazio:
+            print("[ERRO] Imagem 'inv_vazio' não encontrada. Usando fundo cinza.")
+            self.painel_vazio = pygame.Surface((self.largura_painel_central, self.altura_painel_central))
+            self.painel_vazio.fill(CINZA_ESCURO)
+
+        # Novas imagens de estatísticas do jogador
+        self.estatistica_shuan = self.gerenciador_recursos.obter_imagem('estatistica_shuan')
+        if not self.estatistica_shuan:
+            print("[AVISO] Imagem 'estatistica_shuan' não encontrada.")
+        self.estatistica_silvie = self.gerenciador_recursos.obter_imagem('estatistica_silvie')
+        if not self.estatistica_silvie:
+            print("[AVISO] Imagem 'estatistica_silvie' não encontrada.")
+
+        # Imagem do menu de informações do item
+        self.menu_info_image = self.gerenciador_recursos.obter_imagem('menu_info')
+        if self.menu_info_image:
+            self.rect_menu_info = self.menu_info_image.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2))
+        else:
+            print("[AVISO] Imagem 'menu_info' não encontrada. O menu de informações do item não será exibido.")
+            self.rect_menu_info = pygame.Rect(0, 0, 400, 300) # Fallback rect
+            self.menu_info_image = pygame.Surface(self.rect_menu_info.size)
+            self.menu_info_image.fill(PRETO) # Fallback color
+
+        # Botão de fechar para o menu de informações do item (reutiliza a imagem existente)
+        self.botao_fechar_menu_info = self.gerenciador_recursos.obter_imagem('inv_botao_fechar')
+        if self.botao_fechar_menu_info and self.rect_menu_info:
+            self.rect_botao_fechar_menu_info = self.botao_fechar_menu_info.get_rect(topright=(self.rect_menu_info.right + self.botao_fechar_menu_info.get_width()-1, self.rect_menu_info.top + 10))
+        else:
+            print("[AVISO] Imagem 'inv_botao_fechar' não encontrada para o menu de informações do item.")
+            self.rect_botao_fechar_menu_info = pygame.Rect(0,0,0,0) # Fallback rect
+
+        # Botão "Usar" para o menu de informações do item
+        self.botao_usar_item = self.gerenciador_recursos.obter_imagem('inv_botao_usar') # Assumindo que esta imagem existe
+        if self.botao_usar_item and self.rect_menu_info:
+            self.rect_botao_usar_item = self.botao_usar_item.get_rect(center=(self.rect_menu_info.centerx, self.rect_menu_info.bottom - 30)) # 30 pixels acima da borda inferior
+        else:
+            print("[AVISO] Imagem 'inv_botao_usar' não encontrada. O botão 'Usar' não será exibido.")
+            # Fallback: criar uma superfície simples para o botão
+            self.botao_usar_item = pygame.Surface((100, 40))
+            self.botao_usar_item.fill(AZUL)
+            self.rect_botao_usar_item = self.botao_usar_item.get_rect(center=(self.rect_menu_info.centerx, self.rect_menu_info.bottom - 30))
+
+
+        # Carrega as fontes com os tamanhos definidos
+        # Certifique-se de que GerenciadorDeRecursos.obter_fonte pode aceitar um argumento 'size'
+        self.fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_SUBTITULO)
+        self.fonte_texto = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+        self.fonte_texto_hover = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_SUBTITULO)
+        self.fonte_raridade = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_HACHI_MARU_TEXTO)
+
+
+        # Botão de fechar principal do inventário
+        self.botao_fechar = self.gerenciador_recursos.obter_imagem('inv_botao_fechar')
+        self.rect_botao_fechar = self.botao_fechar.get_rect(topright=(self.x_painel_central + self.fundo_inventario.get_width(), 97))
+
+        # Botões laterais e seus retângulos
+        self.botoes_laterais = {}
+        y_inicial_botoes = 94 # Posição Y inicial para os botões laterais
+        x_inicial_botoes = self.x_painel_central # Posição X inicial para os botões laterais
+
+        # Botão Estado
+        img_estado_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_estado')
+        img_estado_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_estado_ativo')
+        rect_estado = img_estado_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes))
+        self.botoes_laterais['estado'] = {
+            'normal': img_estado_normal,
+            'ativo': img_estado_ativo,
+            'rect': rect_estado
         }
-        # Preenche o item_padrao
-        self.imagens_ui['item_padrao'].fill((100, 100, 100, 150))
 
-        self.icones_abas = { i: self.gerenciador_recursos.obter_imagem(k) for i, k in enumerate(['inv_tab_status', 'inv_tab_arma', 'inv_tab_acessorio', 'inv_tab_consumivel', 'inv_tab_outros'])}
-        self.icones_slots = {k: self.gerenciador_recursos.obter_imagem(f'inv_slot_{k}') for k in ['camisa', 'fruta', 'arma_especial']}
-        self.imagens_itens = {}
-        
-    def _obter_imagem_item(self, item):
-        """Obtém a imagem de um item, com cache para performance."""
-        if item.identificador_item not in self.imagens_itens:
-            # Tenta carregar a imagem do item usando o identificador
-            try:
-                self.imagens_itens[item.identificador_item] = self.gerenciador_recursos.obter_imagem(f'item_{item.identificador_item}')
-            except:
-                # Se não encontrar, usa uma imagem padrão (certifique-se de que 'item_padrao' exista ou crie uma Surface)
-                self.imagens_itens[item.identificador_item] = pygame.Surface((64, 64), pygame.SRCALPHA) # Fallback simples
-                self.imagens_itens[item.identificador_item].fill((100, 100, 100, 150)) # Cor cinza semi-transparente
-                print(f"AVISO: Imagem para item '{item.identificador_item}' não encontrada. Usando fallback.")
-        
-        return self.imagens_itens[item.identificador_item]
+        # Botão Arma
+        img_arma_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_arma')
+        img_arma_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_arma_ativo')
+        rect_arma = img_arma_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 83)) # Ajuste o espaçamento
+        self.botoes_laterais['armas'] = {
+            'normal': img_arma_normal,
+            'ativo': img_arma_ativo,
+            'rect': rect_arma
+        }
 
-    def _resetar_selecao(self):
-        """Reseta a seleção de item para evitar bugs entre abas."""
-        self.item_selecionado = None
-        self.indice_item_selecionado = -1
-        self.scroll_offset = 0
+        # Botão Acessório
+        img_acessorio_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_acessorio')
+        img_acessorio_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_acessorio_ativo')
+        rect_acessorio = img_acessorio_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 166))
+        self.botoes_laterais['acessorios'] = {
+            'normal': img_acessorio_normal,
+            'ativo': img_acessorio_ativo,
+            'rect': rect_acessorio
+        }
 
-    def _carregar_dados(self):
-        """Carrega e filtra os dados do inventário e do jogador."""
-        inventario_completo = self.db_manager.buscar_inventario_jogador(self.jogador_id)
-        self.dados_jogador = self.db_manager.buscar_jogador(self.jogador_id)
-        # NOVO: Carregar item equipado do jogador
-        self.arma_equipada = self.db_manager.buscar_arma_equipada(self.jogador_id) # Objeto (row) da arma equipada
+        # Botão Consumível
+        img_consumivel_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_consumivel')
+        img_consumivel_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_consumivel_ativo')
+        rect_consumivel = img_consumivel_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 249))
+        self.botoes_laterais['consumiveis'] = {
+            'normal': img_consumivel_normal,
+            'ativo': img_consumivel_ativo,
+            'rect': rect_consumivel
+        }
+
+        # Botão Especial (Outros)
+        img_especial_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_especial')
+        img_especial_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_especial_ativo')
+        rect_especial = img_especial_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 331))
+        self.botoes_laterais['especial'] = {
+            'normal': img_especial_normal,
+            'ativo': img_especial_ativo,
+            'rect': rect_especial
+        }
+
+        # Botões de filtro
+        self.botoes_filtro = {}
+        # Posição inicial para os botões de filtro dentro do painel central
+        x_filtro_inicial = self.x_painel_central + 375 # Margem do painel
+        y_filtro_inicial = self.y_painel_central + 33 # Margem do painel
+
+        # Filtros de Armas (apenas espada e projetil)
+        self.botoes_filtro['armas_espada'] = {
+            'ativo': self.gerenciador_recursos.obter_imagem('filtro_espada'),
+            'rect': self.gerenciador_recursos.obter_imagem('filtro_espada').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+        }
+        self.botoes_filtro['armas_projetil'] = {
+            'ativo': self.gerenciador_recursos.obter_imagem('filtro_projetil'),
+            'rect': self.gerenciador_recursos.obter_imagem('filtro_projetil').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+        }
+
+        # Filtros de Consumíveis (apenas consumivel e nao_consumivel)
+        self.botoes_filtro['consumiveis_consumivel'] = {
+            'ativo': self.gerenciador_recursos.obter_imagem('filtro_consumivel'),
+            'rect': self.gerenciador_recursos.obter_imagem('filtro_consumivel').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+        }
+        self.botoes_filtro['consumiveis_nao_consumivel'] = {
+            'ativo': self.gerenciador_recursos.obter_imagem('filtro_nao_consumivel'),
+            'rect': self.gerenciador_recursos.obter_imagem('filtro_nao_consumivel').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+        }
+
+        # Filtro de Acessórios (único)
+        self.botoes_filtro['acessorios_acessorio'] = {
+            'ativo': self.gerenciador_recursos.obter_imagem('filtro_acessorio'),
+            'rect': self.gerenciador_recursos.obter_imagem('filtro_acessorio').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+        }
+
+        # Filtro Especial (único)
+        self.botoes_filtro['especial_especial'] = {
+            'ativo': self.gerenciador_recursos.obter_imagem('filtro_especial'),
+            'rect': self.gerenciador_recursos.obter_imagem('filtro_especial').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+        }
+
+
+        # Carrega os dados do inventário e do jogador
+        self._carregar_dados_inventario()
+
+    def _carregar_dados_inventario(self):
+        """
+        Carrega os dados do inventário e do jogador do banco de dados.
+        Atualiza também os dados de vida e energia do jogador a partir da entidade do jogador.
+        """
+        if not self.entidades.jogador or not self.entidades.progresso_do_jogo:
+            print("[ERRO] Jogador ou progresso do jogo não disponíveis para carregar inventário.")
+            return
+
+        self.mochila = self.entidades.jogador.mochila
+        # print(f"[DEBUG] Mochila carregada: {len(self.mochila.itens)} itens")
+
+        # Atualiza self.dados_jogador a partir da entidade do jogador para obter os valores mais recentes
+        self.dados_jogador = self.entidades.jogador
+        # print(f"[DEBUG] Dados do jogador carregados: {self.dados_jogador.nome if self.dados_jogador else 'Nenhum'}")
+
 
         # Filtra o inventário em listas separadas
-        self.lista_armas = [item for item in inventario_completo if item.tipo_item == 'arm']
-        self.lista_acessorios = [item for item in inventario_completo if item.tipo_item == 'ace']
-        self.lista_consumiveis = [item for item in inventario_completo if item.tipo_item == 'con']
-        self.lista_outros = [item for item in inventario_completo if item.tipo_item in ['ncn', 'fru']]
+        self.lista_armas = [item for item in self.mochila.itens if item.tipo == 'arm']
+        self.lista_acessorios = [item for item in self.mochila.itens if item.tipo == 'ace']
+        # Consumíveis agora inclui 'con' e 'ncn' para permitir filtragem
+        self.lista_consumiveis = [item for item in self.mochila.itens if item.tipo in ['con', 'ncn']]
+        # Outros agora só inclui 'fru'
+        self.lista_outros = [item for item in self.mochila.itens if item.tipo == 'fru']
 
-        # Reinicia a seleção para evitar bugs
-        self._resetar_selecao()
+        # Ordena as listas por nome para facilitar a visualização
+        self.lista_armas.sort(key=lambda item: item.nome)
+        self.lista_acessorios.sort(key=lambda item: item.nome)
+        self.lista_consumiveis.sort(key=lambda item: item.nome)
+        self.lista_outros.sort(key=lambda item: item.nome)
 
-    def _definir_layout(self):
-        """Define o retângulo principal do painel e os retângulos dos botões."""
-        painel_img = self.imagens_ui.get('inv_painel_fundo')
-        if painel_img:
-            self.rect_painel = painel_img.get_rect(center=(LARGURA_TELA // 2 - 50, ALTURA_TELA // 2-50))
-        else: 
-            self.rect_painel = pygame.Rect(0, 0, 800, 500)
-            self.rect_painel.center = (LARGURA_TELA // 2-50, ALTURA_TELA // 2-40)
 
-        icone_fechar = self.imagens_ui.get('botao_fechar')
-        if icone_fechar:
-            pos_x_fechar = self.rect_painel.right - (icone_fechar.get_width() / 2) - 12
-            pos_y_fechar = self.rect_painel.top + 125
-            self.rect_botao_fechar = icone_fechar.get_rect(center=(pos_x_fechar, pos_y_fechar))
-        else:
-            self.rect_botao_fechar = pygame.Rect(0,0,0,0)
+    def processar_eventos(self, evento):
+        """
+        Processa eventos específicos da tela de inventário.
+        """
+        super().processar_eventos(evento) # Permite eventos base (ex: ESC para sair)
 
-        self.rects_abas = []
-        
-        base_x_aba = self.rect_painel.left + 190
-        base_y_aba = self.rect_painel.top + 132
-
-        # Aba 0: Status
-        if self.icones_abas.get(0):
-            icone = self.icones_abas[0]
-            pos_x = base_x_aba - (icone.get_width() / 2)
-            pos_y = base_y_aba + (0 * 85) # Espaçamento original
-            self.rects_abas.append(icone.get_rect(center=(pos_x, pos_y)))
-
-        # Aba 1: Arma
-        if self.icones_abas.get(1):
-            icone = self.icones_abas[1]
-            pos_x = base_x_aba - (icone.get_width() / 2)
-            pos_y = base_y_aba + (1 * 86) # Espaçamento original
-            self.rects_abas.append(icone.get_rect(center=(pos_x, pos_y - 3)))
-
-        # Aba 2: Acessório
-        if self.icones_abas.get(2):
-            icone = self.icones_abas[2]
-            pos_x = base_x_aba - (icone.get_width() / 2)
-            pos_y = base_y_aba + (2 * 87) # Espaçamento original
-            self.rects_abas.append(icone.get_rect(center=(pos_x, pos_y - 6)))
-
-        # Aba 3: Consumível
-        if self.icones_abas.get(3):
-            icone = self.icones_abas[3]
-            pos_x = base_x_aba - (icone.get_width() / 2)
-            pos_y = base_y_aba + (3 * 88) # Espaçamento original
-            self.rects_abas.append(icone.get_rect(center=(pos_x, pos_y - 12)))
-
-        # Aba 4: Outros
-        if self.icones_abas.get(4):
-            icone = self.icones_abas[4]
-            pos_x = base_x_aba - (icone.get_width() / 2)
-            pos_y = base_y_aba + (4 * 89) # Espaçamento original
-            self.rects_abas.append(icone.get_rect(center=(pos_x, pos_y - 24)))
-
-        button_width = 180
-        button_height = 40
-        spacing = 10
-
-        # Posição central para o grupo de botões
-        center_x_group = self.rect_painel.centerx + 50 # Ajuste conforme necessário
-        bottom_y_group = self.rect_painel.bottom - 60
-
-        # Botão de Ação (Equipar/Usar/Desequipar) - à esquerda do centro do grupo
-        self.rect_botao_acao = pygame.Rect(
-            center_x_group - (button_width + 35 + spacing / 2),
-            bottom_y_group,
-            button_width,
-            button_height
-        )
-
-        # Botão de Informação - à direita do centro do grupo
-        self.rect_botao_informacao = pygame.Rect(
-            center_x_group + 50 + spacing / 2,
-            bottom_y_group,
-            button_width,
-            button_height
-        )
-
-        # NOVO: Painel de Informações do Item
-        self.rect_info_panel = pygame.Rect(
-            self.rect_painel.centerx - 200, # Ajuste a posição X e Y
-            self.rect_painel.centery - 150,
-            400, 300 # Largura e altura do painel
-        )
-        self.rect_info_panel_close_button = pygame.Rect(
-            self.rect_info_panel.right - 30, self.rect_info_panel.top + 10, 20, 20
-        )
-        
-    def handle_input(self, evento):
-        """Gerencia cliques do mouse e teclas."""
-        if evento.type == pygame.KEYDOWN and (evento.key == pygame.K_ESCAPE or evento.key == pygame.K_i):
-            if self.showing_item_info: # Se o painel de info está aberto, ESC o fecha
-                self.showing_item_info = False
-                return
-            self._voltar_ao_jogo()
-            return
-
-        if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
-            pos = evento.pos
-
-            # NOVO: Se o painel de informações está aberto, só interage com ele
-            if self.showing_item_info:
-                if self.rect_info_panel_close_button.collidepoint(pos):
-                    self.showing_item_info = False
+        if self.showing_item_details_popup:
+            if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
+                # Lógica para o botão de fechar do menu de informações
+                if self.rect_botao_fechar_menu_info and self.rect_botao_fechar_menu_info.collidepoint(evento.pos):
+                    self.showing_item_details_popup = False
+                    self.item_details_to_show = None
+                    print("[DEBUG] Fechou o menu de informações do item.")
                     return
-                return # Consome o clique, não processa o resto
-
-            # Lógica para fechar o inventário
-            if self.rect_botao_fechar.collidepoint(pos):
-                self._voltar_ao_jogo()
-                return
-
-            # Lógica para mudar de aba
-            for i, rect_aba in enumerate(self.rects_abas):
-                if rect_aba.collidepoint(pos):
-                    self.aba_ativa_index = i
-                    self._resetar_selecao() # Reseta a seleção ao mudar de aba
+                # Lógica para o botão "Usar" do menu de informações
+                elif self.rect_botao_usar_item and self.rect_botao_usar_item.collidepoint(evento.pos):
+                    if self.item_details_to_show:
+                        print(f"[DEBUG] Usando item: {self.item_details_to_show.nome}")
+                        # Chama a função para usar o item
+                        self.entidades.jogador.usar_item_da_mochila(self.item_details_to_show)
+                        # Fecha o popup e recarrega os dados do inventário para refletir a mudança
+                        self.showing_item_details_popup = False
+                        self.item_details_to_show = None
+                        # A chamada para _carregar_dados_inventario() será feita no método 'atualizar'
                     return
+            return # Não processa outros eventos enquanto o popup está aberto
+
+        if evento.type == pygame.MOUSEBUTTONDOWN:
+            if evento.button == 1: # Clique esquerdo
+                # Lógica para o botão de fechar
+                if self.rect_botao_fechar.collidepoint(evento.pos):
+                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA) # Ou a tela anterior, se houver um histórico
+                    return
+
+                # Lógica para os botões laterais (abas)
+                for tab_name, button_data in self.botoes_laterais.items():
+                    if button_data['rect'].collidepoint(evento.pos):
+                        self.current_tab = tab_name
+                        print(f"[DEBUG] Aba alterada para: {self.current_tab}")
+                        self.item_em_foco = None # Limpa o item em foco ao mudar de aba
+                        return
+                
+                # Lógica para os botões de filtro (dentro das abas de itens)
+                if self.current_tab == 'armas':
+                    if self.botoes_filtro['armas_espada']['rect'].collidepoint(evento.pos):
+                        # Se o filtro atual é espada, alterna para projetil; caso contrário, define como espada
+                        self.current_filter_armas = 'projetil' if self.current_filter_armas == 'espada' else 'espada'
+                    elif self.botoes_filtro['armas_projetil']['rect'].collidepoint(evento.pos):
+                        # Se o filtro atual é projetil, alterna para espada; caso contrário, define como projetil
+                        self.current_filter_armas = 'espada' if self.current_filter_armas == 'projetil' else 'projetil'
+                    print(f"[DEBUG] Filtro de Armas alterado para: {self.current_filter_armas}")
+                
+                elif self.current_tab == 'consumiveis':
+                    if self.botoes_filtro['consumiveis_consumivel']['rect'].collidepoint(evento.pos):
+                        # Se o filtro atual é consumivel, alterna para nao_consumivel; caso contrário, define como consumivel
+                        self.current_filter_consumiveis = 'nao_consumivel' if self.current_filter_consumiveis == 'consumivel' else 'consumivel'
+                    elif self.botoes_filtro['consumiveis_nao_consumivel']['rect'].collidepoint(evento.pos):
+                        # Se o filtro atual é nao_consumivel, alterna para consumivel; caso contrário, define como nao_consumivel
+                        self.current_filter_consumiveis = 'consumivel' if self.current_filter_consumiveis == 'nao_consumivel' else 'nao_consumivel'
+                    print(f"[DEBUG] Filtro de Consumíveis alterado para: {self.current_filter_consumiveis}")
+                
+                # Acessórios e Especial não precisam de lógica de clique para filtro, pois têm apenas um filtro.
+
+                # Lógica para selecionar item (se houver)
+                # Esta lógica só deve ser ativada se uma aba de itens estiver ativa
+                if self.current_tab in ['armas', 'acessorios', 'consumiveis', 'especial']:
+                    # Determina qual lista de itens usar com base na aba atual E no filtro ativo
+                    lista_itens_filtrada = self._obter_lista_itens_filtrada()
+
+                    # Calcula a posição da coluna ativa - agora usa a posição do painel central
+                    pos_coluna_ativa = self.pos_lista_itens
+
+
+                    inicio = self._obter_scroll_offset_ativo()
+                    fim = min(len(lista_itens_filtrada), inicio + self.itens_visiveis_por_coluna)
+                    itens_visiveis = lista_itens_filtrada[inicio:fim]
+
+                    for i, item in enumerate(itens_visiveis):
+                        y_item = pos_coluna_ativa[1] + i * self.altura_linha_item
+                        rect_item = pygame.Rect(pos_coluna_ativa[0], y_item, self.largura_coluna, self.altura_linha_item)
+
+                        if rect_item.collidepoint(evento.pos):
+                            # Lógica para exibir o menu de informações do item
+                            self.item_details_to_show = item
+                            self.showing_item_details_popup = True
+                            print(f"[DEBUG] Clicou no item: {item.nome}. Exibindo detalhes.")
+                            return # Não processa mais cliques após abrir o popup
+        
+        elif evento.type == pygame.MOUSEWHEEL:
+            mouse_pos = pygame.mouse.get_pos()
             
-            # Lógica para cliques nos itens do inventário
-            # ATENÇÃO: Esta chamada deve vir ANTES da lógica dos botões de ação/informação
-            self._handle_item_click(pos)
+            # Determina qual coluna está sob o mouse para aplicar o scroll
+            # A rolagem agora só afeta a aba ativa e verifica se o mouse está sobre a área do painel central
+            if self._esta_sobre_area_painel_central(mouse_pos):
+                if self.current_tab == 'armas':
+                    self.scroll_offset_armas = self._aplicar_scroll(self.scroll_offset_armas, evento.y, self._obter_lista_itens_filtrada())
+                elif self.current_tab == 'acessorios':
+                    self.scroll_offset_acessorios = self._aplicar_scroll(self.scroll_offset_acessorios, evento.y, self._obter_lista_itens_filtrada())
+                elif self.current_tab == 'consumiveis':
+                    self.scroll_offset_consumiveis = self._aplicar_scroll(self.scroll_offset_consumiveis, evento.y, self._obter_lista_itens_filtrada())
+                elif self.current_tab == 'especial':
+                    self.scroll_offset_outros = self._aplicar_scroll(self.scroll_offset_outros, evento.y, self._obter_lista_itens_filtrada())
 
-            # NOVO: Lógica para clique no botão de ação
-            if self.item_selecionado: # Só verifica se há um item selecionado
-                if self.rect_botao_acao.collidepoint(pos):
-                    self._executar_acao_item_selecionado()
-                elif self.rect_botao_informacao.collidepoint(pos): # NOVO: Clique no botão Informação
-                    self.showing_item_info = True
-                    self.item_details_to_show = self.item_selecionado # Define o item para o painel de detalhes
-                    print(f"Mostrando informações de: {self.item_details_to_show.nome_item.strip()}")
-    
-    def _executar_acao_item_selecionado(self):
-        """Executa a ação (usar/equipar/desequipar) para o item atualmente selecionado."""
-        if not self.item_selecionado:
-            return
+    def _esta_sobre_area_painel_central(self, mouse_pos):
+        """Verifica se a posição do mouse está dentro da área do painel central de itens."""
+        # Ajusta o retângulo para a área onde os itens são realmente listados, abaixo dos filtros
+        rect_painel_central = pygame.Rect(self.pos_lista_itens[0], self.pos_lista_itens[1], self.largura_painel_central, self.altura_painel_central - 40)
+        return rect_painel_central.collidepoint(mouse_pos)
 
-        if self.item_selecionado.tipo_item == 'con': # Consumível
-            self._usar_consumivel(self.item_selecionado)
-        elif self.item_selecionado.tipo_item == 'arm': # Arma
-            # NOVO: Lógica Equipar/Desequipar para armas
-            is_equipped = (self.arma_equipada and 
-                           self.arma_equipada.identificador_item == self.item_selecionado.identificador_item)
-            if is_equipped:
-                self._desequipar_arma(self.item_selecionado)
+    def _aplicar_scroll(self, current_offset, scroll_delta, lista_itens):
+        """Aplica o scroll a um offset específico, respeitando os limites."""
+        total_itens = len(lista_itens)
+        max_offset = max(0, total_itens - self.itens_visiveis_por_coluna)
+        new_offset = current_offset - scroll_delta
+        return max(0, min(new_offset, max_offset))
+
+    def _obter_lista_itens_filtrada(self):
+        """Retorna a lista de itens filtrada com base na aba e filtro ativos."""
+        lista_base = []
+        current_filter = ''
+
+        if self.current_tab == 'armas':
+            lista_base = self.lista_armas
+            current_filter = self.current_filter_armas
+            if current_filter == 'espada':
+                return [item for item in lista_base if item.tipo_arma == 'esp']
+            elif current_filter == 'projetil':
+                return [item for item in lista_base if item.tipo_arma in ['est', 'arco']] # Estilingue e Arco
+        elif self.current_tab == 'acessorios':
+            lista_base = self.lista_acessorios
+            current_filter = self.current_filter_acessorios # Será 'acessorio'
+            # Acessórios não precisam de sub-filtro complexo, já estão filtrados por tipo_item == 'ace'
+        elif self.current_tab == 'consumiveis':
+            lista_base = self.lista_consumiveis # Esta lista agora contém 'con' e 'ncn'
+            current_filter = self.current_filter_consumiveis
+            if current_filter == 'consumivel':
+                return [item for item in lista_base if item.tipo == 'con']
+            elif current_filter == 'nao_consumivel':
+                return [item for item in lista_base if item.tipo == 'ncn']
+        elif self.current_tab == 'especial':
+            lista_base = self.lista_outros # Esta lista agora contém apenas 'fru'
+            current_filter = self.current_filter_especial # Será 'especial'
+            # Para a aba "especial", o filtro "especial" significa mostrar as frutas
+            return [item for item in lista_base if item.tipo == 'fru']
+
+        return lista_base # Retorna a lista completa da aba se o filtro for 'todos' ou único
+
+    def _obter_scroll_offset_ativo(self):
+        """Retorna o offset de scroll da aba ativa."""
+        if self.current_tab == 'armas':
+            return self.scroll_offset_armas
+        elif self.current_tab == 'acessorios':
+            return self.scroll_offset_acessorios
+        elif self.current_tab == 'consumiveis':
+            return self.scroll_offset_consumiveis
+        elif self.current_tab == 'especial':
+            return self.scroll_offset_outros
+        return 0
+
+
+    def atualizar(self, dt):
+        """
+        Atualiza a lógica interna da tela de inventário.
+        Recarrega os dados do inventário e do jogador para garantir que estejam sempre atualizados.
+        """
+        self._carregar_dados_inventario() # Garante que HP/PE e itens estejam atualizados
+        pass # Não há muita lógica de atualização contínua aqui, a menos que haja animações.
+
+    def desenhar(self, tela):
+        """
+        Desenha os elementos da tela de inventário.
+        """
+        # Posiciona o fundo_inventario em (144, 88)
+        tela.blit(self.fundo_inventario, (self.x_painel_central, self.y_painel_central))
+
+        mouse_pos = pygame.mouse.get_pos()
+        self.item_em_foco = None # Reseta o item em foco a cada frame
+
+        # Desenha o botão de fechar
+        tela.blit(self.botao_fechar, self.rect_botao_fechar)
+
+        # Desenha os botões laterais
+        for tab_name, button_data in self.botoes_laterais.items():
+            image_to_draw = button_data['ativo'] if self.current_tab == tab_name else button_data['normal']
+            tela.blit(image_to_draw, button_data['rect'])
+
+        # Desenha o conteúdo da aba ativa
+        if self.current_tab == 'estado':
+            self._desenhar_info_jogador(tela)
+        elif self.current_tab == 'armas':
+            # Sempre desenha o painel de itens, mesmo que vazio
+            tela.blit(self.painel_itens, (self.x_painel_central, self.y_painel_central))
+            self._desenhar_filtros_armas(tela) # Desenha os botões de filtro
+            lista_filtrada = self._obter_lista_itens_filtrada()
+            if lista_filtrada: # Só desenha a coluna de itens se houver itens para mostrar
+                self._desenhar_coluna_itens(tela, "Armas", lista_filtrada, self.pos_lista_itens, self.scroll_offset_armas, mouse_pos)
             else:
-                self._equipar_arma(self.item_selecionado)
-        elif self.item_selecionado.tipo_item == 'ace': # Acessório
-            self._equipar_acessorio(self.item_selecionado) # Por enquanto, acessório apenas equipa
-        elif self.item_selecionado.tipo_item == 'fru': # Fruta
-            pass # Adicione a lógica para frutas aqui
-        else:
-            self.feedback_message = "Este item não pode ser usado/equipado."
-            self.feedback_timer = self.feedback_duration
+                tela.blit(self.painel_vazio, (self.x_painel_central, self.y_painel_central))
+        elif self.current_tab == 'acessorios':
+            tela.blit(self.painel_itens, (self.x_painel_central, self.y_painel_central))
+            self._desenhar_filtros_acessorios(tela) # Desenha o botão de filtro
+            lista_filtrada = self._obter_lista_itens_filtrada()
+            if lista_filtrada:
+                self._desenhar_coluna_itens(tela, "Acessórios", lista_filtrada, self.pos_lista_itens, self.scroll_offset_acessorios, mouse_pos)
+            else:
+                tela.blit(self.painel_vazio, (self.x_painel_central, self.y_painel_central))
+        elif self.current_tab == 'consumiveis':
+            tela.blit(self.painel_itens, (self.x_painel_central, self.y_painel_central))
+            self._desenhar_filtros_consumiveis(tela) # Desenha os botões de filtro
+            lista_filtrada = self._obter_lista_itens_filtrada()
+            if lista_filtrada:
+                self._desenhar_coluna_itens(tela, "Consumíveis", lista_filtrada, self.pos_lista_itens, self.scroll_offset_consumiveis, mouse_pos)
+            else:
+                tela.blit(self.painel_vazio, (self.x_painel_central, self.y_painel_central))
+        elif self.current_tab == 'especial': # Corresponde a 'outros'
+            tela.blit(self.painel_itens, (self.x_painel_central, self.y_painel_central))
+            self._desenhar_filtros_especial(tela) # Desenha o botão de filtro
+            lista_filtrada = self._obter_lista_itens_filtrada()
+            if lista_filtrada:
+                self._desenhar_coluna_itens(tela, "Outros", lista_filtrada, self.pos_lista_itens, self.scroll_offset_outros, mouse_pos)
+            else:
+                tela.blit(self.painel_vazio, (self.x_painel_central, self.y_painel_central))
 
 
-    def _handle_item_click(self, pos):
-        """
-        Detecta qual item foi clicado na visualização atual (Armas, Acessórios, etc.)
-        e o marca como selecionado.
-        """
-        current_list = []
-        if self.aba_ativa_index == 1: # Armas
-            current_list = self.lista_armas
-        elif self.aba_ativa_index == 2: # Acessórios
-            current_list = self.lista_acessorios
-        elif self.aba_ativa_index == 3: # Consumíveis
-            current_list = self.lista_consumiveis
-        elif self.aba_ativa_index == 4: # Outros (não consumíveis e frutas)
-            current_list = self.lista_outros
+        # Desenha os detalhes do item em foco (sempre na mesma posição, independente da aba)
+        #if self.item_em_foco: # Esta linha foi comentada pois o popup de detalhes agora lida com isso
+        #    self._desenhar_detalhes_item(tela, self.item_em_foco)
 
-        if not current_list:
-            self._resetar_selecao()
-            return
+        # Desenha o menu de informações do item por cima de tudo
+        if self.showing_item_details_popup and self.item_details_to_show:
+            # Cria uma superfície semi-transparente preta para escurecer o fundo
+            s = pygame.Surface((LARGURA_TELA, ALTURA_TELA), pygame.SRCALPHA)
+            s.fill((0, 0, 0, 180)) # Cor preta com 180 de alpha (0-255)
+            tela.blit(s, (0, 0))
 
-        # Configurações da grade (copiadas de _draw_item_view para calcular a posição do clique)
-        slot_img = self.imagens_ui.get('inv_slot_item')
-        if not slot_img: return
+            self._desenhar_menu_info_item(tela, self.item_details_to_show)
 
-        x_inicial_grelha = self.rect_painel.left + 80
-        y_inicial_grelha = self.rect_painel.top + 120
-        colunas = 4
-        padding_grelha = 20
-        largura_slot = slot_img.get_width()
-        altura_slot = slot_img.get_height()
+    def _desenhar_filtros_armas(self, tela):
+        """Desenha os botões de filtro para a aba de armas."""
+        # Desenha o filtro ativo
+        if self.current_filter_armas == 'espada':
+            tela.blit(self.botoes_filtro['armas_espada']['ativo'], self.botoes_filtro['armas_espada']['rect'])
+        elif self.current_filter_armas == 'projetil':
+            tela.blit(self.botoes_filtro['armas_projetil']['ativo'], self.botoes_filtro['armas_projetil']['rect'])
 
-        for i, item in enumerate(current_list):
-            coluna_atual = i % colunas
-            linha_atual = i // colunas
+
+    def _desenhar_filtros_consumiveis(self, tela):
+        """Desenha os botões de filtro para a aba de consumíveis."""
+        # Desenha o filtro ativo
+        if self.current_filter_consumiveis == 'consumivel':
+            tela.blit(self.botoes_filtro['consumiveis_consumivel']['ativo'], self.botoes_filtro['consumiveis_consumivel']['rect'])
+        elif self.current_filter_consumiveis == 'nao_consumivel':
+            tela.blit(self.botoes_filtro['consumiveis_nao_consumivel']['ativo'], self.botoes_filtro['consumiveis_nao_consumivel']['rect'])
+
+
+    def _desenhar_filtros_acessorios(self, tela):
+        """Desenha o botão de filtro para a aba de acessórios (único)."""
+        button_data = self.botoes_filtro['acessorios_acessorio']
+        # Sempre ativo, pois é o único filtro
+        tela.blit(button_data['ativo'], button_data['rect'])
+
+    def _desenhar_filtros_especial(self, tela):
+        """Desenha o botão de filtro para a aba especial (único)."""
+        button_data = self.botoes_filtro['especial_especial']
+        # Sempre ativo, pois é o único filtro
+        tela.blit(button_data['ativo'], button_data['rect'])
+
+
+    def _desenhar_coluna_itens(self, tela, titulo_coluna, lista_itens, pos_coluna, scroll_offset, mouse_pos):
+        """Desenha uma coluna de itens com título e itens listados."""
+        x_coluna, y_coluna = pos_coluna
+
+        # Desenha os itens
+        inicio = scroll_offset
+        fim = min(len(lista_itens), inicio + self.itens_visiveis_por_coluna)
+        itens_visiveis = lista_itens[inicio:fim]
+
+        for i, item in enumerate(itens_visiveis):
+            y_item_top = y_coluna + i * self.altura_linha_item # Topo da área da linha do item
+            rect_item = pygame.Rect(x_coluna, y_item_top, self.largura_coluna, self.altura_linha_item)
+
+            mouse_sobre = rect_item.collidepoint(mouse_pos)
+
+            current_font = self.fonte_texto
+            if mouse_sobre:
+                self.item_em_foco = item # Define o item em foco
+                current_font = self.fonte_texto_hover
             
-            pos_x_slot = x_inicial_grelha + coluna_atual * (largura_slot + padding_grelha) + 34
-            pos_y_slot = y_inicial_grelha + linha_atual * (altura_slot + padding_grelha) - 34
+            # Desenha o nome do item e quantidade
+            texto_item = f"{item.nome} x{item.quantidade}"
             
-            item_rect = pygame.Rect(pos_x_slot, pos_y_slot, largura_slot, altura_slot)
-
-            if item_rect.collidepoint(pos):
-                self.item_selecionado = item
-                self.indice_item_selecionado = i
-                print(f"Item selecionado: {item.nome_item.strip()} (ID: {item.identificador_item})")
-                self.feedback_message = "" # Limpa feedback anterior ao selecionar novo item
-                return # Item clicado, não precisa verificar outros
-        
-        # Se clicou fora de qualquer item, deseleciona
-        self._resetar_selecao()
-
-
-    def _usar_consumivel(self, item_consumivel):
-        """Lógica para usar um item consumível."""
-        print(f"Tentando usar consumível: {item_consumivel.nome_item.strip()}")
-        sucesso = self.db_manager.usar_consumivel(self.jogador_id, item_consumivel.identificador_item)
-        if sucesso:
-            print(f"Consumível {item_consumivel.nome_item.strip()} usado com sucesso!")
-            self.feedback_message = f"{item_consumivel.nome_item.strip()} usado!"
-            self.feedback_timer = self.feedback_duration
-            self._carregar_dados() # Recarrega dados para atualizar contagem do item e stats do jogador
-        else:
-            print(f"Não foi possível usar o consumível {item_consumivel.nome_item.strip()}.")
-            self.feedback_message = f"Não pode usar {item_consumivel.nome_item.strip()}."
-            self.feedback_timer = self.feedback_duration
-
-    def _equipar_arma(self, item_arma):
-        """Lógica para equipar uma arma."""
-        print(f"Tentando equipar arma: {item_arma.nome_item.strip()}")
-        sucesso = self.db_manager.equipar_arma(self.jogador_id, item_arma.identificador_item)
-        if sucesso:
-            print(f"Arma {item_arma.nome_item.strip()} equipada com sucesso!")
-            self.feedback_message = f"{item_arma.nome_item.strip()} equipado!"
-            self.feedback_timer = self.feedback_duration
-            self._carregar_dados() # Recarrega dados para atualizar status de equipamento do jogador
-        else:
-            print(f"Não foi possível equipar a arma {item_arma.nome_item.strip()}.")
-            self.feedback_message = f"Não pode equipar {item_arma.nome_item.strip()}."
-            self.feedback_timer = self.feedback_duration
-
-
-    def _voltar_ao_jogo(self):
-        """Retorna para a tela de jogo."""
-        jogador_atualizado = self.db_manager.buscar_jogador(self.jogador_id)
-        self.gerenciador_telas.mudar_tela(
-            CHAVE_TRANSICAO_MAPA, dados_da_ilha=self.dados_retorno_ilha,
-            dados_da_area=self.dados_retorno_area, jogador=jogador_atualizado,
-            ponto_geracao_jogador=self.ponto_retorno_jogador)
-
-    def update(self, dt):
-        """Atualiza o timer do feedback visual."""
-        if self.feedback_timer > 0:
-            self.feedback_timer -= dt
-            if self.feedback_timer <= 0:
-                self.feedback_message = "" # Limpa a mensagem quando o timer acaba
-        if self.showing_item_info:
-            pass # Nenhuma atualização de lógica para o painel de info no momento
-
-    def _get_lista_atual(self):
-        """Retorna a lista de inventário ativa (vendedor ou jogador)."""
-        # A tela de inventário não tem modo comprar/vender, então retorna a lista baseada na aba
-        if self.aba_ativa_index == 1: # Armas
-            return self.lista_armas
-        elif self.aba_ativa_index == 2: # Acessórios
-            return self.lista_acessorios
-        elif self.aba_ativa_index == 3: # Consumíveis
-            return self.lista_consumiveis
-        elif self.aba_ativa_index == 4: # Outros
-            return self.lista_outros
-        return [] # Retorna lista vazia para aba de status
-
-    def _get_lista_visivel(self):
-        """Retorna a fatia da lista de itens que deve ser visível na tela. (Não usada no momento sem scroll)"""
-        return self._get_lista_atual() # No momento, toda a lista é visível
-
-    def draw(self, tela):
-        """Desenha todos os elementos da tela da loja."""
-        tela.fill(PRETO) 
-        if self.snapshot_fundo:
-            tela.blit(self.snapshot_fundo, (0, 0))
-        fundo_overlay = pygame.Surface((LARGURA_TELA, ALTURA_TELA), pygame.SRCALPHA)
-        fundo_overlay.fill((0, 0, 10, 150))
-        tela.blit(fundo_overlay, (0, 0))
-
-        if self.imagens_ui.get('painel_fundo'):
-            tela.blit(self.imagens_ui['painel_fundo'], self.rect_painel)
-        
-        self._draw_ui_base(tela)
-
-        # Lógica de decisão: desenha APENAS o conteúdo da aba ativa
-        if self.aba_ativa_index == 0:
-            self._draw_status_view(tela)
-        elif self.aba_ativa_index == 1:
-            self._draw_item_view(tela, self.lista_armas, "Armas")
-        elif self.aba_ativa_index == 2:
-            self._draw_item_view(tela, self.lista_acessorios, "Acessórios")
-        elif self.aba_ativa_index == 3:
-            self._draw_item_view(tela, self.lista_consumiveis, "Consumíveis")
-        elif self.aba_ativa_index == 4:
-            self._draw_item_view(tela, self.lista_outros, "Outros")
-
-        # NOVO: Desenha os botões de ação e informação
-        self._draw_item_action_buttons(tela)
-        
-        # NOVO: Desenha a mensagem de feedback
-        self._draw_feedback_message(tela)
-
-        # NOVO: Desenha o painel de informações do item se estiver ativo (último para sobrepor)
-        if self.showing_item_info:
-            self._draw_item_details_panel(tela)
-
-        
-    def _draw_ui_base(self, tela):
-            """Desenha os elementos que aparecem em todas as abas."""
-            for i, rect_aba in enumerate(self.rects_abas):
-                icone = self.icones_abas[i]
-                icone.set_alpha(255 if i == self.aba_ativa_index else 150)
-                tela.blit(icone, rect_aba)
+            # Renderiza o texto com a fonte atual
+            texto_renderizado = current_font.render(texto_item, True, BRANCO_CLARO) # Mantém a cor branca
             
-            if self.imagens_ui.get('botao_fechar'):
-                tela.blit(self.imagens_ui['botao_fechar'], self.rect_botao_fechar)
+            # Ajusta o texto se exceder a largura
+            if texto_renderizado.get_width() > self.largura_coluna - 10: # Pequena margem
+                texto_item = self.renderizar_texto_limitado(current_font, texto_item, BRANCO_CLARO, self.largura_coluna - 10)
+                texto_renderizado = current_font.render(texto_item, True, BRANCO_CLARO) # Renderiza novamente após truncar
 
-    def _draw_status_view(self, tela):
-        """Desenha o conteúdo da aba de Estado, com tudo alinhado ao painel principal."""
+            # Calcula o centro vertical para o texto dentro da linha do item
+            text_rect = texto_renderizado.get_rect()
+            text_y_centered = y_item_top + (self.altura_linha_item - text_rect.height) // 2
 
-        # Referências de posição para facilitar o alinhamento
-        painel_topo_y = self.rect_painel.top
-        painel_centro_x = self.rect_painel.centerx
-        painel_centro_y = self.rect_painel.centery
-        painel_esquerda_x = self.rect_painel.left
-        painel_direita_x = self.rect_painel.right
-
-        # Rótulos "Equip." e "Estat."
-        if self.imagens_ui.get('label_equip'):
-            label_equip_rect = self.imagens_ui['label_equip'].get_rect(center=(painel_esquerda_x + 270, painel_topo_y + 160))
-            tela.blit(self.imagens_ui['label_equip'], label_equip_rect)
-        
-        if self.imagens_ui.get('label_estat'):
-            label_estat_rect = self.imagens_ui['label_estat'].get_rect(center=(painel_direita_x - 150, painel_topo_y + 160))
-            tela.blit(self.imagens_ui['label_estat'], label_estat_rect)
-
-        # Slots de Equipamento (na esquerda)
-        y_slot_inicial = painel_topo_y + 150
-        x_slot = painel_esquerda_x + 150
-        slots_info = {'camisa': (x_slot + 120, y_slot_inicial + 88), 'fruta': (x_slot + 120, y_slot_inicial + 185), 'arma_especial': (x_slot + 120, y_slot_inicial + 285)}
-        for nome_slot, pos in slots_info.items():
-            if self.icones_slots.get(nome_slot):
-                slot_rect = self.icones_slots[nome_slot].get_rect(center=pos)
-                tela.blit(self.icones_slots[nome_slot], slot_rect)
-        
-        # NOVO: Desenha a arma equipada se houver
-        if self.arma_equipada:
-            # Posição do slot de arma equipada
-            pos_x_arma_equipada = slots_info['arma_especial'][0]
-            pos_y_arma_equipada = slots_info['arma_especial'][1]
-            slot_img = self.imagens_ui.get('inv_slot_arma_equipada') # Use a imagem de slot específica
+            self._desenhar_texto_com_borda(
+                tela,
+                texto_item,
+                current_font, # Passa a fonte atual (normal ou hover)
+                BRANCO_CLARO, # Cor do texto
+                PRETO, # Cor da borda
+                1, # Grossura da borda
+                (x_coluna + 5, text_y_centered), # Usa o y calculado para centralização
+                align='left'
+            )
             
-            if slot_img:
-                slot_rect = slot_img.get_rect(center=(pos_x_arma_equipada, pos_y_arma_equipada))
-                tela.blit(slot_img, slot_rect)
-                
-                imagem_arma = self._obter_imagem_item(self.arma_equipada)
-                if imagem_arma:
-                    # Redimensiona para caber no slot (ajuste o tamanho conforme a imagem do slot)
-                    img_scaled = pygame.transform.scale(imagem_arma, (slot_img.get_width() - 10, slot_img.get_height() - 10))
-                    img_rect = img_scaled.get_rect(center=slot_rect.center)
-                    tela.blit(img_scaled, img_rect)
-                
-                # Desenha o nome da arma equipada abaixo do slot
-                self._desenhar_texto_com_borda(tela, self.arma_equipada.nome_item.strip(), self.fonte_texto, BRANCO, PRETO, 1, (slot_rect.centerx, slot_rect.bottom + 5))
+            # Removido: Desenho do retângulo de destaque no hover
 
 
-        # Personagem e o seu fundo (no centro)
-        if self.imagens_ui.get('fundo_personagem'):
-            fundo_personagem_rect = self.imagens_ui['fundo_personagem'].get_rect(center=(painel_centro_x + 58,painel_centro_y+80))
-            tela.blit(self.imagens_ui['fundo_personagem'], fundo_personagem_rect)
-        
-        if self.img_jogador_sprite:
-            sprite_rect = self.img_jogador_sprite.get_rect(center=(painel_centro_x + 60, painel_centro_y + 80))
-            tela.blit(self.img_jogador_sprite, sprite_rect)
-        
-        # Nome do personagem (no topo)
-        self._desenhar_texto_com_borda(tela, self.dados_jogador.nome.strip(), self.fonte_titulo, (255,255,255), (53,38,16), 2, (painel_centro_x + 50, painel_topo_y + 160))
+    def _desenhar_detalhes_item(self, tela, item):
+        """Desenha os detalhes de um item na parte inferior da tela."""
+        tela.blit(self.quadro_item_detalhes, (self.x_quadro_detalhes, self.y_quadro_detalhes))
 
-        
-        x_base_stats = painel_direita_x - 150
-        y_base_stats = painel_topo_y + 150
-
-        # Valor do Nível
-        # Para ajustar a altura, mude o valor depois de 'y_base_stats +'
-        pos_y_nivel = y_base_stats + 10 
-        self._desenhar_texto_com_borda(tela, str(self.dados_jogador.nivel), self.fonte_texto, (255,255,255), (53,38,16), 2, (x_base_stats, pos_y_nivel + 100 ))
-
-        # Valor do PV
-        pos_y_pv = y_base_stats + 105
-        self._desenhar_texto_com_borda(tela, f"{self.dados_jogador.vida_atual}/{self.dados_jogador.vida}", self.fonte_texto, (255,255,255), (53,38,16), 2, (x_base_stats, pos_y_pv + 85))
-        
-        # Valor do PE
-        pos_y_pe = y_base_stats + 200
-        self._desenhar_texto_com_borda(tela, str(self.dados_jogador.energia), self.fonte_texto, (255,255,255), (53,38,16), 2, (x_base_stats, pos_y_pe + 75))
-        
-        # Adicione este novo método à sua classe
-
-    def _draw_item_view(self, tela, lista_de_itens, titulo_aba):
-        """Desenha uma visualização de itens com imagens nos slots."""
-        # Desenha o título da aba no topo
-        self._desenhar_texto_com_borda(tela, titulo_aba, self.fonte_titulo, BRANCO, PRETO, 2, (self.rect_painel.centerx, self.rect_painel.top + 55))
-
-        # Se a lista de itens estiver vazia, mostra a imagem "Não tem nada aqui!"
-        if not lista_de_itens:
-            img_nada_aqui = self.imagens_ui.get('inv_nada_aqui')
-            if img_nada_aqui:
-                pos_x_nada = self.rect_painel.centerx + 50
-                pos_y_nada = self.rect_painel.centery + 50
-                rect_img = img_nada_aqui.get_rect(center=(pos_x_nada, pos_y_nada))
-                tela.blit(img_nada_aqui, rect_img)
-            return
-
-        # Se houver itens, desenha a grelha
-        slot_img = self.imagens_ui.get('inv_slot_item')
-        if not slot_img: return
-
-        # Configurações da grelha
-        x_inicial_grelha = self.rect_painel.left + 80
-        y_inicial_grelha = self.rect_painel.top + 120
-        colunas = 4
-        padding_grelha = 20
-        largura_slot = slot_img.get_width()
-        altura_slot = slot_img.get_height()
-
-        # Loop para desenhar cada item
-        for i, item in enumerate(lista_de_itens):
-            coluna_atual = i % colunas
-            linha_atual = i // colunas
-            
-            # Posição do slot, ajustada para caber dentro da área cinza
-            pos_x_slot = x_inicial_grelha + coluna_atual * (largura_slot + padding_grelha) + 34
-            pos_y_slot = y_inicial_grelha + linha_atual * (altura_slot + padding_grelha) - 34
-            
-            # NOVO: Destaca o slot se for o item selecionado
-            
-
-            # 1. Desenha o slot de fundo
-            tela.blit(slot_img, (pos_x_slot, pos_y_slot))
-            
-            # 2. NOVO: Desenha a imagem do item no centro do slot
-            imagem_item = self._obter_imagem_item(item)
-            if imagem_item:
-                # Redimensiona a imagem se necessário para caber no slot
-                tamanho_max = min(largura_slot - 10, altura_slot - 10)  # Margem de 5px
-                if imagem_item.get_width() > tamanho_max or imagem_item.get_height() > tamanho_max:
-                    imagem_item = pygame.transform.scale(imagem_item, (tamanho_max, tamanho_max))
-                
-                # Centraliza a imagem no slot
-                rect_item = imagem_item.get_rect(center=(pos_x_slot + largura_slot//2, pos_y_slot + altura_slot//2))
-                tela.blit(imagem_item, rect_item)
-            
-            # 3. Desenha o nome do item abaixo do slot com seus offsets personalizados
-            nome_item = item.nome_item.strip()
-            # pos_nome_y original: pos_y_slot + altura_slot + 5
-            # Com seus offsets personalizados:
-            self._desenhar_texto_com_borda(tela, nome_item, self.fonte_texto, BRANCO, PRETO, 1, 
-                                           (pos_x_slot + -110 + largura_slot//2, pos_y_slot + altura_slot + 5 + -300))
-            
-            # 4. Desenha a quantidade no canto inferior direito do slot com seus offsets personalizados
-            texto_qtd = f"x{item.quantidade}"
-            # pos_qtd_x original: pos_x_slot + largura_slot - 10
-            # pos_qtd_y original: pos_y_slot + altura_slot - 10
-            # Com seus offsets personalizados:
-            self._desenhar_texto_com_borda(tela, texto_qtd, self.fonte_texto, AMARELO_CLARO, PRETO, 1, 
-                                           (pos_x_slot + largura_slot - 10 + -130, pos_y_slot + altura_slot - 10 + -285), align='right')
-
-    def _draw_action_button(self, tela):
-        """Desenha o botão de ação (Equipar/Usar) se um item equipável/usável estiver selecionado."""
-        if self.item_selecionado:
-            # Define o texto do botão com base no tipo de item
-            button_text = ""
-            if self.item_selecionado.tipo_item == 'arm':
-                button_text = "Equipar"
-            elif self.item_selecionado.tipo_item == 'con':
-                button_text = "Usar"
-            elif self.item_selecionado.tipo_item == 'ace': # NOVO: Para acessórios
-                button_text = "Equipar"
-            elif self.item_selecionado.tipo_item == 'fru':
-                button_text = "Comer" # Ou outro texto para frutas
-            
-            if button_text: # Só desenha o botão se houver uma ação definida
-                pygame.draw.rect(tela, VERDE, self.rect_botao_acao, border_radius=5)
-                self._desenhar_texto_com_borda(tela, button_text, self.fonte_botao, BRANCO, PRETO, 1, self.rect_botao_acao.center)
-
-    def _draw_feedback_message(self, tela):
-        """Desenha a mensagem de feedback na tela."""
-        if self.feedback_message and self.feedback_timer > 0:
-            alpha = min(255, int(255 * (self.feedback_timer / self.feedback_duration)))
-            color = (255, 255, 255, alpha) # Branco com transparência decrescente
-
-            text_surface = self.fonte_titulo.render(self.feedback_message, True, (color[0], color[1], color[2]))
-            text_surface.set_alpha(alpha) # Aplica o alpha na superfície do texto
-            
-            text_rect = text_surface.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA - 50))
-            tela.blit(text_surface, text_rect)
-    def _equipar_acessorio(self, item_acessorio):
-        """Lógica para equipar um acessório."""
-        print(f"Tentando equipar acessório: {item_acessorio.nome_item.strip()}")
-        sucesso = self.db_manager.equipar_acessorio(self.jogador_id, item_acessorio.identificador_item) # Chamada para o DBManager
-        if sucesso:
-            print(f"Acessório {item_acessorio.nome_item.strip()} equipado com sucesso!")
-            self.feedback_message = f"{item_acessorio.nome_item.strip()} equipado!"
-            self.feedback_timer = self.feedback_duration
-            self._carregar_dados() # Recarrega dados para atualizar status de equipamento do jogador
-        else:
-            print(f"Não foi possível equipar o acessório {item_acessorio.nome_item.strip()}.")
-            self.feedback_message = f"Não pode equipar {item_acessorio.nome_item.strip()}."
-            self.feedback_timer = self.feedback_duration
-    def _desequipar_arma(self, item_arma):
-        """Lógica para desequipar uma arma."""
-        print(f"Tentando desequipar arma: {item_arma.nome_item.strip()}")
-        sucesso = self.db_manager.desequipar_arma(self.jogador_id) # Não precisa do ID da arma, apenas do jogador
-        if sucesso:
-            print(f"Arma {item_arma.nome_item.strip()} desequipada com sucesso!")
-            self.feedback_message = f"{item_arma.nome_item.strip()} desequipado!"
-            self.feedback_timer = self.feedback_duration
-            self._carregar_dados() # Recarrega dados para atualizar status de equipamento do jogador
-        else:
-            print(f"Não foi possível desequipar a arma {item_arma.nome_item.strip()}.")
-            self.feedback_message = f"Não pode desequipar {item_arma.nome_item.strip()}."
-            self.feedback_timer = self.feedback_duration
-    def _draw_item_action_buttons(self, tela):
-            """Desenha os botões de ação (Equipar/Usar/Desequipar) e Informação."""
-            if self.item_selecionado:
-                # Botão de Ação
-                button_text = ""
-                button_color = VERDE # Cor padrão para ação
-                
-                # NOVO: Lógica para o texto do botão de ação
-                if self.item_selecionado.tipo_item == 'arm':
-                    is_equipped = (self.arma_equipada and 
-                                self.arma_equipada.identificador_item == self.item_selecionado.identificador_item)
-                    if is_equipped:
-                        button_text = "Desequipar"
-                        button_color = VERMELHO # Desequipar pode ser vermelho
-                    else:
-                        button_text = "Equipar"
-                elif self.item_selecionado.tipo_item == 'ace':
-                    # Você pode adicionar lógica para desequipar acessórios aqui também se tiver um campo no jogador_equipamento
-                    button_text = "Equipar"
-                elif self.item_selecionado.tipo_item == 'con':
-                    button_text = "Usar"
-                elif self.item_selecionado.tipo_item == 'fru':
-                    button_text = "Comer"
-                # Para outros tipos de item (ncn), button_text pode ser vazio ou ter um texto genérico se não houver ação direta
-
-                if button_text: # Só desenha o botão se houver uma ação definida
-                    pygame.draw.rect(tela, button_color, self.rect_botao_acao, border_radius=5)
-                    
-                    self._desenhar_texto_com_borda(tela, button_text, self.fonte_botao, BRANCO, PRETO, 1, self.rect_botao_acao.center)
-
-            # Botão de Informação (aparece para qualquer item selecionado)
-                pygame.draw.rect(tela, CINZA, self.rect_botao_informacao, border_radius=5)
-                self._desenhar_texto_com_borda(tela, "Informação", self.fonte_botao, BRANCO, PRETO, 1, self.rect_botao_informacao.center)
-    def _draw_item_details_panel(self, tela):
-        """Desenha o painel com as informações detalhadas do item selecionado."""
-        if not self.item_details_to_show:
-            return
-
-        # Fundo escuro para o painel de detalhes (overlay)
-        overlay_surface = pygame.Surface(tela.get_size(), pygame.SRCALPHA)
-        overlay_surface.fill((0, 0, 0, 180)) # Preto semi-transparente
-        tela.blit(overlay_surface, (0, 0))
-
-        # Painel principal do item
-        pygame.draw.rect(tela, (150, 100, 50), self.rect_info_panel, border_radius=5) # Cor marrom clara
-        pygame.draw.rect(tela, (50, 30, 10), self.rect_info_panel, 3, border_radius=5) # Borda mais escura
-
-        # Título (nome do item)
-        self._desenhar_texto_com_borda(tela, self.item_details_to_show.nome_item.strip(), self.fonte_titulo, BRANCO, PRETO, 2, (self.rect_info_panel.centerx, self.rect_info_panel.top + 30))
+        # Título do item
+        self._desenhar_texto_com_borda(
+            tela,
+            item.nome,
+            self.fonte_titulo,
+            VERDE_CLARO,
+            PRETO,
+            1,
+            (self.x_quadro_detalhes + self.largura_quadro_detalhes // 2, self.y_quadro_detalhes + 20),
+            align='center'
+        )
 
         # Descrição do item (com quebra de linha)
-        desc_rect = self.rect_info_panel.inflate(-40, -100) # Reduz o retângulo para o texto
-        desc_rect.top = self.rect_info_panel.top + 70 # Posiciona abaixo do título
-        self._draw_text_wrapped(tela, self.item_details_to_show.descricao.strip(), self.fonte_texto, BRANCO, desc_rect)
-
-        # Outras características (Raridade, Tipo, Preços)
-        y_start = desc_rect.bottom + 20
-
-        # NOVO: Verificação segura para 'Raridade'
-        raridade_text = "N/A"
-        if hasattr(self.item_details_to_show, 'raridade') and self.item_details_to_show.raridade is not None:
-            raridade_text = self.item_details_to_show.raridade.strip()
-        self._desenhar_texto_com_borda(tela, f"Raridade: {raridade_text}", self.fonte_texto, AMARELO_CLARO, PRETO, 1, (self.rect_info_panel.left + 20, y_start -70), align='left')
+        largura_texto_detalhes = self.largura_quadro_detalhes - 40 # Margem
+        linhas_desc = self.quebrar_texto(item.descricao, self.fonte_texto, largura_texto_detalhes)
         
-        # NOVO: Verificação segura para 'Preço de Compra'
-        preco_compra_text = "Não Comprável"
-        if hasattr(self.item_details_to_show, 'preco_compra') and self.item_details_to_show.preco_compra is not None:
-             preco_compra_text = f"Custo: {self.item_details_to_show.preco_compra} moedas"
-        self._desenhar_texto_com_borda(tela, preco_compra_text, self.fonte_texto, BRANCO, PRETO, 1, (self.rect_info_panel.left + 20, y_start + -50), align='left')
+        y_offset = self.y_quadro_detalhes + 60
+        for linha in linhas_desc:
+            texto_renderizado = self.fonte_texto.render(linha, True, PRETO)
+            tela.blit(texto_renderizado, (self.x_quadro_detalhes + 20, y_offset))
+            y_offset += self.fonte_texto.get_linesize()
 
-        # NOVO: Verificação segura para 'Preço de Venda'
-        preco_venda_text = "Não Vendável"
-        if hasattr(self.item_details_to_show, 'preco_venda') and self.item_details_to_show.preco_venda is not None:
-             preco_venda_text = f"Venda: {self.item_details_to_show.preco_venda} moedas"
-        self._desenhar_texto_com_borda(tela, preco_venda_text, self.fonte_texto, BRANCO, PRETO, 1, (self.rect_info_panel.left + 20, y_start + -30), align='left')
+        # Efeitos do item (se houver)
+        efeitos = item.resumir_efeitos() # Assumindo que o item tem este método
+        if efeitos:
+            self._desenhar_texto_com_borda(
+                tela,
+                f"Efeitos: {efeitos}",
+                self.fonte_texto,
+                AZUL_CLARO,
+                PRETO,
+                1,
+                (self.x_quadro_detalhes + 20, y_offset + 10),
+                align='left'
+            )
 
-        # Botão de Fechar do painel
-        pygame.draw.rect(tela, VERMELHO, self.rect_info_panel_close_button, border_radius=5)
-        self._desenhar_texto_com_borda(tela, "X", self.fonte_texto, BRANCO, PRETO, 1, self.rect_info_panel_close_button.center)
+    def _desenhar_menu_info_item(self, tela, item):
+        """Desenha o menu de informações detalhadas do item."""
+        if not self.menu_info_image or not self.rect_menu_info:
+            return # Não desenha se a imagem ou o rect não existirem
+
+        tela.blit(self.menu_info_image, self.rect_menu_info)
+        
+        if self.botao_fechar_menu_info and self.rect_botao_fechar_menu_info:
+            tela.blit(self.botao_fechar_menu_info, self.rect_botao_fechar_menu_info)
+
+        # Desenha o botão "Usar"
+        if self.botao_usar_item and self.rect_botao_usar_item:
+            tela.blit(self.botao_usar_item, self.rect_botao_usar_item)
+            # Adiciona texto ao botão "Usar"
+            self._desenhar_texto_com_borda(
+                tela,
+                "Usar",
+                self.fonte_titulo, # Pode ser uma fonte diferente para o botão
+                BRANCO_CLARO,
+                PRETO,
+                1,
+                self.rect_botao_usar_item.center,
+                align='center'
+            )
+
+
+        # Posições para o texto dentro do menu_info_image
+        x_base = self.rect_menu_info.x + 50 # Margem interna
+        y_base = self.rect_menu_info.y + 50 # Margem interna
+
+        # Título do item
+        self._desenhar_texto_com_borda(
+            tela,
+            item.nome,
+            self.fonte_titulo,
+            VERDE_CLARO,
+            PRETO,
+            1,
+            (self.rect_menu_info.centerx, y_base),
+            align='center'
+        )
+
+        # Descrição do item (com quebra de linha)
+        largura_texto_detalhes = self.rect_menu_info.width - 100 # Largura do menu - margens
+        linhas_desc = self.quebrar_texto(item.descricao, self.fonte_texto, largura_texto_detalhes)
+        
+        y_offset = y_base + self.fonte_titulo.get_height() + 20 # Abaixo do título
+        for linha in linhas_desc:
+            texto_renderizado = self.fonte_texto.render(linha, True, PRETO)
+            # Centraliza o texto horizontalmente dentro da área de detalhes
+            text_rect = texto_renderizado.get_rect(centerx=self.rect_menu_info.centerx)
+            tela.blit(texto_renderizado, (text_rect.x, y_offset))
+            y_offset += self.fonte_texto.get_linesize()
+
+        # Efeitos do item (se houver)
+        efeitos = item.resumir_efeitos() # Assumindo que o item tem este método
+        if efeitos:
+            self._desenhar_texto_com_borda(
+                tela,
+                f"Efeitos: {efeitos}",
+                self.fonte_texto,
+                AZUL_CLARO,
+                PRETO,
+                1,
+                (self.rect_menu_info.centerx, y_offset + 10),
+                align='center'
+            )
+        
+        # Raridade (separado em duas partes)
+        texto_raridade_fixo = "Raridade: "
+        texto_raridade_valor = str(item.raridade)
+
+        # Renderiza a primeira parte com fonte_texto
+        render_raridade_fixo = self.fonte_texto.render(texto_raridade_fixo, True, AMARELO)
+        
+        # Renderiza a segunda parte com fonte_raridade
+        render_raridade_valor = self.fonte_raridade.render(texto_raridade_valor, True, AMARELO)
+
+        # Calcula a largura total combinada para centralizar
+        largura_total_raridade = render_raridade_fixo.get_width() + render_raridade_valor.get_width()
+        
+        # Calcula a posição X inicial para centralizar o conjunto
+        x_raridade_inicial = self.rect_menu_info.centerx - (largura_total_raridade // 2)
+        y_raridade = y_offset + 40 # Posição Y abaixo dos efeitos
+
+        # Desenha a primeira parte
+        self._desenhar_texto_com_borda(
+            tela,
+            texto_raridade_fixo,
+            self.fonte_texto,
+            AMARELO,
+            PRETO,
+            1,
+            (x_raridade_inicial, y_raridade),
+            align='left' # Alinha à esquerda da posição inicial calculada
+        )
+
+        # Desenha a segunda parte imediatamente após a primeira
+        self._desenhar_texto_com_borda(
+            tela,
+            texto_raridade_valor,
+            self.fonte_raridade,
+            AMARELO,
+            PRETO,
+            1,
+            (x_raridade_inicial + render_raridade_fixo.get_width(), y_raridade),
+            align='left' # Alinha à esquerda da posição final da primeira parte
+        )
+
+
+    def _desenhar_info_jogador(self, tela):
+        """Desenha informações básicas do jogador (HP, PE, Moedas) na tela."""
+        # Posição para as informações do jogador (centralizado no painel central)
+        x_info = self.x_painel_central
+        y_info = self.y_painel_central
+
+        # Desenha a imagem do personagem baseado no nome
+        imagem_personagem = None
+        if self.dados_jogador.nome == "Shuan" and self.estatistica_shuan:
+            imagem_personagem = self.estatistica_shuan
+        elif self.dados_jogador.nome == "Silvie" and self.estatistica_silvie:
+            imagem_personagem = self.estatistica_silvie
+        
+        if imagem_personagem:
+            # Posição da imagem do personagem (ajuste conforme o layout desejado)
+            # Exemplo: acima das informações de texto
+            rect_imagem = imagem_personagem.get_rect(topleft=(x_info, y_info))
+            tela.blit(imagem_personagem, rect_imagem)
+
+        self._desenhar_texto_com_borda(
+            tela,
+            str(self.dados_jogador.nivel),
+            self.fonte_titulo,
+            (255, 255, 255),
+            PRETO,
+            1,
+            (x_info + 533, y_info + 192),
+            align='center'
+        )
+        self._desenhar_texto_com_borda(
+            tela,
+            f"{self.dados_jogador.vida_atual}/{self.dados_jogador.vida_maxima}",
+            self.fonte_titulo,
+            (255, 255, 255),
+            PRETO,
+            1,
+            (x_info + 533, y_info + 274),
+            align='center'
+        )
+        self._desenhar_texto_com_borda(
+            tela,
+            f"{self.dados_jogador.energia_atual}/{self.dados_jogador.energia_maxima}",
+            self.fonte_titulo,
+            (255, 255, 255),
+            PRETO,
+            1,
+            (x_info + 533, y_info + 354),
+            align='center'
+        )
+
+        # Adicione mais atributos do jogador aqui, se desejar
+
+    # Métodos auxiliares copiados e adaptados da TelaModelo/TelaBatalha
+    def renderizar_texto_limitado(self, fonte, texto, cor, largura_max):
+        """Limita o texto para caber na largura máxima, adicionando '...' se necessário."""
+        texto_final = texto
+        while fonte.size(texto_final)[0] > largura_max and len(texto_final) > 0:
+            texto_final = texto_final[:-1]
+        if texto_final != texto: # Se o texto foi truncado
+            if len(texto_final) > 3: # Garante que há espaço para "..."
+                texto_final = texto_final[:-3] + "..."
+            else: # Se o texto é muito curto, apenas trunca
+                texto_final = "..."
+        return texto_final
+
+    def quebrar_texto(self, texto, fonte, largura_max):
+        """Quebra um texto em múltiplas linhas para caber em uma largura máxima."""
+        palavras = texto.split(" ")
+        linhas = []
+        linha_atual = ""
+
+        for palavra in palavras:
+            test_linha = linha_atual + palavra + " "
+            if fonte.size(test_linha)[0] <= largura_max:
+                linha_atual = test_linha
+            else:
+                linhas.append(linha_atual.strip())
+                linha_atual = palavra + " "
+
+        if linha_atual:
+            linhas.append(linha_atual.strip())
+
+        return linhas

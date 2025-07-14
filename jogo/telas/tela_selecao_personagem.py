@@ -4,6 +4,8 @@ import pygame
 import sys
 from .tela_modelo import TelaModelo
 from utilidades.constantes import *
+from gerenciadores import GerenciadorDeEntidades
+from entidades import Jogador
 
 class TelaSelecaoPersonagem(TelaModelo):
     """
@@ -11,8 +13,12 @@ class TelaSelecaoPersonagem(TelaModelo):
     Ao escolher, solicita ao GerenciadorDeTelas para iniciar o jogo no mapa inicial,
     com o personagem selecionado e o ponto de entrada de "novo jogo".
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos): # Adiciona gerenciador_telas
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados): # Adiciona gerenciador_telas
         super().__init__(gerenciador_telas, gerenciador_recursos)
+        self.gerenciador_entidades = GerenciadorDeEntidades()
+
+        self.banco_de_dados = gerenciador_banco_de_dados
+        self.dados_slot = self.gerenciador_entidades.progresso_do_jogo
 
         # --- Recursos específicos da Tela de Seleção de Personagem ---
         self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
@@ -25,8 +31,8 @@ class TelaSelecaoPersonagem(TelaModelo):
             self.imagem_fundo.fill(CINZA_ESCURO) # Fallback
 
         # Carregue imagens dos personagens aqui se forem desenhadas na UI desta tela
-        self.imagem_menino_ui = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADO)
-        self.imagem_menina_ui = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADA)
+        self.imagem_menino_ui = self.gerenciador_recursos.obter_imagem(SHUAN)
+        self.imagem_menina_ui = self.gerenciador_recursos.obter_imagem(SILVIE)
 
         # --- Constantes de Layout da Tela de Seleção ---
         self._largura_opcao = 250 # Largura da área clicável da opção
@@ -63,26 +69,57 @@ class TelaSelecaoPersonagem(TelaModelo):
         )
         self._texto_botao_voltar = "Voltar"
 
-    def handle_input(self, evento):
-        super().handle_input(evento) # Chama o handle_input da base para eventos comuns (ex: QUIT)
+
+
+    def processar_eventos(self, evento):
+        super().processar_eventos(evento) # Chama o processar_eventos da base para eventos comuns (ex: QUIT)
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if evento.button == 1: # Clique com o botão esquerdo
                 if self._rect_opcao_menino.collidepoint(evento.pos):
                     print(f"Selecionado {SHUAN}! Iniciando novo jogo...")
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=SHUAN)
+                    jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.criar_novo_jogo(SHUAN, self.dados_slot.identificador_progresso)
                 elif self._rect_opcao_menina.collidepoint(evento.pos):
                     print(f"Selecionado {SILVIE}! Iniciando novo jogo...")
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO, personagem=SILVIE)
+                    jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.criar_novo_jogo(SILVIE, self.dados_slot.identificador_progresso)
                 elif self._rect_botao_voltar.collidepoint(evento.pos):
                     print("Voltando ao Menu Principal...")
                     self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
+                    return None
+
+                self.gerenciador_entidades.jogador = Jogador(
+                    gerenciador_banco_de_dados=self.banco_de_dados,
+                    gerenciador_recursos=self.gerenciador_recursos,
+                    x_inicial=jogador.coordenada_x,
+                    y_inicial=jogador.coordenada_y,
+                    identificador_jogador=jogador.identificador_jogador,
+                    nome=jogador.nome,
+                    descricao=jogador.descricao,
+                    energia_maxima=jogador.energia_maxima,
+                    vida_maxima=jogador.vida_maxima,
+                    nivel=jogador.nivel,
+                    sorte=jogador.sorte,
+                    energia_atual=jogador.energia_atual,
+                    vida_atual=jogador.vida_atual,
+                    experiencia_atual=jogador.experiencia_atual,
+                    moedas=jogador.moedas_totais,
+                    orientacao='direita',
+                    mochila=mochila_jogador,
+                    kit=kit_jogador,
+                    id_inventario=id_inventario
+                )
+                self.gerenciador_entidades.mochila_jogador = mochila_jogador
+                self.gerenciador_entidades.kit_jogador = kit_jogador
+                self.gerenciador_entidades.ilha_atual = ilha
+                self.gerenciador_entidades.area_atual = area
+
+                self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO)
         return None
 
-    def update(self, dt):
+    def atualizar(self, dt):
         return None
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         # Desenha o fundo
         tela.blit(self.imagem_fundo, (0, 0))
 

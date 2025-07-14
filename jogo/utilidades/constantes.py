@@ -15,12 +15,26 @@ PRETO = (53, 38, 16)
 VERMELHO = (255, 0, 0)
 VERDE = (0, 255, 0)
 AZUL = (0, 0, 255)
+AZUL_CLARO = (0, 191, 255)
 AMARELO = (255, 255, 0)
 ROXO = (128, 0, 128)
 CINZA = (150, 150, 150)
 CINZA_ESCURO = (100, 100, 100)
 COR_TEXTO_SALVAR = (53, 38, 16) # Cor específica para texto de salvar
-AMARELO_CLARO = (255, 255, 153) 
+AMARELO_CLARO = (255, 255, 153)
+VERDE_CLARO = pygame.Color("#23EA52")
+BRANCO_CLARO = pygame.Color("#F0F0F0")
+AZUL_CLARO = pygame.Color("#4B85C8")
+
+# --- Tags de Alvo ---
+TAGS_DE_ALVO = {
+    "fila": ["Alvo Único", "Primeiro", "No Chão"],
+    "alvo_terrestre": ["Alvo Único", "No Chão"],
+    "terrestre": ["Todos", "No Chão"],
+    "alvo_livre": ["Alvo Único", "No Chão", "No Ar"],
+    "area": ["Todos", "No Chão", "No Ar"]
+}
+
 # --- Animação do Jogador ---
 VELOCIDADE_ANIMACAO_CAMINHADA = 0.15 # Segundos por frame na animação de caminhada (ajuste conforme quiser)
 FPS = 60 # Quadros por segundo
@@ -29,7 +43,7 @@ FPS = 60 # Quadros por segundo
 VELOCIDADE_ANIMACAO_INIMIGO = 0.2
 
 # --- Constantes do Jogador ---
-VELOCIDADE_JOGADOR = 7 # Exemplo de velocidade padrão para o jogador
+VELOCIDADE_JOGADOR = 5 # Exemplo de velocidade padrão para o jogador
 LARGURA_JOGADOR = 80
 ALTURA_JOGADOR = 120
 
@@ -55,7 +69,9 @@ CHAVE_TRANSICAO_INVENTARIO = 'inventario'
 
 # --- Estados do Inimigo ---
 ESTADO_INIMIGO_PARADO = 'parado'
-ESTADO_INIMIGO_MOVENDO = 'movendo'
+ESTADO_INIMIGO_PATRULHANDO = 'patrulhando'
+ESTADO_INIMIGO_ALERTA = 'alerta'
+ESTADO_INIMIGO_PERSEGUINDO = 'perseguindo'
 ESTADO_INIMIGO_ATACANDO = 'atacando'
 ESTADO_INIMIGO_RECARGA = 'recarregando'
 
@@ -76,6 +92,15 @@ SHUAN = 'Shuan'
 # --- Inimigos ---
 INIMIGO_LOBO = 'Lobo'
 INIMIGO_CORVO = 'Corvo'
+
+# --- Habitantes ---
+BIGODINI = 'campones_b'
+TIAO_PALHA = 'campones_a'
+LINA_PANELA = 'camponesa_a'
+TIA_COTINHA = 'camponesa_b'
+SR_LEE = 'lee'
+SR_LEE_LOGISTA = 'lee_busto'
+
 
 # --- Identificadores de Mapas ---
 ID_MAPA_OCEANO = 'oceano'
@@ -125,6 +150,30 @@ CHAVE_ICONE_ALERTA = 'icone_alerta'
 CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
 CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
 CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
+CHAVE_CAIXA_DIALOGO = 'caixa_dialogo'
+
+CHAVE_FONTE_CHERRY_TITULO = 'fonte_cherry_titulo'
+CHAVE_FONTE_CHERRY_SUBTITULO = 'fonte_cherry_subtitulo'
+CHAVE_FONTE_CHERRY_TEXTO = 'fonte_cherry_texto'
+CHAVE_FONTE_HACHI_MARU_TEXTO = 'fonte_hachi_maru_texto'
+CHAVE_ICONE_CORACAO = 'icone_coracao'
+CHAVE_ICONE_ENERGIA = 'icone_energia'
+CHAVE_ICONE_MOEDA = 'icone_moeda'
+
+CHAVE_MENU_SELECAO_HABILIDADE = 'menu_selecao_habilidade'
+CHAVE_MENU_ITENS = 'menu_itens'
+CHAVE_CAIXA_DE_TEXTO = 'caixa_de_texto'
+CHAVE_BARRA_DE_ESTADO = 'barra_de_estado'
+CHAVE_CAMPO_DE_BATALHA_CAMPOS = 'campo_de_batalha_campos'
+
+# --- Chaves de Ação em Batalhas ---
+CHAVE_ACAO_ESTRATEGIAS = 'acao_estrategias'
+CHAVE_ACAO_MOCHILA = 'acao_mochila'
+CHAVE_ACAO_FRUTA = 'acao_fruta'
+CHAVE_ACAO_SOCO_SILVIE = 'acao_soco_silvie'
+CHAVE_ACAO_SOCO_SHUAN = 'acao_soco_shuan'
+CHAVE_ACAO_ESPADA = 'acao_espada'
+CHAVE_ACAO_PROJETIL = 'acao_projetil'
 
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
@@ -145,6 +194,8 @@ CHAVE_CENARIO_CIDADE_PRACA_CAMADA_SUPERIOR = 'cenario_lurien_praca_camada_superi
 
 CHAVE_CENARIO_NEVE_COSTA = 'cenario_frimora_costa'
 CHAVE_CENARIO_NEVE_VILA = 'cenario_frimora_vila'
+CHAVE_CENARIO_NEVE_FLORESTA = 'cenario_frimora_floresta'
+CHAVE_CENARIO_NEVE_FLORESTA_CAMADA_SUPERIOR = 'cenario_frimora_floresta_camada_superior'
 CHAVE_CENARIO_NEVE_MONTANHA = 'cenario_frimora_montanha'
 
 CHAVE_CENARIO_ILHA_4_PARTE_1 = 'cenario_cactuaraquara_duna'
@@ -158,6 +209,12 @@ CHAVE_CENARIO_ILHA_5_PARTE_3 = 'cenario_nublaria_floresta'
 CHAVE_CENARIO_ILHA_6_PARTE_1 = 'cenario_quartel_porto'
 CHAVE_CENARIO_ILHA_6_PARTE_2 = 'cenario_quartel_interior'
 CHAVE_CENARIO_ILHA_6_PARTE_3 = 'cenario_quartel_escritorio'
+
+
+CENA_SILVIE_NO_CAMPO = 'cena_silvie_no_campo'
+CENA_SHUAN_NO_CAMPO = 'cena_shuan_no_campo'
+
+ARBUSTO = 'arbusto'
 
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)

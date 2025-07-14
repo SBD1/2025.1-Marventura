@@ -3,14 +3,18 @@
 import pygame
 import sys # Para sys.exit()
 from utilidades.constantes import *
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeTelas
+    
 class TelaModelo:
     """
     Classe base para todas as telas do jogo.
     Define a interface comum (contrato) para as telas, incluindo gerenciadores
-    e métodos essenciais como handle_input, update e draw.
+    e métodos essenciais como processar_eventos, update e draw.
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos'):
         """
         Construtor da TelaModelo.
         :param gerenciador_telas: Referência ao gerenciador de telas para transições.
@@ -20,7 +24,7 @@ class TelaModelo:
         self.gerenciador_recursos = gerenciador_recursos
 
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """
         Processa um evento de entrada.
         Deve ser sobrescrito pelas subclasses para lidar com a lógica específica da tela.
@@ -42,7 +46,7 @@ class TelaModelo:
 
         return None # Por padrão, não faz nada e não solicita transição
 
-    def update(self, dt):
+    def atualizar(self, dt):
         """
         Atualiza a lógica interna da tela (movimento de entidades, timers, etc.).
         Deve ser sobrescrito pelas classes filhas.
@@ -51,7 +55,7 @@ class TelaModelo:
         """
         return None # Implementação padrão não faz nada
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         """
         Desenha os elementos da tela na superfície principal do Pygame.
         Deve ser sobrescrito pelas classes filhas.

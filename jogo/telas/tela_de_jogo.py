@@ -1,15 +1,27 @@
 # telas/tela_jogo.py
 
 import pygame
-import sys
 from utilidades.constantes import *
-from entidades import Jogador
+from entidades.item_inventario import ItemInventario
 from entidades import Inimigo
+from entidades import Habitante
 from entidades import Obstaculo
 from entidades import Caminho
 from entidades import AreaInteracao
+from entidades.habilidades import Habilidade
 from utilidades import Camera
+from interface import CaixaDeDialogo
 from .tela_modelo import TelaModelo
+from telas.tela_inventario import TelaInventario
+from gerenciadores import GerenciadorDeEntidades
+from gerenciadores import GerenciadorNotificacoesItem
+import gerenciadores.gerenciador_missoes # Importa o módulo, não a classe diretamente
+from componentes import BarraDeEstado
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
+    from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeTelas
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
     """
@@ -19,25 +31,33 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param gerenciador_telas: O gerenciador de telas.
         :param gerenciador_recursos: O gerenciador de recursos.
         :param id_mapa: O identificador do mapa atual.
-        :param personagem: O tipo de personagem ('menino' ou 'menina').
+        :param jogador: O tipo de jogador ('menino' ou 'menina').
         :param ponto_de_destino: O identificador do ponto de renascimento/reinício do jogador.
         :param coordenada_x: Posição X inicial no mundo.
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, dados_da_ilha, dados_da_area,
-                 gerenciador_banco_de_dados, jogador, ponto_geracao_jogador):
-        super().__init__(gerenciador_telas, gerenciador_recursos)
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager'):
+        super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
+        self.gerenciador_entidades = GerenciadorDeEntidades()
+        self.gerenciador_recursos = gerenciador_recursos
 
-        self.dados_da_area = dados_da_area
-        self.dados_da_ilha = dados_da_ilha
-        self.informacoes_jogador = jogador
-
+        self.dados_da_area = self.gerenciador_entidades.area_atual
+        self.dados_da_ilha = self.gerenciador_entidades.ilha_atual
+        self.dados_do_progresso = self.gerenciador_entidades.progresso_do_jogo
         self.banco_de_dados = gerenciador_banco_de_dados
 
         # --- Atributos para o menu de viagem ---
         self.menu_viagem = None
         self.menu_viagem_ativo = False
+        self.menu_inventario = None
+        self.menu_inventario_ativo = False
+
+        self.barra_de_estado = BarraDeEstado(gerenciador_recursos, self.gerenciador_entidades.jogador)
+        self.tempo_ocioso = 0  # Tempo que o jogador está ocioso
+        self.limite_ocioso = 5  # Tempo limite em segundos para exibir a barra de estado
+        self.barra_de_estado_visivel = False  # Controla a visibilidade da barra de estado
+        self.posicao_anterior_jogador = self.gerenciador_entidades.jogador.rect.topleft
 
         # --- Atributo para exibição do nome da ilha ---
         self.exibicao_nome_ilha = None
@@ -58,21 +78,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             altura_janela=ALTURA_TELA,
             tamanho_mundo=(self.largura_mundo, self.altura_mundo)
         )
+        
+        self.jogador = self.gerenciador_entidades.jogador
 
-        x, y, orientacao = ponto_geracao_jogador
-        self.jogador = Jogador(
-            self.gerenciador_recursos,
-            x, y,
-            jogador.nome,
-            jogador.descricao,
-            jogador.energia,
-            jogador.vida,
-            jogador.nivel,
-            jogador.sorte,
-            jogador.vida_atual,
-            jogador.experiencia_atual,
-            orientacao
-        )
 
         # ############### INÍCIO DA CORREÇÃO 1 ###############
         # Inicialize TODOS os seus grupos de sprites aqui
@@ -80,6 +88,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.obstaculos_caminho = pygame.sprite.Group()
         self.obstaculos_visao = pygame.sprite.Group()
         self.inimigos = pygame.sprite.Group()
+        self.areas_interacao_passivas = pygame.sprite.Group()
         self.areas_interacao = pygame.sprite.Group()
         self.npcs = pygame.sprite.Group()
         
@@ -91,6 +100,46 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.caminhos = []
 
         self._carregar_entidades_dos_dados_do_mapa()
+
+        self.efeitos_visuais = []
+        self.sprites_efeito_ataque = [
+            pygame.image.load(f"recursos/efeitos/slash_{i}.png").convert_alpha()
+            for i in range(5)
+        ]
+        # print("Sprites de ataque carregadas:", len(self.sprites_efeito_ataque))
+        # --- Atributos da Caixa de Diálogo ---
+        self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos) # Garante que a caixa de diálogo seja sempre criada
+        self.dialogos_atuais = []
+        self.indice_dialogo_atual = 0
+        self.dialogo_ativo = False
+        
+        # --- NOVO: Atributos para cena estática ---
+        self.cena_estatica_ativa = False
+        self.imagem_cena_estatica = None # Imagem da cena (tela cheia)
+
+        # --- NOVO: Gerenciador de Missões ---
+        # Passe referências importantes para o GerenciadorDeMissoes
+        self.gerenciador_missoes = gerenciadores.gerenciador_missoes.GerenciadorDeMissoes(
+            self.banco_de_dados,
+            self.gerenciador_recursos,
+            self.camera, # Passa a instância da câmera
+            self.jogador,
+            self.caixa_dialogo, # Passa a instância da caixa de diálogo
+            self.npcs, # Passa o grupo de NPCs para interação
+            self.gerenciador_telas, # Para transições de tela
+            self
+        )
+
+        fonte_notificacoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO)
+        self.notificador = GerenciadorNotificacoesItem(fonte_notificacoes, posicao_base=(LARGURA_TELA - 20, 20))
+
+
+        #self.gerenciador_missoes.iniciar_missao('mis001')
+        # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
+        # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
+        
+        # Exemplo: Tenta carregar uma missão ativa ao iniciar a tela de jogo
+        # self.gerenciador_missoes.carregar_missao_ativa_se_existir(self.dados_do_progresso.identificador_progresso)
 
 
 
@@ -116,55 +165,116 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 caminho_arena = caminho
             self.caminhos.append(caminho)
         
-        inimigos_data = self.banco_de_dados.buscar_lacaios_por_area(id_area_atual)
         if not caminho_arena:
             print("AVISO: Nenhum caminho do tipo 'arena' foi encontrado no mapa. Os inimigos não serão carregados.")
-        for dado_do_inimigo in inimigos_data:
-        # Passamos o `caminho_arena` para o construtor do inimigo.
-        # A classe Inimigo já sabe lidar com o caso de `caminho_arena` ser None.
-            novo_inimigo = Inimigo(
-            self.gerenciador_recursos,
-            dado_do_inimigo.x, dado_do_inimigo.y,
-            dado_do_inimigo.nome_lacaio,
-            dado_do_inimigo.descricao_lacaio,
-            dado_do_inimigo.vida_atual,
-            dado_do_inimigo.vida_total,
-            dado_do_inimigo.nivel,
-            dado_do_inimigo.experiencia,
-            caminho_container=caminho_arena, # Pode ser None, e está tudo bem
-        )
-            self.inimigos.add(novo_inimigo)
-            if hasattr(self, 'todos_os_sprites'):
-                self.todos_os_sprites.add(novo_inimigo)
-        vendedores = self.banco_de_dados.buscar_vendedor_por_area(id_area_atual)
-        for vendedor_data in vendedores:
-            vendedor_sprite = pygame.sprite.Sprite()
-            # Usa a nova chave de imagem que criamos
-            vendedor_sprite.image = self.gerenciador_recursos.obter_imagem('VENDEDOR_JOAO')
-            vendedor_sprite.rect = vendedor_sprite.image.get_rect(
-                center=(vendedor_data.coordenada_x, vendedor_data.coordenada_y)
-            )
-            self.npcs.add(vendedor_sprite)
-            self.todos_os_sprites.add(vendedor_sprite)
+        else:
+            inimigos = self.banco_de_dados.buscar_lacaios_por_area(self.dados_do_progresso.identificador_progresso, id_area_atual)
+            
+            # Carrega os inimigos, agora passando o caminho da arena
+            for dado_do_inimigo in inimigos:
+                print(f"[DEBUG] Carregando inimigo: {dado_do_inimigo.nome_lacaio} ({dado_do_inimigo.identificador_instancia_lacaio})")
+                habilidades = self.banco_de_dados.buscar_habilidades_por_personagem(dado_do_inimigo.identificador_lacaio)
+                itens = self.banco_de_dados.buscar_inventario(dado_do_inimigo.identificador_instancia_lacaio, 'moc', self.dados_do_progresso.identificador_progresso)
+                print(f"[DEBUG] Habilidades encontradas para o inimigo {dado_do_inimigo.nome_lacaio}: {habilidades}")
+                habilidades_obj = [
+                    Habilidade(
+                        id=h.identificador_habilidade,
+                        nome=h.nome,
+                        descricao=h.descricao,
+                        tipo_de_ataque=h.tipo_de_ataque,
+                        tipo_de_alvo=h.tipo_de_alvo,
+                        dano=h.dano,
+                        custo=h.custo,
+                        efeito=(
+                            {"nome": h.efeito_nome, "valor": h.efeito_valor}
+                            if h.efeito_nome else None
+                        )
+                    )
+                    for h in habilidades
+                ]
+                print(f"[DEBUG] Habilidades_obj encontradas para o inimigo {dado_do_inimigo.nome_lacaio}: {habilidades_obj}")
+
+                novo_inimigo = Inimigo(
+                    self.gerenciador_recursos,
+                    dado_do_inimigo.x, dado_do_inimigo.y,
+                    dado_do_inimigo.identificador_lacaio,
+                    dado_do_inimigo.identificador_instancia_lacaio,
+                    dado_do_inimigo.nome_lacaio,
+                    dado_do_inimigo.descricao_lacaio,
+                    dado_do_inimigo.vida_atual,
+                    dado_do_inimigo.vida_total,
+                    dado_do_inimigo.nivel,
+                    dado_do_inimigo.experiencia,
+                    habilidade=habilidades_obj,
+                    inventario=itens,
+                    caminho_container=caminho_arena, # Passa o caminho encontrado
+                )
+                self.inimigos.add(novo_inimigo)
+                if hasattr(self, 'todos_os_sprites'):
+                    self.todos_os_sprites.add(novo_inimigo)
+            vendedores = self.banco_de_dados.buscar_vendedor_por_area(id_area_atual)
+            for vendedor_data in vendedores:
+                vendedor_sprite = pygame.sprite.Sprite()
+                # Usa a nova chave de imagem que criamos
+                vendedor_sprite.image = self.gerenciador_recursos.obter_imagem('VENDEDOR_JOAO')
+                vendedor_sprite.rect = vendedor_sprite.image.get_rect(
+                    center=(vendedor_data.coordenada_x, vendedor_data.coordenada_y)
+                )
+                self.npcs.add(vendedor_sprite)
+                self.todos_os_sprites.add(vendedor_sprite)
+
         areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
         for area_data in areas_interativas:
             # Inicializa a área como None para garantir que ela seja criada dentro de um if
             area = None
+            
             if area_data.tipo_evento == 'mudar_area':
-                evento_acionado = self.banco_de_dados.buscar_eventos_mudar_area(area_data.identificador_area_interativa)
-                area = AreaInteracao(area_data.x, area_data.y,
-                                     area_data.largura, area_data.altura,
-                                     area_data.tipo_evento,
-                                     mudar_area=evento_acionado)
+                area = AreaInteracao(
+                    identificador=area_data.identificador,
+                    x=area_data.x, y=area_data.y,
+                    largura=area_data.largura, altura=area_data.altura,
+                    tipo_evento=area_data.tipo_evento,
+                    metodo_ativacao=area_data.metodo_ativacao,
+                    ativa=area_data.ativa,
+                    area_destino=area_data.area_destino
+                )
             
             elif area_data.tipo_evento == 'embarcar':
-                evento_acionado = self.banco_de_dados.buscar_eventos_embarcar(area_data.identificador_area_interativa)
-                area = AreaInteracao(area_data.x, area_data.y,
-                                     area_data.largura, area_data.altura,
-                                     area_data.tipo_evento,
-                                     navegar_para=evento_acionado)
+                area = AreaInteracao(
+                    identificador=area_data.identificador,
+                    x=area_data.x, y=area_data.y,
+                    largura=area_data.largura, altura=area_data.altura,
+                    tipo_evento=area_data.tipo_evento,
+                    metodo_ativacao=area_data.metodo_ativacao,
+                    ativa=area_data.ativa,
+                    area_destino=area_data.area_destino
+                )
             
-            # --- INÍCIO DA CORREÇÃO ---
+            elif area_data.tipo_evento == 'investigar':
+                area = AreaInteracao(
+                    identificador=area_data.identificador,
+                    x=area_data.x, y=area_data.y,
+                    largura=area_data.largura, altura=area_data.altura,
+                    tipo_evento=area_data.tipo_evento,
+                    chance_sucesso=area_data.chance_sucesso,
+                    metodo_ativacao=area_data.metodo_ativacao,
+                    ativa=area_data.ativa,
+                    chave_imagem=area_data.chave_imagem,
+                    gererenciador_recursos=self.gerenciador_recursos
+                )
+
+            elif area_data.tipo_evento == 'missao':
+                area = AreaInteracao(
+                    identificador=area_data.identificador,
+                    x=area_data.x, y=area_data.y,
+                    largura=area_data.largura, altura=area_data.altura,
+                    tipo_evento=area_data.tipo_evento,
+                    chance_sucesso=area_data.chance_sucesso,
+                    metodo_ativacao=area_data.metodo_ativacao,
+                    ativa=area_data.ativa,
+                    identificador_missao=area_data.identificador_missao,
+                )
+
             elif area_data.tipo_evento == 'abrir_loja':
                 # Para uma loja, não precisamos de dados extras do evento,
                 # apenas saber que este é o tipo.
@@ -172,13 +282,45 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 area = AreaInteracao(area_data.x, area_data.y,
                                      area_data.largura, area_data.altura,
                                      area_data.tipo_evento) # Apenas o tipo é suficiente
-            # --- FIM DA CORREÇÃO ---
             
             # Adiciona a área criada ao grupo de sprites
             if area:
-                self.areas_interacao.add(area)
+                if area_data.metodo_ativacao == 'passivo':
+                    self.areas_interacao_passivas.add(area)
+                else:
+                    self.areas_interacao.add(area)
 
-    
+        # --- NOVO: Carregar NPCs ---
+        dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
+        for habitante in dados_habitantes:
+            dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante)
+            novo_npc = Habitante(
+                self.gerenciador_recursos,
+                habitante.identificador_habitante,
+                habitante.identificador_area,
+                habitante.coordenada_x,
+                habitante.coordenada_y,
+                habitante.nome,
+                habitante.descricao,
+                habitante.tipo_habitante,
+                habitante.moedas_totais,
+                habitante.especialidade,
+                habitante.chave_imagem,
+                dialogos
+            )
+            self.npcs.add(novo_npc)
+
+
+
+    def iniciar_dialogo(self, lista_de_textos):
+        """Inicia uma sequência de diálogos."""
+        self.dialogos_atuais = lista_de_textos
+        self.indice_dialogo_atual = 0
+        self.dialogo_ativo = True
+        
+        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
+        
+
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
         Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
@@ -187,22 +329,123 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         if self.dados_da_ilha.nome or self.dados_da_area.nome: # Só cria a exibição se houver algo para mostrar
             self.exibicao_nome_ilha = _ExibicaoNomeIlha(self.dados_da_ilha.nome, self.dados_da_area.nome, self.gerenciador_recursos)
-            print(f"Exibindo Ilha: {self.dados_da_ilha.nome}, Área: {self.dados_da_area.nome}")
-            if self.dados_da_ilha.identificador_ilha:
-                print(f"(Ilha {self.dados_da_ilha.nome} visitada: {self.dados_da_ilha.visitada})")
         else:
             self.exibicao_nome_ilha = None
             print(f"AVISO: Nenhuma informação de ilha ou área para exibir para o mapa ID: {self.dados_da_area.identificador_area}")
 
 
-    def handle_input(self, evento):
-        transicao_info = super().handle_input(evento)
+    def _detectar_inimigos_acertados(self):
+        """Verifica quais inimigos foram atingidos pelo ataque do jogador."""
+        atingidos = []
+
+        # Define a área de ataque (você pode ter isso em outro lugar)
+        area_ataque = self.jogador.get_area_de_ataque()  # Ex: um retângulo na frente
+
+        for inimigo in self.inimigos:
+            if inimigo.rect.colliderect(area_ataque):
+                #print(f"[DEBUG] Inimigo {inimigo.tipo} atingido!")
+                atingidos.append(inimigo)
+
+        return atingidos
+
+    def _ataque_no_mapa(self):
+        print("[DEBUG] Jogador atacou no mapa!")
+        # Definir posição do efeito baseado na direção do jogador
+        x, y = self.jogador.rect.center
+        if self.jogador.orientacao == "direita":
+            efeito_pos = (x + 20, y - 10)
+        else:
+            efeito_pos = (x - 80, y - 10)
+
+        # Adiciona efeito à lista (dura 0.2 segundos)
+        self.efeitos_visuais.append({
+            "sprites": self.sprites_efeito_ataque,
+            "pos": efeito_pos,
+            "frame": 0,
+            "tempo_por_frame": 0.05,
+            "tempo_restante": 0.05
+        })
+
+        # Pega inimigos atingidos
+        inimigos_acertados = self._detectar_inimigos_acertados()
+
+        if inimigos_acertados:
+            print("Ataque no mapa acertou inimigo!")
+
+            # Pega todos os inimigos da área (visão ou perseguição)
+            inimigos_reagindo = [
+                inimigo for inimigo in self.inimigos
+                if inimigo.estado in (ESTADO_INIMIGO_ALERTA, ESTADO_INIMIGO_PERSEGUINDO)
+            ]
+
+            # Junta os dois sem repetir
+            inimigos_para_batalha = list({i for i in inimigos_acertados + inimigos_reagindo})
+
+            self.gerenciador_telas.mudar_tela(
+                CHAVE_TRANSICAO_BATALHA,
+                inimigos_na_batalha = inimigos_para_batalha,
+                jogador_iniciou=True
+            )
+
+
+
+    def _montar_ondas(self, sprites_colididos):
+        """
+        Recebe uma lista de sprites (cada um representa um grupo no mapa)
+        e devolve [[dict, dict, dict],  ...]   (1 lista por onda, 3 cópias cada)
+        """
+        ondas = []
+        for sprite in sprites_colididos:          # cada sprite vira uma onda
+            base = self.busca_dados_do_inimigo([sprite.tipo_inimigo])[0]
+            # cópias independentes para PV, XP, etc.
+            ondas.append([base.copy() for _ in range(3)])
+        return ondas
+
+
+
+    def processar_eventos(self, evento):
+        transicao_info = super().processar_eventos(evento)
         if transicao_info:
             return transicao_info
         
+        # --- NOVO: Priorizar o gerenciador de missões/eventos para inputs ---
+        # Se o gerenciador de missões estiver em um estado de "cutscene"
+        # ou esperando um input específico que ele controla, ele deve ter prioridade.
+        if self.gerenciador_missoes.esta_em_evento_controlado():
+            self.gerenciador_missoes.processar_eventos(evento)
+            return None # Consome o evento para evitar que o jogador se mova ou faça outra coisa
+  
+        
+        # --- Lógica da Caixa de Diálogo (TEM PRIORIDADE SOBRE OUTROS INPUTS) ---
+        if self.dialogo_ativo and self.caixa_dialogo:
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_SPACE:
+                    if self.caixa_dialogo.esta_digitando:
+                        self.caixa_dialogo.pular_digitacao()
+                    elif self.caixa_dialogo.esta_finalizado():
+                        self.indice_dialogo_atual += 1
+                        if self.indice_dialogo_atual < len(self.dialogos_atuais):
+                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
+                        else:
+                            self.dialogo_ativo = False # Fim do diálogo
+                            self.caixa_dialogo.limpar_dialogo() # Limpa o texto da caixa
+
+            # NOVO: Tratamento do scroll do mouse
+            elif evento.type == pygame.MOUSEBUTTONDOWN:
+                if self.caixa_dialogo.aguardando_input and not self.caixa_dialogo.esta_digitando:
+                    if evento.button == 4:  # Scroll para cima
+                        self.caixa_dialogo.rolar(-1)
+                    elif evento.button == 5: # Scroll para baixo
+                        self.caixa_dialogo.rolar(1)
+            return None # Consome o evento, o jogador não deve se mover enquanto o diálogo está ativo
+
+        if self.menu_inventario_ativo and self.menu_inventario:
+            self.menu_inventario.processar_eventos(evento)
+            pass
+
         # --- Lógica do Menu de Viagem (se estiver ativo) ---
         if self.menu_viagem_ativo and self.menu_viagem:
-            resultado_menu = self.menu_viagem.handle_input(evento)
+            resultado_menu = self.menu_viagem.processar_eventos(evento)
             if resultado_menu is not None:
                 if resultado_menu == "cancelar":
                     self.menu_viagem_ativo = False
@@ -210,34 +453,41 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     return None # Consome o evento
                 else: # Uma ilha foi selecionada
                     ilha_selecionada = resultado_menu
-                    print(f"Viajando para: {ilha_selecionada.nome}")
+                    print(f"Viajando para: {ilha_selecionada.identificador_ilha}")
 
                     if ilha_selecionada:
-                        porto_destino = self.banco_de_dados.buscar_porto_por_ilha(ilha_selecionada.identificador_ilha)
-
+                        porto_destino = self.banco_de_dados.buscar_porto_da_ilha(ilha_selecionada.identificador_ilha, self.dados_do_progresso.identificador_progresso)
+                        print(f"porto_destino: {porto_destino}")
                         if porto_destino:
                             self.menu_viagem_ativo = False
                             self.menu_viagem = None # Limpa a instância do menu
                             id_area = porto_destino.identificador_area
 
-                            evento = next(
-                                (row for row in self.evento_selecionado if row.identificador_porto_destino == id_area),
-                                None  # valor padrão caso não encontre
+                            self.gerenciador_entidades.ilha_atual = ilha_selecionada
+
+                            self.gerenciador_entidades.area_atual = porto_destino
+
+                            informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, id_area)
+                            
+                            self.gerenciador_entidades.jogador.atualizar_posicao_jogador(
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y,
+                                informacoes_de_destino.orientacao
                             )
 
-                            ponto_geracao_jogador = (
-                                evento.ponto_geracao_x,
-                                evento.ponto_geracao_y,
-                                evento.orientacao
+                            self.banco_de_dados.atualizar_posicao_jogador(
+                                self.gerenciador_entidades.jogador.identificador_jogador,
+                                id_area,
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y,
                             )
-                            return {'estado': CHAVE_TRANSICAO_MAPA, # Sempre volta para TelaJogo para outro mapa
-                                'id_mapa': id_area,
-                                'ponto_de_destino': None,
-                                'personagem': self.jogador.nome,
-                                'dados_da_area': porto_destino,
-                                'dados_da_ilha': ilha_selecionada,
-                                'jogador': self.informacoes_jogador,
-                                'ponto_geracao_jogador': ponto_geracao_jogador}
+
+                            self.gerenciador_entidades.ponto_de_renascimento = (
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y
+                            )
+
+                            return {'estado': CHAVE_TRANSICAO_MAPA}
                         else:
                             print(f"AVISO: Não foi possível determinar o mapa de destino para a ilha '{ilha_selecionada.nome}'.")
                     else:
@@ -246,142 +496,232 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # --- Lógica de Interação com Áreas de Interação (Eventos KEYDOWN) ---
         # SOMENTE reage a um evento KEYDOWN, não ao estado contínuo da tecla.
-        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_e:
-            areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
-            
-            if not areas_colidindo_agora:
-                print("DEBUG: Tecla 'E' pressionada, mas o jogador NÃO está colidindo com uma área de interação.")
-            else:
-                # Se houver colisão, vamos inspecionar cada área
-                for area in areas_colidindo_agora:
-                    # ESTA É A LINHA MAIS IMPORTANTE PARA A DEPURAÇÃO:
-                    print(f"DEBUG: Interagindo com uma área. O tipo do evento é: '{area.tipo_evento}'")
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_e:
+                areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
+                
+                if not areas_colidindo_agora:
+                    print("DEBUG: Tecla 'E' pressionada, mas o jogador NÃO está colidindo com uma área de interação.")
+                else:
+                    # Se houver colisão, vamos inspecionar cada área
+                    for area in areas_colidindo_agora:
+                        # ESTA É A LINHA MAIS IMPORTANTE PARA A DEPURAÇÃO:
+                        print(f"DEBUG: Interagindo com uma área. O tipo do evento é: '{area.tipo_evento}'")
 
-                    # O código abaixo só será executado se o print acima mostrar 'mudar_area'
-                    if area.tipo_evento == 'mudar_area':
-                        print("SUCESSO: Condição 'mudar_area' detectada! Iniciando transição...")
-                        proxima_area = self.banco_de_dados.buscar_info_area(area.ir_para_area.area_destino)
-                        ponto_geracao_jogador = (
-                            area.ir_para_area.ponto_geracao_x,
-                            area.ir_para_area.ponto_geracao_y,
-                            area.ir_para_area.orientacao
-                        )
-                        return {
-                            'estado': CHAVE_TRANSICAO_MAPA,
-                            'dados_da_area': proxima_area,
-                            'dados_da_ilha': self.dados_da_ilha,
-                            'jogador': self.informacoes_jogador,
-                            'ponto_geracao_jogador': ponto_geracao_jogador
-                        }
-                    
-                    elif area.tipo_evento == 'abrir_loja':
-                        vendedores = self.banco_de_dados.buscar_vendedor_por_area(self.dados_da_area.identificador_area)
-                        if vendedores:
-                            vendedor = vendedores[0]  # Assume o primeiro vendedor da área
-                            ponto_retorno_jogador = (
-                                self.jogador.mundo_x,
-                                self.jogador.mundo_y,
-                                self.jogador.orientacao
+                        # O código abaixo só será executado se o print acima mostrar 'mudar_area'
+                        if area.tipo_evento == 'mudar_area':
+                            print(f"Detectou interação para mudar mapa para {area.area_destino}")
+                            self.gerenciador_entidades.area_atual = self.banco_de_dados.buscar_info_area(area.area_destino, self.dados_do_progresso.identificador_progresso)
+
+                            informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, area.area_destino)
+
+                            self.gerenciador_entidades.jogador.atualizar_posicao_jogador(
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y,
+                                informacoes_de_destino.orientacao
                             )
-                            return {
-                                'estado': CHAVE_TRANSICAO_LOJA,
-                                'jogador_id': self.informacoes_jogador.identificador_jogador,
-                                'vendedor_id': vendedor.identificador_habitante,
-                                'nome_vendedor': vendedor.nome.strip(),
-                                'dados_retorno_ilha': self.dados_da_ilha,
-                                'dados_retorno_area': self.dados_da_area,
-                                'ponto_retorno_jogador': ponto_retorno_jogador
-                            }
 
-                    
-                    elif area.tipo_evento == 'embarcar':
-                        if not self.menu_viagem_ativo:
-                            print("SUCESSO: Condição 'embarcar' detectada! Abrindo menu...")
-                            self.ilhas_vizinhas = self.banco_de_dados.buscar_conexoes_ilha(self.dados_da_area.identificador_ilha)
+                            self.banco_de_dados.atualizar_posicao_jogador(
+                                self.gerenciador_entidades.jogador.identificador_jogador,
+                                area.area_destino,
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y,
+                            )
 
-                            self.evento_selecionado = area.navegar_para # Armazena as opções de destino do evento de embarcar
-                            self.menu_viagem = _MenuViagemFlutuante(self.ilhas_vizinhas)
-                            self.menu_viagem_ativo = True
-                            return None # Consome o evento
-                    
-                    elif area.tipo_evento == 'iniciar_batalha':
-                        print(f"Detectou interação para iniciar batalha com {area.dados_evento.get('inimigos')}")
-                        return {'estado': CHAVE_TRANSICAO_BATALHA,
-                                'inimigos': area.dados_evento['inimigos'], # Passe os inimigos da área
-                                'jogador_x': self.jogador.mundo_x,
-                                'jogador_y': self.jogador.mundo_y,
-                                'olhando_direita': self.jogador.orientacao,
-                                'id_mapa': self.dados_da_area.identificador_area,
-                                'personagem': self.jogador.nome}
-                    
-                    # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
-                    # elif area.tipo_evento == 'dialogo_npc':
-                    #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
+                            self.gerenciador_entidades.ponto_de_renascimento = (
+                                informacoes_de_destino.ponto_geracao_x,
+                                informacoes_de_destino.ponto_geracao_y
+                            )
 
-        # --- Abrir Inventário ---
-        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_i:
-            ponto_retorno_jogador = (self.jogador.mundo_x, self.jogador.mundo_y, self.jogador.orientacao)
-            
-            fundo_para_inventario = self.gerenciador_telas.tela_principal_surface.copy()
+                            return {'estado': CHAVE_TRANSICAO_MAPA}
+                        
+                        elif area.tipo_evento == 'abrir_loja':
+                            vendedores = self.banco_de_dados.buscar_vendedor_por_area(self.dados_da_area.identificador_area)
+                            if vendedores:
+                                vendedor = vendedores[0]  # Assume o primeiro vendedor da área
+                                ponto_retorno_jogador = (
+                                    self.jogador.mundo_x,
+                                    self.jogador.mundo_y,
+                                    self.jogador.orientacao
+                                )
+                                return {
+                                    'estado': CHAVE_TRANSICAO_LOJA,
+                                    'jogador_id': self.informacoes_jogador.identificador_jogador,
+                                    'vendedor_id': vendedor.identificador_habitante,
+                                    'nome_vendedor': vendedor.nome.strip(),
+                                    'dados_retorno_ilha': self.dados_da_ilha,
+                                    'dados_retorno_area': self.dados_da_area,
+                                    'ponto_retorno_jogador': ponto_retorno_jogador
+                                }
+                            
+                        elif area.tipo_evento == 'embarcar':
+                            if not self.menu_viagem_ativo:
+                                print('Embarcando na viagem...')
+                                self.ilhas_vizinhas = self.banco_de_dados.buscar_conexoes_ilha(self.dados_da_area.identificador_ilha, self.dados_do_progresso.identificador_progresso)
 
-            return {
-                'estado': CHAVE_TRANSICAO_INVENTARIO,
-                'jogador_id': self.informacoes_jogador.identificador_jogador,
-                'dados_retorno_ilha': self.dados_da_ilha,
-                'dados_retorno_area': self.dados_da_area,
-                'ponto_retorno_jogador': ponto_retorno_jogador,
-                'snapshot_fundo': fundo_para_inventario
-            }
+                                self.menu_viagem = _MenuViagemFlutuante(self.ilhas_vizinhas)
+                                self.menu_viagem_ativo = True
+                                return None # Consome o evento
+                        
+                        
+                        elif area.tipo_evento == 'investigar':
+                            area.iniciar_animacao_chacoalhar()
+                            mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador, self.notificador)
+                            if mensagem.startswith("Item"):
+                                self.gerenciador_entidades.jogador.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.gerenciador_entidades.jogador.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+                            print(mensagem)
+
+                        # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
+                        # elif area.tipo_evento == 'dialogo_npc':
+                        #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
+
+            elif evento.key == pygame.K_k:
+                self._ataque_no_mapa()
+
+            # --- Abrir Inventário ---
+            elif evento.key == pygame.K_i:
+                self.menu_inventario = TelaInventario(
+                    self.gerenciador_telas,
+                    self.gerenciador_recursos,
+                    self.banco_de_dados,
+                    self.gerenciador_entidades)
+                self.menu_inventario_ativo = True
 
 
 
-    def update(self, dt):
-        super().update(dt) # Chama o update da TelaModelo (para eventos globais como ESC)
 
-        # Se um menu estiver ativo (como o de viagem), pausa a lógica do jogo
-        if self.menu_viagem_ativo and self.menu_viagem:
-            return None
+    def atualizar(self, dt):
+        super().atualizar(dt)
+        dt_ms = dt * 1000 # Converte dt para milissegundos para a câmera e eventos
 
-        # 1. Atualiza a lógica do jogador (movimento, animação, etc.)
-        self.jogador.update(dt, self.obstaculos_caminho, self.caminhos, self.largura_mundo, self.altura_mundo)
-        
-        # 2. Atualiza a câmera para seguir a nova posição do jogador
-        self.camera.update(self.jogador.rect)
+        # --- NOVO: Atualiza o Gerenciador de Missões PRIMEIRO ---
+        # Se um evento de missão estiver ativo, ele pode controlar o jogador, a câmera, etc.
+        self.gerenciador_missoes.atualizar(dt_ms) # Passa dt em milissegundos
+
+        # Se o gerenciador de missões estiver em um evento controlado OU CENA ESTÁTICA ATIVA, desativa o input do jogador
+        if self.gerenciador_missoes.esta_em_evento_controlado() or self.cena_estatica_ativa: # CENA ESTÁTICA desabilita jogador
+            self.jogador.movendo_esquerda = False
+            self.jogador.movendo_direita = False
+            self.jogador.movendo_cima = False
+            self.jogador.movendo_baixo = False
+        elif self.menu_inventario_ativo and self.menu_inventario:
+            # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
+            return
+        else:
+            # Lógica de clamping do jogador para não sair dos limites do mundo (movimento normal)
+            largura_mundo_atual = self.mapa_fundo_imagem.get_width()
+            altura_mundo_atual = self.mapa_fundo_imagem.get_height()
+
+            # Atualiza o jogador SOMENTE SE NÃO HOUVER UM EVENTO CONTROLANDO
+            self.jogador.atualizar(dt, self.obstaculos_caminho, self.caminhos, largura_mundo_atual, altura_mundo_atual)
+
+            # --- Controle de tempo ocioso ---
+            if self.jogador.rect.topleft == self.posicao_anterior_jogador:
+                self.tempo_ocioso += dt
+            else:
+                self.tempo_ocioso = 0
+                self.barra_de_estado_visivel = False
+
+            self.posicao_anterior_jogador = self.jogador.rect.topleft
+
+            if self.tempo_ocioso >= self.limite_ocioso:
+                self.barra_de_estado_visivel = True
+
+        # Limita a posição X do jogador
+        if self.jogador.rect.left < 0:
+            self.jogador.rect.left = 0
+        if self.jogador.rect.right > largura_mundo_atual:
+            self.jogador.rect.right = largura_mundo_atual
+
+        # Limita a posição Y do jogador
+        if self.jogador.rect.top < 0:
+            self.jogador.rect.top = 0
+        if self.jogador.rect.bottom > altura_mundo_atual:
+            self.jogador.rect.bottom = altura_mundo_atual
+
+            self.jogador.mundo_x = self.jogador.rect.x
+            self.jogador.mundo_y = self.jogador.rect.y
+
+
+        # Atualiza a visibilidade do ícone de interação
+        self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
+        self.inimigos_lutando = pygame.sprite.spritecollide(self.jogador, self.inimigos, False)
+        self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
+
+        # Atualiza os NPCs, passando a posição do jogador para a orientação
+        for npc in self.npcs:
+            npc.atualizar(dt, self.jogador.rect)
+
+        for area in self.areas_interacao:
+            area.atualizar()
+        self.notificador.atualizar(dt)
+
+        self.camera.atualizar(dt, self.jogador.rect)
 
         # 3. ATUALIZAÇÃO CORRIGIDA: Atualiza SOMENTE os inimigos (com IA)
         # O vendedor, que está em outro grupo (self.npcs), não é afetado por este loop.
         for inimigo in self.inimigos:
-            inimigo.update(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
-            # Verifica se o inimigo iniciou um ataque
+            #print(f"[DEBUG] Atualizando inimigo: {inimigo.nome}, estado: {inimigo.estado}")
+            inimigo.atualizar(dt, self.jogador, self.obstaculos_caminho, self.obstaculos_visao)
             if inimigo.atingiu_jogador:
-                print(f"Inimigo '{inimigo.tipo_inimigo}' acertou o jogador! Iniciando batalha...")
+                # Pega todos os inimigos da área (visão ou perseguição)
+                print(f"[DEBUG] Inimigo {inimigo.nome} atingiu o jogador!")
+                inimigos_reagindo = [
+                    inimigo for inimigo in self.inimigos
+                    if inimigo.estado in (ESTADO_INIMIGO_ALERTA, ESTADO_INIMIGO_PERSEGUINDO, ESTADO_INIMIGO_ATACANDO)
+                ]
+                print(f"[DEBUG] Inimigos reagindo: {[i.nome for i in inimigos_reagindo]}")
+                # Se ninguém está alerta ainda, adiciona ao menos o atacante
+                if not inimigos_reagindo:
+                    inimigos_reagindo = [inimigo]
+
+                # Sinaliza para o gerenciador de telas que uma batalha deve começar
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
-                    inimigo_batalha=inimigo.tipo_inimigo,
-                    jogador_atual_x=self.jogador.mundo_x,
-                    jogador_atual_y=self.jogador.mundo_y,
-                    jogador_olhando_direita=self.jogador.orientacao,
-                    mapa_atual_id=self.dados_da_area.identificador_area,
-                    personagem=self.jogador.nome
+                    inimigos_na_batalha = inimigos_reagindo
                 )
-                return
-                
-        # 4. Atualiza a visibilidade do ícone de interação
-        self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
-        self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
-
+                return # Termina o atualizar aqui para não processar mais nada após a transição
+            
         # 5. Atualiza a animação de fade-in/out do nome da ilha
         if self.exibicao_nome_ilha:
-            self.exibicao_nome_ilha.update()
+            self.exibicao_nome_ilha.atualizar()
+        
+        # Se o diálogo for controlado pela TelaJogo (não pela missão), atualiza aqui
+        if self.dialogo_ativo and self.caixa_dialogo and not self.gerenciador_missoes.dialogo_controlado_ativo:
+            self.caixa_dialogo.atualizar()
+        
+        # Se o menu de viagem estiver ativo, ele tem prioridade no atualizar
+        if self.menu_viagem_ativo and self.menu_viagem:
+            # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
+            pass
+
+        # Atualizar duração dos efeitos
+        novos_efeitos = []
+
+        for efeito in self.efeitos_visuais:
+            efeito["tempo_restante"] -= dt
+            if efeito["tempo_restante"] <= 0:
+                efeito["frame"] += 1
+                if efeito["frame"] < len(efeito["sprites"]):
+                    efeito["tempo_restante"] = efeito["tempo_por_frame"]
+                    novos_efeitos.append(efeito)
+                # senão: animação acabou, não adiciona de novo
+            else:
+                novos_efeitos.append(efeito)
+
+        self.efeitos_visuais = novos_efeitos
+
+
 
         return None
+
 
     def salvar_progresso(self):
         """
         Coleta os dados atuais do jogo (posição, status do jogador) e os salva no banco de dados.
         Este método centraliza a lógica de salvamento para esta tela.
         """
-        print(f"Iniciando salvamento para o jogador: {self.informacoes_jogador.identificador_jogador}")
+        print(f"Iniciando salvamento para o jogador: {self.jogador.identificador_jogador}")
 
         # --- INÍCIO DA MODIFICAÇÃO ---
         # REMOVA a busca por dados "frescos", pois isso está causando o problema.
@@ -393,12 +733,15 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # Busca as moedas mais recentes. Se o jogador veio de uma loja,
         # self.informacoes_jogador estará atualizado.
-        moedas_atuais = self.banco_de_dados.buscar_jogador(self.informacoes_jogador.identificador_jogador).moedas_totais
+        moedas_atuais = self.banco_de_dados.buscar_jogador(self.jogador.identificador_jogador).moedas_totais
 
         # Chama o método do DBManager para salvar os dados
         self.banco_de_dados.salvar_progresso_jogador(
-            id_jogador=self.informacoes_jogador.identificador_jogador,
+            id_jogador=self.jogador.identificador_jogador,
+            vida=self.jogador.vida_maxima,
             vida_atual=self.jogador.vida_atual,
+            energia=self.jogador.energia_maxima,
+            energia_atual=self.jogador.energia_atual,
             experiencia_atual=self.jogador.experiencia_atual,
             nivel=self.jogador.nivel,
             moedas_totais=moedas_atuais,  # Use a variável com o valor correto
@@ -411,47 +754,124 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         
         print("Progresso salvo com sucesso.")
     
-    def draw(self, tela):
-        # 1. Desenha o cenário de fundo, deslocado pela câmera
-        # A nova forma de usar blit com a câmera é mais eficiente
-        tela.blit(self.mapa_fundo_imagem, (0, 0), self.camera.rect)
 
-        # 2. Desenha as entidades na ordem correta
-        # NPCs e Inimigos são desenhados primeiro
-        for npc in self.npcs:
-            pos_npc_tela = npc.rect.move(-self.camera.rect.x, -self.camera.rect.y)
-            tela.blit(npc.image, pos_npc_tela)
 
-        for inimigo in self.inimigos:
-            # Chamamos o método .draw() específico do inimigo para incluir o radar
-            inimigo.draw(tela, self.camera.rect.x)
-            
-        # O jogador é desenhado por último para que ele apareça na frente dos outros
-        # O jogador também tem um método .draw() customizado para o ícone de interação
-        self.jogador.draw(tela, self.camera.rect.x, self.camera.rect.y)
-
-        # 3. Desenha a camada de sobreposição (se existir)
-        if self.camada_superior_imagem:
-            # A câmera também se aplica aqui para que a camada superior se mova com o cenário
-            tela.blit(self.camada_superior_imagem, (0, 0), self.camera.rect)
-
-        # 4. Desenha os elementos de UI que não se movem com a câmera
-        # (Estes são desenhados por último para ficarem sobre tudo)
-        if self.exibicao_nome_ilha:
-            self.exibicao_nome_ilha.draw(tela)
+    def desenhar(self, tela):
+        # Desenha a imagem de fundo
+        tela.blit(self.mapa_fundo_imagem, (self.mapa_fundo_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
         
-        if self.menu_viagem_ativo and self.menu_viagem:
-            self.menu_viagem.draw(tela)
-            
-        # 5. (Opcional) Desenha as caixas de colisão para debug
-        if DEBUG_DESENHAR_CAIXAS_COLISAO:
-            for sprite in self.todos_os_sprites: # Usar todos_os_sprites para debug é útil
-                rect_debug = sprite.rect.move(-self.camera.rect.x, -self.camera.rect.y)
-                pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_debug, 1)
-            
+        # --- NOVO: Desenha a cena estática SE estiver ativa ---
+        if self.cena_estatica_ativa and self.imagem_cena_estatica:
+            tela.blit(self.imagem_cena_estatica, (0, 0)) # Desenha a cena cobrindo toda a tela
+        else: # Só desenha os elementos do jogo se a cena estática não estiver ativa
+            # Desenha os NPCs
+            for npc in self.npcs:
+                npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
+
             for area in self.areas_interacao:
-                rect_debug = area.rect.move(-self.camera.rect.x, -self.camera.rect.y)
-                pygame.draw.rect(tela, AZUL, rect_debug, 2)
+                area.desenhar(tela, self.camera.rect.x)
+
+            # Desenha o jogador
+            self.jogador.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
+
+            # Desenha os inimigos
+            for inimigo in self.inimigos:
+                inimigo.desenhar(tela, self.camera.rect.x)
+
+            # Desenha o efeito do ataque no mapa
+            for efeito in self.efeitos_visuais:
+                # print(f"Desenhando efeito: {efeito['frame']}, Tempo restante: {efeito['tempo_restante']:.2f}s")
+                sprite = efeito["sprites"][efeito["frame"]]
+                sprite = pygame.transform.scale(sprite, (60, 60))
+                if self.jogador.orientacao == "direita":
+                    sprite = pygame.transform.flip(sprite, True, False)
+                pos = efeito["pos"]
+                tela.blit(sprite, (pos[0]-self.camera.rect.x, pos[1]-self.camera.rect.y))
+
+            # --- Desenhar a camada superior (se existir) ---
+            if self.camada_superior_imagem:
+                tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
+
+            for caminho in self.caminhos:
+                caminho.desenhar(tela, self.camera.rect.x)
+
+            if DEBUG_DESENHAR_CAIXAS_COLISAO:
+                for area in self.areas_interacao:
+                    area_rect_tela = pygame.Rect(
+                        area.rect.x - self.camera.rect.x,
+                        area.rect.y - self.camera.rect.y,
+                        area.rect.width,
+                        area.rect.height
+                    )
+                    pygame.draw.rect(tela, AZUL, area_rect_tela, 2)
+
+                for obstaculo in self.obstaculos_caminho:
+                    rect_colisao_tela = pygame.Rect(
+                        obstaculo.rect.x - self.camera.rect.x,
+                        obstaculo.rect.y - self.camera.rect.y,
+                        obstaculo.rect.width,
+                        obstaculo.rect.height
+                    )
+                    pygame.draw.rect(tela, COR_CAIXA_COLISAO, rect_colisao_tela, 1)
+
+                # DEBUG para NPCs
+                for npc in self.npcs:
+                    debug_rect_npc = pygame.Rect(
+                        npc.rect.x - self.camera.rect.x,
+                        npc.rect.y - self.camera.rect.y,
+                        npc.rect.width,
+                        npc.rect.height
+                    )
+                    pygame.draw.rect(tela, VERDE, debug_rect_npc, 1) # Cor verde para NPCs
+
+            self.notificador.desenhar(tela)
+            # --- Desenha o nome da ilha com fade ---
+            if self.exibicao_nome_ilha:
+                self.exibicao_nome_ilha.desenhar(tela)
+            
+            # --- Desenha o menu de viagem se estiver ativo ---
+            if self.menu_viagem_ativo and self.menu_viagem:
+                self.menu_viagem.desenhar(tela)
+
+            # --- Desenha o menu de inventário se estiver ativo ---
+            if self.menu_inventario_ativo and self.menu_inventario:
+                self.menu_inventario.desenhar(tela)
+
+            if self.barra_de_estado_visivel:
+                self.barra_de_estado.desenhar(tela)
+
+
+            # --- Desenha a caixa de diálogo se estiver ativa ---
+            if self.dialogo_ativo and self.caixa_dialogo:
+                self.caixa_dialogo.desenhar(tela)
+
+        # NOVO: Se o gerenciador de missões estiver ativo e tiver um diálogo para exibir, ele desenha
+        if self.gerenciador_missoes.dialogo_controlado_ativo and self.gerenciador_missoes.caixa_dialogo:
+             self.gerenciador_missoes.caixa_dialogo.desenhar(tela)
+
+    
+
+    # --- NOVOS MÉTODOS PARA CENA ESTÁTICA ---
+    def ativar_cena_estatica(self, chave_imagem):
+        """Ativa a exibição de uma imagem de cena estática (tela cheia)."""
+        self.imagem_cena_estatica = self.gerenciador_recursos.obter_imagem(chave_imagem)
+        if self.imagem_cena_estatica:
+            # Redimensiona a imagem para caber na tela se necessário
+            self.imagem_cena_estatica = pygame.transform.scale(self.imagem_cena_estatica, (LARGURA_TELA, ALTURA_TELA))
+            self.cena_estatica_ativa = True
+            print(f"Cena estática '{chave_imagem}' ativada.")
+        else:
+            self.cena_estatica_ativa = False
+            print(f"AVISO: Imagem da cena estática '{chave_imagem}' não encontrada.")
+
+
+
+    def desativar_cena_estatica(self):
+        """Desativa a exibição da imagem de cena estática."""
+        self.cena_estatica_ativa = False
+        self.imagem_cena_estatica = None
+        print("Cena estática desativada.")
+
 
 
 
@@ -465,7 +885,7 @@ class _MenuViagemFlutuante:
         self.cor_fundo_menu = (50, 50, 50, 200)
         self.cor_borda_menu = (200, 200, 200)
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_UP:
                 self.indice_selecionado = (self.indice_selecionado - 1) % len(self.opcoes)
@@ -495,7 +915,7 @@ class _MenuViagemFlutuante:
         # Se não for uma tecla de navegação ou seleção, não faz nada
         return None
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         if not self.opcoes:
             return
 
@@ -541,7 +961,7 @@ class _ExibicaoNomeIlha:
         self.duracao_fade = 1000 # 1 segundo para fade-in/out
         self.duracao_estatica = 2000 # 2 segundos no máximo de opacidade
 
-    def update(self):
+    def atualizar(self):
         if not self.ativo:
             return
 
@@ -561,7 +981,7 @@ class _ExibicaoNomeIlha:
             self.ativo = False
             self.alpha = 0
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         if not self.ativo or not self.nome_ilha:
             return
 

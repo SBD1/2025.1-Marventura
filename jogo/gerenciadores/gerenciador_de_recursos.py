@@ -52,7 +52,7 @@ class GerenciadorDeRecursos:
 
             # Armazena a imagem carregada (ou redimensionada) no dicionário interno
             self._imagens[chave] = imagem
-            print(f"Recurso carregado: Imagem '{chave}' de '{caminho}'")
+            #print(f"Recurso carregado: Imagem '{chave}' de '{caminho}'")
 
         except pygame.error as e:
             # Em caso de erro no carregamento ou redimensionamento
@@ -79,7 +79,7 @@ class GerenciadorDeRecursos:
         try:
             # Esta chamada agora vai funcionar perfeitamente!
             caminho_final = caminho_absoluto(caminho)
-            print(f"Tentando carregar fonte de: {caminho_final}") # Linha de debug
+            #print(f"Tentando carregar fonte de: {caminho_final}") # Linha de debug
             fonte = pygame.font.Font(caminho_final, tamanho)
             self._fontes[chave] = fonte
 
@@ -101,7 +101,7 @@ class GerenciadorDeRecursos:
         try:
             som = pygame.mixer.Sound(caminho_absoluto(caminho))
             self._sons[chave] = som
-            print(f"Recurso carregado: Som '{chave}' de '{caminho}'")
+            #print(f"Recurso carregado: Som '{chave}' de '{caminho}'")
         except pygame.error as e:
             print(f"ERRO ao carregar som '{chave}' de '{caminho}': {e}")
             self._sons[chave] = None
@@ -134,26 +134,37 @@ class GerenciadorDeRecursos:
         Carrega todos os recursos do jogo (fontes, imagens, etc.).
         Este método centraliza todas as chamadas de carregamento.
         """
-        print("Iniciando carregamento de todos os recursos...")
+        #print("Iniciando carregamento de todos os recursos...")
         
         # --- Carregar Fontes ---
         #caminho_arquivo_fonte_coliner = 'recursos/fontes/Coliner-Regular.ttf'
         caminho_arquivo_fonte_coliner = 'recursos/fontes/Coliner-Bold.ttf'
         caminho_arquivo_fonte_always = 'recursos/fontes/Always In My Heart.ttf'
         caminho_arquivo_fonte_playfair = 'recursos/fontes/PlayfairDisplay-Regular.ttf'
-        self._carregar_fonte(CHAVE_FONTE_COLINER_TITULO, caminho_arquivo_fonte_coliner, TAMANHO_TITULO)
-        self._carregar_fonte(CHAVE_FONTE_COLINER_BOTAO, caminho_arquivo_fonte_coliner, TAMANHO_BOTAO)
-        self._carregar_fonte(CHAVE_FONTE_COLINER_TEXTO, caminho_arquivo_fonte_coliner, TAMANHO_TEXTO)
-        self._carregar_fonte(CHAVE_FONTE_PAYFAIR_TEXTO, caminho_arquivo_fonte_playfair, TAMANHO_TEXTO)
-        self._carregar_fonte(CHAVE_FONTE_HEART_TEXTO, caminho_arquivo_fonte_always, TAMANHO_TEXTO_PEQUENO)
-        
+        fonte_cherry = 'recursos/fontes/CherryBombOne-Regular.ttf'
+        self._carregar_fonte(CHAVE_FONTE_COLINER_TITULO, caminho_arquivo_fonte_coliner, TAMANHO_TITULO)       # Fonte para títulos grandes
+        self._carregar_fonte(CHAVE_FONTE_COLINER_BOTAO, caminho_arquivo_fonte_coliner, TAMANHO_BOTAO)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_COLINER_TEXTO, caminho_arquivo_fonte_coliner, TAMANHO_TEXTO)     # Fonte para botões
+        self._carregar_fonte(CHAVE_FONTE_PAYFAIR_TEXTO, caminho_arquivo_fonte_playfair, TAMANHO_TEXTO)  # Fonte para nome no cartaz
+        self._carregar_fonte(CHAVE_FONTE_HEART_TEXTO, caminho_arquivo_fonte_always, 15)   # Fonte para data/dados no cartaz
+        self._carregar_fonte(CHAVE_FONTE_CHERRY_TITULO, fonte_cherry, 48)          # Fonte para barra de estado
+        self._carregar_fonte(CHAVE_FONTE_CHERRY_SUBTITULO, fonte_cherry, 32)       # Fonte para barra de estado
+        self._carregar_fonte(CHAVE_FONTE_CHERRY_TEXTO, fonte_cherry, 24)           # Fonte para textos gerais
+        fonte_hachi_maru_texto = 'recursos/fontes/HachiMaruPop-Regular.ttf'
+        self._carregar_fonte(CHAVE_FONTE_HACHI_MARU_TEXTO, fonte_hachi_maru_texto, 20)           # Fonte para textos gerais
+
         # --- Carregar Imagens de Interface e Fundos ---
         self._carregar_imagem(CHAVE_TELA_INICIAL, 'recursos/imagens/cenario/tela_inicial.png', escalar_para_tamanho=(LARGURA_TELA, ALTURA_TELA))
         self._carregar_imagem(CHAVE_LOGO, 'recursos/imagens/interface/logo.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADA, 'recursos/imagens/interface/cartaz_de_procurado_menina.png')
         self._carregar_imagem(CHAVE_CARTAZ_PROCURADO, 'recursos/imagens/interface/cartaz_de_procurado_menino.png')
         self._carregar_imagem(CHAVE_CARTAZ_VAZIO, 'recursos/imagens/interface/cartaz_de_procurado_vazio.png')
+        self._carregar_imagem(CHAVE_CAIXA_DIALOGO, 'recursos/imagens/interface/caixa_de_dialogo.png')
         #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
+        self._carregar_imagem(CHAVE_BARRA_DE_ESTADO, 'recursos/imagens/interface/barra_de_estado.png')
+        self._carregar_imagem(CHAVE_CAIXA_DE_TEXTO, 'recursos/imagens/interface/caixa_de_texto.png')
+        self._carregar_imagem(CHAVE_MENU_ITENS, 'recursos/imagens/interface/menu_itens.png')
+        self._carregar_imagem(CHAVE_MENU_SELECAO_HABILIDADE, 'recursos/imagens/interface/caixa_de_habilidades.png')
 
         # --- Carregar planos de fundo para os mapas do jogo ---
         self._carregar_imagem(CHAVE_CENARIO_CAMPO_COSTA_OESTE, 'recursos/imagens/cenario/ilha_campo_costa_oeste.png', escalar_para_altura=ALTURA_TELA)
@@ -166,12 +177,36 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CENARIO_CIDADE_PRACA, 'recursos/imagens/cenario/ilha_cidade_praça.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_CIDADE_PRACA_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_cidade_praça-camada_superior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_CENARIO_NEVE_COSTA, 'recursos/imagens/cenario/ilha_neve_costa.png')
-        self._carregar_imagem(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_CENARIO_NEVE_VILA, 'recursos/imagens/cenario/ilha_neve_vila.png')
+        self._carregar_imagem(CHAVE_CENARIO_NEVE_FLORESTA, 'recursos/imagens/cenario/ilha_neve_floresta.png')
+        self._carregar_imagem(CHAVE_CENARIO_NEVE_FLORESTA_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_neve_floresta-camada_superior.png')
         self._carregar_imagem(CHAVE_CENARIO_NEVE_MONTANHA, 'recursos/imagens/cenario/ilha_neve_montanha.png')
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
-        self._carregar_imagem('inv_painel_fundo', 'recursos/imagens/cenario/painel_inventario_completo.png', escalar_para_altura=ALTURA_TELA)
-        self._carregar_imagem('inv_botao_fechar', 'recursos/imagens/cenario/botao_fechar.png')
+        self._carregar_imagem('inv_painel_fundo', 'recursos/imagens/mochila/painel_fundo.png')
+        self._carregar_imagem('inv_botao_fechar', 'recursos/imagens/mochila/fechar.png')
+        self._carregar_imagem('inv_lateral_estado', 'recursos/imagens/mochila/estado.png')
+        self._carregar_imagem('inv_lateral_estado_ativo', 'recursos/imagens/mochila/estado_ativo.png')
+        self._carregar_imagem('inv_lateral_arma', 'recursos/imagens/mochila/arma.png')
+        self._carregar_imagem('inv_lateral_arma_ativo', 'recursos/imagens/mochila/arma_ativo.png')
+        self._carregar_imagem('inv_lateral_acessorio', 'recursos/imagens/mochila/acessorio.png')
+        self._carregar_imagem('inv_lateral_acessorio_ativo', 'recursos/imagens/mochila/acessorio_ativo.png')
+        self._carregar_imagem('inv_lateral_consumivel', 'recursos/imagens/mochila/consumivel.png')
+        self._carregar_imagem('inv_lateral_consumivel_ativo', 'recursos/imagens/mochila/consumivel_ativo.png')
+        self._carregar_imagem('inv_lateral_especial', 'recursos/imagens/mochila/especiais.png')
+        self._carregar_imagem('inv_lateral_especial_ativo', 'recursos/imagens/mochila/especiais_ativo.png')
+        self._carregar_imagem('inv_painel_itens', 'recursos/imagens/mochila/painel_itens.png')
+        self._carregar_imagem('inv_vazio', 'recursos/imagens/mochila/vazio.png')
+        self._carregar_imagem('filtro_espada', 'recursos/imagens/mochila/filtro_espadas.png')
+        self._carregar_imagem('filtro_projetil', 'recursos/imagens/mochila/filtro_projeteis.png')
+        self._carregar_imagem('filtro_consumivel', 'recursos/imagens/mochila/filtro_consumiveis.png')
+        self._carregar_imagem('filtro_nao_consumivel', 'recursos/imagens/mochila/filtro_nao_consumiveis.png')
+        self._carregar_imagem('filtro_especial', 'recursos/imagens/mochila/filtro_especiais.png')
+        self._carregar_imagem('filtro_acessorio', 'recursos/imagens/mochila/filtro_acessorios.png')
+        self._carregar_imagem('estatistica_silvie', 'recursos/imagens/mochila/estatistica_silvie.png')
+        self._carregar_imagem('estatistica_shuan', 'recursos/imagens/mochila/estatistica_shuan.png')
+        self._carregar_imagem('menu_info', 'recursos/imagens/mochila/menu_info.png')
+
         self._carregar_imagem('inv_slot_item', 'recursos/imagens/cenario/item.png')
         self._carregar_imagem('inv_nada_aqui', 'recursos/imagens/cenario/nada.png')
         # Labels e fundo do personagem (usando os nomes corretos)
@@ -192,6 +227,24 @@ class GerenciadorDeRecursos:
         self._carregar_imagem('inv_slot_fruta', 'recursos/imagens/cenario/icone_aba_fruta.png')
         self._carregar_imagem('inv_slot_arma_especial', 'recursos/imagens/cenario/icone_aba_arma_personagem.png')
      
+        self._carregar_imagem(CENA_SILVIE_NO_CAMPO, 'recursos/imagens/cenas/cena_silvie_no_campo.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CENA_SHUAN_NO_CAMPO, 'recursos/imagens/cenas/cena_shuan_no_campo.png', escalar_para_altura=ALTURA_TELA)
+        # --- Carregar Imagens de Campos de Batalha ---
+        self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS, 'recursos/imagens/cenario/campo_de_batalha_campos.png')
+
+        # --- Carregar Imagens de Ações em Batalhas ---
+        self._carregar_imagem(CHAVE_ACAO_ESTRATEGIAS, 'recursos/imagens/interface/balao_de_estrategias.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_MOCHILA, 'recursos/imagens/interface/balao_de_inventario.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_FRUTA, 'recursos/imagens/interface/balao_de_fruta.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_SOCO_SILVIE, 'recursos/imagens/interface/balao_de_soco_silvie.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_SOCO_SHUAN, 'recursos/imagens/interface/balao_de_soco_shuan.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_ESPADA, 'recursos/imagens/interface/balao_de_espadas.png', escalar_para_altura=100)
+        self._carregar_imagem(CHAVE_ACAO_PROJETIL, 'recursos/imagens/interface/balao_de_projeteis.png', escalar_para_altura=100)
+
+        # --- Carregar Imagens de Ícones ---
+        self._carregar_imagem(CHAVE_ICONE_CORACAO, 'recursos/imagens/icones/coracao.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_ENERGIA, 'recursos/imagens/icones/energia.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_MOEDA, 'recursos/imagens/icones/moeda.png', escalar_para_altura=48)
 
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
@@ -214,6 +267,14 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(f"{INIMIGO_CORVO}_0", 'recursos/imagens/inimigos/Corvo_0.png', escalar_para_altura=60)
         self._carregar_imagem(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
 
+        # --- Carregar Imagens dos Habitantes ---
+        self._carregar_imagem(BIGODINI, 'recursos/imagens/habitantes/campones_b.png')
+        self._carregar_imagem(TIAO_PALHA, 'recursos/imagens/habitantes/campones_a.png')
+        self._carregar_imagem(LINA_PANELA, 'recursos/imagens/habitantes/camponesa_a.png')
+        self._carregar_imagem(TIA_COTINHA, 'recursos/imagens/habitantes/camponesa_b.png')
+        self._carregar_imagem(SR_LEE, 'recursos/imagens/habitantes/lee.png')
+        self._carregar_imagem(SR_LEE_LOGISTA, 'recursos/imagens/habitantes/lee-busto.png')
+
         # --- Carregar Ícone de Interação ---
         self._carregar_imagem(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
@@ -221,6 +282,9 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_MARCADOR_MAPA_SILVIE, 'recursos/imagens/icones/marcador_mapa_silvie.png', escalar_para_altura=48)
         self._carregar_imagem(f'{SHUAN}_inventario', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=160)
         self._carregar_imagem(f'{SILVIE}_inventario', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=160)
+        
+        self._carregar_imagem(ARBUSTO, 'recursos/imagens/itens/arbusto.png')
+
         if not self._tudo_carregado_com_sucesso():
             print("Recursos críticos falharam ao carregar. Saindo.")
             pygame.quit()
