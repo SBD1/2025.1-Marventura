@@ -206,29 +206,14 @@ class GerenciadorDeRecursos:
         self._carregar_imagem('estatistica_silvie', 'recursos/imagens/mochila/estatistica_silvie.png')
         self._carregar_imagem('estatistica_shuan', 'recursos/imagens/mochila/estatistica_shuan.png')
         self._carregar_imagem('menu_info', 'recursos/imagens/mochila/menu_info.png')
+        self._carregar_imagem('inv_botao_usar', 'recursos/imagens/mochila/botao.png')
 
-        self._carregar_imagem('inv_slot_item', 'recursos/imagens/cenario/item.png')
-        self._carregar_imagem('inv_nada_aqui', 'recursos/imagens/cenario/nada.png')
-        # Labels e fundo do personagem (usando os nomes corretos)
-        self._carregar_imagem('inv_label_equip', 'recursos/imagens/cenario/icone_aba_equip.png')
-        self._carregar_imagem('inv_label_estat', 'recursos/imagens/cenario/icone_aba_estat.png')
-        self._carregar_imagem('inv_fundo_personagem', 'recursos/imagens/cenario/icone_aba_gemjogador.png')
         self._carregar_som('som_compra_sucesso', 'recursos/audio/compra_sucesso.mp3') 
         self._carregar_som('som_compra_falha', 'recursos/audio/compra_falha.mp3')
-        # Abas Verticais
-        self._carregar_imagem('inv_tab_status', 'recursos/imagens/cenario/icone_aba_status.png')
-        self._carregar_imagem('inv_tab_arma', 'recursos/imagens/cenario/icone_aba_arma.png')
-        self._carregar_imagem('inv_tab_acessorio', 'recursos/imagens/cenario/icone_aba_acessorio.png')
-        self._carregar_imagem('inv_tab_consumivel', 'recursos/imagens/cenario/icone_aba_consumivel.png')
-        self._carregar_imagem('inv_tab_outros', 'recursos/imagens/cenario/icone_aba_outros.png')
-
-        # Slots de Equipamento (usando os nomes corretos)
-        self._carregar_imagem('inv_slot_camisa', 'recursos/imagens/cenario/icone_aba_camisa.png')
-        self._carregar_imagem('inv_slot_fruta', 'recursos/imagens/cenario/icone_aba_fruta.png')
-        self._carregar_imagem('inv_slot_arma_especial', 'recursos/imagens/cenario/icone_aba_arma_personagem.png')
      
         self._carregar_imagem(CENA_SILVIE_NO_CAMPO, 'recursos/imagens/cenas/cena_silvie_no_campo.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CENA_SHUAN_NO_CAMPO, 'recursos/imagens/cenas/cena_shuan_no_campo.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CENA_JANTAR_COMUNITARIO, 'recursos/imagens/cenas/cena_jantar_comunitario.png', escalar_para_altura=ALTURA_TELA)
         # --- Carregar Imagens de Campos de Batalha ---
         self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS, 'recursos/imagens/cenario/campo_de_batalha_campos.png')
 

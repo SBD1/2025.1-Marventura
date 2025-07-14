@@ -3,6 +3,7 @@
 import pygame
 from utilidades.constantes import * # Importa as constantes
 from entidades.habilidades import Habilidade
+
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from gerenciadores.db_manager import DBManager
@@ -14,10 +15,11 @@ if TYPE_CHECKING:
 class Jogador(pygame.sprite.Sprite):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_banco_de_dados: 'DBManager', gerenciador_recursos: 'GerenciadorDeRecursos', x_inicial, y_inicial, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila: 'Mochila' = [], kit: 'KitDoExplorador' = [], id_inventario = None):
+    def __init__(self, gerenciador_banco_de_dados: 'DBManager', gerenciador_recursos, progresso, x_inicial, y_inicial, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila: 'Mochila' = [], kit: 'KitDoExplorador' = [], id_inventario = None):
         super().__init__()
         self.gerenciador_recursos = gerenciador_recursos
         self.banco_de_dados = gerenciador_banco_de_dados
+        self.gerenciador_missoes = None
         # REMOVIDO: self.fator_de_escala = fator_de_escala
 
         # Estado do jogador
@@ -28,6 +30,7 @@ class Jogador(pygame.sprite.Sprite):
         self.identificador_jogador = identificador_jogador
         self.nome = nome
         self.identificador_jogador = identificador_jogador
+        self.identificador_progresso = progresso
         self.descricao = descricao
         self.energia_maxima = energia_maxima
         self.vida_maxima = vida_maxima
@@ -85,6 +88,9 @@ class Jogador(pygame.sprite.Sprite):
         self.mostrar_icone_interacao = False
         self.icone_interacao = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_INTERACAO)
 
+        # NOVO: Flag para bloquear o movimento controlado pelo jogador
+        self.movimento_bloqueado = False 
+
         self.mochila = mochila  # Lista de itens na mochila do jogador
         self.kit_do_explorador = kit # Lista de itens equipados pelo jogador
         self.habilidades = []  # Lista de habilidades do jogador
@@ -100,9 +106,9 @@ class Jogador(pygame.sprite.Sprite):
 
 
     def usar_item_da_mochila(self, item: 'ItemInventario'):
-        if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, item.id):
-            print(f"[DEBUG] Item {item.id} removido do inventário do jogador {self.identificador_jogador}.")
-            self.mochila.usar_item(item.id, self)
+        if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, item.identificador_item):
+            print(f"[DEBUG] Item {item.identificador_item} removido do inventário do jogador {self.identificador_jogador}.")
+            self.mochila.usar_item(item.identificador_item, self)
 
 
 
@@ -146,21 +152,23 @@ class Jogador(pygame.sprite.Sprite):
 
 
     def calcular_nivel(self, experiencia_total):
-        return experiencia_total // 100
+        return experiencia_total // 100 + 1  # Nível começa em 1, então adicionamos 1 ao resultado da divisão
   
 
 
-    def atualizar_atributos_por_nivel(self, jogador):
-        novo_nivel = self.calcular_nivel(jogador.experiencia_atual)
-        ganho_de_niveis = novo_nivel - jogador.nivel
+    def atualizar_atributos_por_nivel(self):
+        novo_nivel = self.calcular_nivel(self.experiencia_atual)
+        ganho_de_niveis = novo_nivel - self.nivel
 
         if ganho_de_niveis > 0:
-            jogador.nivel = novo_nivel
-            jogador.vida_maxima += ganho_de_niveis
-            jogador.energia_maxima += ganho_de_niveis
-            jogador.vida_atual = jogador.vida_maxima
-            jogador.energia_atual = jogador.energia_maxima
+            self.nivel = novo_nivel
+            self.vida_maxima += ganho_de_niveis
+            self.energia_maxima += ganho_de_niveis
+            self.vida_atual = self.vida_maxima
+            self.energia_atual = self.energia_maxima
             print(f"O jogador subiu {ganho_de_niveis} nível(s)!")
+            if self.gerenciador_missoes and self.nivel == 10:
+                self.gerenciador_missoes.iniciar_missao('mis011')
 
 
 
@@ -543,81 +551,88 @@ class Jogador(pygame.sprite.Sprite):
         :param obstaculos: Um grupo de sprites de obstáculos para colisão.
         :param lista_de_caminhos: Uma lista de objetos Caminho que definem a área andável.
         """
-        self.processar_eventos_continuos()
+        dx, dy = 0, 0 # Zera os deltas
 
-        # --- NOVO: LÓGICA DE VELOCIDADE BASEADA NO TERRENO ---
-        
-        # 1. Obtém o terreno atual sob os pés do jogador
-        terreno_atual = self._obter_terreno_atual(lista_de_caminhos)
+        # Só processa input e movimento se não estiver bloqueado
+        if not self.movimento_bloqueado:
+            self.processar_eventos_continuos()
 
-        # 2. Define o modificador de velocidade com base no terreno
-        modificador_velocidade = 1.0  # 100% da velocidade por padrão
-        if terreno_atual == 'neve':
-            modificador_velocidade = 0.7  # 70% da velocidade (redução de 30%)
-        
-        # 3. Calcula a velocidade efetiva para este quadro
-        velocidade_efetiva = self.velocidade * modificador_velocidade
+            # --- NOVO: LÓGICA DE VELOCIDADE BASEADA NO TERRENO ---
+            
+            # 1. Obtém o terreno atual sob os pés do jogador
+            terreno_atual = self._obter_terreno_atual(lista_de_caminhos)
 
-        # --- FIM DA NOVA LÓGICA ---
+            # 2. Define o modificador de velocidade com base no terreno
+            modificador_velocidade = 1.0  # 100% da velocidade por padrão
+            if terreno_atual == 'neve':
+                modificador_velocidade = 0.7  # 70% da velocidade (redução de 30%)
+            
+            # 3. Calcula a velocidade efetiva para este quadro
+            velocidade_efetiva = self.velocidade * modificador_velocidade
 
-        pos_anterior_x = self.mundo_x
-        pos_anterior_y = self.mundo_y
+            # --- FIM DA NOVA LÓGICA ---
 
-        dx, dy = 0, 0
-        if self.movendo_esquerda:
-            dx -= velocidade_efetiva
-        if self.movendo_direita:
-            dx += velocidade_efetiva
-        if self.movendo_cima:
-            dy -= velocidade_efetiva
-        if self.movendo_baixo:
-            dy += velocidade_efetiva
+            pos_anterior_x = self.mundo_x
+            pos_anterior_y = self.mundo_y
 
-        # --- Verificação de colisão em X ---
-        self.mundo_x += dx
-        self.rect.x = int(self.mundo_x)
-        self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
-        self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
+            if self.movendo_esquerda:
+                dx -= velocidade_efetiva
+            if self.movendo_direita:
+                dx += velocidade_efetiva
+            if self.movendo_cima:
+                dy -= velocidade_efetiva
+            if self.movendo_baixo:
+                dy += velocidade_efetiva
 
-        colidiu_obstaculo_x = False
-        for obstaculo in obstaculos:
-            if self.pes_rect.colliderect(obstaculo.rect):
-                colidiu_obstaculo_x = True
-                break
-        
-        fora_do_caminho_x = not self._esta_dentro_do_caminho(lista_de_caminhos)
-
-        if colidiu_obstaculo_x or fora_do_caminho_x:
-            self.mundo_x = pos_anterior_x
+            # --- Verificação de colisão em X ---
+            self.mundo_x += dx
             self.rect.x = int(self.mundo_x)
-            self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
-            self.pes_rect.bottom = self.rect.bottom
+            self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
+            self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
 
-        # --- Verificação de colisão em Y ---
-        self.mundo_y += dy
-        self.rect.y = int(self.mundo_y)
-        self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
-        self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
+            colidiu_obstaculo_x = False
+            for obstaculo in obstaculos:
+                if self.pes_rect.colliderect(obstaculo.rect):
+                    colidiu_obstaculo_x = True
+                    break
+            
+            fora_do_caminho_x = not self._esta_dentro_do_caminho(lista_de_caminhos)
 
-        colidiu_obstaculo_y = False
-        for obstaculo in obstaculos:
-            if self.pes_rect.colliderect(obstaculo.rect):
-                colidiu_obstaculo_y = True
-                break
+            if colidiu_obstaculo_x or fora_do_caminho_x:
+                self.mundo_x = pos_anterior_x
+                self.rect.x = int(self.mundo_x)
+                self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
+                self.pes_rect.bottom = self.rect.bottom
 
-        fora_do_caminho_y = not self._esta_dentro_do_caminho(lista_de_caminhos)
-
-        if colidiu_obstaculo_y or fora_do_caminho_y:
-            self.mundo_y = pos_anterior_y
+            # --- Verificação de colisão em Y ---
+            self.mundo_y += dy
             self.rect.y = int(self.mundo_y)
-            self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
-            self.pes_rect.bottom = self.rect.bottom
-        self.mundo_x = max(0, min(self.mundo_x, largura_mundo - self.rect.width))
-        self.mundo_y = max(0, min(self.mundo_y, altura_mundo - self.rect.height))
-    
-        # --- Atualizar Animação --- (O resto do método permanece idêntico)
-        esta_movendo = (self.movendo_esquerda or self.movendo_direita or
-                        self.movendo_cima or self.movendo_baixo)
+            self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
+            self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
+
+            colidiu_obstaculo_y = False
+            for obstaculo in obstaculos:
+                if self.pes_rect.colliderect(obstaculo.rect):
+                    colidiu_obstaculo_y = True
+                    break
+
+            fora_do_caminho_y = not self._esta_dentro_do_caminho(lista_de_caminhos)
+
+            if colidiu_obstaculo_y or fora_do_caminho_y:
+                self.mundo_y = pos_anterior_y
+                self.rect.y = int(self.mundo_y)
+                self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
+                self.pes_rect.bottom = self.rect.bottom
+            self.mundo_x = max(0, min(self.mundo_x, largura_mundo - self.rect.width))
+            self.mundo_y = max(0, min(self.mundo_y, altura_mundo - self.rect.height))
+        
+            # --- Atualizar Animação --- (O resto do método permanece idêntico)
+            esta_movendo = (self.movendo_esquerda or self.movendo_direita or
+                            self.movendo_cima or self.movendo_baixo)
+            
+        else:
+            # Determina se o jogador está se movendo (pela missão)
+            esta_movendo = self.estado == 'caminhando'
         
         # (O restante da sua lógica de animação continua aqui, sem alterações)
         if esta_movendo:
@@ -640,7 +655,7 @@ class Jogador(pygame.sprite.Sprite):
 
         imagem_atual = None
         if self.estado == 'parado' and self.frames_animacao['parado']:
-            #print(self.mundo_x, self.mundo_y)
+            # print(self.mundo_x, self.mundo_y)
             imagem_atual = self.frames_animacao['parado'][self.indice_frame]
         elif self.estado == 'caminhando' and self.frames_animacao['caminhando']:
             imagem_atual = self.frames_animacao['caminhando'][self.indice_frame]

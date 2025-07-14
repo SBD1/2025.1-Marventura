@@ -3,24 +3,24 @@
 import pygame
 from .tela_modelo import TelaModelo
 from utilidades.constantes import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
+    from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeTelas
+    from gerenciadores import GerenciadorDeEntidades
 
 class TelaLoja(TelaModelo):
     """
     Representa a interface da loja, onde o jogador pode comprar itens de um
     vendedor ou vender itens de seu próprio inventário.
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, db_manager, jogador_id, vendedor_id, nome_vendedor,
-                 dados_retorno_ilha, dados_retorno_area, ponto_retorno_jogador):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', db_manager: 'DBManager', gerenciador_etidades: 'GerenciadorDeEntidades', vendedor_id, nome_vendedor):
         super().__init__(gerenciador_telas, gerenciador_recursos)
         self.db_manager = db_manager
-        self.jogador_id = jogador_id
         self.vendedor_id = vendedor_id
         self.nome_vendedor = nome_vendedor
-
-        # --- Dados para retornar ao jogo ---
-        self.dados_retorno_ilha = dados_retorno_ilha
-        self.dados_retorno_area = dados_retorno_area
-        self.ponto_retorno_jogador = ponto_retorno_jogador
+        self.entidades = gerenciador_etidades
 
 
         # Estado da UI
@@ -56,11 +56,16 @@ class TelaLoja(TelaModelo):
         Carrega os dados iniciais do jogador e do vendedor do banco de dados.
         Esta função é chamada apenas uma vez na inicialização da tela.
         """
-        self.inventario_vendedor = self.db_manager.buscar_inventario_vendedor(self.vendedor_id)
-        self.inventario_jogador = self.db_manager.buscar_inventario_jogador(self.jogador_id)
-        self.dados_jogador = self.db_manager.buscar_jogador(self.jogador_id)
-        self.id_inventario_jogador = self.db_manager.buscar_id_inventario_por_personagem(self.jogador_id)
-        self.id_inventario_vendedor = self.db_manager.buscar_id_inventario_por_personagem(self.vendedor_id)
+        self.inventario_vendedor = self.db_manager.buscar_inventario_vendedor(self.vendedor_id, self.entidades.progresso_do_jogo.identificador_progresso)
+
+        self.inventario_jogador = self.db_manager.buscar_inventario(identificador_personagem=self.entidades.jogador.identificador_jogador, identificador_progresso= self.entidades.progresso_do_jogo.identificador_progresso)
+
+        self.dados_jogador = self.db_manager.buscar_jogador(self.entidades.jogador.identificador_jogador)
+
+        self.id_inventario_jogador = self.db_manager.buscar_id_inventario(self.entidades.jogador.identificador_jogador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
+
+        self.id_inventario_vendedor = self.db_manager.buscar_id_inventario(self.vendedor_id, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
+        
         self._resetar_selecao()
 
     def _resetar_selecao(self):
@@ -93,9 +98,9 @@ class TelaLoja(TelaModelo):
         self.rect_botao_transacao = pygame.Rect(margem_x + largura * 0.45, self.rect_painel_info.bottom + altura * 0.02, largura * 0.45, altura * 0.07)
         self.rect_botao_voltar = pygame.Rect(margem_x + largura * 0.45, self.rect_botao_transacao.bottom + altura * 0.015, largura * 0.45, altura * 0.07)
 
-    def handle_input(self, evento):
+    def processar_eventos(self, evento):
         """Gerencia todas as entradas do usuário nesta tela."""
-        super().handle_input(evento)
+        super().processar_eventos(evento)
         self._handle_scroll(evento)
         if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
             self._handle_clicks(evento.pos)
@@ -123,15 +128,10 @@ class TelaLoja(TelaModelo):
             self._resetar_selecao()
         elif self.rect_botao_voltar.collidepoint(pos):
             # Busca os dados mais recentes do jogador no banco de dados
-            jogador_atualizado = self.db_manager.buscar_jogador(self.jogador_id)
+            jogador_atualizado = self.db_manager.buscar_jogador(self.entidades.jogador.identificador_jogador)
             
             # Usa a transição de mapa para voltar ao jogo com os dados atualizados
-            self.gerenciador_telas.mudar_tela(
-                CHAVE_TRANSICAO_MAPA,
-                dados_da_ilha=self.dados_retorno_ilha,
-                dados_da_area=self.dados_retorno_area,
-                jogador=jogador_atualizado,  # Passa os dados frescos do jogador
-                ponto_geracao_jogador=self.ponto_retorno_jogador)
+            self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA)
         elif self.rect_botao_transacao.collidepoint(pos) and self.item_selecionado:
             self._realizar_transacao()
         # --- NOVO: Lógica para botões de quantidade ---
@@ -160,7 +160,7 @@ class TelaLoja(TelaModelo):
             self._comprar_item()
         elif self.modo == 'vender':
             # Evita tentar vender item sem preço definido
-            if self.item_selecionado.preco_venda is None or self.item_selecionado.preco_venda <= 0:
+            if self.item_selecionado.preco_de_venda is None or self.item_selecionado.preco_de_venda <= 0:
                 self._mostrar_feedback("Este item não pode ser vendido.", False)
                 return
             self._vender_item()
@@ -168,19 +168,20 @@ class TelaLoja(TelaModelo):
 
     def _comprar_item(self):
         """Processa a compra de um item."""
-        if self.item_selecionado.preco_compra is None:
+        if self.item_selecionado.preco_de_compra is None:
             self._mostrar_feedback("Este item não pode ser comprado.", False)
             return
             
-        preco = self.item_selecionado.preco_compra * self.quantidade_selecionada
-        if self.dados_jogador.moedas_totais >= preco:
+        preco = self.item_selecionado.preco_de_compra * self.quantidade_selecionada
+        if self.entidades.jogador.moedas >= preco:
             resultado = self.db_manager.realizar_compra(
-                self.jogador_id, self.vendedor_id, self.id_inventario_jogador,
+                self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
                 self.quantidade_selecionada, preco
             )
             if resultado.get('sucesso'):
                 self._mostrar_feedback("Compra realizada com sucesso!", True)
+                self.entidades.jogador.moedas -= preco
                 self._atualizar_dados_da_tela()
             else:
                 self._mostrar_feedback(f"Falha na compra: {resultado.get('erro', 'Erro')}", False)
@@ -189,17 +190,20 @@ class TelaLoja(TelaModelo):
 
     def _vender_item(self):
         """Processa a venda de um item."""
-        preco_unitario = self.item_selecionado.preco_venda
+        preco_unitario = self.item_selecionado.preco_de_venda
 
         if preco_unitario is not None and preco_unitario > 0:
             preco = preco_unitario * self.quantidade_selecionada
+            print(f"Vendendo {self.quantidade_selecionada}x {self.item_selecionado.nome_item.strip()} por {preco} moedas. Identificador do jogador: {self.entidades.jogador.identificador_jogador}, Identificador do vendedor: {self.vendedor_id}, ID Inventário Jogador: {self.id_inventario_jogador}, ID Inventário Vendedor: {self.id_inventario_vendedor}, ID Item: {self.item_selecionado.identificador_item}")
             resultado = self.db_manager.realizar_venda(
-                self.jogador_id, self.vendedor_id, self.id_inventario_jogador,
+                self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
                 self.quantidade_selecionada, preco
             )
+            print(f"Resultado da venda: {resultado}")
             if resultado.get('sucesso'):
                 self._mostrar_feedback("Venda realizada com sucesso!", True)
+                self.entidades.jogador.moedas += preco
                 self._atualizar_dados_da_tela()
             else:
                 self._mostrar_feedback(f"Falha na venda: {resultado.get('erro', 'Erro')}", False)
@@ -220,7 +224,7 @@ class TelaLoja(TelaModelo):
                 self.gerenciador_recursos.obter_som('som_compra_falha').play()
 
 
-    def update(self, dt):
+    def atualizar(self, dt):
         """Atualiza o timer do feedback visual."""
         if self.feedback_timer > 0:
             self.feedback_timer -= dt
@@ -245,7 +249,7 @@ class TelaLoja(TelaModelo):
              # Se o item não existia, busca os dados completos e adiciona
              # (Esta parte ainda pode necessitar de uma consulta se os dados completos do item não estiverem disponíveis)
              # Para simplificar, vamos recarregar apenas o inventário do jogador neste caso.
-             self.inventario_jogador = self.db_manager.buscar_inventario_jogador(self.jogador_id)
+             self.inventario_jogador = self.db_manager.buscar_inventario(self.entidades.jogador.identificador_jogador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
         else:
             self.inventario_jogador = inv_jogador
 
@@ -277,7 +281,7 @@ class TelaLoja(TelaModelo):
         lista_atual = self._get_lista_atual()
         return lista_atual[self.scroll_offset:self.scroll_offset + 10]
 
-    def draw(self, tela):
+    def desenhar(self, tela):
         """Desenha todos os elementos da tela da loja."""
         imagem_escalada = pygame.transform.scale(self.imagem_fundo, (LARGURA_TELA, ALTURA_TELA))
         tela.blit(imagem_escalada, (0, 0))
@@ -336,11 +340,11 @@ class TelaLoja(TelaModelo):
 
         # --- NOVO: Lógica de preço e quantidade ---
         if self.modo == 'comprar':
-            preco_unitario = self.item_selecionado.preco_compra
+            preco_unitario = self.item_selecionado.preco_de_compra
             preco_total = preco_unitario * self.quantidade_selecionada if preco_unitario else 0
             preco_texto = f"Preço Total: {preco_total} moedas"
         else: # modo 'vender'
-            preco_unitario = self.item_selecionado.preco_venda
+            preco_unitario = self.item_selecionado.preco_de_venda
             preco_total = preco_unitario * self.quantidade_selecionada if preco_unitario else 0
             preco_texto = f"Vender por: {preco_total} moedas" if preco_unitario is not None else "Não pode ser vendido"
         
@@ -380,9 +384,14 @@ class TelaLoja(TelaModelo):
         para garantir que a tela esteja sempre sincronizada.
         """
         print("Sincronizando dados da loja com o banco de dados...")
-        self.inventario_vendedor = self.db_manager.buscar_inventario_vendedor(self.vendedor_id)
-        self.inventario_jogador = self.db_manager.buscar_inventario_jogador(self.jogador_id)
-        self.dados_jogador = self.db_manager.buscar_jogador(self.jogador_id)
+        self.inventario_vendedor = self.db_manager.buscar_inventario_vendedor(self.vendedor_id, self.entidades.progresso_do_jogo.identificador_progresso)
+        self.inventario_jogador = self.db_manager.buscar_inventario(self.entidades.jogador.identificador_jogador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
+        
+        self.entidades.jogador.mochila = self.db_manager.carregar_mochila_do_jogador(
+            self.entidades.jogador.identificador_jogador, self.entidades.progresso_do_jogo.identificador_progresso
+        )
+
+        self.dados_jogador = self.db_manager.buscar_jogador(self.entidades.jogador.identificador_jogador)
         
         # Reseta a seleção para evitar interações com itens que podem ter sumido
         self._resetar_selecao()

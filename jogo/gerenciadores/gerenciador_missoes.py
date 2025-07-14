@@ -3,9 +3,17 @@
 import pygame
 import json # Ou outro formato para carregar seus scripts
 from utilidades.constantes import * # Importa as constantes
+from entidades.item_inventario import ItemInventario
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager, GerenciadorDeRecursos, GerenciadorDeTelas
+    from entidades import Jogador
+    from utilidades import Camera
+    from telas import TelaJogo
+    from componentes import CaixaDeDialogo
 
 class GerenciadorDeMissoes:
-    def __init__(self, banco_de_dados, gerenciador_recursos, camera, jogador, caixa_dialogo, npcs, gerenciador_telas, tela_jogo):
+    def __init__(self, banco_de_dados: "DBManager", gerenciador_recursos: "GerenciadorDeRecursos", camera: "Camera", jogador: "Jogador", caixa_dialogo: "CaixaDeDialogo", npcs, gerenciador_telas: "GerenciadorDeTelas", tela_jogo: "TelaJogo"):
         self.banco_de_dados = banco_de_dados
         self.gerenciador_recursos = gerenciador_recursos
         self.camera = camera
@@ -27,6 +35,11 @@ class GerenciadorDeMissoes:
         
         self.proximo_passo_apos_dialogo_controlado = None # O que fazer depois que o diálogo controlado terminar
 
+        # NOVO: Atributos para controle de movimento
+        self.entidade_em_movimento = None
+        self.destino_movimento = None
+        self.velocidade_movimento_controlado = VELOCIDADE_JOGADOR * 0.8 # Um pouco mais lento para cutscenes
+
 
     def _carregar_scripts_missoes(self, nome_jogador):
         """
@@ -37,18 +50,79 @@ class GerenciadorDeMissoes:
         return {
             'mis001': [ # Sua primeira missão
                 {'tipo': 'cena_dialogo_missao', 'missao_id': 'mis001', 'chave_imagem_cena': CENA_SILVIE_NO_CAMPO if nome_jogador == SILVIE else CENA_SHUAN_NO_CAMPO},
+                {'tipo': 'inserir_gatilho_de_missao', 'id_area': 'are001', 'id_missao': 'mis002', 'x': 2560, 'y': 220, 'largura': 180, 'altura': 133}
                 # Os passos para focar no jogador e finalizar a missão serão executados
                 # automaticamente após o diálogo da cena terminar.
             ],
             'mis002': [
-                {'tipo': 'focar_em_ponto', 'x': 500, 'y': 100},
-                {'tipo': 'dialogo', 'textos': ["Encontrei o baú perdido!", "Mas está trancado...", "Preciso da chave sagrada."]},
-                {'tipo': 'retornar_para_jogador'}
+                {'tipo': 'remover_inimigos_da_area', 'area_id': 'are001'},
+                {'tipo': 'carregar_inimigo_na_posicao', 'chave_inimigo': 'Lobo', 'x': 2980, 'y': 290, 'id_instancia': 'lobo_missao_002'},
+                {'tipo': 'mover_jogador_para', 'x': 2780, 'y': 170},
+                {'tipo': 'mover_inimigo_para', 'id_instancia': 'lobo_missao_002', 'x': 2900, 'y': 210},
+                {'tipo': 'dialogo', 'missao_id': 'mis002'}, # Precisamos do ID para buscar os diálogos
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'remover_gatilho_de_missao', 'id_area': 'are001', 'id_missao': 'mis002', 'x': 2560, 'y': 220, 'largura': 180, 'altura': 133},
+                {'tipo': 'inserir_gatilho_de_missao', 'id_area': 'are002', 'id_missao': 'mis003', 'x': 0, 'y': 0, 'largura': 150, 'altura': 600},
+                {'tipo': 'batalha', 'inimigos_batalha': ['lobo_missao_002']},
+            ],
+            'mis003': [
+                {'tipo': 'mover_jogador_para', 'x': 1485, 'y': 370},
+                {'tipo': 'dialogo', 'missao_id': 'mis003'},
+                {'tipo': 'remover_gatilho_de_missao', 'id_area': 'are002', 'id_missao': 'mis003', 'x': 0, 'y': 0, 'largura': 150, 'altura': 600},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa'}
+            ],
+            'mis004': [
+                {'tipo': 'dialogo', 'missao_id': 'mis004'},
+                #{'tipo': 'escutar_vitoria_batalha'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis005': [
+                {'tipo': 'dialogo', 'missao_id': 'mis005'},
+                #{'tipo': 'escutar_interacao', 'tipo_evento_alvo': 'investigar'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis006': [
+                {'tipo': 'dialogo', 'missao_id': 'mis006'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis007': [
+                {'tipo': 'dialogo', 'missao_id': 'mis007'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis008': [
+                {'tipo': 'dialogo', 'missao_id': 'mis008'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis009': [
+                {'tipo': 'dialogo', 'missao_id': 'mis009'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis010': [
+                {'tipo': 'dialogo', 'missao_id': 'mis010'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'recompensa', 'xp': 25}
+            ],
+            'mis011':[
+                {'tipo': 'cena_dialogo_missao', 'missao_id': 'mis011', 'chave_imagem_cena': CENA_JANTAR_COMUNITARIO},
             ]
+
+
             # ... outras missões
         }
 
     def iniciar_missao(self, identificador_missao):
+        estado_missao = self.banco_de_dados.buscar_estado_da_missao(identificador_missao, self.jogador.identificador_progresso)
+
+        if estado_missao == 'concluida':
+            return
+
         """Inicia a execução do script de uma missão."""
         if identificador_missao in self.scripts_missoes:
             self.missao_ativa_id = identificador_missao
@@ -58,31 +132,79 @@ class GerenciadorDeMissoes:
             self.dialogo_controlado_ativo = False
             print(f"Missão '{identificador_missao}' iniciada.")
             # Você pode querer atualizar o estado_missao no banco de dados para 'aceita'
-            # self.banco_de_dados.atualizar_estado_missao(identificador_missao, self.jogador.identificador_progresso, 'aceita')
+            self.banco_de_dados.atualizar_estado_missao(identificador_missao, self.jogador.identificador_progresso, 'aceita')
+            return True
         else:
             print(f"Erro: Missão '{identificador_missao}' não encontrada nos scripts.")
+            return False
+
+
 
     def atualizar(self, dt_ms):
         """
         Atualiza o estado do gerenciador de missões e avança no script.
         :param dt_ms: Delta time em milissegundos.
         """
+
+        # =====================================================================
+        #  PRIMEIRO: Verifique e execute o movimento controlado, se houver.
+        #  Esta lógica precisa rodar MESMO SE o script estiver "pausado".
+        # =====================================================================
+        if self.entidade_em_movimento and self.destino_movimento:
+            entidade = self.entidade_em_movimento
+            destino = self.destino_movimento
+            
+            direcao = destino - pygame.math.Vector2(entidade.mundo_x, entidade.mundo_y)
+
+            # Checa se a entidade chegou ao destino
+            if direcao.length() < 5: # Usamos uma pequena margem de erro
+                entidade.mundo_x, entidade.mundo_y = destino.x, destino.y
+                entidade.estado = 'parado' # Para a animação
+                self.entidade_em_movimento = None
+                self.destino_movimento = None
+                # IMPORTANTE: O próprio movimento, ao terminar, avança o script
+                self._avancar_passo() 
+            else:
+                # Move a entidade
+                direcao.normalize_ip()
+                entidade.mundo_x += direcao.x * self.velocidade_movimento_controlado
+                entidade.mundo_y += direcao.y * self.velocidade_movimento_controlado
+                entidade.estado = 'caminhando' # Ativa a animação de caminhada
+
+                # NOVO E CRUCIAL: Sincronize o rect com as coordenadas de mundo
+                entidade.rect.x = int(entidade.mundo_x)
+                entidade.rect.y = int(entidade.mundo_y)
+                
+                # Atualiza a orientação visual da entidade
+                if hasattr(entidade, 'orientacao'):
+                    entidade.orientacao = 'direita' if direcao.x >= 0 else 'esquerda'
+                elif hasattr(entidade, 'olhando_direita'):
+                    entidade.olhando_direita = direcao.x >= 0
+            
+            # Como o movimento está acontecendo, paramos o resto do update desta frame
+            return 
+
+        # =====================================================================
+        #  SEGUNDO: Agora, verifique as condições de pausa geral (diálogo, etc.)
+        # =====================================================================
         if self.missao_ativa_id is None or self.esta_pausado:
             if self.dialogo_controlado_ativo and self.caixa_dialogo:
-                self.caixa_dialogo.atualizar() # Garante que o diálogo continue a ser atualizado
+                self.caixa_dialogo.atualizar()
             return
 
         # Se há um diálogo controlado ativo, a execução do script está pausada
         if self.dialogo_controlado_ativo:
             self.caixa_dialogo.atualizar()
-            return # A lógica de avanço do diálogo está no processar_eventos
+            return
 
         # Se o movimento da câmera estiver em andamento, pausa o script
         if self.camera.modo == 'movimento_suave' and not self.camera.is_movimento_suave_completo():
-            self.camera.update(dt_ms) # A câmera se atualiza
-            return # Pausa o avanço do script até o movimento terminar
+            self.camera.update(dt_ms)
+            return
 
-        # Executa o passo atual do script
+        # =====================================================================
+        #  TERCEIRO: Se não há movimento nem pausa, execute o próximo passo
+        # =====================================================================
         if self.indice_passo_atual < len(self.script_em_execucao):
             passo = self.script_em_execucao[self.indice_passo_atual]
             self._executar_passo(passo, dt_ms)
@@ -93,22 +215,93 @@ class GerenciadorDeMissoes:
             self.script_em_execucao = None
             self.indice_passo_atual = 0
             self.esta_pausado = False
-            # Pode ativar a próxima missão, dar recompensas, etc.
-            self.camera.retornar_para_jogador() # Retorna a câmera para o jogador ao fim da missão
+            self.camera.retornar_para_jogador()
+
+
 
     def _executar_passo(self, passo, dt_ms):
         """Executa uma única ação do script da missão."""
         tipo_passo = passo['tipo']
 
+        print(f"Executando passo da missão: {tipo_passo}") # Ótimo para debug
+
         if tipo_passo == 'focar_em_ponto':
             self.camera.focar_em_ponto(passo['x'], passo['y'])
             self._avancar_passo() # Este é instantâneo, então avança imediatamente
 
+        elif tipo_passo == 'remover_inimigos_da_area':
+            # Remove inimigos existentes para garantir um cenário limpo
+            # A melhor forma é fazer isso na TelaJogo, que controla o grupo de inimigos
+            self.tela_jogo.inimigos.empty()
+            self._avancar_passo()
+
+        elif tipo_passo == 'carregar_inimigo_na_posicao':
+            # Pede para a TelaJogo criar e adicionar o inimigo da missão
+            self.tela_jogo.adicionar_inimigo_em_missao(
+                passo['chave_inimigo'],
+                passo['id_instancia'],
+                passo['x'],
+                passo['y']
+            )
+            self._avancar_passo()
+
+        elif tipo_passo == 'mover_jogador_para':
+            self.entidade_em_movimento = self.jogador
+            self.destino_movimento = pygame.math.Vector2(passo['x'], passo['y'])
+            self.esta_pausado = True # Pausa o script até o movimento terminar
+
+        elif tipo_passo == 'mover_inimigo_para':
+            # Encontra o inimigo pelo ID de instância que demos a ele
+            inimigo_alvo = None
+            for inimigo in self.tela_jogo.inimigos:
+                if hasattr(inimigo, 'identificador_instancia_lacaio') and inimigo.identificador_instancia_lacaio == passo['id_instancia']:
+                    inimigo_alvo = inimigo
+                    break
+            
+            if inimigo_alvo:
+                self.entidade_em_movimento = inimigo_alvo
+                self.destino_movimento = pygame.math.Vector2(passo['x'], passo['y'])
+                self.esta_pausado = True # Pausa o script
+            else:
+                print(f"ERRO: Inimigo com ID '{passo['id_instancia']}' não encontrado para mover.")
+                self._avancar_passo() # Pula o passo se não encontrar
+
         elif tipo_passo == 'dialogo':
-            self.iniciar_dialogo_controlado(passo['textos'])
-            # O avanço do passo acontecerá após o diálogo terminar,
-            # em processar_eventos quando o usuário pressionar espaço no último texto.
-            self.proximo_passo_apos_dialogo_controlado = True # Sinaliza para avançar o passo do script depois
+            # Seu código de diálogo estava quase certo, só precisa do ID da missão
+            id_missao = passo['missao_id']
+            genero = 'F' if self.jogador.nome == SILVIE else 'M'
+            dialogos = self.banco_de_dados.buscar_dialogos_da_missao(id_missao, genero, self.jogador.identificador_jogador)
+            if dialogos:
+                self.iniciar_dialogo_controlado(dialogos)
+                self.proximo_passo_apos_dialogo_controlado = True
+            else:
+                print(f"AVISO: Nenhum diálogo encontrado para a missão '{id_missao}'. Pulando.")
+                self._avancar_passo()
+                
+        elif tipo_passo == 'batalha':
+            # Usa o sistema de transição de tela que você já tem
+            print("Iniciando transição para batalha...")
+            
+            # Encontra os inimigos da batalha na lista de inimigos da tela de jogo
+            inimigos_para_batalha = []
+            for id_inimigo in passo['inimigos_batalha']:
+                for inimigo_sprite in self.tela_jogo.inimigos:
+                    if hasattr(inimigo_sprite, 'identificador_instancia_lacaio') and inimigo_sprite.identificador_instancia_lacaio == id_inimigo:
+                        inimigos_para_batalha.append(inimigo_sprite)
+                        print(inimigos_para_batalha)
+
+            if inimigos_para_batalha:
+                self.gerenciador_telas.mudar_tela(
+                    CHAVE_TRANSICAO_BATALHA,
+                    inimigos_na_batalha=inimigos_para_batalha,
+                    modo_batalha='chefe'
+                    # Adicione quaisquer outros dados que sua tela de batalha precise
+                )
+                # A missão será finalizada quando a batalha terminar (ver Passo 3)
+                self.esta_pausado = True # Pausa a missão até o retorno da batalha
+            else:
+                print("ERRO: Inimigos para a batalha não foram encontrados.")
+                self._avancar_passo()
 
         elif tipo_passo == 'movimento_camera_suave':
             self.camera.iniciar_movimento_suave(
@@ -124,13 +317,70 @@ class GerenciadorDeMissoes:
             self._avancar_passo()
 
         elif tipo_passo == 'recompensa':
-            print(f"Recompensa: XP={passo.get('xp', 0)}, Item={passo.get('item_id', 'Nenhum')}")
+            print(f"Recompensa: XP={passo.get('xp', 50)}, Item={passo.get('item_id', 'Nenhum')}")
             # Lógica para adicionar XP e itens ao jogador
+            self.jogador.experiencia_atual += passo.get('xp', 50)
+            self.jogador.atualizar_atributos_por_nivel()
+    
+            dados_do_item = self.banco_de_dados.buscar_item_recompensa_missao(self.missao_ativa_id)
+            if dados_do_item:
+                efeitos = self.banco_de_dados.buscar_efeitos_por_item(dados_do_item.identificador_item)
+            
+                item = ItemInventario(
+                    dados_do_item.identificador_item,
+                    dados_do_item.nome_item,
+                    dados_do_item.descricao_item,
+                    dados_do_item.tipo,
+                    dados_do_item.raridade,
+                    dados_do_item.quantidade
+                )
+                for efeito in efeitos:
+                    item.adicionar_efeito(efeito.efeito_nome, efeito.efeito_valor)
+    
+                self.jogador.inserir_item_na_mochila(item, self.tela_jogo.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+                self.jogador.moedas += passo.get('moedas', 0)
+    
+                self.tela_jogo.notificador.adicionar_item(dados_do_item.nome_item, dados_do_item.quantidade)
+
+            self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
+                self.jogador.identificador_jogador,
+                self.jogador.energia_maxima,
+                self.jogador.vida_maxima,
+                self.jogador.nivel,
+                self.jogador.sorte,
+                self.jogador.energia_atual,
+                self.jogador.vida_atual,
+                self.jogador.experiencia_atual,
+                self.jogador.moedas
+            )
+            self._avancar_passo()
+
+        elif tipo_passo == 'inserir_gatilho_de_missao':
+            resultado = self.banco_de_dados.inserir_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'))
+            print(resultado)
+            if resultado:
+                print(f"Gatilho de missão inserido na área '{passo.get('id_area')}' para a missão '{passo.get('id_missao')}'.")
+            self.tela_jogo.atualizar_areas_interativas_passivas()
+
+            self._avancar_passo()
+
+        elif tipo_passo == 'remover_gatilho_de_missao':
+            self.banco_de_dados.remover_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'))
+
+            self.tela_jogo.atualizar_areas_interativas_passivas()
+
             self._avancar_passo()
         
+        elif tipo_passo == 'ativar_proxima_missao':
+            
+            self.banco_de_dados.atualizar_estado_missao(passo.get('id_missao'), self.jogador.identificador_progresso, 'aceita')
+            self.iniciar_missao(passo.get('id_missao'))
+
         elif tipo_passo == 'finalizar_missao':
             print(f"Missão '{self.missao_ativa_id}' marcada como finalizada.")
-            # Atualizar estado_missao no banco de dados para 'concluida'
+            
+            self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
+            self.tela_jogo.gerenciador_entidades.iniciar_missao = None
             self._avancar_passo()
 
         # NOVO TIPO DE PASSO: Cena estática com diálogo
@@ -145,7 +395,7 @@ class GerenciadorDeMissoes:
             # 2. Carregar e exibir os diálogos da missão
             genero = 'F' if self.jogador.nome == SILVIE else 'M'
             
-            dialogos_da_missao = self.banco_de_dados.buscar_dialogos_da_missao(missao_id, genero)
+            dialogos_da_missao = self.banco_de_dados.buscar_dialogos_da_missao(missao_id, genero, self.jogador.identificador_jogador)
             if dialogos_da_missao:
                 print(f"DEBUG: Diálogos encontrados para a missão '{missao_id}': {len(dialogos_da_missao)}.")
                 self.iniciar_dialogo_controlado(dialogos_da_missao)
@@ -158,6 +408,7 @@ class GerenciadorDeMissoes:
                 self.tela_jogo.desativar_cena_estatica()
                 self.camera.retornar_para_jogador()
                 self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
+                self.tela_jogo.gerenciador_entidades.iniciar_missao = None
                 self._avancar_passo() # Avança para o próximo passo no script (se houver)
 
 
@@ -200,27 +451,21 @@ class GerenciadorDeMissoes:
             if evento.type == pygame.KEYDOWN:
                 if evento.key == pygame.K_SPACE:
                     if self.caixa_dialogo.esta_digitando:
-                        print("DEBUG: Pressionado ESPAÇO - pulando digitação do diálogo.")
                         self.caixa_dialogo.pular_digitacao()
                     elif self.caixa_dialogo.esta_finalizado():
-                        print("DEBUG: Pressionado ESPAÇO - diálogo atual finalizado.")
                         self.indice_dialogo_controlado += 1
                         if self.indice_dialogo_controlado < len(self.dialogos_controlados_atuais):
-                            print(f"DEBUG: Avançando para o diálogo {self.indice_dialogo_controlado + 1}/{len(self.dialogos_controlados_atuais)}.")
                             self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].dialogo, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
                         else:
-                            print(f"DEBUG: Avançando para o diálogo {self.indice_dialogo_controlado + 1}/{len(self.dialogos_controlados_atuais)}.")
                             self._finalizar_dialogo_controlado()
                             if self.proximo_passo_apos_dialogo_controlado == 'finalizar_cena_e_missao':
-                                print("DEBUG: Condição 'finalizar_cena_e_missao' ATENDIDA.")
-                                print("Diálogo da cena de missão terminado. Finalizando cena e missão.")
                                 self.tela_jogo.desativar_cena_estatica()
                                 self.camera.retornar_para_jogador()
-                                #self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
+                                self.banco_de_dados.atualizar_estado_missao(self.missao_ativa_id, self.jogador.identificador_progresso, 'concluida')
+                                self.tela_jogo.gerenciador_entidades.iniciar_missao = None
                                 self._avancar_passo() # Avança o script da missão
                                 self.proximo_passo_apos_dialogo_controlado = None # Reseta a flag
                             elif self.proximo_passo_apos_dialogo_controlado:
-                                print(f"DEBUG: Condição {self.proximo_passo_apos_dialogo_controlado} ATENDIDA. Avançando passo do script.")
                                 self._avancar_passo() # Avança o script da missão
                                 self.proximo_passo_apos_dialogo_controlado = None
             elif evento.type == pygame.MOUSEBUTTONDOWN:

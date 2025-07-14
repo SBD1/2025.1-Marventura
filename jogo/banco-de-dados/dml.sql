@@ -94,7 +94,7 @@ VALUES
 INSERT INTO habilidade
     (identificador_efeito, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano, custo)
 VALUES
-    (NULL, 'Soco Direto', 'Um golpe rápido e certeiro. Simples, mas eficiente como uma boa bronca.', 'soco', 'alvo_terrestre', 8, 0),
+    (NULL, 'Soco Direto', 'Um golpe rápido e certeiro. Simples, mas eficiente como uma boa bronca.', 'soco', 'alvo_terrestre', 8, 0), -- Dano_final = dano_base * (1 + (nivel_jogador / escala)) * multiplicador_area * multiplicador_raridade
     ('efe084', 'Martelo de Carne', 'Socos pesados e ritmados como um churrasqueiro raivoso. Aplica Tontura.', 'soco', 'terrestre', 8, 4),
     (NULL, 'Soco Giratório', 'Um giro rápido com soco final. Às vezes acerta dois alvos lado a lado.', 'soco', 'alvo_terrestre', 8, 0),
     ('efe084', 'Trovão de Punhos', 'Uma sequência de socos trovejantes que sacodem o chão. Pode causar Tontura em todos.', 'soco', 'terrestre', 8, 4),
@@ -143,8 +143,8 @@ VALUES
 INSERT INTO habilidade
     (identificador_efeito, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano)
 VALUES
-    ('efe085', 'Investida Penosa', 'O corvo mergulha com um grito estridente, mirando os olhos. Quem precisa de precisão quando se tem drama?', 'soco', 'alvo_livre', 4),
-    ('efe082', 'Mordida Selvagem', 'Uma mordida rápida e feroz. Ele rosna depois, só pra garantir que você não esqueça.', 'soco', 'alvo_terrestre', 4),
+    ('efe085', 'Investida Penosa', 'O corvo mergulha com um grito estridente, mirando os olhos. Quem precisa de precisão quando se tem drama?', 'soco', 'alvo_livre', 1),
+    ('efe082', 'Mordida Selvagem', 'Uma mordida rápida e feroz. Ele rosna depois, só pra garantir que você não esqueça.', 'soco', 'alvo_terrestre', 2),
     ('efe084', 'Carga Desgovernada', 'Baixa a cabeça, corre, atropela. Você não está preparado. Ninguém está preparado.', 'soco', 'terrestre', 4),
     ('efe084', 'Soco Açucarado', 'Um murro tão forte quanto seu vício em balas. Quem diria que açúcar deixava alguém assim?', 'soco', 'alvo_terrestre', 4),
     (NULL, 'Suborno de Honra', 'Ele tenta “convencer” você a baixar a guarda. Com um soco. E uma proposta indecente.', 'soco', 'alvo_terrestre', 4),
@@ -961,7 +961,7 @@ INSERT INTO lacaio
     (nome, descricao, vida, nivel, experiencia, tempo_reacao)
 VALUES
     ('Corvo',	'Um bico afiado e uma risada sarcástica. Costuma roubar frutas e orgulho.', 8, 1, 10, 750), -- lac001 vida=8(1+0.05*nível)^(1.5)
-    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 7, 11, 10, 1200), -- lac002
+    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 11, 7, 10, 1200), -- lac002
     ('Brutamontes',	'Grande, mal-humorado e com um gosto inusitado por doces.', 16, 12, 15, 900), -- lac003
     ('Marinheiro Corrupto',	'Usa o uniforme da Marinha, mas segue as ordens do bolso.', 20, 17, 17, 900), -- lac004
     ('Pirata Congelado',	'Foi soterrado pela neve... e agora está de volta para esfriar os ânimos.', 24, 22, 22, 900), -- lac005
@@ -1144,6 +1144,32 @@ VALUES
 
 
 
+-- Inventários de habitantes
+INSERT INTO inventario
+    (identificador_personagem, identificador_progresso)
+VALUES
+    ('ven001', 'pro001'), -- inv055
+    ('ven001', 'pro002'), -- inv056
+    ('ven001', 'pro003'); -- inv057
+
+
+
+-- Itens dos habitantes
+INSERT INTO item_inventario
+    (identificador_inventario, identificador_item, quantidade)
+VALUES
+    ('inv055', 'ncn001', 20),
+    ('inv055', 'ncn002', 20),
+    ('inv055', 'ncn003', 20),
+    ('inv056', 'ncn001', 20),
+    ('inv056', 'ncn002', 20),
+    ('inv056', 'ncn003', 20),
+    ('inv057', 'ncn001', 20),
+    ('inv057', 'ncn002', 20),
+    ('inv057', 'ncn003', 20);
+
+
+
 -- Itens dos inimigos
 INSERT INTO item_inventario
     (identificador_inventario, identificador_item, quantidade)
@@ -1200,7 +1226,7 @@ VALUES
     ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
     ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
-    ('are001', 'mis012', 10, 'rct001', 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are001', null, 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
     ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
 
 -- -- Adicione vendedores nas áreas das lojas
@@ -1253,9 +1279,9 @@ VALUES
 --     ('are004', 'João das Ferramentas', 'Vendedor de armas e acessórios', 'ven', 400, 300, 'arm', 100);
 -- 
 INSERT INTO area_interativa
-    (identificador_area, x, y, largura, altura, tipo_evento)
+    (identificador_area_origem, x, y, largura, altura, tipo_evento, metodo_ativacao, ativa)
 VALUES
-    ('are004', 700, 500, 100, 100, 'abrir_loja');
+    ('are004', 700, 500, 100, 100, 'abrir_loja', 'ativo', TRUE);
 
 
 INSERT INTO estado_missao
@@ -1357,7 +1383,7 @@ VALUES
     ('rct001', 'mis005', 1, 'F', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
     ('rct001', 'mis005', 1, 'M', 'A cerca tá mais aberta que o coração da minha nonna! Se não fechar logo, até o vento vai plantar tomate aqui! Anda, anda, martella com amore!'),
     ('rct001', 'mis006', 1, 'F', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
-    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazza, e mostra que aqui quem uiva é só o rádio da cozinha!'),
+    ('rct001', 'mis006', 1, 'M', 'Lupi na fazenda? Só se for pra fazer serenata! Vai lá, ragazzo, e mostra que aqui quem uiva é só o rádio da cozinha!'),
     ('hbt001', 'mis011', 1, 'F', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Silvie, ainda meio desconfiada, observa tudo com olhos atentos. É sua primeira noite na vila.'),
     ('hbt001', 'mis011', 1, 'M', 'Interior da casa de Tião Palha. A mesa está cheia de pratos fumegantes e moradores animados. Shuan, ainda meio desconfiado, observa tudo com olhos atentos. É sua primeira noite na vila.'),
     ('hbt002', 'mis011', 2, 'F', '(Puxando uma cadeira para ela): — Senta aqui, moça. Primeira regra da vila: ninguém janta sozinho. Segunda regra: cuidado com a Gertrudes.'),
@@ -1386,8 +1412,8 @@ VALUES
     ('rct001', 'mis011', 19, 'M', '(Erguendo um copo): — Um brinde ao novo viajante! Que sua estadia seja leve, sua comida quente e suas galinhas... diplomáticas!'),
     ('hbt001', 'mis011', 20, 'F', '(Todos): — Viva!'),
     ('hbt001', 'mis011', 20, 'M', '(Todos): — Viva!'),
-    ('hbt001', 'mis011', 21, 'F', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
-    ('hbt001', 'mis011', 21, 'M', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
+    ('hbt001', 'mis011', 21, 'F', 'Mais tarde naquela noite'),
+    ('hbt001', 'mis011', 21, 'M', 'Mais tarde naquela noite'),
     ('ven001', 'mis011', 22, 'F', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
     ('ven001', 'mis011', 22, 'M', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
     ('rct001', 'mis011', 24, 'F', 'Já tentaram espantar, mas voltaram com mais medo que gato em dia de banho! Eu te digo, ragazza... essa criatura não tá ali por acaso. Tá guardando alguma coisa, capisce?'),

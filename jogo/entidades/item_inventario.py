@@ -1,6 +1,6 @@
 class ItemInventario:
     def __init__(self, id_item, nome, descricao, tipo, raridade, quantidade, efeitos=None):
-        self.id = id_item
+        self.identificador_item = id_item
         self.nome = nome
         self.descricao = descricao
         self.tipo = tipo  # Ex: 'con', 'ncn', etc.

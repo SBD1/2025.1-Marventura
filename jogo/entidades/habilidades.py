@@ -1,5 +1,5 @@
 class Habilidade:
-    def __init__(self, id, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano, custo, efeito=None):
+    def __init__(self, id, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano, custo=None, efeito=None):
         self.id = id
         self.nome = nome
         self.descricao = descricao

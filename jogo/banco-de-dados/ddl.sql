@@ -86,7 +86,8 @@ CREATE TABLE nao_consumivel (
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
     preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
-    e_coletado BOOLEAN 
+    e_coletado BOOLEAN,
+    item_de_missao BOOLEAN DEFAULT FALSE
 );
 
 CREATE TRIGGER atribui_id_nao_consumivel
@@ -211,7 +212,7 @@ EXECUTE FUNCTION public.gerar_id();
 CREATE TABLE area (
     identificador_area ID PRIMARY KEY,
     identificador_ilha ID REFERENCES ilha(identificador_ilha),
-    nome CHAR(30) CHECK (nome ~ '^[a-zA-Z áàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\\-]+$'),
+    nome CHAR(30),
     tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
     chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z _]+$'),
     chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z _]+$'),
@@ -264,10 +265,10 @@ CREATE TABLE jogador (
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
     energia_atual SMALLINT DEFAULT 5 CHECK (energia_atual BETWEEN 0 AND energia),
     vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
-    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    nivel SMALLINT CHECK (nivel BETWEEN 1 AND 60),
     sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10), -- chance_de_esquiva = 1 - (0.95 ^ sorte)
     vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
-    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 600),
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 6000),
     moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
 );
 
@@ -345,7 +346,8 @@ CREATE TABLE habitante (
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
-    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999),
+    conhecido BOOLEAN DEFAULT FALSE
 );
 
 CREATE TRIGGER atribui_id_habitante
@@ -599,7 +601,7 @@ CREATE TABLE area_interativa (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
     chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
     tipo_evento CHAR(10) NOT NULL CHECK (
-        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao')
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao', 'abrir_loja')
     ),
     metodo_ativacao CHAR(7) NOT NULL CHECK (metodo_ativacao IN ('ativo', 'passivo')),
     ativa BOOLEAN NOT NULL DEFAULT TRUE
@@ -637,6 +639,7 @@ EXECUTE FUNCTION tentar_coletar_item();
 CREATE TABLE item_missao (
     identificador_missao ID,
     identificador_item ID,
+    quantidade SMALLINT DEFAULT 1 CHECK (quantidade BETWEEN 1 AND 99),
     PRIMARY KEY (identificador_missao, identificador_item),
     FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)

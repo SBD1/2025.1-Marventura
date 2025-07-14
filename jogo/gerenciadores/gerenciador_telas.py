@@ -11,6 +11,9 @@ from telas import TelaBatalha
 from telas import TelaLoja
 from gerenciadores import GerenciadorDeEntidades
 from utilidades.constantes import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
 
 
 class GerenciadorDeTelas:
@@ -18,7 +21,7 @@ class GerenciadorDeTelas:
     Gerencia as diferentes telas (estados) do jogo.
     Responsável por criar, armazenar e transitar entre as telas.
     """
-    def __init__(self, tela_principal_surface, gerenciador_recursos, gerenciador_banco_de_dados):
+    def __init__(self, tela_principal_surface, gerenciador_recursos, gerenciador_banco_de_dados: "DBManager"):
         self.tela_principal_surface = tela_principal_surface
         self.gerenciador_recursos = gerenciador_recursos
         self.gerenciador_banco_de_dados = gerenciador_banco_de_dados
@@ -44,7 +47,7 @@ class GerenciadorDeTelas:
                                   self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_SELECAO_PERSONAGEM:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos,
-                                         self.gerenciador_banco_de_dados,)
+                                         self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados)
@@ -61,16 +64,14 @@ class GerenciadorDeTelas:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                self.gerenciador_banco_de_dados,
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
-                               jogador_iniciou= kwargs.get('jogador_iniciou', False))
+                               jogador_iniciou= kwargs.get('jogador_iniciou', False),
+                               modo_batalha=kwargs.get('modo_batalha', 'normal'))
         elif estado_desejado == CHAVE_TRANSICAO_LOJA:
             return TelaLoja(self, self.gerenciador_recursos,
                         self.gerenciador_banco_de_dados,
-                        kwargs.get('jogador_id'),
+                        self.gerenciador_entidades,
                         kwargs.get('vendedor_id'),
-                        kwargs.get('nome_vendedor'),
-                        kwargs.get('dados_retorno_ilha'),
-                        kwargs.get('dados_retorno_area'),
-                        kwargs.get('ponto_retorno_jogador'))
+                        kwargs.get('nome_vendedor'),)
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None

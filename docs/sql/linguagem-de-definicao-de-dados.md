@@ -23,410 +23,513 @@ Revisão Técnica: Verificação e validação do conteúdo por especialistas em
 ## DDL - Linguagem de Definição de Dados
 
 </CENTER>
----
 
 ```sql
-CREATE SEQUENCE global_numeric_id_sequence
-    START WITH 1
-    INCREMENT BY 1
-    NO CYCLE;
-
 CREATE TABLE tipo_item (
-    identificador_item SERIAL PRIMARY KEY,
-    tipo VARCHAR(50) NOT NULL UNIQUE
+    identificador_item ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ace', 'arm', 'fru', 'con', 'ncn'))
 );
-
-CREATE TABLE efeito (
-    identificador_efeito SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    bravura TEXT
-);
-
-CREATE TABLE habilidade (
-    id_habilidade SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    dano INT CHECK (dano >= 0 AND dano <= 15) NOT NULL,
-    custo INT CHECK (custo >= 0 AND custo <= 4) NOT NULL
-);
-
-CREATE TABLE tipo_personagem (
-    id_personagem SERIAL PRIMARY KEY,
-    tipo VARCHAR(50) NOT NULL UNIQUE
-);
-
-CREATE TABLE campo_batalha (
-    sala_id SERIAL PRIMARY KEY,
-    tipo_terreno VARCHAR(50),
-    qtd_de_pessoas INT,
-    tamanho VARCHAR(50)
-);
-
-CREATE TABLE porto (
-    sala_id SERIAL PRIMARY KEY,
-    qtd_barcos INT,
-    capacidade INT,
-    sendo_ilha BOOLEAN
-);
-
-CREATE TABLE vila (
-    sala_id SERIAL PRIMARY KEY,
-    total_salas INT,
-    informacoes TEXT
-);
-
-CREATE TABLE ilha (
-    id SERIAL PRIMARY KEY,
-    sala_id INT UNIQUE NOT NULL,
-    tipo VARCHAR(50),
-    tamanho VARCHAR(50),
-    nome VARCHAR(100),
-    quantidade_sala INT,
-    FOREIGN KEY (sala_id) REFERENCES campo_batalha(sala_id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
-
-CREATE TABLE mapa (
-    id_mapa INT NOT NULL,
-    id_ilha INT NOT NULL,
-    total_ilhas INT,
-    total_item_chave INT,
-    PRIMARY KEY (id_mapa, id_ilha),
-    FOREIGN KEY (id_ilha) REFERENCES ilha(id)
-);
-
-CREATE TABLE consumivel (
-    identificador_consumivel SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50) NOT NULL,
-    quantidade INT DEFAULT 1,
-    raridade VARCHAR(50) CHECK (raridade IN ('★', '★★', '★★★')),
-    preco_compra DECIMAL(10, 2) NOT NULL,
-    preco_venda DECIMAL(10, 2) NOT NULL,
-    e_fabricavel BOOLEAN,
-    FOREIGN KEY (tipo) REFERENCES tipo_item(tipo)
-);
-
-CREATE TABLE nao_consumivel (
-    identificador_nao_consumivel SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50) NOT NULL,
-    quantidade INT DEFAULT 1,
-    raridade VARCHAR(50) CHECK (raridade IN ('★', '★★', '★★★')),
-    preco_compra DECIMAL(10, 2) NOT NULL,
-    preco_venda DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (tipo) REFERENCES tipo_item(tipo)
-);
-
-CREATE TABLE acessorio (
-    identificador_acessorio INT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50),
-    quantidade INT DEFAULT 1,
-    raridade VARCHAR(50),
-    preco_compra DECIMAL(10,2),
-    preco_venda DECIMAL(10,2),
-    FOREIGN KEY (identificador_acessorio) REFERENCES nao_consumivel(identificador_nao_consumivel)
-);
-
-CREATE TABLE arma (
-    identificador_arma INT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50),
-    quantidade INT DEFAULT 1,
-    raridade VARCHAR(50),
-    preco_compra DECIMAL(10,2),
-    preco_venda DECIMAL(10,2),
-    identificador_habilidade INT,
-    FOREIGN KEY (identificador_arma) REFERENCES nao_consumivel(identificador_nao_consumivel),
-    FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(id_habilidade)
-);
-
-CREATE TABLE fruta (
-    identificador_fruta INT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo VARCHAR(50),
-    quantidade INT DEFAULT 1,
-    raridade VARCHAR(50),
-    preco_compra DECIMAL(10,2),
-    preco_venda DECIMAL(10,2),
-    identificador_habilidade INT,
-    FOREIGN KEY (identificador_fruta) REFERENCES nao_consumivel(identificador_nao_consumivel),
-    FOREIGN KEY (identificador_habilidade) REFERENCES efeito(identificador_efeito)
-);
-
-CREATE TABLE efeito_consumivel (
-    identificador_efeito INT,
-    identificador_consumivel INT,
-    PRIMARY KEY (identificador_efeito, identificador_consumivel),
-    FOREIGN KEY (identificador_efeito) REFERENCES efeito(identificador_efeito),
-    FOREIGN KEY (identificador_consumivel) REFERENCES consumivel(identificador_consumivel)
-);
-
-CREATE TABLE efeito_acessorio (
-    identificador_efeito INT,
-    identificador_acessorio INT,
-    PRIMARY KEY (identificador_efeito, identificador_acessorio),
-    FOREIGN KEY (identificador_efeito) REFERENCES efeito(identificador_efeito),
-    FOREIGN KEY (identificador_acessorio) REFERENCES acessorio(identificador_acessorio)
-);
-
-CREATE TABLE jogador (
-    id_jogador SERIAL PRIMARY KEY,
-    id_personagem INT,
-    id_habilidade INT,
-    id_mapa INT NOT NULL,
-    id_ilha INT NOT NULL,
-    nome VARCHAR(100) NOT NULL,
-    energia INT CHECK (energia >= 0 AND energia <= 999) DEFAULT 100,
-    vida INT CHECK (vida >= 0 AND vida <= 999) DEFAULT 100,
-    nivel INT CHECK (nivel >= 1 AND nivel <= 99) DEFAULT 1,
-    sorte INT CHECK (sorte >= 0 AND sorte <= 99) DEFAULT 0,
-    vida_atual INT DEFAULT 100 CHECK (vida_atual <= vida),
-    dano_base INT NOT NULL CHECK (dano_base >= 0 AND dano_base <= 999),
-    experiencia_atual INT DEFAULT 0 CHECK (experiencia_atual >= 0 AND experiencia_atual <= 99999),
-    coordenada_x DECIMAL(10,2) NOT NULL CHECK (coordenada_x >= 0 AND coordenada_x <= 5000),
-    coordenada_y DECIMAL(10,2) NOT NULL CHECK (coordenada_y >= 0 AND coordenada_y <= 5000),
-    FOREIGN KEY (id_personagem) REFERENCES tipo_personagem(id_personagem),
-    FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade),
-    FOREIGN KEY (id_mapa, id_ilha) REFERENCES mapa(id_mapa, id_ilha)
-);
-
-CREATE TABLE receita (
-    identificador_receita SERIAL PRIMARY KEY,
-    consumivel_produzido INT,
-    id_jogador INT,
-    FOREIGN KEY (consumivel_produzido) REFERENCES consumivel(identificador_consumivel),
-    FOREIGN KEY (id_jogador) REFERENCES jogador(id_jogador)
-);
-
-CREATE TABLE ingrediente_consumivel (
-    identificador_receita INT,
-    identificador_consumivel INT,
-    PRIMARY KEY (identificador_receita, identificador_consumivel),
-    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita),
-    FOREIGN KEY (identificador_consumivel) REFERENCES consumivel(identificador_consumivel)
-);
-
-CREATE TABLE ingrediente_nao_consumivel (
-    identificador_receita INT,
-    identificador_nao_consumivel INT,
-    PRIMARY KEY (identificador_receita, identificador_nao_consumivel),
-    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita),
-    FOREIGN KEY (identificador_nao_consumivel) REFERENCES nao_consumivel(identificador_nao_consumivel)
-);
-
-CREATE TABLE chefe (
-    id_chefe SERIAL PRIMARY KEY,
-    id_habilidade INT,
-    id_mapa INT NOT NULL,
-    id_ilha INT NOT NULL,
-    nome VARCHAR(28) NOT NULL UNIQUE,
-    dano INT CHECK (dano >= 0 AND dano <= 999),
-    vida INT CHECK (vida >= 0 AND vida <= 999) DEFAULT 100,
-    nivel INT CHECK (nivel >= 1 AND nivel <= 99) DEFAULT 1,
-    experiencia INT NOT NULL CHECK (experiencia >= 0 AND experiencia <= 30),
-    coordenada_x DECIMAL(10,2) NOT NULL CHECK (coordenada_x >= 0 AND coordenada_x <= 5000),
-    coordenada_y DECIMAL(10,2) NOT NULL CHECK (coordenada_y >= 0 AND coordenada_y <= 5000),
-    FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade),
-    FOREIGN KEY (id_mapa, id_ilha) REFERENCES mapa(id_mapa, id_ilha)
-);
-
-CREATE TABLE lacaio (
-    id_lacaio SERIAL PRIMARY KEY,
-    id_habilidade INT,
-    id_mapa INT NOT NULL,
-    id_ilha INT NOT NULL,
-    nome VARCHAR(15) NOT NULL,
-    dano INT CHECK (dano >= 0 AND dano <= 999),
-    vida INT CHECK (vida >= 0 AND vida <= 999) DEFAULT 100,
-    nivel INT CHECK (nivel >= 1 AND nivel <= 99) DEFAULT 1,
-    experiencia INT NOT NULL CHECK (experiencia >= 0 AND experiencia <= 30),
-    coordenada_x DECIMAL(10,2) NOT NULL CHECK (coordenada_x >= 0 AND coordenada_x <= 5000),
-    coordenada_y DECIMAL(10,2) NOT NULL CHECK (coordenada_y >= 0 AND coordenada_y <= 5000),
-    FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade),
-    FOREIGN KEY (id_mapa, id_ilha) REFERENCES mapa(id_mapa, id_ilha)
-);
-
-CREATE TABLE instancia_lacaio (
-    id_instancia_lacaio SERIAL PRIMARY KEY,
-    identificador_lacaio INT NOT NULL,
-    vida_atual INT DEFAULT 100 CHECK (vida_atual >= 0 AND vida_atual <= 999),
-    FOREIGN KEY (identificador_lacaio) REFERENCES lacaio(id_lacaio)
-);
-
-CREATE TABLE aliado (
-    id_aliado SERIAL PRIMARY KEY,
-    id_mapa INT NOT NULL,
-    id_ilha INT NOT NULL,
-    nome VARCHAR(6) NOT NULL UNIQUE,
-    descricao VARCHAR(100) NOT NULL,
-    vida INT CHECK (vida >= 0 AND vida <= 999) DEFAULT 100,
-    nivel INT CHECK (nivel >= 1 AND nivel <= 99) DEFAULT 1,
-    vida_atual INT DEFAULT 100 CHECK (vida_atual <= vida),
-    dano_base INT CHECK (dano_base >= 0 AND dano_base <= 999),
-    coordenada_x DECIMAL(10,2) NOT NULL CHECK (coordenada_x >= 0 AND coordenada_x <= 5000),
-    coordenada_y DECIMAL(10,2) NOT NULL CHECK (coordenada_y >= 0 AND coordenada_y <= 5000),
-    FOREIGN KEY (id_mapa, id_ilha) REFERENCES mapa(id_mapa, id_ilha)
-);
-
-CREATE TABLE habitante (
-    identificador_habitante SERIAL PRIMARY KEY,
-    identificador_mapa INT NOT NULL,
-    id_ilha INT NOT NULL,
-    nome VARCHAR(15) NOT NULL,
-    tipo VARCHAR(3) NOT NULL CHECK (tipo IN ('hbt', 'rec', 'coz', 'ven')),
-    descricao VARCHAR(100) NOT NULL,
-    especialidade VARCHAR(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
-    coordenada_x DECIMAL(10,2) NOT NULL CHECK (coordenada_x >= 0 AND coordenada_x <= 5000),
-    coordenada_y DECIMAL(10,2) NOT NULL CHECK (coordenada_y >= 0 AND coordenada_y <= 5000),
-    FOREIGN KEY (identificador_mapa, id_ilha) REFERENCES mapa(id_mapa, id_ilha)
-);
-
-CREATE TABLE habilidade_aliado (
-    id_aliado INT,
-    id_habilidade INT,
-    PRIMARY KEY (id_aliado, id_habilidade),
-    FOREIGN KEY (id_aliado) REFERENCES aliado(id_aliado),
-    FOREIGN KEY (id_habilidade) REFERENCES habilidade(id_habilidade)
-);
-
-CREATE TABLE batalha (
-    identificador_batalha SERIAL PRIMARY KEY,
-    identificador_jogador INT,
-    identificador_aliado INT,
-    identificador_chefe INT,
-    identificador_instancia_lacaio INT,
-    experiencia_ganha INT,
-    FOREIGN KEY (identificador_jogador) REFERENCES jogador(id_jogador),
-    FOREIGN KEY (identificador_aliado) REFERENCES aliado(id_aliado),
-    FOREIGN KEY (identificador_chefe) REFERENCES chefe(id_chefe),
-    FOREIGN KEY (identificador_instancia_lacaio) REFERENCES instancia_lacaio(id_instancia_lacaio)
-);
-
-CREATE TABLE batalha_instancia_lacaio (
-    identificador_batalha INT,
-    identificador_instancia_lacaio INT,
-    PRIMARY KEY (identificador_batalha, identificador_instancia_lacaio),
-    FOREIGN KEY (identificador_batalha) REFERENCES batalha(identificador_batalha),
-    FOREIGN KEY (identificador_instancia_lacaio) REFERENCES instancia_lacaio(id_instancia_lacaio)
-);
-
-CREATE TABLE negociacao (
-    identificador_negociacao SERIAL PRIMARY KEY,
-    identificador_item INT NOT NULL,
-    identificador_jogador INT NOT NULL,
-    identificador_vendedor INT NOT NULL,
-    quantidade INT NOT NULL DEFAULT 0 CHECK (quantidade >= 0 AND quantidade <= 99),
-    preco_final DECIMAL(10,2) NOT NULL DEFAULT 1 CHECK (preco_final >= 1 AND preco_final <= 98901),
-    tipo VARCHAR(6) NOT NULL CHECK (tipo IN ('compra', 'venda')),
-    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item),
-    FOREIGN KEY (identificador_jogador) REFERENCES jogador(id_jogador),
-    FOREIGN KEY (identificador_vendedor) REFERENCES habitante(identificador_habitante)
-);
-
-CREATE TABLE missao (
-    missao_id SERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
-    descricao TEXT,
-    mapa_id INT NOT NULL,
-    ilha_id INT NOT NULL,
-    id_jogador INT,
-    id_recrutador INT,
-    tipo_sala VARCHAR(50) NOT NULL CHECK (tipo_sala IN ('campo_batalha', 'porto', 'vila')),
-    sala_id INT NOT NULL,
-    FOREIGN KEY (mapa_id, ilha_id) REFERENCES mapa(id_mapa, id_ilha),
-    FOREIGN KEY (id_jogador) REFERENCES jogador(id_jogador),
-    FOREIGN KEY (id_recrutador) REFERENCES habitante(identificador_habitante)
-);
-
-CREATE TABLE mar (
-    mar_id SERIAL PRIMARY KEY,
-    monstro VARCHAR(100),
-    obstaculo VARCHAR(100)
-);
-
-CREATE TABLE mapa_mar (
-    mapa_id INT NOT NULL,
-    mar_id INT NOT NULL,
-    ilha_id INT NOT NULL,
-    PRIMARY KEY (mapa_id, ilha_id, mar_id),
-    FOREIGN KEY (mapa_id, ilha_id) REFERENCES mapa(id_mapa, id_ilha),
-    FOREIGN KEY (mar_id) REFERENCES mar(mar_id)
-);
-
-CREATE TABLE corredor_maritimo (
-    maritimo_id SERIAL PRIMARY KEY,
-    ilha_a INT NOT NULL,
-    ilha_b INT NOT NULL,
-    FOREIGN KEY (ilha_a) REFERENCES ilha(id),
-    FOREIGN KEY (ilha_b) REFERENCES ilha(id)
-);
-
-CREATE TABLE controlador_mar (
-    maritimo_id INT NOT NULL,
-    mar_id INT NOT NULL,
-    PRIMARY KEY (maritimo_id, mar_id),
-    FOREIGN KEY (maritimo_id) REFERENCES corredor_maritimo(maritimo_id),
-    FOREIGN KEY (mar_id) REFERENCES mar(mar_id)
-);
-
-CREATE TABLE barco (
-    id SERIAL PRIMARY KEY,
-    tipo VARCHAR(50),
-    nome VARCHAR(100),
-    melhoria TEXT,
-    porto_id INT,
-    FOREIGN KEY (porto_id) REFERENCES porto(sala_id)
-);
-
-CREATE TABLE barco_porto (
-    barco_id INT NOT NULL,
-    sala_id INT NOT NULL,
-    PRIMARY KEY (barco_id, sala_id),
-    FOREIGN KEY (barco_id) REFERENCES barco(id),
-    FOREIGN KEY (sala_id) REFERENCES porto(sala_id)
-);
-
-CREATE TABLE controlador_barco (
-    barco_id INT NOT NULL,
-    maritimo_id INT NOT NULL,
-    PRIMARY KEY (barco_id, maritimo_id),
-    FOREIGN KEY (barco_id) REFERENCES barco(id),
-    FOREIGN KEY (maritimo_id) REFERENCES corredor_maritimo(maritimo_id)
-);
-
-CREATE TABLE marco (
-    mar_id INT PRIMARY KEY,
-    monstro VARCHAR(100),
-    obstaculo VARCHAR(100),
-    FOREIGN KEY (mar_id) REFERENCES mar(mar_id)
-);
-
-CREATE TABLE Inventario (
-    id_inventario SERIAL PRIMARY KEY,
-    id_jogador INT NOT NULL,
-    nome VARCHAR(100),
-    FOREIGN KEY (id_jogador) REFERENCES jogador(id_jogador)
-);
-
-CREATE TABLE ItemInventario (
-    id_inventario INT NOT NULL,
-    identificador_item INT NOT NULL,
-    PRIMARY KEY (id_inventario, identificador_item),
-    FOREIGN KEY (id_inventario) REFERENCES Inventario(id_inventario),
-    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
-);
-
-CREATE TABLE ItemMissao (
-    missao_id INT NOT NULL,
-    identificador_item INT NOT NULL,
-    PRIMARY KEY (missao_id, identificador_item),
-    FOREIGN KEY (missao_id) REFERENCES missao(missao_id),
-    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
-);
-
 ```
+
+```sql
+CREATE TABLE arma (
+    identificador_arma ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    tipo_arma CHAR(3) NOT NULL CHECK (tipo_arma IN ('esp', 'est', 'arc')),
+    local_encontrado CHAR(27) NOT NULL CHECK (local_encontrado IN ('Loja de Espadas', 'Loja de Estilingues e Arcos')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
+);
+```
+
+```sql
+CREATE TABLE fruta (
+    identificador_fruta ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(222) NOT NULL,
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Missão', 'Evento')),
+    preco_de_venda SMALLINT CHECK (preco_de_venda IS NULL OR preco_de_venda BETWEEN 1 AND 999)
+);
+```
+
+```sql
+CREATE TABLE acessorio (
+    identificador_acessorio ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(18) NOT NULL CHECK (local_encontrado IN ('Loja de Acessórios')),
+    preco_de_compra SMALLINT NOT NULL CHECK (preco_de_compra BETWEEN 1 AND 999)
+);
+```
+
+```sql
+CREATE TABLE consumivel (
+    identificador_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57', 'Cozinha')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    e_fabricavel BOOLEAN DEFAULT FALSE CHECK (e_fabricavel IN (TRUE, FALSE))
+);
+```
+
+```sql
+CREATE TABLE nao_consumivel (
+    identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(150) NOT NULL,
+    raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
+    local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
+    preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999)
+);
+```
+
+```sql
+CREATE TABLE receita (
+    identificador_receita ID PRIMARY KEY,
+    consumivel_produzido ID NOT NULL REFERENCES consumivel(identificador_consumivel)
+);
+```
+
+```sql
+CREATE TABLE ingrediente_consumivel (
+    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
+    PRIMARY KEY (identificador_receita, identificador_consumivel)
+);
+```
+
+```sql
+CREATE TABLE ingrediente_nao_consumivel (
+    identificador_receita ID NOT NULL REFERENCES receita(identificador_receita),
+    identificador_nao_consumivel ID NOT NULL REFERENCES nao_consumivel(identificador_nao_consumivel),
+    PRIMARY KEY (identificador_receita, identificador_nao_consumivel)
+);
+```
+
+```sql
+CREATE TABLE efeito (
+    identificador_efeito ID PRIMARY KEY,
+    nome CHAR(15) NOT NULL CHECK (nome IN ('Cura', 'Energia', 'Vida Máxima', 'Energia Máxima', 'Ataque', 'Sorte', 'Eletrificado', 'Congelado', 'Molhado', 'Envenenado', 'Sangramento', 'Queimadura', 'Tontura', 'Cegueira', 'Purificação')),
+    valor SMALLINT CHECK (valor BETWEEN 1 AND 20)
+);
+```
+
+```sql
+CREATE TABLE efeito_acessorio (
+    identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
+    identificador_acessorio ID NOT NULL REFERENCES acessorio(identificador_acessorio),
+    PRIMARY KEY (identificador_efeito, identificador_acessorio)
+);
+```
+
+```sql
+CREATE TABLE efeito_consumivel (
+    identificador_efeito ID NOT NULL REFERENCES efeito(identificador_efeito),
+    identificador_consumivel ID NOT NULL REFERENCES consumivel(identificador_consumivel),
+    PRIMARY KEY (identificador_efeito, identificador_consumivel)
+);
+```
+
+```sql
+CREATE TABLE habilidade (
+    identificador_habilidade ID PRIMARY KEY,
+    identificador_efeito ID REFERENCES efeito(identificador_efeito),
+    nome CHAR(50) NOT NULL,
+    descricao CHAR(200) NOT NULL,
+    tipo_de_ataque CHAR(10) NOT NULL CHECK (tipo_de_ataque IN ('soco', 'espada', 'estilingue', 'arco', 'fruta')),
+    tipo_de_alvo CHAR(15) NOT NULL CHECK (tipo_de_alvo IN ('fila', 'alvo_terrestre', 'terrestre', 'alvo_livre', 'area')),
+    dano SMALLINT NOT NULL,
+    custo SMALLINT DEFAULT 0
+);
+```
+
+```sql
+CREATE TABLE habilidade_arma (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_arma ID NOT NULL REFERENCES arma (identificador_arma),
+    PRIMARY KEY (identificador_habilidade, identificador_arma)
+);
+```
+
+```sql
+CREATE TABLE habilidade_fruta (
+    identificador_habilidade ID NOT NULL REFERENCES habilidade(identificador_habilidade),
+    identificador_fruta ID NOT NULL REFERENCES fruta (identificador_fruta),
+    PRIMARY KEY (identificador_habilidade, identificador_fruta)
+);
+```
+
+```sql
+CREATE TABLE progresso (
+    identificador_progresso ID PRIMARY KEY,
+    numero_do_slot SMALLINT NOT NULL UNIQUE CHECK (numero_do_slot BETWEEN 1 AND 3),
+    data_ultimo_salvamento TIMESTAMP DEFAULT now(),
+    ocupado BOOLEAN NOT NULL DEFAULT FALSE
+);
+```
+
+```sql
+CREATE TABLE ilha (
+    identificador_ilha ID PRIMARY KEY,
+    nome CHAR(30) CHECK (nome IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57'))
+);
+```
+
+```sql
+CREATE TABLE area (
+    identificador_area ID PRIMARY KEY,
+    identificador_ilha ID REFERENCES ilha(identificador_ilha),
+    nome CHAR(30),
+    tipo_area CHAR(25) NOT NULL CHECK (tipo_area IN ('Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka')),
+    chave_imagem_fundo CHAR(50) CHECK (chave_imagem_fundo ~ '^[a-z _]+$'),
+    chave_imagem_frente CHAR(50) CHECK (chave_imagem_frente ~ '^[a-z _]+$'),
+    CHECK (
+        tipo_area = 'Yomotsu Hirasaka' OR identificador_ilha IS NOT NULL
+    )
+);
+```
+
+```sql
+CREATE TABLE conexao_entre_areas (
+    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_destino ID NOT NULL REFERENCES area(identificador_area),
+    ponto_geracao_x SMALLINT CHECK (ponto_geracao_x BETWEEN 0 AND 5000),
+    ponto_geracao_y SMALLINT CHECK (ponto_geracao_y BETWEEN 0 AND 5000),
+    orientacao CHAR(8) CHECK (orientacao IN ('esquerda', 'direita')),
+    PRIMARY KEY (identificador_area_origem, identificador_area_destino)
+);
+```
+
+```sql
+CREATE TABLE tipo_personagem (
+    identificador_personagem ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('hbt', 'rct', 'coz', 'ven', 'ali', 'jog', 'lac', 'che'))
+);
+```
+
+```sql
+CREATE TABLE jogador (
+    identificador_jogador ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_progresso ID UNIQUE REFERENCES progresso(identificador_progresso),
+    nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
+    descricao CHAR(300),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
+    energia_atual SMALLINT DEFAULT 5 CHECK (energia_atual BETWEEN 0 AND energia),
+    vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    sorte SMALLINT CHECK (sorte BETWEEN 1 AND 10),
+    vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida),
+    experiencia_atual SMALLINT CHECK (experiencia_atual BETWEEN 0 AND 6000),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+```
+
+```sql
+CREATE TABLE aliado (
+    identificador_aliado ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_progresso ID UNIQUE REFERENCES progresso(identificador_progresso),
+    nome char(6) NOT NULL CHECK (nome IN ('Silvie', 'Shuan')),
+    descricao CHAR(300),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT  CHECK (vida BETWEEN 10 AND 70),
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    vida_atual SMALLINT CHECK (vida_atual BETWEEN 0 AND vida)
+);
+```
+
+```sql
+CREATE TABLE chefe (
+    identificador_chefe ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    nome CHAR(28),
+    descricao CHAR(100),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 10 AND 60),
+    experiencia SMALLINT,
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+```
+
+```sql
+CREATE TABLE lacaio (
+    identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    nome CHAR(20),
+    descricao CHAR(100),
+    vida SMALLINT,
+    nivel SMALLINT CHECK (nivel BETWEEN 0 AND 60),
+    experiencia SMALLINT,
+    tempo_reacao SMALLINT
+);
+```
+
+```sql
+CREATE TABLE habitante (
+    identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    nome CHAR(27),
+    descricao CHAR(500),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
+    tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+```
+
+```sql
+CREATE TABLE instancia_lacaio (
+    identificador_instancia_lacaio ID PRIMARY KEY,
+    identificador_lacaio ID NOT NULL REFERENCES lacaio(identificador_lacaio),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+```
+
+```sql
+CREATE TABLE barco (
+    identificador_barco ID PRIMARY KEY,
+    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
+    tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
+    nome CHAR(30) NOT NULL,
+    descricao CHAR (150) NOT NULL,
+    estado CHAR (9) NOT NULL CHECK (estado IN ('bloquedo', 'adquirido', 'destruido'))
+);
+```
+
+```sql
+CREATE TABLE habilidade_personagem (
+    identificador_personagem ID,
+    identificador_habilidade ID,
+    PRIMARY KEY (identificador_personagem, identificador_habilidade),
+    FOREIGN KEY (identificador_personagem) REFERENCES tipo_personagem(identificador_personagem),
+    FOREIGN KEY (identificador_habilidade) REFERENCES habilidade(identificador_habilidade)
+);
+```
+
+```sql
+CREATE TABLE receitas_conhecidas (
+    identificador_progresso ID,
+    identificador_receita ID,
+    PRIMARY KEY (identificador_progresso, identificador_receita),
+    FOREIGN KEY (identificador_progresso) REFERENCES progresso(identificador_progresso),
+    FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita)
+);
+```
+
+```sql
+CREATE TABLE inventario (
+    identificador_inventario ID PRIMARY KEY,
+    identificador_personagem ID NOT NULL REFERENCES tipo_personagem(identificador_personagem),
+    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
+    tipo_inventario CHAR(3) DEFAULT 'moc' NOT NULL CHECK (tipo_inventario IN ('moc', 'kit'))
+);
+```
+
+```sql
+CREATE TABLE item_inventario (
+    identificador_inventario ID,
+    identificador_item ID,
+    quantidade SMALLINT DEFAULT 0 CHECK (quantidade BETWEEN 0 AND 99),
+    PRIMARY KEY (identificador_inventario, identificador_item),
+    FOREIGN KEY (identificador_inventario) REFERENCES inventario(identificador_inventario),
+    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
+);
+```
+
+```sql
+CREATE TABLE ilha_visitada (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_ilha ID REFERENCES ilha(identificador_ilha),
+    PRIMARY KEY (identificador_progresso, identificador_ilha),
+    visitada BOOLEAN NOT NULL DEFAULT FALSE
+);
+```
+
+```sql
+CREATE TABLE conexao_entre_ilhas (
+    identificador_ilha_a ID NOT NULL REFERENCES ilha(identificador_ilha),
+    identificador_ilha_b ID NOT NULL REFERENCES ilha(identificador_ilha),
+    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
+    bloqueada BOOLEAN DEFAULT TRUE,
+    PRIMARY KEY (identificador_ilha_a, identificador_ilha_b, identificador_progresso)
+);
+```
+
+```sql
+CREATE TABLE area_visitada (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_area ID REFERENCES area(identificador_area),
+    PRIMARY KEY (identificador_progresso, identificador_area),
+    visitada BOOLEAN NOT NULL DEFAULT FALSE
+);
+```
+
+```sql
+CREATE TABLE estado_instancia_lacaio (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_instancia_lacaio ID REFERENCES instancia_lacaio(identificador_instancia_lacaio),
+    identificador_area_atual ID REFERENCES area(identificador_area),
+    vida_atual SMALLINT,
+    data_da_morte TIMESTAMP DEFAULT NULL,
+    PRIMARY KEY (identificador_progresso, identificador_instancia_lacaio)
+);
+```
+
+```sql
+CREATE TABLE estado_chefe (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_chefe ID REFERENCES chefe(identificador_chefe),
+    identificador_area_atual ID REFERENCES area(identificador_area),
+    vida_atual SMALLINT,
+    data_da_morte TIMESTAMP DEFAULT NULL,
+    PRIMARY KEY (identificador_progresso, identificador_chefe)
+);
+```
+
+```sql
+CREATE TABLE negociacao (
+    identificador_negociacao ID PRIMARY KEY,
+    identificador_item ID NOT NULL REFERENCES tipo_item(identificador_item),
+    identificador_jogador ID NOT NULL REFERENCES jogador(identificador_jogador),
+    identificador_vendedor ID NOT NULL REFERENCES habitante(identificador_habitante),
+    quantidade SMALLINT CHECK (quantidade BETWEEN 0 AND 99),
+    preco_final SMALLINT,
+    tipo_negociacao CHAR(6) NOT NULL CHECK (tipo_negociacao IN ('compra', 'venda'))
+);
+```
+
+```sql
+CREATE TABLE missao (
+    identificador_missao ID PRIMARY KEY,
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    identificador_recrutador ID REFERENCES habitante(identificador_habitante),
+    identificador_missao_dependente ID REFERENCES missao(identificador_missao),
+    descricao CHAR(100),
+    nome CHAR(50) NOT NULL,
+    nivel_de_desbloqueio SMALLINT NOT NULL CHECK (nivel_de_desbloqueio BETWEEN 0 AND 60)
+);
+```
+
+```sql
+CREATE TABLE dialogo (
+    identificador_dialogo ID PRIMARY KEY,
+    identificador_personagem ID REFERENCES tipo_personagem(identificador_personagem),
+    identificador_missao ID REFERENCES missao(identificador_missao),
+    sequencia_local SMALLINT CHECK (sequencia_local > 0),
+    genero CHAR(1) CHECK (genero IN ('M', 'F')),
+    dialogo CHAR(500)
+);
+```
+
+```sql
+CREATE TABLE estado_missao (
+    identificador_missao ID REFERENCES missao(identificador_missao),
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente')),
+    PRIMARY KEY (identificador_missao, identificador_progresso)
+);
+```
+
+```sql
+CREATE TABLE tipo_elemento_espacial (
+    identificador_elemento_espacial ID PRIMARY KEY,
+    tipo CHAR(3) NOT NULL CHECK (tipo IN ('ari', 'obs', 'cam'))
+);
+```
+
+```sql
+CREATE TABLE obstaculo (
+    identificador_obstaculo ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+);
+```
+
+```sql
+CREATE TABLE caminho (
+    identificador_caminho ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area ID NOT NULL REFERENCES area(identificador_area),
+    tipo_terreno CHAR(6) DEFAULT 'normal' CHECK (tipo_terreno IN ('normal', 'neve', 'arena')),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000)
+);
+```
+
+```sql
+CREATE TABLE area_interativa (
+    identificador_area_interativa ID PRIMARY KEY REFERENCES tipo_elemento_espacial(identificador_elemento_espacial),
+    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_destino ID REFERENCES area(identificador_area),
+    identificador_missao ID REFERENCES missao(identificador_missao),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
+    x SMALLINT CHECK (x BETWEEN 0 AND 5000),
+    y SMALLINT CHECK (y BETWEEN 0 AND 5000),
+    largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
+    altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
+    chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
+    tipo_evento CHAR(10) NOT NULL CHECK (
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao')
+    ),
+    metodo_ativacao CHAR(7) NOT NULL CHECK (metodo_ativacao IN ('ativo', 'passivo')),
+    ativa BOOLEAN NOT NULL DEFAULT TRUE,
+    CHECK (
+        (tipo_evento <> 'mudar_area' OR identificador_area_destino IS NOT NULL)
+        AND
+        (tipo_evento <> 'missao' OR identificador_missao IS NOT NULL)
+    )
+);
+```
+
+```sql
+CREATE TABLE recompensa_de_exploracao (
+    identificador_recompensa ID PRIMARY KEY,
+    identificador_area_interativa ID NOT NULL REFERENCES area_interativa(identificador_area_interativa),
+    data_da_tentativa TIMESTAMP NOT NULL DEFAULT now()
+);
+```
+
+```sql
+CREATE TABLE item_missao (
+    identificador_missao ID,
+    identificador_item ID,
+    PRIMARY KEY (identificador_missao, identificador_item),
+    FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
+    FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
+);
+```
+
+```sql
+CREATE TABLE jogador_equipamento (
+    identificador_jogador ID PRIMARY KEY REFERENCES jogador(identificador_jogador),
+    identificador_arma ID REFERENCES arma(identificador_arma),
+    identificador_acessorio ID REFERENCES acessorio(identificador_acessorio),
+    identificador_fruta ID REFERENCES fruta(identificador_fruta)
+);
+```
+
 ---
 
 
@@ -448,4 +551,4 @@ CREATE TABLE ItemMissao (
 | Versão | Descrição | Autor(es) | Data de Produção | Revisor(es) | Data de Revisão | 
 | :----: | --------- | --------- | :--------------: | ----------- | :-------------: |
 | `1.0` | Criação do documento | [Pablo Serra](https://github.com/Pabloserrapxx) | 29/05/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 31/05/2025 |
- `1.1` | adicionado as consultas | [Pablo Serra](https://github.com/Pabloserrapxx) | 16/06/2025 |  |  |
+ `1.1` | adicionado as consultas | [Pablo Serra](https://github.com/Pabloserrapxx) | 16/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 11/07/2025 |

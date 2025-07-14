@@ -19,7 +19,7 @@ class _IconeAcao:
         tela.blit(self.image, self.rect)
 
 class TelaBatalha(TelaModelo):
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, inimigos_na_batalha, jogador_iniciou=False):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, inimigos_na_batalha, jogador_iniciou=False, modo_batalha='normal'):
         super().__init__(gerenciador_telas, gerenciador_recursos)
 
         self.entidades = GerenciadorDeEntidades()
@@ -97,11 +97,18 @@ class TelaBatalha(TelaModelo):
             habilidade=inimigo_mapa.habilidade[0]
             item = self.banco_de_dados.buscar_item_do_lacaio(inimigo_mapa.identificador_inimigo)
 
-            # Cria 3 clones do mesmo inimigo em versão "batalha"
-            onda = [
-                InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
-                for _ in range(3)
-            ]
+            onda = []
+            if modo_batalha == 'normal':
+                # Cria 3 clones do mesmo inimigo em versão "batalha"
+                onda = [
+                    InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
+                    for _ in range(3)
+                ]
+            elif modo_batalha == 'chefe':
+                # Cria apenas 1 inimigo chefe
+                onda = [
+                    InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
+                ]
 
             self.ondas_pendentes.append(onda)
 
@@ -238,26 +245,28 @@ class TelaBatalha(TelaModelo):
 
         # Atribui diretamente os três inimigos
         self.inimigo_da_esquerda = onda[0]
-        self.inimigo_do_meio = onda[1]
-        self.inimigo_da_direita = onda[2]
+        self.inimigo_do_meio = onda[1] if len(onda) > 1 else None
+        self.inimigo_da_direita = onda[2] if len(onda) > 2 else None
 
         # Lista de inimigos em ordem para lógica de batalha
         self.inimigos = [
-            self.inimigo_da_esquerda,
+            self.inimigo_da_esquerda if self.inimigo_da_esquerda else None,
             self.inimigo_do_meio,
-            self.inimigo_da_direita
+            self.inimigo_da_direita if self.inimigo_da_direita else None
         ]
 
         # Posicionamento dos inimigos na tela de batalha
         posicoes = [
-            (LARGURA_TELA - 350, ALTURA_TELA - 225),
+            (LARGURA_TELA - 350, ALTURA_TELA - 225) if self.inimigo_da_esquerda else None,
             (LARGURA_TELA - 250, ALTURA_TELA - 150),
-            (LARGURA_TELA - 120, ALTURA_TELA - 200),
+            (LARGURA_TELA - 120, ALTURA_TELA - 200) if self.inimigo_da_direita else None
         ]
 
         self.inimigos_animados = []
 
         for i, inimigo in enumerate(self.inimigos):
+            if not inimigo:
+                continue
             imagem = self.gerenciador_recursos.obter_imagem(inimigo.imagem_id)
             posicao = posicoes[i]
             sprite_animado = InimigoAnimado(imagem, posicao)
@@ -314,7 +323,8 @@ class TelaBatalha(TelaModelo):
         tipo = self.habilidade_usando.tipo_de_alvo
         if tipo in ["area", "terrestre"]:
             for i in range(len(self.inimigos)):
-                self._aplicar_dano(i, dano)
+                if self.inimigos[i] and self.inimigos[i].esta_vivo():
+                    self._aplicar_dano(i, dano)
         elif tipo in ["fila"]:
             alvo = self._proximo_inimigo_vivo()
             if alvo:
@@ -372,7 +382,7 @@ class TelaBatalha(TelaModelo):
 
     def _proximo_inimigo_vivo(self):
         for inimigo in self.inimigos:
-            if inimigo.esta_vivo():
+            if inimigo and inimigo.esta_vivo():
                 return inimigo
         return None
 
@@ -396,7 +406,7 @@ class TelaBatalha(TelaModelo):
 
     def _preparar_fila_de_ataque_inimiga(self):
         self.fila_ataques_inimigos = [
-            i for i, inimigo in enumerate(self.inimigos) if inimigo.esta_vivo()
+            i for i, inimigo in enumerate(self.inimigos) if inimigo and inimigo.esta_vivo()
         ]
     
     def _executar_ataque_inimigo(self):
@@ -438,7 +448,7 @@ class TelaBatalha(TelaModelo):
     
             # Ganha experiência e retorna ao mapa
             self.entidades.jogador.experiencia_atual += self.experiencia_acumulada
-            self.entidades.jogador.atualizar_atributos_por_nivel(self.entidades.jogador)
+            self.entidades.jogador.atualizar_atributos_por_nivel()
 
             self._adiconar_item_ao_invetario_do_jogador(self.itens_obtidos)
     
@@ -471,7 +481,7 @@ class TelaBatalha(TelaModelo):
     
             # Salva o progresso
             self.entidades.jogador.experiencia_atual += self.experiencia_acumulada
-            self.entidades.jogador.atualizar_atributos_por_nivel(self.entidades.jogador)
+            self.entidades.jogador.atualizar_atributos_por_nivel()
 
             self._adiconar_item_ao_invetario_do_jogador(self.itens_obtidos)
     
@@ -638,7 +648,8 @@ class TelaBatalha(TelaModelo):
                 # E atualiza os efeitos aplicados (se houver) decrementando a duração em 1 turno
                 self.entidades.jogador.atualizar_efeitos()
                 for inimigo in self.inimigos:
-                    inimigo.atualizar_efeitos()
+                    if inimigo is not None:
+                        inimigo.atualizar_efeitos()
 
         for dano in self.danos_flutuantes:
             dano.update(dt)
@@ -651,7 +662,7 @@ class TelaBatalha(TelaModelo):
 
         # 2) Dispara fade‑out nos inimigos que acabaram de ficar com PV <= 0
         for i, inimigo in enumerate(self.inimigos):
-            if inimigo.vida_atual <= 0 and self.inimigos_animados[i].estado == "parado":
+            if inimigo is not None and inimigo.vida_atual <= 0 and self.inimigos_animados[i].estado == "parado":
                 self.inimigos_animados[i].iniciar_morte()           ### dispara fade
                 # NÃO remova ainda — deixe o fade acontecer
 
@@ -669,13 +680,15 @@ class TelaBatalha(TelaModelo):
         #self.imagens_de_inimigos = [a.imagem for a in self.inimigos_animados]
 
         # Verifica se todos os inimigos da onda foram derrotados
-        if all(not inimigo.esta_vivo() for inimigo in self.inimigos):
-            self.experiencia_acumulada += inimigo.experiencia
-            self.itens_obtidos.append(inimigo.item)
+        if all(not inimigo.esta_vivo() for inimigo in self.inimigos if inimigo is not None):
+            self.experiencia_acumulada += inimigo.experiencia if inimigo is not None else 0
+            if inimigo:
+                self.itens_obtidos.append(inimigo.item)
             inimigo_pop = self.inimigos_lutando.pop(0)
             print(f"Inimigo derrotado: {inimigo_pop.identificador_instancia_lacaio}")
             self.banco_de_dados.sekishiki_meikai_ha(inimigo_pop.identificador_instancia_lacaio, self.entidades.progresso_do_jogo.identificador_progresso)
             if not self._carregar_proxima_onda():
+                print("Todas as ondas foram derrotadas!")
                 self._finalizar_batalha(venceu=True)
 
         if self.estado_batalha == "derrota":

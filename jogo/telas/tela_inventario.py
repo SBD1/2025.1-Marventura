@@ -141,7 +141,7 @@ class TelaInventario(TelaModelo):
         # Botão "Usar" para o menu de informações do item
         self.botao_usar_item = self.gerenciador_recursos.obter_imagem('inv_botao_usar') # Assumindo que esta imagem existe
         if self.botao_usar_item and self.rect_menu_info:
-            self.rect_botao_usar_item = self.botao_usar_item.get_rect(center=(self.rect_menu_info.centerx, self.rect_menu_info.bottom - 30)) # 30 pixels acima da borda inferior
+            self.rect_botao_usar_item = self.botao_usar_item.get_rect(center=(self.rect_menu_info.centerx, self.rect_menu_info.bottom))
         else:
             print("[AVISO] Imagem 'inv_botao_usar' não encontrada. O botão 'Usar' não será exibido.")
             # Fallback: criar uma superfície simples para o botão
@@ -322,7 +322,9 @@ class TelaInventario(TelaModelo):
             if evento.button == 1: # Clique esquerdo
                 # Lógica para o botão de fechar
                 if self.rect_botao_fechar.collidepoint(evento.pos):
-                    self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA) # Ou a tela anterior, se houver um histórico
+                    #self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA) # Ou a tela anterior, se houver um histórico
+                    self.gerenciador_telas.tela_atual.menu_inventario = None
+                    self.gerenciador_telas.tela_atual.menu_inventario_ativo = False
                     return
 
                 # Lógica para os botões laterais (abas)
@@ -434,7 +436,8 @@ class TelaInventario(TelaModelo):
             lista_base = self.lista_outros # Esta lista agora contém apenas 'fru'
             current_filter = self.current_filter_especial # Será 'especial'
             # Para a aba "especial", o filtro "especial" significa mostrar as frutas
-            return [item for item in lista_base if item.tipo == 'fru']
+            bolsa_de_moedas = self.entidades.jogador.moedas
+            return [item for item in lista_base if item.tipo == 'ncn' and item.item_de_missao]
 
         return lista_base # Retorna a lista completa da aba se o filtro for 'todos' ou único
 
@@ -659,19 +662,20 @@ class TelaInventario(TelaModelo):
             tela.blit(self.botao_fechar_menu_info, self.rect_botao_fechar_menu_info)
 
         # Desenha o botão "Usar"
-        if self.botao_usar_item and self.rect_botao_usar_item:
-            tela.blit(self.botao_usar_item, self.rect_botao_usar_item)
-            # Adiciona texto ao botão "Usar"
-            self._desenhar_texto_com_borda(
-                tela,
-                "Usar",
-                self.fonte_titulo, # Pode ser uma fonte diferente para o botão
-                BRANCO_CLARO,
-                PRETO,
-                1,
-                self.rect_botao_usar_item.center,
-                align='center'
-            )
+        if self.current_tab == 'consumiveis' and item.tipo == 'con':
+            if self.botao_usar_item and self.rect_botao_usar_item:
+                tela.blit(self.botao_usar_item, self.rect_botao_usar_item)
+                # Adiciona texto ao botão "Usar"
+                self._desenhar_texto_com_borda(
+                    tela,
+                    "Usar",
+                    self.fonte_titulo, # Pode ser uma fonte diferente para o botão
+                    BRANCO_CLARO,
+                    PRETO,
+                    1,
+                    self.rect_botao_usar_item.center,
+                    align='center'
+                )
 
 
         # Posições para o texto dentro do menu_info_image
