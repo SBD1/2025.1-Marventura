@@ -1,9 +1,37 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/27.0.2 Chrome/134.0.6998.205 Electron/35.3.0 Safari/537.36" scale="2" border="0" version="27.0.2">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0" scale="2" border="0" version="28.0.4">
   <diagram name="Página-1" id="qZ9dU6de14IeWO8vwjYs">
-    <mxGraphModel dx="2083" dy="765" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1848" dy="558" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="S_6kCJHap6dtxQoSMu78-5" value="" style="endArrow=none;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;jumpStyle=arc;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="S_6kCJHap6dtxQoSMu78-2" target="S_6kCJHap6dtxQoSMu78-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="570" y="780" as="sourcePoint" />
+            <mxPoint x="810" y="710" as="targetPoint" />
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-6" value="(0,N&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="S_6kCJHap6dtxQoSMu78-5">
+          <mxGeometry x="1" relative="1" as="geometry">
+            <mxPoint x="40" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-3" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;jumpStyle=arc;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="0KiRzt0CqEyJqnX5arQi-20" target="S_6kCJHap6dtxQoSMu78-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="500" y="420" as="sourcePoint" />
+            <mxPoint x="490" y="630" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="360" y="625" />
+              <mxPoint x="360" y="670" />
+              <mxPoint x="360" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-4" value="(0,N&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;)&lt;/span&gt;" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" connectable="0" vertex="1" parent="S_6kCJHap6dtxQoSMu78-3">
+          <mxGeometry x="1" relative="1" as="geometry">
+            <mxPoint x="171" y="-75" as="offset" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="iwevk6jDCSmzt_M_3gEn-10" value="Qtd." style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="540" y="60" width="40" height="20" as="geometry" />
         </mxCell>
@@ -175,7 +203,7 @@
           <mxGeometry x="550" y="510" width="100" height="40" as="geometry" />
         </mxCell>
         <mxCell id="0KiRzt0CqEyJqnX5arQi-20" value="Receita" style="rounded=0;whiteSpace=wrap;html=1;glass=0;" parent="1" vertex="1">
-          <mxGeometry x="540" y="590" width="120" height="60" as="geometry" />
+          <mxGeometry x="540" y="580" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="0KiRzt0CqEyJqnX5arQi-27" value="PreçoCompra" style="ellipse;whiteSpace=wrap;html=1;align=left;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="540" y="120" width="40" height="20" as="geometry" />
@@ -239,7 +267,7 @@
         </mxCell>
         <mxCell id="AHWg4KH6Gm_TxBfD3CBN-27" value="(0,N)" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" parent="AHWg4KH6Gm_TxBfD3CBN-26" connectable="0" vertex="1">
           <mxGeometry x="1" relative="1" as="geometry">
-            <mxPoint x="35" y="40" as="offset" />
+            <mxPoint x="35" y="30" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="54PvYaPEWLfNZyFd4lhY-1" value="" style="endArrow=none;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;jumpStyle=arc;" parent="1" source="iwevk6jDCSmzt_M_3gEn-44" target="0KiRzt0CqEyJqnX5arQi-2" edge="1">
@@ -285,7 +313,7 @@
             <mxPoint x="719.5" y="510" as="sourcePoint" />
             <mxPoint x="719.5" y="560" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="720" y="620" />
+              <mxPoint x="720" y="610" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -299,7 +327,7 @@
             <mxPoint x="520" y="500" as="sourcePoint" />
             <mxPoint x="460" y="620" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="490" y="620" />
+              <mxPoint x="490" y="610" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -318,7 +346,7 @@
         <mxCell id="wa5bNqH3ix244_HLIah2-13" value="éFabricável" style="ellipse;whiteSpace=wrap;html=1;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="810" y="310" width="40" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="j9XFhWCNsnSkalBIjv5d-1" value="Inventário" style="rounded=0;whiteSpace=wrap;html=1;shape=ext;margin=3;double=1;" parent="1" vertex="1">
+        <mxCell id="j9XFhWCNsnSkalBIjv5d-1" value="Inventário" style="rounded=0;whiteSpace=wrap;html=1;shape=ext;margin=3;double=0;" parent="1" vertex="1">
           <mxGeometry x="60" y="30" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="j9XFhWCNsnSkalBIjv5d-2" value="Possui" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -387,7 +415,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="54PvYaPEWLfNZyFd4lhY-5" value="&lt;div style=&quot;&quot;&gt;As receitas utilizam 1 ou 2 ingredientes, podendo ser consumíveis, não-consumíveis ou uma combinação de ambos.&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;align=left;" parent="1" vertex="1">
-          <mxGeometry x="420" y="675" width="170.5" height="110" as="geometry" />
+          <mxGeometry x="419.5" y="680" width="170.5" height="110" as="geometry" />
         </mxCell>
         <mxCell id="-rAfwSwdHLe8d30JFTcD-8" value="Dano" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="150.5" y="705" width="40" height="20" as="geometry" />
@@ -465,7 +493,7 @@
         <mxCell id="rPM-Hz7g1SzxGYDXyKlC-1" value="TipoDeAlvo" style="ellipse;whiteSpace=wrap;html=1;fontStyle=0;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="150.5" y="765" width="40" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="rPM-Hz7g1SzxGYDXyKlC-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;startFill=0;" parent="1" source="rPM-Hz7g1SzxGYDXyKlC-2" target="URyzKEtMf2HfSRkeP_Ze-8" edge="1">
+        <mxCell id="rPM-Hz7g1SzxGYDXyKlC-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;startFill=0;jumpStyle=arc;" parent="1" source="rPM-Hz7g1SzxGYDXyKlC-2" target="URyzKEtMf2HfSRkeP_Ze-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="rPM-Hz7g1SzxGYDXyKlC-9" value="(0, N)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="rPM-Hz7g1SzxGYDXyKlC-4" vertex="1" connectable="0">
@@ -493,14 +521,35 @@
         <mxCell id="rPM-Hz7g1SzxGYDXyKlC-14" value="Tipo de Alvo&lt;div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;fila&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;alvo_terrestre&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;terrestre&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;alvo_livre&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;area&#39;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="-20" y="660" width="140" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="VrmiJQWNs4IN0sQeK686-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;endArrow=none;startFill=0;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" edge="1" parent="1" source="VrmiJQWNs4IN0sQeK686-1" target="iwevk6jDCSmzt_M_3gEn-43">
+        <mxCell id="VrmiJQWNs4IN0sQeK686-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;endArrow=none;startFill=0;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" parent="1" source="VrmiJQWNs4IN0sQeK686-1" target="iwevk6jDCSmzt_M_3gEn-43" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VrmiJQWNs4IN0sQeK686-1" value="TipoArma" style="ellipse;whiteSpace=wrap;html=1;fontStyle=0;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" vertex="1" parent="1">
+        <mxCell id="VrmiJQWNs4IN0sQeK686-1" value="TipoArma" style="ellipse;whiteSpace=wrap;html=1;fontStyle=0;labelPosition=right;verticalLabelPosition=middle;align=left;verticalAlign=middle;" parent="1" vertex="1">
           <mxGeometry x="240" y="430" width="40" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="VrmiJQWNs4IN0sQeK686-5" value="Local Encontrado&lt;div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Ilha de Borabóia&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Cidade de Lurien&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Ilha Glacial de Frimora&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Cactuaraquara&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Nublária&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Quartel Naval D-57&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Cozinha&#39;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&#39;Loja de Espadas&#39;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&#39;Loja de Estilingues e Arcos&#39;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;labelBackgroundColor=none;" vertex="1" parent="1">
+        <mxCell id="VrmiJQWNs4IN0sQeK686-5" value="Local Encontrado&lt;div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Ilha de Borabóia&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Cidade de Lurien&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Ilha Glacial de Frimora&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Cactuaraquara&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Nublária&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Quartel Naval D-57&#39;&lt;/span&gt;,&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: #ce9178;&quot;&gt;&#39;Cozinha&#39;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&#39;Loja de Espadas&#39;&lt;/span&gt;&lt;span style=&quot;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;color: rgb(204, 204, 204); font-family: Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 14px; line-height: 19px; white-space: pre;&quot;&gt;&lt;span style=&quot;color: rgb(206, 145, 120);&quot;&gt;&#39;Loja de Estilingues e Arcos&#39;&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="690" width="240" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-1" value="Progresso" style="rounded=0;whiteSpace=wrap;html=1;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="299.5" y="830" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-2" value="É conhecida" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="309.5" y="715" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-13" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;endFill=0;entryX=1.001;entryY=0.17;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="S_6kCJHap6dtxQoSMu78-7" target="S_6kCJHap6dtxQoSMu78-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-7" value="IdentificadorProgresso" style="ellipse;whiteSpace=wrap;html=1;align=left;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="440" y="830" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-8" value="NumeroDoSlot" style="ellipse;whiteSpace=wrap;html=1;align=left;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="440" y="870" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-9" value="DataÚltimoSalvamento" style="ellipse;whiteSpace=wrap;html=1;align=left;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="440" y="890" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="S_6kCJHap6dtxQoSMu78-10" value="Ocupado" style="ellipse;whiteSpace=wrap;html=1;align=left;labelPosition=right;verticalLabelPosition=middle;verticalAlign=middle;fontStyle=0" vertex="1" parent="1">
+          <mxGeometry x="440" y="850" width="40" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
