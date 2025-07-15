@@ -44,6 +44,7 @@ class TelaInicial(TelaModelo): # Herda de TelaModelo
             'acao': lambda: sys.exit()
         })
 
+
     def processar_eventos(self, evento):
         # Chama o processar_eventos da base para eventos comuns (ex: QUIT)
         super().processar_eventos(evento)

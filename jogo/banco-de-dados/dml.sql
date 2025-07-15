@@ -94,7 +94,7 @@ VALUES
 INSERT INTO habilidade
     (identificador_efeito, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano, custo)
 VALUES
-    (NULL, 'Soco Direto', 'Um golpe rápido e certeiro. Simples, mas eficiente como uma boa bronca.', 'soco', 'alvo_terrestre', 8, 0),
+    (NULL, 'Soco Direto', 'Um golpe rápido e certeiro. Simples, mas eficiente como uma boa bronca.', 'soco', 'alvo_terrestre', 8, 0), -- Dano_final = dano_base * (1 + (nivel_jogador / escala)) * multiplicador_area * multiplicador_raridade
     ('efe084', 'Martelo de Carne', 'Socos pesados e ritmados como um churrasqueiro raivoso. Aplica Tontura.', 'soco', 'terrestre', 8, 4),
     (NULL, 'Soco Giratório', 'Um giro rápido com soco final. Às vezes acerta dois alvos lado a lado.', 'soco', 'alvo_terrestre', 8, 0),
     ('efe084', 'Trovão de Punhos', 'Uma sequência de socos trovejantes que sacodem o chão. Pode causar Tontura em todos.', 'soco', 'terrestre', 8, 4),
@@ -143,8 +143,8 @@ VALUES
 INSERT INTO habilidade
     (identificador_efeito, nome, descricao, tipo_de_ataque, tipo_de_alvo, dano)
 VALUES
-    ('efe085', 'Investida Penosa', 'O corvo mergulha com um grito estridente, mirando os olhos. Quem precisa de precisão quando se tem drama?', 'soco', 'alvo_livre', 4),
-    ('efe082', 'Mordida Selvagem', 'Uma mordida rápida e feroz. Ele rosna depois, só pra garantir que você não esqueça.', 'soco', 'alvo_terrestre', 4),
+    ('efe085', 'Investida Penosa', 'O corvo mergulha com um grito estridente, mirando os olhos. Quem precisa de precisão quando se tem drama?', 'soco', 'alvo_livre', 1),
+    ('efe082', 'Mordida Selvagem', 'Uma mordida rápida e feroz. Ele rosna depois, só pra garantir que você não esqueça.', 'soco', 'alvo_terrestre', 2),
     ('efe084', 'Carga Desgovernada', 'Baixa a cabeça, corre, atropela. Você não está preparado. Ninguém está preparado.', 'soco', 'terrestre', 4),
     ('efe084', 'Soco Açucarado', 'Um murro tão forte quanto seu vício em balas. Quem diria que açúcar deixava alguém assim?', 'soco', 'alvo_terrestre', 4),
     (NULL, 'Suborno de Honra', 'Ele tenta “convencer” você a baixar a guarda. Com um soco. E uma proposta indecente.', 'soco', 'alvo_terrestre', 4),
@@ -288,8 +288,7 @@ VALUES
     ('Carne de Ave Brava', 'Um pedaço de ave com gosto de aventura. Cozinhe bem ou corra risco de bicadas!', '★', 'Ilha de Borabóia', NULL, 7, FALSE),
     ('Presa de Lobo', 'Um dente afiado arrancado de um lobo valente. Não é comestível, mas é estiloso.', '★★', 'Ilha de Borabóia', NULL, 15, FALSE),
     ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 10, 5, FALSE),
-    ('ButterCream de Fuligem', 'O preferido dos confeiteiros da cidade, feito com um toque especial de cana-de-açúcar e... partículas do ar local.', '★★', 'Cidade de Lurien', NULL, 15, FALSE),
-    ('Farinha Misteriosa', 'Ninguém sabe de onde veio, mas faz bolos ótimos. Melhor não perguntar.', '★', 'Cidade de Lurien', 20, 8, FALSE),
+    ('ButterCream de Fuligem', 'O preferido dos confeiteiros da cidade, feito com um toque especial de cana-de-açúcar e... partículas do ar local.', '★★', 'Cidade de Lurien', 20, 8, FALSE),
     ('Medalha de Marinheiro', 'Símbolo de honra… ou corrupção. Não serve pra comer, mas pode abrir portas.', '★★', 'Cidade de Lurien', NULL, 20, FALSE),
     ('Pérola Cantante', 'Emite um som suave quando tocada. Dizem que revive quem ouve sua melodia até o fim.', '★★', 'Ilha Glacial de Frimora', 30, 17, FALSE),
     ('Pedaço de Tecido Rasgado', 'Um trapo que já foi parte de um uniforme pirata. Cheira a nostalgia e mofo.', '★', 'Ilha Glacial de Frimora', NULL, 8, FALSE),
@@ -741,8 +740,8 @@ VALUES
 	('ilh002', 'Beco', 'Área neutra', 'cenario_lurien_beco', null), -- → are010
 	('ilh002', 'Esconderijo', 'Área neutra', 'cenario_lurien_esconderijo', null), -- → are011
 	('ilh002', 'Prisão', 'Área neutra', 'cenario_lurien_prisao', null), -- → are012
-	('ilh002', 'Loja de espadas', 'Loja', 'loja_interior', null), -- → are013
-	('ilh002', 'Loja de acessórios', 'Loja', 'loja_interior', null), -- → are014
+	('ilh002', 'Loja de espadas', 'Loja', 'loja_armas_e_acessorios_interior', null), -- → are013
+	('ilh002', 'Loja de acessórios', 'Loja', 'loja_armas_e_acessorios_interior', null), -- → are014
 	('ilh003', 'Costa de Frimora', 'Porto', 'cenario_frimora_costa', null), -- → are015
 	('ilh003', 'Vila de Frimora', 'Vila', 'cenario_frimora_vila', null), -- → are016
 	('ilh003', 'Floresta de Frimora', 'Área de combate', 'cenario_frimora_floresta', 'cenario_frimora_floresta_camada_superior'), -- → are017
@@ -753,7 +752,7 @@ VALUES
 	('ilh004', 'Cidadela de Cactuaraquara', 'Vila', 'cenario_cactuaraquara_cidadela', null), -- → are022
 	('ilh004', 'Oásis de Ramtak', 'Área de combate', 'cenario_cactuaraquara_oasis', null), -- → are023
 	('ilh004', 'Loja de Cactuaraquara', 'Loja', 'loja_interior', null), -- → are024
-	('ilh004', 'Loja de armas', 'Loja', 'loja_interior', null), -- → are025
+	('ilh004', 'Loja de armas', 'Loja', 'loja_armas_e_acessorios_interior', null), -- → are025
 	('ilh005', 'Penumbra dos Ossudos', 'Porto', 'cenario_nublaria_penumbra', null), -- → are026
 	('ilh005', 'Acampamento de Nublária', 'Vila', 'cenario_nublaria_acampamento', null), -- → are027
 	('ilh005', 'Floresta', 'Área de combate', 'cenario_nublaria_floresta', null), -- → are028
@@ -808,7 +807,7 @@ VALUES
     ('are017', 'are016', 50, 415, 'direita'),
     ('are016', 'are019', 0, 0, 'direita'),
     ('are019', 'are016', 695, 320, 'direita'),
-    ('are016', 'are020', 0, 0, 'esquerda'),
+    ('are016', 'are020', 100, 275, 'direita'),
     ('are020', 'are016', 1460, 320, 'direita'),
     ('are017', 'are018', 1377, 757, 'esquerda'),
     ('are018', 'are017', 50, 750, 'direita'),
@@ -898,12 +897,15 @@ VALUES
     ('are003', 'normal', 2586, 230, 827, 145),
     ('are003', 'normal', 3413, 230, 481, 370),
     ('are003', 'normal', 3894, 313, 361, 158),
+    ('are004', 'normal', 0, 525, 900, 75),
     ('are007', 'normal', 111, 309, 2589, 107),
     ('are007', 'normal', 580, 270, 290, 39),
     ('are008', 'normal', 0, 498, 1682, 102),
     ('are008', 'normal', 1539, 403, 143, 95),
     ('are009', 'normal', 0, 483, 764, 117),
     ('are009', 'arena', 764, 203, 1036, 397),
+    ('are013', 'normal', 0, 530, 900, 70),
+    ('are014', 'normal', 0, 530, 900, 70),
     ('are015', 'normal', 0, 705, 1130, 319),
     ('are015', 'neve', 0, 705, 675, 60),
     ('are015', 'neve', 0, 853, 247, 172),
@@ -915,7 +917,9 @@ VALUES
     ('are016', 'neve', 0, 407, 3540, 74),
     ('are016', 'neve', 0, 571, 3540, 29),
     ('are017', 'arena', 0, 735, 1536, 289),
-    ('are017', 'neve', 0, 735, 1536, 289);
+    ('are017', 'neve', 0, 735, 1536, 289),
+    ('are019', 'normal', 0, 501, 900, 99),
+    ('are020', 'normal', 0, 525, 900, 75);
 
 
 
@@ -926,6 +930,7 @@ VALUES
     ('are007', 354, 390, 93, 22),
     ('are007', 1413, 390, 93, 22),
     ('are007', 2472, 390, 93, 22),
+    ('are007', 322, 302, 137, 36),
     ('are008', 1539, 418, 102, 17),
     ('are008', 1641, 435, 41, 25),
     ('are017', 635, 781, 56, 100),
@@ -938,7 +943,7 @@ INSERT INTO habitante
     (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem, especialidade)
 VALUES
     ('are004', 'Sr. Lee', 'Sr. Lee, o mestre das marmitas rurais! Vende ovos frescos, arroz do planalto e conselhos que parecem saídos de um livro de provérbios... mal traduzido.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven001
-    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 236, 196, 500, 'lee', 'com'), -- ven002
+    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 446, 196, 500, 'lee', 'com'), -- ven002
     ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven003
     ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven004
     ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven005
@@ -956,11 +961,12 @@ VALUES
     ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 15, 'camponesa_a'); -- rct002
 
 
+
 INSERT INTO lacaio
     (nome, descricao, vida, nivel, experiencia, tempo_reacao)
 VALUES
     ('Corvo',	'Um bico afiado e uma risada sarcástica. Costuma roubar frutas e orgulho.', 8, 1, 10, 750), -- lac001 vida=8(1+0.05*nível)^(1.5)
-    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 7, 11, 10, 1200), -- lac002
+    ('Lobo',	'Uiva alto, morde forte e adora assustar viajantes desavisados.', 11, 7, 10, 1200), -- lac002
     ('Brutamontes',	'Grande, mal-humorado e com um gosto inusitado por doces.', 16, 12, 15, 900), -- lac003
     ('Marinheiro Corrupto',	'Usa o uniforme da Marinha, mas segue as ordens do bolso.', 20, 17, 17, 900), -- lac004
     ('Pirata Congelado',	'Foi soterrado pela neve... e agora está de volta para esfriar os ânimos.', 24, 22, 22, 900), -- lac005
@@ -1143,6 +1149,67 @@ VALUES
 
 
 
+-- Inventários de habitantes
+INSERT INTO inventario
+    (identificador_personagem, identificador_progresso)
+VALUES
+    ('ven001', 'pro001'), -- inv055
+    ('ven001', 'pro002'), -- inv056
+    ('ven001', 'pro003'), -- inv057
+    ('ven002', 'pro001'), -- inv058
+    ('ven002', 'pro002'), -- inv059
+    ('ven002', 'pro003'), -- inv060
+    ('ven003', 'pro001'), -- inv061
+    ('ven003', 'pro002'), -- inv062
+    ('ven003', 'pro003'), -- inv063
+    ('ven004', 'pro001'), -- inv064
+    ('ven004', 'pro002'), -- inv065
+    ('ven004', 'pro003'), -- inv066
+    ('ven005', 'pro001'), -- inv067
+    ('ven005', 'pro002'), -- inv068
+    ('ven005', 'pro003'), -- inv069
+    ('ven006', 'pro001'), -- inv070
+    ('ven006', 'pro002'), -- inv071
+    ('ven006', 'pro003'); -- inv072
+
+
+
+-- Itens dos habitantes
+INSERT INTO item_inventario
+    (identificador_inventario, identificador_item, quantidade)
+VALUES
+    ('inv055', 'ncn001', 20),
+    ('inv055', 'ncn002', 20),
+    ('inv055', 'ncn003', 20),
+    ('inv056', 'ncn001', 20),
+    ('inv056', 'ncn002', 20),
+    ('inv056', 'ncn003', 20),
+    ('inv057', 'ncn001', 20),
+    ('inv057', 'ncn002', 20),
+    ('inv057', 'ncn003', 20),
+    
+    ('inv058', 'ncn006', 20),
+    ('inv058', 'ncn007', 20),
+    ('inv058', 'con007', 20),
+    ('inv059', 'ncn006', 20),
+    ('inv059', 'ncn007', 20),
+    ('inv059', 'con007', 20),
+    ('inv060', 'ncn006', 20),
+    ('inv060', 'ncn007', 20),
+    ('inv060', 'con007', 20),
+
+    ('inv061', 'ncn009', 20),
+    ('inv061', 'con012', 20),
+    ('inv061', 'con013', 20),
+    ('inv062', 'ncn009', 20),
+    ('inv062', 'con012', 20),
+    ('inv062', 'con013', 20),
+    ('inv063', 'ncn009', 20),
+    ('inv063', 'con012', 20),
+    ('inv063', 'con013', 20);
+
+
+
 -- Itens dos inimigos
 INSERT INTO item_inventario
     (identificador_inventario, identificador_item, quantidade)
@@ -1150,39 +1217,39 @@ VALUES
     ('inv001', 'ncn004', 1),
     ('inv002', 'ncn005', 1),
     ('inv003', 'con008', 1),
-    ('inv004', 'ncn009', 1),
-    ('inv005', 'ncn011', 1),
-    ('inv006', 'ncn012', 1),
-    ('inv007', 'ncn013', 1),
-    ('inv008', 'ncn014', 1),
-    ('inv009', 'ncn018', 1),
-    ('inv010', 'ncn019', 1),
+    ('inv004', 'ncn008', 1),
+    ('inv005', 'ncn010', 1),
+    ('inv006', 'ncn011', 1),
+    ('inv007', 'ncn012', 1),
+    ('inv008', 'ncn013', 1),
+    ('inv009', 'ncn017', 1),
+    ('inv010', 'ncn018', 1),
     ('inv011', 'con027', 1),
-    ('inv012', 'ncn022', 1),
+    ('inv012', 'ncn021', 1),
     ('inv019', 'ncn004', 1),
     ('inv020', 'ncn005', 1),
     ('inv021', 'con008', 1),
-    ('inv022', 'ncn009', 1),
-    ('inv023', 'ncn011', 1),
-    ('inv024', 'ncn012', 1),
-    ('inv025', 'ncn013', 1),
-    ('inv026', 'ncn014', 1),
-    ('inv027', 'ncn018', 1),
-    ('inv028', 'ncn019', 1),
+    ('inv022', 'ncn008', 1),
+    ('inv023', 'ncn010', 1),
+    ('inv024', 'ncn011', 1),
+    ('inv025', 'ncn012', 1),
+    ('inv026', 'ncn013', 1),
+    ('inv027', 'ncn017', 1),
+    ('inv028', 'ncn018', 1),
     ('inv029', 'con027', 1),
-    ('inv030', 'ncn022', 1),
+    ('inv030', 'ncn021', 1),
     ('inv037', 'ncn004', 1),
     ('inv038', 'ncn005', 1),
-    ('inv039', 'con008', 1),
-    ('inv040', 'ncn009', 1),
-    ('inv041', 'ncn011', 1),
-    ('inv042', 'ncn012', 1),
-    ('inv043', 'ncn013', 1),
-    ('inv044', 'ncn014', 1),
-    ('inv045', 'ncn018', 1),
-    ('inv046', 'ncn019', 1),
+    ('inv039', 'con007', 1),
+    ('inv040', 'ncn008', 1),
+    ('inv041', 'ncn010', 1),
+    ('inv042', 'ncn011', 1),
+    ('inv043', 'ncn012', 1),
+    ('inv044', 'ncn013', 1),
+    ('inv045', 'ncn017', 1),
+    ('inv046', 'ncn018', 1),
     ('inv047', 'con027', 1),
-    ('inv048', 'ncn022', 1);
+    ('inv048', 'ncn021', 1);
 
 
 
@@ -1199,8 +1266,70 @@ VALUES
     ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
     ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
-    ('are001', 'mis012', 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are001', null, 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
     ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
+
+-- -- Adicione vendedores nas áreas das lojas
+-- INSERT INTO habitante
+--     (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, especialidade, moedas_totais)
+-- VALUES
+--     ('are004', 'João das Ferramentas', 'Vendedor de armas e acessórios', 'ven', 400, 300, 'arm', 500),
+--     ('are016', 'Vovó Yuba', 'Cozinheira e vendedora de comidas', 'ven', 400, 200, 'com', 300),
+--     ('are020', 'Mercador das Dunas', 'Vendedor especializado', 'ven', 400, 300, 'ace', 400),
+--     ('are024', 'Comerciante Sombrio', 'Vendedor de itens raros', 'ven', 400, 300, 'com', 600),
+--     ('are029', 'Intendente Naval', 'Vendedor militar', 'ven', 400, 300, 'arm', 800);
+-- 
+-- -- Crie inventários para os vendedores
+-- INSERT INTO inventario (identificador_personagem, tipo_inventario)
+-- VALUES 
+--     ('ven001', 'ger'),
+--     ('ven002', 'ger'),
+--     ('ven003', 'ger'),
+--     ('ven004', 'ger'),
+--     ('ven005', 'ger');
+-- 
+-- -- Adicione itens aos inventários dos vendedores
+-- INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
+-- VALUES
+--     -- Vendedor de Borabóia (armas básicas)
+--     ('inv019', 'arm001', 3),
+--     ('inv019', 'arm010', 2),
+--     ('inv019', 'ace001', 1),
+--     
+--     -- Vovó Yuba (ingredientes e comidas)
+--     ('inv020', 'ncn001', 10),
+--     ('inv020', 'ncn002', 8),
+--     ('inv020', 'con012', 5),
+--     
+--     -- Vendedor do Deserto (itens especiais)
+--     ('inv021', 'arm002', 2),
+--     ('inv021', 'ace002', 1),
+--     
+--     -- Vendedor Sombrio (itens raros)
+--     ('inv022', 'con020', 3),
+--     ('inv022', 'con021', 2),
+--     
+--     -- Intendente Naval (equipamentos militares)  
+--     ('inv023', 'arm001', 5),
+--     ('inv023', 'con023', 10);
+-- 
+-- INSERT INTO habitante
+--     (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, especialidade, moedas_totais)
+-- VALUES
+--     ('are004', 'João das Ferramentas', 'Vendedor de armas e acessórios', 'ven', 400, 300, 'arm', 100);
+-- 
+INSERT INTO area_interativa
+    (identificador_area_origem, x, y, largura, altura, tipo_evento, metodo_ativacao, ativa)
+VALUES
+    ('are004', 288, 151, 241, 233, 'abrir_loja', 'ativo', TRUE),
+    ('are020', 288, 151, 241, 233, 'abrir_loja', 'ativo', TRUE);
+
+
+
+INSERT INTO area_interativa
+    (identificador_area_origem, x, y, largura, altura, tipo_evento, metodo_ativacao, ativa, chave_imagem)
+VALUES
+    ('are007', 293, 157, 201, 201, 'abrir_loja', 'ativo', TRUE, 'barraca');
 
 
 
@@ -1251,7 +1380,7 @@ INSERT INTO item_missao
 VALUES
     ('mis010', 'con040', 1);
 
-    
+
 
 INSERT INTO dialogo
     (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
@@ -1332,8 +1461,8 @@ VALUES
     ('rct001', 'mis011', 19, 'M', '(Erguendo um copo): — Um brinde ao novo viajante! Que sua estadia seja leve, sua comida quente e suas galinhas... diplomáticas!'),
     ('hbt001', 'mis011', 20, 'F', '(Todos): — Viva!'),
     ('hbt001', 'mis011', 20, 'M', '(Todos): — Viva!'),
-    ('hbt001', 'mis011', 21, 'F', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
-    ('hbt001', 'mis011', 21, 'M', 'Em uma conversa durante o jantar comunitário, um dos moradores comentou:'),
+    ('hbt001', 'mis011', 21, 'F', 'Mais tarde naquela noite'),
+    ('hbt001', 'mis011', 21, 'M', 'Mais tarde naquela noite'),
     ('ven001', 'mis011', 22, 'F', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
     ('ven001', 'mis011', 22, 'M', 'Ultimamente, uma fera tem aparecido. Grande como um touro, rápida como um raio. Anda destruindo plantações e espantando os trabalhadores.'),
     ('rct001', 'mis011', 24, 'F', 'Já tentaram espantar, mas voltaram com mais medo que gato em dia de banho! Eu te digo, ragazza... essa criatura não tá ali por acaso. Tá guardando alguma coisa, capisce?'),

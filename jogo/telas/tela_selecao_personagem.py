@@ -34,8 +34,8 @@ class TelaSelecaoPersonagem(TelaModelo):
             self.imagem_fundo.fill(CINZA_ESCURO) # Fallback
 
         # Carregue imagens dos personagens aqui se forem desenhadas na UI desta tela
-        self.imagem_menino_ui = self.gerenciador_recursos.obter_imagem(SHUAN) # Exemplo: Usando sprite existente
-        self.imagem_menina_ui = self.gerenciador_recursos.obter_imagem(SILVIE) # Exemplo: Usando sprite existente
+        self.imagem_menino_ui = self.gerenciador_recursos.obter_imagem(SHUAN)
+        self.imagem_menina_ui = self.gerenciador_recursos.obter_imagem(SILVIE)
 
         # --- Constantes de Layout da Tela de Seleção ---
         self._largura_opcao = 250 # Largura da área clicável da opção

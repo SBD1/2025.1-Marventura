@@ -3,14 +3,18 @@
 import pygame
 import sys # Para sys.exit()
 from utilidades.constantes import *
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeTelas
+    
 class TelaModelo:
     """
     Classe base para todas as telas do jogo.
     Define a interface comum (contrato) para as telas, incluindo gerenciadores
     e métodos essenciais como processar_eventos, update e draw.
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos'):
         """
         Construtor da TelaModelo.
         :param gerenciador_telas: Referência ao gerenciador de telas para transições.
@@ -62,23 +66,53 @@ class TelaModelo:
         # então as subclasses deverão implementá-lo no seu próprio método draw.
         pass # Por padrão, não desenha nada
 
-    def _desenhar_texto_com_borda(self, superficie, texto, fonte, cor, cor_borda, grossura_borda, posicao_centro):
+    def _desenhar_texto_com_borda(self, superficie, texto, fonte, cor, cor_borda, grossura_borda, pos, align='center'):
         """
-        Método auxiliar para desenhar um texto em uma superfície com uma borda simples.
-        Pode ser reutilizado por qualquer tela que herde desta base.
+        Método auxiliar para desenhar texto com borda, com suporte a alinhamento.
         """
-        print(f"Desenhando texto com borda: '{texto}' na posição {posicao_centro} com cor {cor} e borda {cor_borda}")
-        # Renderiza a superfície da borda do texto
+        # Renderiza a superfície principal e a da borda
+        superficie_texto = fonte.render(texto, True, cor)
         superficie_borda = fonte.render(texto, True, cor_borda)
-        rect_borda = superficie_borda.get_rect(center=posicao_centro)
+        
+        # Define o retângulo do texto com base no alinhamento desejado
+        if align == 'center':
+            rect_texto = superficie_texto.get_rect(center=pos)
+        elif align == 'left':
+            rect_texto = superficie_texto.get_rect(midleft=pos)
+        elif align == 'right':
+            rect_texto = superficie_texto.get_rect(midright=pos)
+        else: # Padrão para o centro se o alinhamento for desconhecido
+            rect_texto = superficie_texto.get_rect(center=pos)
 
-        # Desenha a borda movendo a superfície da borda ligeiramente
-        for dx in [-grossura_borda, 0, grossura_borda]:
-            for dy in [-grossura_borda, 0, grossura_borda]:
-                 if dx != 0 or dy != 0: # Desenha apenas as 8 direções em volta do centro
-                    superficie.blit(superficie_borda, (rect_borda.x + dx, rect_borda.y + dy))
-
-        # Renderiza a superfície principal do texto
-        superficie_principal = fonte.render(texto, True, cor)
-        rect_principal = superficie_principal.get_rect(center=posicao_centro)
-        superficie.blit(superficie_principal, rect_principal)
+        # Desenha a borda em 8 direções
+        for dx in range(-grossura_borda, grossura_borda + 1):
+            for dy in range(-grossura_borda, grossura_borda + 1):
+                if dx != 0 or dy != 0:
+                    superficie.blit(superficie_borda, (rect_texto.x + dx, rect_texto.y + dy))
+        
+        # Desenha o texto principal por cima da borda
+        superficie.blit(superficie_texto, rect_texto)
+        
+    def _draw_text_wrapped(self, surface, text, font, color, rect):
+        """Desenha o texto com quebra de linha automática dentro de um retângulo."""
+        words = text.split(' ')
+        lines = []
+        current_line = ""
+        
+        for word in words:
+            test_line = current_line + word + " "
+            # Adiciona uma pequena margem interna ao retângulo
+            if font.size(test_line)[0] < rect.width - 20:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word + " "
+        lines.append(current_line)
+        
+        # Ajusta a posição inicial Y para descer um pouco
+        y = rect.top + 70 
+        for line in lines:
+            line_surface = font.render(line, True, color)
+            # Adiciona uma margem à esquerda
+            surface.blit(line_surface, (rect.left + 10, y))
+            y += font.get_linesize()
