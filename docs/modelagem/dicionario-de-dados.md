@@ -1600,3 +1600,5 @@ As tabelas 1 a 41 a seguir representam o dicionário de dados do jogo **Marventu
 | `1.10` | Atualização dos valores dos atributos das tabelas referentes aos itens e criação da tabela TipoItem | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 19/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 19/06/2025 |
 | `1.11` | Atualização do dicionário dos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 19/06/2025 |  |  |
 | `1.12` | Novo dicionário de dados | [Diassis](https://github.com/Diaxiz) | 10/07/2025 |  |  |
+| `1.13` | Atualização geral com adição de atributos e tabelas novas (efeito, habilidade, progresso, itens e tipos) | [Diassis](https://github.com/Diaxiz) | 15/07/2025 | - | - |
+
