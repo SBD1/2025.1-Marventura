@@ -284,6 +284,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                      x=area_data.x, y=area_data.y,
                                      largura=area_data.largura, altura=area_data.altura,
                                      tipo_evento=area_data.tipo_evento,
+                                     chave_imagem=area_data.chave_imagem,
+                                     gererenciador_recursos=self.gerenciador_recursos,
                                      metodo_ativacao=area_data.metodo_ativacao,
                                      ativa=area_data.ativa)
             

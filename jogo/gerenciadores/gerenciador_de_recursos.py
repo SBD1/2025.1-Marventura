@@ -181,7 +181,9 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_CENARIO_NEVE_FLORESTA, 'recursos/imagens/cenario/ilha_neve_floresta.png')
         self._carregar_imagem(CHAVE_CENARIO_NEVE_FLORESTA_CAMADA_SUPERIOR, 'recursos/imagens/cenario/ilha_neve_floresta-camada_superior.png')
         self._carregar_imagem(CHAVE_CENARIO_NEVE_MONTANHA, 'recursos/imagens/cenario/ilha_neve_montanha.png')
-        self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png', escalar_para_altura=ALTURA_TELA)
+        self._carregar_imagem(CHAVE_BARRACA, 'recursos/imagens/cenario/barraca.png')
+        self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
+        self._carregar_imagem(CHAVE_LOJA_ARMAS_E_ACESSORIOS_INTERIOR, 'recursos/imagens/cenario/loja_armas_e_acessorios_interior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
         self._carregar_imagem('inv_painel_fundo', 'recursos/imagens/mochila/painel_fundo.png')
         self._carregar_imagem('inv_botao_fechar', 'recursos/imagens/mochila/fechar.png')
@@ -234,16 +236,25 @@ class GerenciadorDeRecursos:
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
         self._carregar_imagem(SILVIE, 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=300)
-        self._carregar_imagem('VENDEDOR_JOAO', 'recursos/imagens/jogador/vendedor.png', escalar_para_altura=200)
         self._carregar_imagem(f'{SHUAN}_em_repouso', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=120)
         self._carregar_imagem(f'{SHUAN}_caminhando_1', 'recursos/imagens/jogador/Shuan_pose-caminhada-direito.png', escalar_para_altura=120)
         self._carregar_imagem(f'{SHUAN}_caminhando_2', 'recursos/imagens/jogador/Shuan_pose-caminhada.png', escalar_para_altura=120)
         self._carregar_imagem(f'{SHUAN}_caminhando_3', 'recursos/imagens/jogador/Shuan_pose-caminhada-esquerdo.png', escalar_para_altura=120)
+        
+        self._carregar_imagem(f'{SHUAN}_em_repouso_ampliada', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
+        self._carregar_imagem(f'{SHUAN}_caminhando_1_ampliada', 'recursos/imagens/jogador/Shuan_pose-caminhada-direito.png', escalar_para_altura=300)
+        self._carregar_imagem(f'{SHUAN}_caminhando_2_ampliada', 'recursos/imagens/jogador/Shuan_pose-caminhada.png', escalar_para_altura=300)
+        self._carregar_imagem(f'{SHUAN}_caminhando_3_ampliada', 'recursos/imagens/jogador/Shuan_pose-caminhada-esquerdo.png', escalar_para_altura=300)
 
         self._carregar_imagem(f'{SILVIE}_em_repouso', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=120)
         self._carregar_imagem(f'{SILVIE}_caminhando_1', 'recursos/imagens/jogador/Silvie_pose-caminhada-direito.png', escalar_para_altura=120)
         self._carregar_imagem(f'{SILVIE}_caminhando_2', 'recursos/imagens/jogador/Silvie_pose-caminhada.png', escalar_para_altura=120)
         self._carregar_imagem(f'{SILVIE}_caminhando_3', 'recursos/imagens/jogador/Silvie_pose-caminhada-esquerdo.png', escalar_para_altura=120)
+       
+        self._carregar_imagem(f'{SILVIE}_em_repouso_ampliada', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=300)
+        self._carregar_imagem(f'{SILVIE}_caminhando_1_ampliada', 'recursos/imagens/jogador/Silvie_pose-caminhada-direito.png', escalar_para_altura=300)
+        self._carregar_imagem(f'{SILVIE}_caminhando_2_ampliada', 'recursos/imagens/jogador/Silvie_pose-caminhada.png', escalar_para_altura=300)
+        self._carregar_imagem(f'{SILVIE}_caminhando_3_ampliada', 'recursos/imagens/jogador/Silvie_pose-caminhada-esquerdo.png', escalar_para_altura=300)
 
         # --- Carregar Imagens dos Inimigos ---
         self._carregar_imagem(f"{INIMIGO_LOBO}_0", 'recursos/imagens/inimigos/Lobo_0.png', escalar_para_altura=80)
@@ -253,6 +264,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
 
         # --- Carregar Imagens dos Habitantes ---
+        self._carregar_imagem('VENDEDOR_JOAO', 'recursos/imagens/jogador/vendedor.png', escalar_para_altura=200)
         self._carregar_imagem(BIGODINI, 'recursos/imagens/habitantes/campones_b.png')
         self._carregar_imagem(TIAO_PALHA, 'recursos/imagens/habitantes/campones_a.png')
         self._carregar_imagem(LINA_PANELA, 'recursos/imagens/habitantes/camponesa_a.png')

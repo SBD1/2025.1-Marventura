@@ -175,7 +175,9 @@ CHAVE_ACAO_SOCO_SHUAN = 'acao_soco_shuan'
 CHAVE_ACAO_ESPADA = 'acao_espada'
 CHAVE_ACAO_PROJETIL = 'acao_projetil'
 
+CHAVE_BARRACA = 'barraca'
 CHAVE_LOJA_INTERIOR = 'loja_interior'
+CHAVE_LOJA_ARMAS_E_ACESSORIOS_INTERIOR = 'loja_armas_e_acessorios_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
 
 CHAVE_CENARIO_OCEANO = 'cenario_oceano'

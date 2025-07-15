@@ -20,7 +20,7 @@ class Jogador(pygame.sprite.Sprite):
         self.gerenciador_recursos = gerenciador_recursos
         self.banco_de_dados = gerenciador_banco_de_dados
         self.gerenciador_missoes = None
-        # REMOVIDO: self.fator_de_escala = fator_de_escala
+        self.fator_de_escala = 1.0
 
         # Estado do jogador
         self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
@@ -360,62 +360,68 @@ class Jogador(pygame.sprite.Sprite):
     
 
 
-    def carregar_animacoes(self):
-        # Carrega imagens. Assume-se que elas já estão escaladas pelo GerenciadorDeRecursos.
-        imagem_parado = self.gerenciador_recursos.obter_imagem(self.nome + '_em_repouso')
-        imagem_caminhar_frame_1 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_1')
-        imagem_caminhar_frame_2 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_2')
-        imagem_caminhar_frame_3 = self.gerenciador_recursos.obter_imagem(self.nome + '_caminhando_3')
+    def aplicar_fator_de_escala(self, fator):
+        """Troca os frames animados por versões ampliadas ou normais já carregadas."""
+        if self.fator_de_escala == fator:
+            return
 
-        # Adiciona frame 'parado'
+        self.fator_de_escala = fator
+        self.carregar_animacoes()  # Recarrega frames com o novo sufixo (_ampliada)
+
+        self.imagem = self.frames_animacao[self.estado][self.indice_frame]
+        self.rect = self.imagem.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
+
+        altura_pes = int(18 * fator)
+        self.pes_rect = pygame.Rect(
+            self.rect.x,
+            self.rect.bottom - altura_pes,
+            self.rect.width,
+            altura_pes
+        )
+
+
+
+
+    def carregar_animacoes(self):
+        """Carrega as animações com base no nome do jogador e no fator de escala atual."""
+        sufixo = "_ampliada" if self.fator_de_escala > 1.0 else ""
+
+        def obter_chave_da_imagem(nome_base):
+            chave = self.nome + nome_base + sufixo
+            return self.gerenciador_recursos.obter_imagem(chave)
+
+        self.frames_animacao = {
+            'parado': [],
+            'caminhando': []
+        }
+
+        imagem_parado = obter_chave_da_imagem('_em_repouso')
+        imagem_caminhar_1 = obter_chave_da_imagem('_caminhando_1')
+        imagem_caminhar_2 = obter_chave_da_imagem('_caminhando_2')
+        imagem_caminhar_3 = obter_chave_da_imagem('_caminhando_3')
+
         if imagem_parado:
             self.frames_animacao['parado'].append(imagem_parado)
         else:
-            print(f"AVISO: Imagem '{self.nome}_em_repouso' não encontrada para o jogador. Usando fallback padrão.")
             fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
             fallback_surface.fill(PRETO)
             self.frames_animacao['parado'].append(fallback_surface)
 
-        # Adiciona frames 'caminhando'
-        valid_caminhada_frames = []
-        if imagem_caminhar_frame_1:
-            valid_caminhada_frames.append(imagem_caminhar_frame_1)
-        if imagem_caminhar_frame_2:
-            valid_caminhada_frames.append(imagem_caminhar_frame_2)
-        if imagem_caminhar_frame_3:
-            valid_caminhada_frames.append(imagem_caminhar_frame_3)
-
-        # Se não houver frames de caminhada carregados, usa o frame 'parado' como fallback
+        valid_caminhada_frames = [img for img in [imagem_caminhar_1, imagem_caminhar_2, imagem_caminhar_3] if img]
         if not valid_caminhada_frames:
-            print(f"AVISO: Nenhuma imagem de caminhada para '{self.nome}' carregada. Usando imagem parada como fallback para caminhada.")
-            if self.frames_animacao['parado']:
-                fallback = self.frames_animacao['parado'][0]
-                valid_caminhada_frames = [fallback, fallback, fallback]
-            else:
-                fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
-                fallback_surface.fill(VERMELHO)
-                valid_caminhada_frames = [fallback_surface, fallback_surface, fallback_surface]
+            valid_caminhada_frames = self.frames_animacao['parado'] * 3
 
-        # Define a sequência de caminhada: 1 → 2 → 3 → 2
-        if len(valid_caminhada_frames) >= 3:
-            self.frames_animacao['caminhando'] = [
-                valid_caminhada_frames[0],
-                valid_caminhada_frames[1],
-                valid_caminhada_frames[2],
-                valid_caminhada_frames[1]
-            ]
-        else:
-            print("AVISO: Nem todos os 3 frames de caminhada disponíveis. Repetindo os existentes.")
-            self.frames_animacao['caminhando'] = valid_caminhada_frames * 2  # Loop com o que tiver
+        self.frames_animacao['caminhando'] = (
+            [valid_caminhada_frames[0], valid_caminhada_frames[1], valid_caminhada_frames[2], valid_caminhada_frames[1]]
+            if len(valid_caminhada_frames) >= 3
+            else valid_caminhada_frames * 2
+        )
 
-        # Garante pelo menos um frame em 'parado'
-        if not self.frames_animacao['parado']:
-            print("ERRO CRÍTICO: frames_animacao['parado'] ainda está vazio após todos os fallbacks.")
-            fallback_surface = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA)
-            fallback_surface.fill(VERMELHO)
-            self.frames_animacao['parado'].append(fallback_surface)
-
-        self.frame_parada_apos_caminhada = valid_caminhada_frames[1] if len(valid_caminhada_frames) > 1 else self.frames_animacao['parado'][0]
+        self.frame_parada_apos_caminhada = (
+            self.frames_animacao['caminhando'][1]
+            if len(self.frames_animacao['caminhando']) > 1
+            else self.frames_animacao['parado'][0]
+        )
 
 
 
