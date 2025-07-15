@@ -5,10 +5,13 @@
 Esta página tem como objetivo documentar a gravação de apresentação referente à entrega da Módulo 2 e 3 - sql e trigger procedure, para fins de manter tudo gravado e, também, para revisões futuras no decorrer do projeto, caso seja necessário.
 
 
+<center>
 
-<h2>Vídeo da apresentação 1</h2>
-<p><strong>Vídeo 2 – Apresentação do Módulo 2 e 3</strong></p>
+## Vídeo da apresentação 2 e 3
 
+<div align="center">
+    <p><strong>Vídeo 2 – Apresentação do Módulo 2 e 3</strong></p>
+</div>
 <iframe width="697" height="392"
   src="https://www.youtube.com/embed/rIAAmMRk7RU"
   title="Apresentação do grupo 4 - primeira entregar"
