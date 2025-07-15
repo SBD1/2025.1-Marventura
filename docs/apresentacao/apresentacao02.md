@@ -2,7 +2,7 @@
 
 ## Introdução 
 
-Esta página tem como objetivo documentar a gravação de apresentação referente à entrega da Módulo 2 e 3 - sql e trigger, para fins de manter tudo gravado e, também, para revisões futuras no decorrer do projeto, caso seja necessário.
+Esta página tem como objetivo documentar a gravação de apresentação referente à entrega da Módulo 2 e 3 - sql e trigger procedure, para fins de manter tudo gravado e, também, para revisões futuras no decorrer do projeto, caso seja necessário.
 
 
 
@@ -18,8 +18,6 @@ Esta página tem como objetivo documentar a gravação de apresentação referen
 </iframe>
 
 <p>Autor: <a href="https://github.com/Pabloserrapxx">Pablo Serra Carvalho</a>.</p>
-
-
 
 ## **📑 Histórico de Versões**
 
