@@ -57,55 +57,8 @@ WHERE identificador_jogador = %s;
 ```
 
 ```sql
--- Atualizar os dados de um jogador
-UPDATE jogador
-SET energia = %s, vida_atual = %s, nivel = %s, experiencia_atual = %s,
-    coordenada_x = %s, coordenada_y = %s, id_mapa = %s
-WHERE id_jogador = %s;
-```
-
-```sql
--- Inserir um novo jogador e retornar o ID
-INSERT INTO jogador (
-    nome, id_personagem, id_habilidade, id_mapa, energia, vida, nivel, sorte,
-    vida_atual, dano_base, experiencia_atual, coordenada_x, coordenada_y
-) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-RETURNING id_jogador;
-```
-
-```sql
--- Salvar o progresso do jogador
-UPDATE jogador
-SET
-    vida_atual = %s,
-    experiencia_atual = %s,
-    nivel = %s,
-    moedas_totais = %s,
-    coordenada_x = %s,
-    coordenada_y = %s,
-    orientacao = %s,
-    identificador_area = %s
-WHERE identificador_jogador = %s;
-```
-
-```sql
 -- Verificar se um registro de jogador existe
 SELECT 1 FROM jogador WHERE identificador_jogador = %s;
-```
-
-```sql
--- Atualizar dados do jogador ao resetar
-UPDATE jogador SET
-    nome = %s, descricao = %s, vida_atual = %s, experiencia_atual = %s,
-    nivel = %s, moedas_totais = %s, coordenada_x = %s, coordenada_y = %s,
-    orientacao = %s, identificador_area = %s, vida = %s, energia = %s, sorte = %s
-WHERE identificador_jogador = %s;
-```
-
-```sql
--- Inserir um jogador se ele não existir durante o reset
-INSERT INTO jogador (identificador_jogador, nome, descricao, vida_atual, experiencia_atual, nivel, moedas_totais, coordenada_x, coordenada_y, orientacao, identificador_area, vida, energia, sorte)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 ```
 
 ### Consultas de Inventário e Itens
@@ -163,13 +116,6 @@ SELECT identificador_inventario FROM inventario WHERE identificador_personagem =
 ```
 
 ```sql
--- Criar um novo inventário para um jogador
-INSERT INTO inventario (id_jogador, nome)
-VALUES (%s, %s)
-RETURNING id_inventario;
-```
-
-```sql
 -- Buscar os tipos de itens em um inventário
 SELECT
     ii.identificador_item,
@@ -180,17 +126,6 @@ WHERE ii.id_inventario = %s
 ORDER BY ti.tipo;
 ```
 
-```sql
--- Adicionar um tipo de item ao inventário
-INSERT INTO iteminventario (id_inventario, identificador_item)
-VALUES (%s, %s);
-```
-
-```sql
--- Remover um tipo de item do inventário
-DELETE FROM iteminventario
-WHERE id_inventario = %s AND identificador_item = %s;
-```
 
 ```sql
 -- Buscar o tipo de um item específico
@@ -625,32 +560,6 @@ AND inv.tipo_inventario = 'moc'
 AND ii.quantidade > 0
 ```
 
-
-### Consultas de Equipamento e Uso de Itens
-
-```sql
--- Equipar uma arma (UPSERT)
-INSERT INTO jogador_equipamento (identificador_jogador, identificador_arma)
-VALUES (%s, %s)
-ON CONFLICT (identificador_jogador)
-DO UPDATE SET identificador_arma = EXCLUDED.identificador_arma;
-```
-
-```sql
--- Equipar um acessório (UPSERT)
-INSERT INTO jogador_equipamento (identificador_jogador, identificador_acessorio)
-VALUES (%s, %s)
-ON CONFLICT (identificador_jogador)
-DO UPDATE SET identificador_acessorio = EXCLUDED.identificador_acessorio;
-```
-
-```sql
--- Desequipar arma
-UPDATE jogador_equipamento
-SET identificador_arma = NULL
-WHERE identificador_jogador = %s;
-```
-
 ```sql
 -- Buscar a arma equipada de um jogador
 SELECT
@@ -663,15 +572,6 @@ SELECT
 FROM jogador_equipamento je
 JOIN arma a ON je.identificador_arma = a.identificador_arma
 WHERE je.identificador_jogador = %s;
-```
-
-
-```sql
--- Adicionar itens iniciais ao jogador 
-INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade)
-VALUES (%s, %s, %s)
-ON CONFLICT (identificador_inventario, identificador_item)
-DO UPDATE SET quantidade = item_inventario.quantidade + EXCLUDED.quantidade;
 ```
 
 ```sql

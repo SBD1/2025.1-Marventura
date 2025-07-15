@@ -1,4 +1,5 @@
 # main.py
+# No topo de gerenciador_de_recursos.py
 
 import pygame
 import sys
@@ -6,56 +7,81 @@ from utilidades.constantes import *
 from gerenciadores import GerenciadorDeRecursos
 from gerenciadores import DBManager
 from gerenciadores import GerenciadorDeTelas
+from telas import TelaJogo
 
 # Inicializa o Pygame (DEVE VIR ANTES DE CARREGAR FONTES/IMAGENS)
 pygame.init()
-# Inicializa apenas o módulo de fonte explicitamente (importante para o carregamento de fontes no gerenciador)
+# Inicializa apenas o módulo de fonte explicitamente
 pygame.font.init()
 
 # Configurações da tela principal
+# Usar DOUBLEBUF e HWSURFACE pode melhorar o desempenho em algumas máquinas
+# vsync=1 tenta sincronizar com a taxa de atualização do monitor para evitar "tearing"
 tela_principal = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA), pygame.DOUBLEBUF | pygame.HWSURFACE, vsync=1)
 pygame.display.set_caption("Marventura") # Título da janela do jogo
 
-# --- Gerenciador de Recursos ---
-# Cria uma única instância do gerenciador de recursos
+# --- Gerenciadores Principais ---
+# Cria as instâncias únicas dos gerenciadores
 gerenciador_recursos = GerenciadorDeRecursos()
 gerenciador_banco_de_dados = DBManager()
 
+# Carrega todos os assets (imagens, fontes) para a memória
 gerenciador_recursos.carregar_recursos()
 
 # --- Função Principal do Jogo ---
 def executar_jogo():
+    """Função que contém o loop principal do jogo."""
     relogio = pygame.time.Clock()
 
-    # Cria uma instância do GerenciadorDeTelas.
+    # Cria uma instância do GerenciadorDeTelas, passando os outros gerenciadores.
     # Ele será responsável por inicializar a primeira tela (menu principal).
     gerenciador_telas = GerenciadorDeTelas(tela_principal, gerenciador_recursos, gerenciador_banco_de_dados)
 
     rodando = True
     while rodando:
-        dt = relogio.tick(FPS) / 1000.0 # Delta time em segundos
-
-        # --- Processamento de Eventos ---
+        # Delta time (dt) é o tempo em segundos desde o último frame.
+        # É crucial para um movimento e animação independentes da taxa de quadros.
+        dt = relogio.tick(FPS) / 1000.0
         eventos_pygame = pygame.event.get()
+
         for evento in eventos_pygame:
-            # O gerenciador de telas agora lida com os eventos e a transição de telas
+            # A verificação de QUIT deve estar no loop principal para garantir o encerramento adequado.
+            if evento.type == pygame.QUIT:
+                rodando = False
+                continue # Pula o resto do loop para este evento
+            # O gerenciador de telas lida com os eventos e a transição de telas
             gerenciador_telas.processar_eventos(evento)
 
         # --- Atualização do Estado dos Elementos ---
-        # O gerenciador de telas agora lida com a atualização e a transição de telas
+        # O gerenciador de telas atualiza a tela ativa, que por sua vez atualiza suas entidades.
         gerenciador_telas.atualizar(dt)
 
         # --- Desenho ---
         tela_principal.fill(PRETO) # Limpa a tela antes de desenhar
         gerenciador_telas.desenhar() # O gerenciador de telas sabe qual tela desenhar
 
-        # --- Atualização da Tela e Controle de FPS ---
+        # --- Atualização da Tela ---
+        # pygame.display.flip() atualiza toda a superfície da tela para o que foi desenhado.
         pygame.display.flip()
 
-    # --- Fim do Jogo ---
-    pygame.quit()
-    sys.exit()
+    # --- Lógica de Encerramento ---
+    # Antes de fechar, verifica se o jogador estava na tela de jogo para salvar o progresso.
+    if isinstance(gerenciador_telas.tela_atual, TelaJogo):
+        gerenciador_telas.tela_atual.salvar_progresso()
+    else:
+        # Se a tela atual NÃO for a de jogo, ainda assim tentamos salvar se a anterior foi.
+        # Esta é uma segurança extra graças à sua outra modificação.
+        print("Não estava na tela de jogo no momento de fechar. O progresso deve ter sido salvo na última transição.")
 
-# Inicia o jogo chamando a função principal (se o script for executado diretamente)
+    # --- INÍCIO DA MODIFICAÇÃO ---
+    # Garante que a conexão seja fechada antes de o Pygame encerrar.
+    gerenciador_banco_de_dados.fechar_conexao()
+    
+    pygame.quit()
+    # sys.exit() # <-- COMENTE OU REMOVA ESTA LINHA
+    # --- FIM DA MODIFICAÇÃO ---
+
+
+# --- Ponto de Entrada do Programa ---
 if __name__ == "__main__":
-    executar_jogo() # <-- Chama a função principal do jogo
+    executar_jogo()

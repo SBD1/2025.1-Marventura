@@ -94,7 +94,9 @@ class TelaSalvamento(TelaModelo):
                             print(f"Carregando jogo do Slot {i+1}...\n{self.gerenciador_entidades.progresso_do_jogo}")
                             jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
                             ponto_de_revive = self.banco_de_dados.buscar_ponto_de_renascimento(area.identificador_area)
+                            
                             self.gerenciador_entidades.ponto_de_renascimento = (ponto_de_revive.x, ponto_de_revive.y)
+                            
                             self.gerenciador_entidades.jogador = Jogador(
                                 gerenciador_banco_de_dados=self.banco_de_dados,
                                 gerenciador_recursos=self.gerenciador_recursos,

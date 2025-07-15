@@ -19,7 +19,7 @@ class _IconeAcao:
         tela.blit(self.image, self.rect)
 
 class TelaBatalha(TelaModelo):
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, inimigos_na_batalha, jogador_iniciou=False):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, inimigos_na_batalha, jogador_iniciou=False, modo_batalha='normal'):
         super().__init__(gerenciador_telas, gerenciador_recursos)
 
         self.entidades = GerenciadorDeEntidades()
@@ -97,11 +97,18 @@ class TelaBatalha(TelaModelo):
             habilidade=inimigo_mapa.habilidade[0]
             item = self.banco_de_dados.buscar_item_do_lacaio(inimigo_mapa.identificador_inimigo)
 
-            # Cria 3 clones do mesmo inimigo em versão "batalha"
-            onda = [
-                InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
-                for _ in range(3)
-            ]
+            onda = []
+            if modo_batalha == 'normal':
+                # Cria 3 clones do mesmo inimigo em versão "batalha"
+                onda = [
+                    InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
+                    for _ in range(3)
+                ]
+            elif modo_batalha == 'chefe':
+                # Cria apenas 1 inimigo chefe
+                onda = [
+                    InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
+                ]
 
             self.ondas_pendentes.append(onda)
 
@@ -238,26 +245,28 @@ class TelaBatalha(TelaModelo):
 
         # Atribui diretamente os três inimigos
         self.inimigo_da_esquerda = onda[0]
-        self.inimigo_do_meio = onda[1]
-        self.inimigo_da_direita = onda[2]
+        self.inimigo_do_meio = onda[1] if len(onda) > 1 else None
+        self.inimigo_da_direita = onda[2] if len(onda) > 2 else None
 
         # Lista de inimigos em ordem para lógica de batalha
         self.inimigos = [
-            self.inimigo_da_esquerda,
+            self.inimigo_da_esquerda if self.inimigo_da_esquerda else None,
             self.inimigo_do_meio,
-            self.inimigo_da_direita
+            self.inimigo_da_direita if self.inimigo_da_direita else None
         ]
 
         # Posicionamento dos inimigos na tela de batalha
         posicoes = [
-            (LARGURA_TELA - 350, ALTURA_TELA - 225),
+            (LARGURA_TELA - 350, ALTURA_TELA - 225) if self.inimigo_da_esquerda else None,
             (LARGURA_TELA - 250, ALTURA_TELA - 150),
-            (LARGURA_TELA - 120, ALTURA_TELA - 200),
+            (LARGURA_TELA - 120, ALTURA_TELA - 200) if self.inimigo_da_direita else None
         ]
 
         self.inimigos_animados = []
 
         for i, inimigo in enumerate(self.inimigos):
+            if not inimigo:
+                continue
             imagem = self.gerenciador_recursos.obter_imagem(inimigo.imagem_id)
             posicao = posicoes[i]
             sprite_animado = InimigoAnimado(imagem, posicao)
@@ -314,7 +323,8 @@ class TelaBatalha(TelaModelo):
         tipo = self.habilidade_usando.tipo_de_alvo
         if tipo in ["area", "terrestre"]:
             for i in range(len(self.inimigos)):
-                self._aplicar_dano(i, dano)
+                if self.inimigos[i] and self.inimigos[i].esta_vivo():
+                    self._aplicar_dano(i, dano)
         elif tipo in ["fila"]:
             alvo = self._proximo_inimigo_vivo()
             if alvo:
@@ -372,7 +382,7 @@ class TelaBatalha(TelaModelo):
 
     def _proximo_inimigo_vivo(self):
         for inimigo in self.inimigos:
-            if inimigo.esta_vivo():
+            if inimigo and inimigo.esta_vivo():
                 return inimigo
         return None
 
@@ -396,7 +406,7 @@ class TelaBatalha(TelaModelo):
 
     def _preparar_fila_de_ataque_inimiga(self):
         self.fila_ataques_inimigos = [
-            i for i, inimigo in enumerate(self.inimigos) if inimigo.esta_vivo()
+            i for i, inimigo in enumerate(self.inimigos) if inimigo and inimigo.esta_vivo()
         ]
     
     def _executar_ataque_inimigo(self):
@@ -638,7 +648,8 @@ class TelaBatalha(TelaModelo):
                 # E atualiza os efeitos aplicados (se houver) decrementando a duração em 1 turno
                 self.entidades.jogador.atualizar_efeitos()
                 for inimigo in self.inimigos:
-                    inimigo.atualizar_efeitos()
+                    if inimigo is not None:
+                        inimigo.atualizar_efeitos()
 
         for dano in self.danos_flutuantes:
             dano.update(dt)
@@ -651,7 +662,7 @@ class TelaBatalha(TelaModelo):
 
         # 2) Dispara fade‑out nos inimigos que acabaram de ficar com PV <= 0
         for i, inimigo in enumerate(self.inimigos):
-            if inimigo.vida_atual <= 0 and self.inimigos_animados[i].estado == "parado":
+            if inimigo is not None and inimigo.vida_atual <= 0 and self.inimigos_animados[i].estado == "parado":
                 self.inimigos_animados[i].iniciar_morte()           ### dispara fade
                 # NÃO remova ainda — deixe o fade acontecer
 
@@ -669,13 +680,15 @@ class TelaBatalha(TelaModelo):
         #self.imagens_de_inimigos = [a.imagem for a in self.inimigos_animados]
 
         # Verifica se todos os inimigos da onda foram derrotados
-        if all(not inimigo.esta_vivo() for inimigo in self.inimigos):
-            self.experiencia_acumulada += inimigo.experiencia
-            self.itens_obtidos.append(inimigo.item)
+        if all(not inimigo.esta_vivo() for inimigo in self.inimigos if inimigo is not None):
+            self.experiencia_acumulada += inimigo.experiencia if inimigo is not None else 0
+            if inimigo:
+                self.itens_obtidos.append(inimigo.item)
             inimigo_pop = self.inimigos_lutando.pop(0)
             print(f"Inimigo derrotado: {inimigo_pop.identificador_instancia_lacaio}")
             self.banco_de_dados.sekishiki_meikai_ha(inimigo_pop.identificador_instancia_lacaio, self.entidades.progresso_do_jogo.identificador_progresso)
             if not self._carregar_proxima_onda():
+                print("Todas as ondas foram derrotadas!")
                 self._finalizar_batalha(venceu=True)
 
         if self.estado_batalha == "derrota":
@@ -757,7 +770,15 @@ class TelaBatalha(TelaModelo):
                     item_em_foco = item
                 largura_texto_max = self.largura_quadro - 32  # margem lateral + margem direita
                 texto_nome = self.renderizar_texto_limitado(fonte, f" {item.nome} x{item.quantidade} ", (255, 255, 255), largura_texto_max)
-                tela.blit(texto_nome, (self.x_quadro + 16, y + 4 - (tamanho_fonte - 28) // 2))  # Compensa o y se a fonte ficar maior
+                self._desenhar_texto_com_borda(
+                    tela,
+                    texto_nome,
+                    fonte,
+                    BRANCO_CLARO,
+                    PRETO,
+                    1,
+                    (self.x_quadro + self.largura_quadro // 2, y + 4 - (tamanho_fonte - 28) // 2),
+                )
         
             # Mostrar descrição e efeitos do item em foco
             if item_em_foco:
@@ -774,8 +795,16 @@ class TelaBatalha(TelaModelo):
 
                 efeitos = item_em_foco.resumir_efeitos()
                 if efeitos:
-                    efeitos_texto = fonte_info.render(efeitos, True, VERDE_CLARO)
-                    tela.blit(efeitos_texto, (LARGURA_TELA / 3, 540))
+                    self._desenhar_texto_com_borda(
+                        tela,
+                        efeitos,
+                        fonte_info,
+                        VERDE_CLARO,
+                        PRETO,
+                        1,
+                        (LARGURA_TELA / 3, 540),
+                        'left'
+                    )
         
         # Mostrar lista de habilidades
         if self.estado_batalha == "selecionando_habilidade":
@@ -806,7 +835,18 @@ class TelaBatalha(TelaModelo):
                 texto_nome = self.renderizar_texto_limitado(
                     fonte, habilidade.nome, BRANCO_CLARO, self.largura_menu_habilidade - 32
                 )
-                tela.blit(texto_nome, (self.x_menu_habilidade + 16, y + 4 - (tamanho_fonte - 28) // 2))
+                centro_texto_x = self.x_menu_habilidade + self.largura_menu_habilidade // 2
+
+                self._desenhar_texto_com_borda(
+                    tela,
+                    texto_nome,
+                    fonte,
+                    BRANCO_CLARO,
+                    PRETO,
+                    1,
+                    (centro_texto_x, y + 4 - (tamanho_fonte - 28) // 2)
+                )
+
 
             # Mostrar descrição da habilidade em foco
             if habilidade_em_foco:
@@ -821,23 +861,43 @@ class TelaBatalha(TelaModelo):
                     texto = fonte_info.render(linha, True, PRETO)
                     tela.blit(texto, (self.x_central + 16, 455 + i * 22))
 
-                # Mostrar custo de energia
+
+                # Mostrar custo de energia com borda (alinhado com as tags)
                 texto_custo = f"Custo: {habilidade_em_foco.custo} PE"
-                info_custo = fonte_info.render(texto_custo, True, AZUL_CLARO)
-                y_tags = 455 + len(linhas_desc) * 22 + 10
-                tela.blit(info_custo, (self.x_central + 16, y_tags))
+                altura_tag = fonte_info.get_linesize() + 8  # altura estimada da tag com padding
+                y_tags = 455 + len(linhas_desc) * 22 + 10 + altura_tag // 2  # centraliza com base no meio da tag
+
+                self._desenhar_texto_com_borda(
+                    tela,
+                    texto_custo,
+                    fonte_info,
+                    AZUL_CLARO,
+                    PRETO,
+                    1,
+                    (self.x_central + 16, y_tags),
+                    'left'
+                )
+
+                # Calcular largura do texto
+                largura_texto_custo = fonte_info.size(texto_custo)[0]
 
                 # Mostrar tags de tipo de alvo
                 tags = TAGS_DE_ALVO.get(habilidade_em_foco.tipo_de_alvo, ["???"])
                 espaco = 8
-                x_tag = self.x_central + 16 + info_custo.get_width() + 16
+                x_tag = self.x_central + 16 + largura_texto_custo + 16
 
                 for tag in tags:
-                    superficie_tag = fonte_info.render(tag, True, PRETO, AZUL_CLARO)  # azul claro como fundo
-                    rect_tag = superficie_tag.get_rect()
-                    rect_tag.topleft = (x_tag, y_tags)
-                    tela.blit(superficie_tag, rect_tag.topleft)
-                    x_tag += rect_tag.width + espaco
+                    texto = fonte_info.render(tag, True, PRETO)
+                    largura = texto.get_width() + 12
+                    altura = texto.get_height() + 8
+
+                    rect = pygame.Rect(x_tag, y_tags - altura // 2, largura, altura)
+                    pygame.draw.rect(tela, AZUL_CLARO, rect, border_radius=6)
+                    tela.blit(texto, (rect.x + 6, rect.y + 4))
+
+                    x_tag += largura + espaco
+
+
 
         if self.estado_batalha == "derrota":
             # Fundo preto com transparência crescente
@@ -909,7 +969,7 @@ class TelaBatalha(TelaModelo):
             texto_final = texto_final[:-1]
         if texto_final != texto:
             texto_final = texto_final[:-3] + "..."
-        return fonte.render(texto_final, True, cor)
+        return texto_final
 
 
 

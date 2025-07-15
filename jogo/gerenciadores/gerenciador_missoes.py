@@ -63,7 +63,6 @@ class GerenciadorDeMissoes:
                 {'tipo': 'finalizar_missao'},
                 {'tipo': 'remover_gatilho_de_missao', 'id_area': 'are001', 'id_missao': 'mis002', 'x': 2560, 'y': 220, 'largura': 180, 'altura': 133},
                 {'tipo': 'inserir_gatilho_de_missao', 'id_area': 'are002', 'id_missao': 'mis003', 'x': 0, 'y': 0, 'largura': 150, 'altura': 600},
-                {'tipo': 'recompensa'},
                 {'tipo': 'batalha', 'inimigos_batalha': ['lobo_missao_002']},
             ],
             'mis003': [
@@ -295,6 +294,7 @@ class GerenciadorDeMissoes:
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
                     inimigos_na_batalha=inimigos_para_batalha,
+                    modo_batalha='chefe'
                     # Adicione quaisquer outros dados que sua tela de batalha precise
                 )
                 # A missão será finalizada quando a batalha terminar (ver Passo 3)

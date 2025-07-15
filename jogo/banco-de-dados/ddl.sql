@@ -86,7 +86,8 @@ CREATE TABLE nao_consumivel (
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
     preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
-    e_coletado BOOLEAN 
+    e_coletado BOOLEAN,
+    item_de_missao BOOLEAN DEFAULT FALSE
 );
 
 CREATE TRIGGER atribui_id_nao_consumivel
@@ -260,6 +261,7 @@ CREATE TABLE jogador (
     descricao CHAR(300),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    orientacao CHAR(8) DEFAULT 'direita' CHECK (orientacao IN ('esquerda', 'direita')),
     energia SMALLINT CHECK (energia BETWEEN 5 AND 35),
     energia_atual SMALLINT DEFAULT 5 CHECK (energia_atual BETWEEN 0 AND energia),
     vida SMALLINT CHECK (vida BETWEEN 10 AND 70),
@@ -344,7 +346,8 @@ CREATE TABLE habitante (
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
     especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
-    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999),
+    conhecido BOOLEAN DEFAULT FALSE
 );
 
 CREATE TRIGGER atribui_id_habitante
@@ -598,7 +601,7 @@ CREATE TABLE area_interativa (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
     chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
     tipo_evento CHAR(10) NOT NULL CHECK (
-        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao')
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao', 'abrir_loja')
     ),
     metodo_ativacao CHAR(7) NOT NULL CHECK (metodo_ativacao IN ('ativo', 'passivo')),
     ativa BOOLEAN NOT NULL DEFAULT TRUE
@@ -640,4 +643,12 @@ CREATE TABLE item_missao (
     PRIMARY KEY (identificador_missao, identificador_item),
     FOREIGN KEY (identificador_missao) REFERENCES missao(identificador_missao),
     FOREIGN KEY (identificador_item) REFERENCES tipo_item(identificador_item)
+);
+
+
+CREATE TABLE jogador_equipamento (
+    identificador_jogador ID PRIMARY KEY REFERENCES jogador(identificador_jogador),
+    identificador_arma ID REFERENCES arma(identificador_arma),
+    identificador_acessorio ID REFERENCES acessorio(identificador_acessorio),
+    identificador_fruta ID REFERENCES fruta(identificador_fruta)
 );

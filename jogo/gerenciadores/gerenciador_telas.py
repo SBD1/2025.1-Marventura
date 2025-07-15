@@ -1,5 +1,6 @@
 # telas/gerenciador_telas.py
 
+from collections import namedtuple
 import pygame
 import sys
 from telas import TelaInicial
@@ -7,11 +8,13 @@ from telas import TelaSalvamento
 from telas import TelaSelecaoPersonagem
 from telas import TelaJogo
 from telas import TelaBatalha
+from telas import TelaLoja
 from gerenciadores import GerenciadorDeEntidades
 from utilidades.constantes import *
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from gerenciadores import DBManager
+
 
 class GerenciadorDeTelas:
     """
@@ -61,7 +64,14 @@ class GerenciadorDeTelas:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                self.gerenciador_banco_de_dados,
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
-                               jogador_iniciou= kwargs.get('jogador_iniciou', False))
+                               jogador_iniciou= kwargs.get('jogador_iniciou', False),
+                               modo_batalha=kwargs.get('modo_batalha', 'normal'))
+        elif estado_desejado == CHAVE_TRANSICAO_LOJA:
+            return TelaLoja(self, self.gerenciador_recursos,
+                        self.gerenciador_banco_de_dados,
+                        self.gerenciador_entidades,
+                        kwargs.get('vendedor_id'),
+                        kwargs.get('nome_vendedor'),)
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None
@@ -71,11 +81,14 @@ class GerenciadorDeTelas:
         Define a tela atualmente ativa do jogo.
         Qualquer tela pode chamar este método no gerenciador.
         """
+        if isinstance(self.tela_atual, TelaJogo):
+            self.tela_atual.salvar_progresso()
         nova_tela = self._criar_instancia_tela(novo_estado, **kwargs)
         if nova_tela:
             self.tela_atual = nova_tela
         else:
             print(f"Não foi possível mudar para a tela {novo_estado}. Permanece na tela atual.")
+        
 
     def processar_eventos(self, evento):
         """

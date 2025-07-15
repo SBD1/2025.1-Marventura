@@ -106,6 +106,11 @@ class GerenciadorDeEntidades:
     @area_atual.setter
     def area_atual(self, area_atual):
         """Define a área atual do jogador principal."""
+        if area_atual.tipo_area == 'Loja':
+            self._entidade_jogador.aplicar_fator_de_escala(2.5)
+        else:
+            if self._entidade_jogador.fator_de_escala != 1.0:
+                self._entidade_jogador.aplicar_fator_de_escala(1.0)
         self._area_atual = area_atual
 
 

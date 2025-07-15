@@ -21,6 +21,7 @@ ROXO = (128, 0, 128)
 CINZA = (150, 150, 150)
 CINZA_ESCURO = (100, 100, 100)
 COR_TEXTO_SALVAR = (53, 38, 16) # Cor específica para texto de salvar
+AMARELO_CLARO = (255, 255, 153)
 VERDE_CLARO = pygame.Color("#23EA52")
 BRANCO_CLARO = pygame.Color("#F0F0F0")
 AZUL_CLARO = pygame.Color("#4B85C8")
@@ -64,6 +65,7 @@ CHAVE_TRANSICAO_SALVAMENTO = 'salvamento'
 CHAVE_TRANSICAO_SELECAO_PERSONAGEM = 'selecao_personagem'
 CHAVE_TRANSICAO_NOVO_JOGO = 'novo_jogo'
 CHAVE_TRANSICAO_CARREGAR_JOGO = 'carregar_jogo'
+CHAVE_TRANSICAO_INVENTARIO = 'inventario'
 
 # --- Estados do Inimigo ---
 ESTADO_INIMIGO_PARADO = 'parado'
@@ -103,34 +105,34 @@ SR_LEE_LOGISTA = 'lee_busto'
 # --- Identificadores de Mapas ---
 ID_MAPA_OCEANO = 'oceano'
 
-ID_MAPA_CAMPO_COSTA_OESTE = 'ilha_campo_costa_oeste'
-ID_MAPA_CAMPO_COSTA_LESTE = 'ilha_campo_costa_leste'
-ID_MAPA_CAMPO_VILA = 'ilha_campo_vila'
-ID_MAPA_CAMPO_LOJA = 'ilha_campo_loja'
+ID_MAPA_CAMPO_COSTA_OESTE = 'are001' # Pastos do Sol Dourado
+ID_MAPA_CAMPO_VILA = 'are002' # Vilarejo de Borabóia
+ID_MAPA_CAMPO_COSTA_LESTE = 'are003' # Vale Verdejante (Porto)
+ID_MAPA_CAMPO_LOJA = 'are004' # Loja de Borabóia
 
-ID_MAPA_CIDADE_PORTO = 'ilha_cidade_porto'
-ID_MAPA_CIDADE_CENTRO = 'ilha_cidade_centro'
-ID_MAPA_CIDADE_PRACA = 'ilha_cidade_praca'
-ID_MAPA_CIDADE_LOJA = 'ilha_cidade_loja'
-ID_MAPA_CIDADE_SUBURBIO = 'ilha_cidade_suburbio'
+ID_MAPA_CIDADE_PORTO = 'are007' # Porto de Lurien
+ID_MAPA_CIDADE_CENTRO = 'are008' # Centro
+ID_MAPA_CIDADE_PRACA = 'are009' # Praça de execução
+ID_MAPA_CIDADE_LOJA = 'are010' # Beco (ou loja, ajustar se necessário)
+ID_MAPA_CIDADE_SUBURBIO = 'are011' # Esconderijo (ou suburbio, ajustar se necessário)
 
-ID_MAPA_NEVE_COSTA = 'ilha_neve_costa'
-ID_MAPA_NEVE_VILA = 'ilha_neve_vila'
-ID_MAPA_NEVE_MONTANHA = 'ilha_neve_montanha'
-ID_MAPA_NEVE_COZINHA = 'ilha_neve_cozinha'
+ID_MAPA_NEVE_COSTA = 'are013' # Costa de Frimora
+ID_MAPA_NEVE_VILA = 'are014' # Vila de Frimora
+ID_MAPA_NEVE_MONTANHA = 'are015' # Montanha da Cabra Congelada
+ID_MAPA_NEVE_COZINHA = 'are016' # Cozinha da Vovó Yuba
 
-ID_MAPA_DESERTO_COSTA_OESTE = 'ilha_deserto_costa_oeste'
-ID_MAPA_DESERTO_VILA = 'ilha_deserto_vila'
-ID_MAPA_DESERTO_LOJA = 'ilha_deserto_loja'
-ID_MAPA_DESERTO_COSTA_LESTE = 'ilha_deserto_costa_leste'
+ID_MAPA_DESERTO_COSTA_OESTE = 'are017' # Duna Braba (Porto)
+ID_MAPA_DESERTO_VILA = 'are018' # Cidadela de Cactuaraquara
+ID_MAPA_DESERTO_COSTA_LESTE = 'are019' # Oásis de Ramtak
+ID_MAPA_DESERTO_LOJA = 'are020' # Loja de Cactuaraquara
 
-ID_MAPA_ASSOMBRADA_COSTA_OESTE = 'ilha_assombrada_costa_oeste'
-ID_MAPA_ASSOMBRADA_VILA = 'ilha_assombrada_vila'
-ID_MAPA_ASSOMBRADA_LOJA = 'ilha_assombrada_loja'
+ID_MAPA_ASSOMBRADA_COSTA_OESTE = 'are021' # Penumbra dos Ossudos (Porto)
+ID_MAPA_ASSOMBRADA_VILA = 'are022' # Acampamento de Nublária
+ID_MAPA_ASSOMBRADA_LOJA = 'are024' # Loja de Nublária
 
-ID_MAPA_FORTALEZA_PORTO = 'ilha_fortaleza_porto'
-ID_MAPA_FORTALEZA_INTERIOR = 'ilha_fortaleza_interior'
-ID_MAPA_FORTALEZA_LOJA = 'ilha_fortaleza_loja'
+ID_MAPA_FORTALEZA_PORTO = 'are026' # Porto da Égide
+ID_MAPA_FORTALEZA_INTERIOR = 'are027' # Interior
+ID_MAPA_FORTALEZA_LOJA = 'are029' # Loja da Marinha
 
 # --- Chaves de recursos ---
 CHAVE_LOGO = 'logo'
@@ -153,6 +155,7 @@ CHAVE_CAIXA_DIALOGO = 'caixa_dialogo'
 CHAVE_FONTE_CHERRY_TITULO = 'fonte_cherry_titulo'
 CHAVE_FONTE_CHERRY_SUBTITULO = 'fonte_cherry_subtitulo'
 CHAVE_FONTE_CHERRY_TEXTO = 'fonte_cherry_texto'
+CHAVE_FONTE_HACHI_MARU_TEXTO = 'fonte_hachi_maru_texto'
 CHAVE_ICONE_CORACAO = 'icone_coracao'
 CHAVE_ICONE_ENERGIA = 'icone_energia'
 CHAVE_ICONE_MOEDA = 'icone_moeda'
@@ -172,7 +175,9 @@ CHAVE_ACAO_SOCO_SHUAN = 'acao_soco_shuan'
 CHAVE_ACAO_ESPADA = 'acao_espada'
 CHAVE_ACAO_PROJETIL = 'acao_projetil'
 
+CHAVE_BARRACA = 'barraca'
 CHAVE_LOJA_INTERIOR = 'loja_interior'
+CHAVE_LOJA_ARMAS_E_ACESSORIOS_INTERIOR = 'loja_armas_e_acessorios_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
 
 CHAVE_CENARIO_OCEANO = 'cenario_oceano'
@@ -217,3 +222,10 @@ ARBUSTO = 'arbusto'
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão
+
+# --- Estados de transição ---
+CHAVE_TRANSICAO_LOJA = 'loja'
+
+
+# --- Eventos de área ---
+EVENTO_TIPO_LOJA = 'abrir_loja'
