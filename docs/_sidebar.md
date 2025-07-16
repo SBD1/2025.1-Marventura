@@ -21,8 +21,10 @@
   - [Linguagem de Consulta de Dados](sql/linguagem-de-consulta-de-dados.md)
   - [Tabela de Dados](sql/tabelas-de-dados.md)
   - [Álgebra Relacional](sql/Álgebra%20Relacional.md)
+
 - **Módulo 3**
    - [Triggers e Stored Procedure](trigger/trigger.md)
+   - [Extensão](trigger/introducao_pgagent.md)
 
 - **Atas**
   - [Ata 01](atas/ata01.md)
