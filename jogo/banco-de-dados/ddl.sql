@@ -524,7 +524,7 @@ CREATE TABLE dialogo (
     identificador_missao ID REFERENCES missao(identificador_missao),
     sequencia_local SMALLINT CHECK (sequencia_local > 0),
     genero CHAR(1) CHECK (genero IN ('M', 'F')),
-    dialogo CHAR(500)
+    fala CHAR(500)
 );
 
 CREATE TRIGGER atribui_id_dialogo

@@ -179,91 +179,91 @@ class DBManager:
                     'id_missao': 'mis001',
                     'genero': 'F',
                     'sequencia': 4,
-                    'dialogo': 'Você... quem é você?',
+                    'fala': 'Você... quem é você?',
                 },
                 {
                     'id_missao': 'mis001',
                     'genero': 'F',
                     'sequencia': 7,
-                    'dialogo': 'Eu... não sei como vim parar aqui.',
+                    'fala': 'Eu... não sei como vim parar aqui.',
                 },
                 {
                     'id_missao': 'mis002',
                     'genero': 'F',
                     'sequencia': 1,
-                    'dialogo': 'Tsc... sério?',
+                    'fala': 'Tsc... sério?',
                 },
                 {
                     'id_missao': 'mis003',
                     'genero': 'F',
                     'sequencia': 3,
-                    'dialogo': 'Só alguém procurando respostas... e talvez um pouco de água.',
+                    'fala': 'Só alguém procurando respostas... e talvez um pouco de água.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 3,
-                    'dialogo': '(Olhando ao redor): — Gertrudes é... uma senhora?',
+                    'fala': '(Olhando ao redor): — Gertrudes é... uma senhora?',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 6,
-                    'dialogo': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
+                    'fala': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 9,
-                    'dialogo': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
+                    'fala': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 12,
-                    'dialogo': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
+                    'fala': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 14,
-                    'dialogo': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
+                    'fala': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 17,
-                    'dialogo': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
+                    'fala': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 23,
-                    'dialogo': 'E ninguém tentou detê-la?',
+                    'fala': 'E ninguém tentou detê-la?',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'F',
                     'sequencia': 26,
-                    'dialogo': 'Eu vou enfrentá-la.',
+                    'fala': 'Eu vou enfrentá-la.',
                 },
                 {
                     'id_missao': 'mis012',
                     'genero': 'F',
                     'sequencia': 3,
-                    'dialogo': 'Foi por pouco. Mas está feito.',
+                    'fala': 'Foi por pouco. Mas está feito.',
                 },
                 {
                     'id_missao': 'mis012',
                     'genero': 'F',
                     'sequencia': 5,
-                    'dialogo': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
+                    'fala': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
                 },
                 {
                     'id_missao': 'mis012',
                     'genero': 'F',
                     'sequencia': 7,
-                    'dialogo': 'Isso é ótimo... mas como eu chego lá?',
+                    'fala': 'Isso é ótimo... mas como eu chego lá?',
                 },
             ],
             SHUAN: [
@@ -271,91 +271,91 @@ class DBManager:
                     'id_missao': 'mis001',
                     'genero': 'M',
                     'sequencia': 4,
-                    'dialogo': 'Você... quem é você?',
+                    'fala': 'Você... quem é você?',
                 },
                 {
                     'id_missao': 'mis001',
                     'genero': 'M',
                     'sequencia': 7,
-                    'dialogo': 'Eu... não sei como vim parar aqui.',
+                    'fala': 'Eu... não sei como vim parar aqui.',
                 },
                 {
                     'id_missao': 'mis002',
                     'genero': 'M',
                     'sequencia': 1,
-                    'dialogo': 'Tsc... sério?',
+                    'fala': 'Tsc... sério?',
                 },
                 {
                     'id_missao': 'mis003',
                     'genero': 'M',
                     'sequencia': 3,
-                    'dialogo': 'Só alguém procurando respostas... e talvez um pouco de água.',
+                    'fala': 'Só alguém procurando respostas... e talvez um pouco de água.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 3,
-                    'dialogo': '(Olhando ao redor): — Gertrudes é... uma senhora?',
+                    'fala': '(Olhando ao redor): — Gertrudes é... uma senhora?',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 6,
-                    'dialogo': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
+                    'fala': '(Pegando um garfo): — Ok... então essa vila tem galinhas vingativas, cozinheiras dramáticas e um senhor que tempera a terra com orégano?',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 9,
-                    'dialogo': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
+                    'fala': '(Provando o Omurice): — Uau. Isso é... surpreendentemente bom. Tipo “não esperava gostar tanto de arroz com ovo” bom.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 12,
-                    'dialogo': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
+                    'fala': '(Sorrindo): — Eu só queria água. Agora tô jantando com filósofos, artistas e galinhas vingativas.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 14,
-                    'dialogo': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
+                    'fala': '(Recuando): — Ah não. É ela. Essa aí me seguiu desde o campo. Ela quer vingança.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 17,
-                    'dialogo': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
+                    'fala': '(Entregando o pão com reverência): — Trégua, senhora Gertrudes. Que nossos caminhos se cruzem apenas no café da manhã.',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 23,
-                    'dialogo': 'E ninguém tentou detê-la?',
+                    'fala': 'E ninguém tentou detê-la?',
                 },
                 {
                     'id_missao': 'mis011',
                     'genero': 'M',
                     'sequencia': 26,
-                    'dialogo': 'Eu vou enfrentá-la.',
+                    'fala': 'Eu vou enfrentá-la.',
                 },
                 {
                     'id_missao': 'mis012',
                     'genero': 'M',
                     'sequencia': 3,
-                    'dialogo': 'Foi por pouco. Mas está feito.',
+                    'fala': 'Foi por pouco. Mas está feito.',
                 },
                 {
                     'id_missao': 'mis012',
                     'genero': 'M',
                     'sequencia': 5,
-                    'dialogo': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
+                    'fala': 'Eu... estou procurando alguém. Minha irmã. Preciso continuar.',
                 },
                 {
                     'id_missao': 'mis012',
                     'genero': 'M',
                     'sequencia': 7,
-                    'dialogo': 'Isso é ótimo... mas como eu chego lá?',
+                    'fala': 'Isso é ótimo... mas como eu chego lá?',
                 },
             ]
         }
@@ -765,10 +765,10 @@ class DBManager:
         Insere uma lista de diálogos para um personagem jogador.
         :param id_jogador: ID do jogador que falará os diálogos
         :param dialogos: Lista de dicionários com chaves:
-                        'id_missao', 'sequencia', 'genero', 'dialogo'
+                        'id_missao', 'sequencia', 'genero', 'fala'
         """
         consulta = """
-            INSERT INTO dialogo (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
+            INSERT INTO dialogo (identificador_personagem, identificador_missao, sequencia_local, genero, fala)
             VALUES (%s, %s, %s, %s, %s)
             RETURNING identificador_dialogo;
         """
@@ -778,7 +778,7 @@ class DBManager:
                 dialogo['id_missao'],
                 dialogo['sequencia'],
                 dialogo['genero'],
-                dialogo['dialogo']
+                dialogo['fala']
             )
             self.executar_query(consulta, parametros, fetchone=True)
 
@@ -789,7 +789,7 @@ class DBManager:
         Inclui o nome do personagem que está falando.
 
         :param id_personagem: ID do personagem (jogador, aliado, etc)
-        :return: Lista de tuplas com (identificador_dialogo, sequencia_local, genero, nome_personagem, dialogo)
+        :return: Lista de tuplas com (identificador_dialogo, sequencia_local, genero, nome_personagem, fala)
         """
         consulta = """
             SELECT 
@@ -802,7 +802,7 @@ class DBManager:
                     TRIM(h.nome),
                     '???'
                 ) AS nome_personagem,
-                TRIM(d.dialogo) AS dialogo
+                TRIM(d.fala) AS fala
             FROM dialogo d
             LEFT JOIN jogador j ON d.identificador_personagem = j.identificador_jogador
             LEFT JOIN aliado a ON d.identificador_personagem = a.identificador_aliado
@@ -911,7 +911,7 @@ class DBManager:
         :param id_missao: ID da missão
         :param genero_jogador: 'F' ou 'M'
         :param id_jogador: ID do jogador atual
-        :return: Lista com (id_dialogo, nome_personagem, sequencia_local, dialogo)
+        :return: Lista com (id_dialogo, nome_personagem, sequencia_local, fala)
         """
         consulta = """
             SELECT
@@ -923,7 +923,7 @@ class DBManager:
                     '???'
                 ) AS nome_personagem,
                 dialogo.sequencia_local,
-                TRIM(dialogo.dialogo) AS dialogo
+                TRIM(dialogo.fala) AS fala
             FROM dialogo
             LEFT JOIN tipo_personagem ON tipo_personagem.identificador_personagem = dialogo.identificador_personagem
             LEFT JOIN jogador ON tipo_personagem.identificador_personagem = jogador.identificador_jogador

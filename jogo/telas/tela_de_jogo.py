@@ -356,7 +356,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.indice_dialogo_atual = 0
         self.dialogo_ativo = True
         
-        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
+        self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].fala, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
 
 
 
@@ -511,7 +511,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     elif self.caixa_dialogo.esta_finalizado():
                         self.indice_dialogo_atual += 1
                         if self.indice_dialogo_atual < len(self.dialogos_atuais):
-                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].dialogo, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
+                            self.caixa_dialogo.definir_texto(self.dialogos_atuais[self.indice_dialogo_atual].fala, self.dialogos_atuais[self.indice_dialogo_atual].nome_personagem)
                         else:
                             self.dialogo_ativo = False # Fim do diálogo
                             self.caixa_dialogo.limpar_dialogo() # Limpa o texto da caixa

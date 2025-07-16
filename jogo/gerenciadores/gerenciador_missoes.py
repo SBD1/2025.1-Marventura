@@ -437,7 +437,7 @@ class GerenciadorDeMissoes:
             # self.caixa_dialogo = CaixaDeDialogo(self.gerenciador_recursos) # Descomente se precisar criar aqui
 
         if self.dialogos_controlados_atuais:
-            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].dialogo, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
+            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].fala, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
         else:
             print("Nenhum texto para o diálogo controlado.")
             self._finalizar_dialogo_controlado() # Finaliza imediatamente se não houver textos
@@ -455,7 +455,7 @@ class GerenciadorDeMissoes:
                     elif self.caixa_dialogo.esta_finalizado():
                         self.indice_dialogo_controlado += 1
                         if self.indice_dialogo_controlado < len(self.dialogos_controlados_atuais):
-                            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].dialogo, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
+                            self.caixa_dialogo.definir_texto(self.dialogos_controlados_atuais[self.indice_dialogo_controlado].fala, self.dialogos_controlados_atuais[self.indice_dialogo_controlado].nome_personagem)
                         else:
                             self._finalizar_dialogo_controlado()
                             if self.proximo_passo_apos_dialogo_controlado == 'finalizar_cena_e_missao':

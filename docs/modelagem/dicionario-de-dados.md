@@ -3382,7 +3382,7 @@ As tabelas 1 a 46 a seguir representam o dicionário de dados do jogo **Marventu
           <td>CHECK</td>
         </tr>
         <tr>
-          <td><code>dialogo</code></td>
+          <td><code>fala</code></td>
           <td>Texto dos diálogos.</td>
           <td>Texto</td>
           <td>500</td>

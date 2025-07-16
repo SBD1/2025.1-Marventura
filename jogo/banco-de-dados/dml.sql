@@ -1383,7 +1383,7 @@ VALUES
 
 
 INSERT INTO dialogo
-    (identificador_personagem, identificador_missao, sequencia_local, genero, dialogo)
+    (identificador_personagem, identificador_missao, sequencia_local, genero, fala)
 VALUES
     ('hbt001', 'mis001', 1, 'F', 'O som do vento sussurrava entre as altas folhas douradas. O sol da manhã já aquecia a terra quando uma jovem de cabelos bagunçados abriu os olhos pela primeira vez naquele lugar desconhecido.'),
     ('hbt001', 'mis001', 1, 'M', 'O som do vento sussurrava entre as altas folhas douradas. O sol da manhã já aquecia a terra quando um jovem de cabelos bagunçados abriu os olhos pela primeira vez naquele lugar desconhecido.'),
