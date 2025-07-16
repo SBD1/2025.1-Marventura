@@ -39,7 +39,7 @@ A **Figura 1** abaixo apresenta o Diagrama relacional construído para represent
   </summary>
   <div align="center">
     <p><strong>Figura 1 – Diagrama Relacional das Missões (Versão 2.0)</strong></p>
-    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-miss%C3%A3o-v2.0.png">
+    <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-missao-v2.0.png">
     <p>Autor: <a href="https://github.com/Pabloserrapxx">Pablo Serra</a>.</p>
   </div>
 </details>
