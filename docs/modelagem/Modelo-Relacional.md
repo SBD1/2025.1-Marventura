@@ -111,13 +111,13 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Relacional final</strong></p>
-    <a href="assets/mrl_final.png" target="_blank">
-      <img src="assets/mrl_final.png" alt="Diagrama Relacional" style="max-width: 100%; height: auto;">
+    <a href="/2025.1-Marventura/assets/mrl_final.png" target="_blank">
+      <img src="/2025.1-Marventura/assets/mrl_final.png" alt="Diagrama Relacional" style="max-width: 100%; height: auto;">
     </a>
   </div>
 </details>
----
 
+---
 
 
 ## 📚 Bibliografia
