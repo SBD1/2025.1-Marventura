@@ -102,6 +102,7 @@ Vale destacar que alguns dos relacionamentos também foram modelados para tabela
 ---
 
 A **Figura 5** é uma junção de todos os diagramas relacionais apresentados nas figuras anteriores, integrando as entidades e relacionamentos dos itens do inventário, personagens, missões e mapas em uma única estrutura abrangente. Este diagrama relacional consolidado oferece uma visão completa do sistema de jogo, permitindo entender como todas as partes interagem entre si.
+
 <details>
   <summary>Figura 5 – Diagrama Relacional final - Clique na imagem para melhor visualização
     <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -110,7 +111,9 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Relacional final</strong></p>
-      <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/modelo-relacional-Completo-v1.1.drawio.png" alt="Diagrama Relacional">
+    <a href="/assets/mrl_final.png" target="_blank">
+      <img src="/assets/mrl_final.png" alt="Diagrama Relacional" style="max-width: 100%; height: auto;">
+    </a>
   </div>
 </details>
 
@@ -144,3 +147,4 @@ A **Figura 5** é uma junção de todos os diagramas relacionais apresentados na
 | `2.10` | Atualização do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 27/06/2025 | - | - |
 | `2.11` | Normalização do diagrama dos Itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 05/07/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/07/2025 |
 | `2.12` | Atualização dos modelos parciais | [Israel Thalles](https://github.com/IsraelThalles) | 15/07/2025 |  |  |
+| `2.13` | Atualização dos diagrama final | [Pablo Serra](https://github.com/Pabloserrapxx) | 16/07/2025 |   |  |

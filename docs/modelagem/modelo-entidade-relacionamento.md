@@ -152,16 +152,17 @@ A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores
 
 <details>
   <summary>Figura 5 – Diagrama Entidade-Relacionamento final - Clique na imagem para melhor visualização
-    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" /></svg>
+    <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+      <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+    </svg>
   </summary>
   <div align="center">
     <p><strong>Figura 5 – Diagrama Entidade-Relacionamento final</strong></p>
-    <a href="assets/diagrama-entidade-relacionamento-completo-v7.2.png" target="_blank">
-      <img src="https://raw.githubusercontent.com/SBD1/2025.1-Marventura/refs/heads/main/docs/assets/diagrama-entidade-relacionamento-completo-v7.2.png" alt="Diagrama Relacional">
+    <a href="assets/mer_final_novo.png" target="_blank">
+      <img src="assets/mer_final_novo.png" alt="Diagrama Entidade-Relacionamento" style="max-width: 100%; height: auto;">
     </a>
   </div>
 </details>
-
 ---
 
 
@@ -193,3 +194,4 @@ A **Figura 5** apresenta a junção de todas as tabelas dos diagramas anteriores
 | `4.7` | Atualização do diagrama dos personagens | [Israel Thalles](https://github.com/IsraelThalles) | 19/06/2025 | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 27/06/2025 |
 | `4.8` | Atualização do diagrama dos itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 27/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 15/07/2025 |
 | `4.9` | Atualização dos diagramas parciais | [Israel Thalles](https://github.com/IsraelThalles) | 15/07/2025 |  |  |
+| `5.0` | Atualização dos diagrama final | [Pablo Serra](https://github.com/Pabloserrapxx)  | 16/07/2025 | |  |
