@@ -194,7 +194,7 @@ class TelaLoja(TelaModelo):
 
         if preco_unitario is not None and preco_unitario > 0:
             preco = preco_unitario * self.quantidade_selecionada
-            print(f"Vendendo {self.quantidade_selecionada}x {self.item_selecionado.nome_item.strip()} por {preco} moedas. Identificador do jogador: {self.entidades.jogador.identificador_jogador}, Identificador do vendedor: {self.vendedor_id}, ID Inventário Jogador: {self.id_inventario_jogador}, ID Inventário Vendedor: {self.id_inventario_vendedor}, ID Item: {self.item_selecionado.identificador_item}")
+            print(f"Vendendo {self.quantidade_selecionada}x {self.item_selecionado.nome_item} por {preco} moedas. Identificador do jogador: {self.entidades.jogador.identificador_jogador}, Identificador do vendedor: {self.vendedor_id}, ID Inventário Jogador: {self.id_inventario_jogador}, ID Inventário Vendedor: {self.id_inventario_vendedor}, ID Item: {self.item_selecionado.identificador_item}")
             resultado = self.db_manager.realizar_venda(
                 self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
@@ -322,9 +322,10 @@ class TelaLoja(TelaModelo):
             # Destaque visual para o item selecionado
             if item == self.item_selecionado:
                 pygame.draw.rect(tela, AMARELO_CLARO, item_rect, 2)
-            
-            texto = f"{item.quantidade}x {item.nome_item.strip()}"
-            self._desenhar_texto_com_borda(tela, texto, self.fonte_texto, BRANCO, PRETO, 1, (item_rect.left + 10, item_rect.centery), align='left')
+
+            if item.nome_item:
+                texto = f"{item.quantidade}x {item.nome_item}"
+                self._desenhar_texto_com_borda(tela, texto, self.fonte_texto, BRANCO, PRETO, 1, (item_rect.left + 10, item_rect.centery), align='left')
 
     def _draw_info_panel(self, tela):
         """Desenha o painel com as informações do item selecionado."""
@@ -333,10 +334,10 @@ class TelaLoja(TelaModelo):
             return
 
         # Nome do Item
-        self._desenhar_texto_com_borda(tela, self.item_selecionado.nome_item.strip(), self.fonte_botao, BRANCO, PRETO, 1, (self.rect_painel_info.centerx, self.rect_painel_info.top + 30))
+        self._desenhar_texto_com_borda(tela, self.item_selecionado.nome_item, self.fonte_botao, BRANCO, PRETO, 1, (self.rect_painel_info.centerx, self.rect_painel_info.top + 30))
         
         # Descrição do Item (com quebra de linha)
-        self._draw_text_wrapped(tela, self.item_selecionado.descricao.strip(), self.fonte_texto, BRANCO, self.rect_painel_info.inflate(-20, -100))
+        self._draw_text_wrapped(tela, self.item_selecionado.descricao, self.fonte_texto, BRANCO, self.rect_painel_info.inflate(-20, -100))
 
         # --- NOVO: Lógica de preço e quantidade ---
         if self.modo == 'comprar':
