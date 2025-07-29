@@ -531,8 +531,9 @@ class DBManager:
         Envia um inimigo para o Yomotsu Hirasaka.
         """
         consulta = """
-            UPDATE estado_instancia_lacaio
+            UPDATE estado_lacaio
             SET 
+                vida_atual = 0,
                 data_da_morte = now(),
                 identificador_area_atual = 'are034'
             WHERE 
@@ -1210,26 +1211,25 @@ class DBManager:
         """
         consulta = """
             SELECT 
-                il.identificador_instancia_lacaio,
-                eil.vida_atual,
-                il.moedas_totais,
-                il.coordenada_x AS x,
-                il.coordenada_y AS y,
+                el.identificador_instancia_lacaio,
+                el.vida_atual,
+                el.moedas_totais,
+                el.coordenada_x AS x,
+                el.coordenada_y AS y,
 
                 l.identificador_lacaio,
                 TRIM(l.nome) AS nome_lacaio,
                 TRIM(l.descricao) AS descricao_lacaio,
                 l.vida AS vida_total,
                 l.nivel,
-                l.experiencia
+                l.experiencia,
+                l.tempo_reacao
 
-            FROM instancia_lacaio il
-            JOIN estado_instancia_lacaio eil 
-                ON eil.identificador_instancia_lacaio = il.identificador_instancia_lacaio
-            AND eil.identificador_progresso = %s
-            JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
-            WHERE eil.identificador_area_atual = %s
-            AND eil.data_da_morte IS NULL;
+            FROM estado_lacaio el
+            JOIN lacaio l ON el.identificador_lacaio = l.identificador_lacaio
+            WHERE el.identificador_progresso = %s
+            AND el.identificador_area_atual = %s
+            AND el.data_da_morte IS NULL;
         """
         return self.executar_query(consulta, (identificador_progresso, identificador_area), fetchall=True)
 
@@ -1280,24 +1280,29 @@ class DBManager:
         """
         return self.executar_query(consulta, (id_habitante,), fetchone=True)
     
-    def buscar_habitante_por_area(self, id_area):
-        """Busca dados de todos os habitante de uma área específica."""
+    def buscar_habitante_por_area(self, id_area, id_progresso):
+        """Busca dados de todos os habitantes de uma área específica, com estado associado ao progresso."""
         consulta = """
             SELECT
-                identificador_habitante,
-                identificador_area,
-                TRIM(nome) AS nome,
-                TRIM(descricao) AS descricao,
-                TRIM(chave_imagem) AS chave_imagem,
-                tipo_habitante,
-                coordenada_x,
-                coordenada_y,
-                especialidade,
-                moedas_totais
-                FROM habitante
-                WHERE identificador_area = %s;
+                habitante.identificador_habitante,
+                habitante.identificador_area,
+                TRIM(habitante.nome) AS nome,
+                TRIM(habitante.descricao) AS descricao,
+                TRIM(habitante.chave_imagem) AS chave_imagem,
+                habitante.tipo_habitante,
+                habitante.coordenada_x,
+                habitante.coordenada_y,
+                habitante.especialidade,
+                estado_habitante.moedas_totais,
+                estado_habitante.conhecido
+            FROM habitante
+            JOIN estado_habitante
+                ON habitante.identificador_habitante = estado_habitante.identificador_habitante
+            WHERE habitante.identificador_area = %s
+            AND estado_habitante.identificador_progresso = %s;
         """
-        return self.executar_query(consulta, (id_area,), fetchall=True)
+        return self.executar_query(consulta, (id_area, id_progresso), fetchall=True)
+
     
     def buscar_habitante_por_ilha(self, id_ilha):
         """Busca dados de todos os habitante de uma ilha específica."""
@@ -1331,7 +1336,7 @@ class DBManager:
         """
         return self.executar_query(consulta, (identificador_personagem,), fetchall=True)
     
-    def buscar_lacaio_com_habilidades_por_nome(self, nome_lacaio):
+    def buscar_lacaio_por_nome_com_habilidades(self, nome_lacaio):
         """
         Busca os dados de um lacaio pelo nome (não instância) e retorna suas habilidades.
         
@@ -1361,25 +1366,6 @@ class DBManager:
             WHERE TRIM(lacaio.nome) = %s;
         """
         return self.executar_query(consulta, (nome_lacaio,), fetchall=True)
-
-
-    def matar_inimigos_da_area(self, id_area_origem):
-        """
-        Marca como mortos todos os lacaios vivos da área especificada,
-        e os move para a área 'are0034'.
-
-        :param id_area_origem: ID da área onde os lacaios estão atualmente
-        """
-        consulta = """
-            UPDATE estado_instancia_lacaio
-            SET 
-                data_da_morte = now(),
-                identificador_area_atual = 'are0034'
-            WHERE 
-                identificador_area_atual = %s
-                AND data_da_morte IS NULL;
-        """
-        return self.executar_query(consulta, (id_area_origem,))
 
 
 
@@ -1464,35 +1450,39 @@ class DBManager:
         return self.executar_query(consulta, (id_progresso, id_ilha), fetchone=True)
 
     
-    def buscar_areas_interativas_da_area(self, id_area):
+    def buscar_areas_interativas_da_area(self, id_area, id_progresso):
         """
-        Busca todos os elementos espaciais do tipo 'Área interativa' da área atual (origem).
+        Busca todos os elementos espaciais do tipo 'Área interativa' da área atual (origem),
+        considerando o estado do progresso (se estão ativas ou não).
         """
         consulta = """
             SELECT
-                identificador_area_interativa AS identificador,
-                identificador_area_origem AS area_origem,
-                identificador_area_destino AS area_destino,
-                identificador_missao,
-                TRIM(chave_imagem) AS chave_imagem,
-                x,
-                y,
-                largura,
-                altura,
-                chance_sucesso,
-                TRIM(tipo_evento) AS tipo_evento,
-                TRIM(metodo_ativacao) AS metodo_ativacao,
-                ativa
-            FROM area_interativa
-            WHERE identificador_area_origem = %s;
+                ai.identificador_area_interativa AS identificador,
+                ai.identificador_area_origem AS area_origem,
+                ai.identificador_area_destino AS area_destino,
+                ai.identificador_missao,
+                TRIM(ai.chave_imagem) AS chave_imagem,
+                ai.x,
+                ai.y,
+                ai.largura,
+                ai.altura,
+                ai.chance_sucesso,
+                TRIM(ai.tipo_evento) AS tipo_evento,
+                TRIM(ai.metodo_ativacao) AS metodo_ativacao,
+                eai.ativa
+            FROM area_interativa ai
+            JOIN estado_area_interativa eai
+                ON ai.identificador_area_interativa = eai.identificador_area_interativa
+            WHERE ai.identificador_area_origem = %s
+            AND eai.identificador_progresso = %s;
         """
-        return self.executar_query(consulta, (id_area,), fetchall=True)
+        return self.executar_query(consulta, (id_area, id_progresso), fetchall=True)
 
     
 
-    def inserir_gatilho_de_missao(self, id_area_origem, id_missao, x, y, largura, altura):
+    def inserir_gatilho_de_missao(self, id_area_origem, id_missao, x, y, largura, altura, id_progresso):
         """
-        Insere uma nova área interativa no banco de dados.
+        Insere uma nova área interativa no banco de dados e seu estado associado ao progresso.
 
         :param id_area_origem: ID da área onde a interação ocorre
         :param id_missao: ID da missão associada (ou None)
@@ -1500,39 +1490,79 @@ class DBManager:
         :param y: Posição Y da área
         :param largura: Largura da área
         :param altura: Altura da área
+        :param id_progresso: ID do progresso ao qual o estado da área interativa pertence
         :return: ID da nova área interativa inserida
         """
-        consulta = """
-            INSERT INTO area_interativa
-                (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, metodo_ativacao)
-            VALUES (%s, %s, %s, %s, %s, %s, 'missao', 'passivo')
-            RETURNING identificador_area_interativa;
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    # 1. Inserir a área interativa
+                    cur.execute("""
+                        INSERT INTO area_interativa
+                            (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, metodo_ativacao)
+                        VALUES (%s, %s, %s, %s, %s, %s, 'missao', 'passivo')
+                        RETURNING identificador_area_interativa;
+                    """, (id_area_origem, id_missao, x, y, largura, altura))
+                    
+                    id_area_interativa = cur.fetchone()[0]
+
+                    # 2. Inserir o estado da área interativa
+                    cur.execute("""
+                        INSERT INTO estado_area_interativa (identificador_progresso, identificador_area_interativa, ativa)
+                        VALUES (%s, %s, TRUE);
+                    """, (id_progresso, id_area_interativa))
+
+            return {'sucesso': True, 'id_area_interativa': id_area_interativa}
+        except Exception as e:
+            return {'sucesso': False, 'erro': str(e)}
+
+
+
+
+    def remover_gatilho_de_missao(self, id_area_origem, id_missao, x, y, largura, altura, id_progresso):
         """
-        return self.executar_query(consulta, (id_area_origem, id_missao, x, y, largura, altura), fetchone=True)
-
-
-
-    def remover_gatilho_de_missao(self, id_area_origem, id_missao, x, y, largura, altura):
-        consulta = """
-            WITH alvo AS (
-                SELECT identificador_area_interativa
-                FROM area_interativa
-                WHERE
-                    identificador_area_origem = %s
-                    AND identificador_missao = %s
-                    AND x = %s
-                    AND y = %s
-                    AND largura = %s
-                    AND altura = %s
-                    AND tipo_evento = 'missao'
-                    AND metodo_ativacao = 'passivo'
-                LIMIT 1
-            )
-            DELETE FROM area_interativa
-            WHERE identificador_area_interativa IN (SELECT identificador_area_interativa FROM alvo);
+        Remove uma área interativa de missão e seu estado associado ao progresso.
         """
-        self.executar_query(consulta, (id_area_origem, id_missao, x, y, largura, altura))
+        try:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    # 1. Encontrar a área interativa a ser removida
+                    cur.execute("""
+                        SELECT identificador_area_interativa
+                        FROM area_interativa
+                        WHERE
+                            identificador_area_origem = %s
+                            AND identificador_missao = %s
+                            AND x = %s
+                            AND y = %s
+                            AND largura = %s
+                            AND altura = %s
+                            AND tipo_evento = 'missao'
+                            AND metodo_ativacao = 'passivo'
+                        LIMIT 1;
+                    """, (id_area_origem, id_missao, x, y, largura, altura))
 
+                    resultado = cur.fetchone()
+                    if not resultado:
+                        return {'sucesso': False, 'erro': 'Gatilho não encontrado'}
+
+                    id_area_interativa = resultado[0]
+
+                    # 2. Remover o estado associado ao progresso
+                    cur.execute("""
+                        DELETE FROM estado_area_interativa
+                        WHERE identificador_area_interativa = %s AND identificador_progresso = %s;
+                    """, (id_area_interativa, id_progresso))
+
+                    # 3. Remover a própria área interativa
+                    cur.execute("""
+                        DELETE FROM area_interativa
+                        WHERE identificador_area_interativa = %s;
+                    """, (id_area_interativa,))
+
+            return {'sucesso': True}
+        except Exception as e:
+            return {'sucesso': False, 'erro': str(e)}
 
 
 
@@ -2041,23 +2071,26 @@ class DBManager:
         return self.executar_query(consulta, fetchall=True)
 
 
-# Dentro da classe DBManager em utilidades/db_manager.py
 
-    def buscar_vendedor_por_area(self, id_area):
-        """Busca vendedores em uma área específica."""
+    def buscar_vendedor_por_area(self, id_area, id_progresso):
+        """Busca vendedores em uma área específica, com estado associado ao progresso."""
         query = """
             SELECT
                 h.identificador_habitante,
-                TRIM(h.nome) as nome,
-                TRIM(h.descricao) as descricao,
+                TRIM(h.nome) AS nome,
+                TRIM(h.descricao) AS descricao,
                 h.coordenada_x,
                 h.coordenada_y,
-                h.moedas_totais
+                eh.moedas_totais
             FROM habitante h
+            JOIN estado_habitante eh 
+                ON h.identificador_habitante = eh.identificador_habitante
             WHERE h.identificador_area = %s
             AND h.tipo_habitante = 'ven'
+            AND eh.identificador_progresso = %s
         """
-        return self.executar_query(query, (id_area,), fetchall=True)
+        return self.executar_query(query, (id_area, id_progresso), fetchall=True)
+
 
     def buscar_inventario_vendedor(self, id_vendedor, id_progresso):
         """Busca o inventário de um vendedor específico."""
@@ -2119,55 +2152,9 @@ class DBManager:
         """
         return self.executar_query(query, (id_vendedor, id_progresso), fetchall=True)
 
-    def realizar_compra(self, id_jogador, id_vendedor, id_inventario_jogador, id_inventario_vendedor, id_item, quantidade, preco_total):
-        """
-        Realiza uma transação de compra, movendo item do vendedor para o jogador
-        e dinheiro do jogador para o vendedor.
-        """
-        if not self.conn:
-            return {'sucesso': False, 'erro': 'Sem conexão com o banco.'}
-        try:
-            with self.conn.transaction():
-                with self.conn.cursor() as cur:
-                    # 1. Debitar dinheiro do jogador
-                    cur.execute(
-                        "UPDATE jogador SET moedas_totais = moedas_totais - %s WHERE identificador_jogador = %s AND moedas_totais >= %s",
-                        (preco_total, id_jogador, preco_total)
-                    )
-                    if cur.rowcount == 0:
-                        raise Exception("Moedas insuficientes.")
 
-                    # 2. Creditar dinheiro ao vendedor
-                    cur.execute(
-                        "UPDATE habitante SET moedas_totais = moedas_totais + %s WHERE identificador_habitante = %s",
-                        (preco_total, id_vendedor)
-                    )
-
-                    # 3. Diminuir item do inventário do vendedor
-                    cur.execute(
-                        "UPDATE item_inventario SET quantidade = quantidade - %s WHERE identificador_inventario = %s AND identificador_item = %s AND quantidade >= %s",
-                        (quantidade, id_inventario_vendedor, id_item, quantidade)
-                    )
-                    if cur.rowcount == 0:
-                        raise Exception("Vendedor sem estoque suficiente.")
-
-                    # 4. Adicionar item ao inventário do jogador
-                    cur.execute(
-                        "INSERT INTO item_inventario (identificador_inventario, identificador_item, quantidade) VALUES (%s, %s, %s) ON CONFLICT (identificador_inventario, identificador_item) DO UPDATE SET quantidade = item_inventario.quantidade + %s",
-                        (id_inventario_jogador, id_item, quantidade, quantidade)
-                    )
-
-                    # 5. Registrar negociação
-                    cur.execute(
-                        "INSERT INTO negociacao (identificador_item, identificador_jogador, identificador_vendedor, quantidade, preco_final, tipo_negociacao) VALUES (%s, %s, %s, %s, %s, 'compra')",
-                        (id_item, id_jogador, id_vendedor, quantidade, preco_total)
-                    )
-            return {'sucesso': True}
-        except Exception as e:
-            print(f"ERRO na transação de compra: {e}")
-            return {'sucesso': False, 'erro': str(e)}
         
-    def realizar_compra(self, id_jogador, id_vendedor, id_inventario_jogador, id_inventario_vendedor, id_item, quantidade, preco_total):
+    def realizar_compra(self, id_jogador, id_vendedor, id_inventario_jogador, id_inventario_vendedor, id_item, quantidade, preco_total, id_progresso):
         """
         Realiza uma transação de compra, movendo item do vendedor para o jogador
         e dinheiro do jogador para o vendedor.
@@ -2189,8 +2176,8 @@ class DBManager:
                     # 2. Creditar dinheiro ao vendedor, limitando o total a 999.
                     # A função LEAST() garante que o valor nunca ultrapassará o limite da carteira.
                     cur.execute(
-                        "UPDATE habitante SET moedas_totais = LEAST(999, moedas_totais + %s) WHERE identificador_habitante = %s",
-                        (preco_total, id_vendedor)
+                        "UPDATE estado_habitante SET moedas_totais = LEAST(999, moedas_totais + %s) WHERE identificador_habitante = %s AND identificador_progresso = %s",
+                        (preco_total, id_vendedor, id_progresso)
                     )
                     # --- FIM DA CORREÇÃO ---
 
@@ -2459,7 +2446,8 @@ class DBManager:
                   id_inventario_vendedor,
                   identificador_item,
                   quantidade,
-                  preco_total):
+                  preco_total,
+                  id_progresso):
         """
         Realiza a venda de um item do jogador para o vendedor
         """
@@ -2493,10 +2481,10 @@ class DBManager:
 
                     # 4. Atualizar moedas do vendedor
                     cur.execute(
-                        """UPDATE habitante 
+                        """UPDATE estado_habitante 
                         SET moedas_totais = moedas_totais - %s 
-                        WHERE identificador_habitante = %s""", 
-                        (preco_total, vendedor_id))
+                        WHERE identificador_habitante = %s AND identificador_progresso = %s""", 
+                        (preco_total, vendedor_id, id_progresso))
 
                     # 5. Remove itens com quantidade 0
                     cur.execute(

@@ -5,6 +5,11 @@ from .tela_modelo import TelaModelo
 from utilidades.constantes import *
 from gerenciadores import GerenciadorDeEntidades
 from entidades import Jogador
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
+    from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeTelas
 
 class TelaSalvamento(TelaModelo):
     """
@@ -14,12 +19,13 @@ class TelaSalvamento(TelaModelo):
     novo jogo (levando para seleção de personagem) ou carregar um jogo salvo.
     Acessa recursos visuais e fontes via gerenciador de recursos.
     """
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager'):
         super().__init__(gerenciador_telas, gerenciador_recursos)
         self.gerenciador_entidades = GerenciadorDeEntidades()
         self.banco_de_dados = gerenciador_banco_de_dados
 
-        self.gerenciador_entidades.dados_salvos = gerenciador_banco_de_dados.carregar_dados_dos_slots()
+        self.gerenciador_entidades.dados_salvos = self.banco_de_dados.carregar_dados_dos_slots()
+        print(f"Dados de slots carregados: {self.gerenciador_entidades.dados_salvos}") # Debug: Verifica os dados carregados
 
         # --- Recursos específicos da Tela de Salvamento ---
         self.imagem_cartaz_procurado = self.gerenciador_recursos.obter_imagem(CHAVE_CARTAZ_PROCURADO)
@@ -30,6 +36,7 @@ class TelaSalvamento(TelaModelo):
         self.fonte_botoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
         self.fonte_nome_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_PAYFAIR_TEXTO) # Fonte para o nome/tipo no cartaz
         self.fonte_data_cartaz = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_HEART_TEXTO) # Fonte para data/dados no cartaz
+        self.fonte_progresso = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO) # Fonte para progresso
 
         # Imagem de fundo comum para telas de menu
         self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_TELA_INICIAL)
@@ -197,19 +204,19 @@ class TelaSalvamento(TelaModelo):
                 # Texto de dados/hora ou mapa (APENAS se o slot estiver ocupado)
                 # Verifica se o slot está ocupado E a fonte para dados está disponível
                 if dados_slot.ocupado and self.fonte_data_cartaz:
-                     # O texto de dados mostra a data salva (exemplo)
-                     texto_dados = dados_slot.data_ultimo_salvamento.strftime('%d/%m/%Y %H:%M') # Pega a data salva ou "Sem Data"
-                     # Você pode adicionar mais informações aqui (progresso, mapa, etc.)
-                     # texto_dados += f" - Mapa: {dados_slot.get('id_mapa', 'N/A')}"
-                     # texto_dados += f" - Progresso: {dados_slot.get('progresso', 'N/A')}"
+                    # O texto de dados mostra a data salva (exemplo)
+                    texto_dados = dados_slot.data_ultimo_salvamento.strftime('%d/%m/%Y %H:%M') # Pega a data salva ou "Sem Data"
 
-                     superficie_texto_dados = self.fonte_data_cartaz.render(texto_dados, True, COR_TEXTO_SALVAR) # Renderiza o texto de dados
-                     # Calcula a posição do retângulo do texto de dados (centralizado no slot com offset Y maior)
-                     rect_texto_dados = superficie_texto_dados.get_rect(center=(rect_slot.center[0] + 5, rect_slot.center[1] + 75))
-                     tela.blit(superficie_texto_dados, rect_texto_dados) # Desenha o texto de dados na tela
+                    superficie_texto_dados = self.fonte_data_cartaz.render(texto_dados, True, COR_TEXTO_SALVAR) # Renderiza o texto de dados
+                    # Calcula a posição do retângulo do texto de dados (centralizado no slot com offset Y maior)
+                    rect_texto_dados = superficie_texto_dados.get_rect(center=(rect_slot.center[0] + 5, rect_slot.center[1] + 75))
+                    tela.blit(superficie_texto_dados, rect_texto_dados) # Desenha o texto de dados na tela
 
-                # else: se o slot está ocupado mas a fonte de dados não está disponível, um aviso já é impresso.
-                # else: se o slot não está ocupado, não desenhamos o texto de dados.
+                    self._desenhar_texto_com_borda(
+                        tela, f"{dados_slot.percentual_concluido:.1f}%", self.fonte_progresso, BRANCO, PRETO, self._grossura_borda,
+                        (rect_slot.center[0] + 5, rect_texto_dados.bottom + 20) # Posiciona abaixo do texto de dados
+                    )
+
 
             else:
                  print(f"AVISO: Fonte para textos de slots de salvamento (chave 'nome_cartaz') não disponível para Slot {i + 1}.") # Print de aviso

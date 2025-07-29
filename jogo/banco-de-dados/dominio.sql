@@ -52,7 +52,7 @@ BEGIN
         IF NEW.identificador_personagem IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_personagem" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
-    ELSIF TG_TABLE_NAME = 'instancia_lacaio' THEN
+    ELSIF TG_TABLE_NAME = 'estado_lacaio' THEN
         IF NEW.identificador_instancia_lacaio IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_instancia_lacaio" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
@@ -125,7 +125,7 @@ BEGIN
         NEW.identificador_elemento_espacial := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'tipo_personagem' THEN
         NEW.identificador_personagem := prefixo || lpad(numero_serial::text, 3, '0');
-    ELSIF TG_TABLE_NAME = 'instancia_lacaio' THEN
+    ELSIF TG_TABLE_NAME = 'estado_lacaio' THEN
         NEW.identificador_instancia_lacaio := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'batalha' THEN
         NEW.identificador_batalha := prefixo || lpad(numero_serial::text, 3, '0');

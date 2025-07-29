@@ -2,15 +2,15 @@ CREATE EXTENSION IF NOT EXISTS pgagent;
 
 CREATE OR REPLACE FUNCTION reviver_lacaios() RETURNS void AS $$
 BEGIN
-  UPDATE estado_instancia_lacaio
-  SET vida_atual = l.vida,
-      identificador_area_atual = il.identificador_area,
-      data_da_morte = NULL
-  FROM instancia_lacaio il
-  JOIN lacaio l ON il.identificador_lacaio = l.identificador_lacaio
-  WHERE estado_instancia_lacaio.identificador_instancia_lacaio = il.identificador_instancia_lacaio
-    AND data_da_morte IS NOT NULL
-    AND now() - data_da_morte >= interval '5 minutes';
+  UPDATE estado_lacaio
+  SET 
+    vida_atual = lacaio.vida,
+    identificador_area_atual = estado_lacaio.identificador_area_origem,
+    data_da_morte = NULL
+  FROM lacaio
+  WHERE estado_lacaio.identificador_lacaio = lacaio.identificador_lacaio
+    AND estado_lacaio.data_da_morte IS NOT NULL
+    AND now() - estado_lacaio.data_da_morte >= interval '5 minutes';
 END;
 $$ LANGUAGE plpgsql;
 

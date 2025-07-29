@@ -356,7 +356,7 @@ class GerenciadorDeMissoes:
             self._avancar_passo()
 
         elif tipo_passo == 'inserir_gatilho_de_missao':
-            resultado = self.banco_de_dados.inserir_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'))
+            resultado = self.banco_de_dados.inserir_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'), self.jogador.identificador_progresso)
             print(resultado)
             if resultado:
                 print(f"Gatilho de missão inserido na área '{passo.get('id_area')}' para a missão '{passo.get('id_missao')}'.")
@@ -365,7 +365,7 @@ class GerenciadorDeMissoes:
             self._avancar_passo()
 
         elif tipo_passo == 'remover_gatilho_de_missao':
-            self.banco_de_dados.remover_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'))
+            self.banco_de_dados.remover_gatilho_de_missao(passo.get('id_area'), passo.get('id_missao'), passo.get('x'), passo.get('y'), passo.get('largura'), passo.get('altura'), self.jogador.identificador_progresso)
 
             self.tela_jogo.atualizar_areas_interativas_passivas()
 

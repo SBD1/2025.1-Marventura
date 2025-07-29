@@ -867,20 +867,177 @@ VALUES
 
 
 
+-- Áreas para coletar itens no mundo
 INSERT INTO area_interativa
-    (identificador_area_origem, chave_imagem, x, y, chance_sucesso, tipo_evento, metodo_ativacao)
+    (identificador_area_origem, chave_imagem, x, y, chance_sucesso, tipo_evento)
 VALUES
-    ('are001', 'arbusto', 1247, 119, 0.5, 'investigar', 'ativo'),
-    ('are001', 'arbusto', 2955, 111, 0.5, 'investigar', 'ativo'),
-    ('are002', 'arbusto', 559, 359, 0.5, 'investigar', 'ativo'),
-    ('are002', 'arbusto', 741, 361, 0.5, 'investigar', 'ativo'),
-    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar', 'ativo'),
-    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar', 'ativo'),
-    ('are003', 'arbusto', 817, 138, 0.5, 'investigar', 'ativo'),
-    ('are003', 'arbusto', 2692, 126, 0.5, 'investigar', 'ativo'),
-    ('are003', 'arbusto', 3160, 132, 0.5, 'investigar', 'ativo');
+    ('are001', 'arbusto', 1247, 119, 0.5, 'investigar'),
+    ('are001', 'arbusto', 2955, 111, 0.5, 'investigar'),
+    ('are002', 'arbusto', 559, 359, 0.5, 'investigar'),
+    ('are002', 'arbusto', 741, 361, 0.5, 'investigar'),
+    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar'),
+    ('are003', 'arbusto', 817, 138, 0.5, 'investigar'),
+    ('are003', 'arbusto', 2692, 126, 0.5, 'investigar'),
+    ('are003', 'arbusto', 3160, 132, 0.5, 'investigar');
 
-    
+
+-- Áreas para abrir o menu de loja
+INSERT INTO area_interativa
+    (identificador_area_origem, x, y, largura, altura, tipo_evento)
+VALUES
+    ('are004', 288, 151, 241, 233, 'abrir_loja'),
+    ('are013', 288, 151, 241, 233, 'abrir_loja'),
+    ('are014', 288, 151, 241, 233, 'abrir_loja'),
+    ('are019', 288, 151, 241, 233, 'cozinhar'),
+    ('are020', 288, 151, 241, 233, 'abrir_loja'),
+    ('are024', 288, 151, 241, 233, 'abrir_loja'),
+    ('are025', 288, 151, 241, 233, 'abrir_loja'),
+    ('are029', 288, 151, 241, 233, 'abrir_loja'),
+    ('are033', 288, 151, 241, 233, 'abrir_loja');
+
+
+
+INSERT INTO area_interativa
+    (identificador_area_origem, x, y, largura, altura, tipo_evento, chave_imagem)
+VALUES
+    ('are007', 293, 157, 201, 201, 'abrir_loja', 'barraca'); -- ari041
+
+
+
+INSERT INTO estado_area_interativa
+    (identificador_progresso, identificador_area_interativa)
+VALUES
+    ('pro001', 'ari001'),
+    ('pro001', 'ari002'),
+    ('pro001', 'ari003'),
+    ('pro001', 'ari004'),
+    ('pro001', 'ari005'),
+    ('pro001', 'ari006'),
+    ('pro001', 'ari007'),
+    ('pro001', 'ari008'),
+    ('pro001', 'ari009'),
+    ('pro001', 'ari010'),
+    ('pro001', 'ari011'),
+    ('pro001', 'ari012'),
+    ('pro001', 'ari013'),
+    ('pro001', 'ari014'),
+    ('pro001', 'ari015'),
+    ('pro001', 'ari016'),
+    ('pro001', 'ari017'),
+    ('pro001', 'ari018'),
+    ('pro001', 'ari019'),
+    ('pro001', 'ari020'),
+    ('pro001', 'ari021'),
+    ('pro001', 'ari022'),
+    ('pro001', 'ari023'),
+    ('pro001', 'ari024'),
+    ('pro001', 'ari025'),
+    ('pro001', 'ari026'),
+    ('pro001', 'ari027'),
+    ('pro001', 'ari028'),
+    ('pro001', 'ari029'),
+    ('pro001', 'ari030'),
+    ('pro001', 'ari031'),
+    ('pro001', 'ari032'),
+    ('pro001', 'ari034'),
+    ('pro001', 'ari035'),
+    ('pro001', 'ari036'),
+    ('pro001', 'ari037'),
+    ('pro001', 'ari038'),
+    ('pro001', 'ari039'),
+    ('pro001', 'ari040'),
+    ('pro001', 'ari041'),
+    ('pro002', 'ari001'),
+    ('pro002', 'ari002'),
+    ('pro002', 'ari003'),
+    ('pro002', 'ari004'),
+    ('pro002', 'ari005'),
+    ('pro002', 'ari006'),
+    ('pro002', 'ari007'),
+    ('pro002', 'ari008'),
+    ('pro002', 'ari009'),
+    ('pro002', 'ari010'),
+    ('pro002', 'ari011'),
+    ('pro002', 'ari012'),
+    ('pro002', 'ari013'),
+    ('pro002', 'ari014'),
+    ('pro002', 'ari015'),
+    ('pro002', 'ari016'),
+    ('pro002', 'ari017'),
+    ('pro002', 'ari018'),
+    ('pro002', 'ari019'),
+    ('pro002', 'ari020'),
+    ('pro002', 'ari021'),
+    ('pro002', 'ari022'),
+    ('pro002', 'ari023'),
+    ('pro002', 'ari024'),
+    ('pro002', 'ari025'),
+    ('pro002', 'ari026'),
+    ('pro002', 'ari027'),
+    ('pro002', 'ari028'),
+    ('pro002', 'ari029'),
+    ('pro002', 'ari030'),
+    ('pro002', 'ari031'),
+    ('pro002', 'ari032'),
+    ('pro002', 'ari034'),
+    ('pro002', 'ari035'),
+    ('pro002', 'ari036'),
+    ('pro002', 'ari037'),
+    ('pro002', 'ari038'),
+    ('pro002', 'ari039'),
+    ('pro002', 'ari040'),
+    ('pro002', 'ari041'),
+    ('pro003', 'ari001'),
+    ('pro003', 'ari002'),
+    ('pro003', 'ari003'),
+    ('pro003', 'ari004'),
+    ('pro003', 'ari005'),
+    ('pro003', 'ari006'),
+    ('pro003', 'ari007'),
+    ('pro003', 'ari008'),
+    ('pro003', 'ari009'),
+    ('pro003', 'ari010'),
+    ('pro003', 'ari011'),
+    ('pro003', 'ari012'),
+    ('pro003', 'ari013'),
+    ('pro003', 'ari014'),
+    ('pro003', 'ari015'),
+    ('pro003', 'ari016'),
+    ('pro003', 'ari017'),
+    ('pro003', 'ari018'),
+    ('pro003', 'ari019'),
+    ('pro003', 'ari020'),
+    ('pro003', 'ari021'),
+    ('pro003', 'ari022'),
+    ('pro003', 'ari023'),
+    ('pro003', 'ari024'),
+    ('pro003', 'ari025'),
+    ('pro003', 'ari026'),
+    ('pro003', 'ari027'),
+    ('pro003', 'ari028'),
+    ('pro003', 'ari029'),
+    ('pro003', 'ari030'),
+    ('pro003', 'ari031'),
+    ('pro003', 'ari032'),
+    ('pro003', 'ari034'),
+    ('pro003', 'ari035'),
+    ('pro003', 'ari036'),
+    ('pro003', 'ari037'),
+    ('pro003', 'ari038'),
+    ('pro003', 'ari039'),
+    ('pro003', 'ari040'),
+    ('pro003', 'ari041');
+
+
+
+INSERT INTO estado_area_interativa
+    (identificador_progresso, identificador_area_interativa, ativa)
+VALUES
+    ('pro001', 'ari033', FALSE),
+    ('pro002', 'ari033', FALSE),
+    ('pro003', 'ari033', FALSE);
+
+
 
 INSERT INTO caminho
     (identificador_area, tipo_terreno, x, y, largura, altura)
@@ -940,25 +1097,61 @@ VALUES
 
 -- Vendedores
 INSERT INTO habitante
-    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem, especialidade)
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, chave_imagem, especialidade)
 VALUES
-    ('are004', 'Sr. Lee', 'Sr. Lee, o mestre das marmitas rurais! Vende ovos frescos, arroz do planalto e conselhos que parecem saídos de um livro de provérbios... mal traduzido.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven001
-    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 446, 196, 500, 'lee', 'com'), -- ven002
-    ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven003
-    ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven004
-    ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 500, 'lee_busto', 'com'), -- ven005
-    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 500, 'lee_busto', 'com'); -- ven006
+    ('are004', 'Sr. Lee', 'Sr. Lee, o mestre das marmitas rurais! Vende ovos frescos, arroz do planalto e conselhos que parecem saídos de um livro de provérbios... mal traduzido.', 'ven', 288, 151, 'lee_busto', 'com'), -- ven001
+    ('are007', 'Sr. Lee', 'No meio do caos urbano, lá está ele com seu carrinho fumegante e um avental engordurado. Sr. Lee serve lanches rápidos e piadas mais rápidas ainda.', 'ven', 446, 196, 'lee', 'com'), -- ven002
+    ('are020', 'Sr. Lee', 'Enrolado num cachecol de 3 metros, Sr. Lee vende chocolate amargo e leite alpino — e jura que já enfrentou uma nevasca com uma colher de pau.', 'ven', 288, 151, 'lee_busto', 'com'), -- ven003
+    ('are024', 'Sr. Lee', 'Com um turbante improvisado e um leque de papel, Sr. Lee sobrevive ao calor vendendo sucos gelados e histórias que evaporam no ar.', 'ven', 288, 151, 'lee_busto', 'com'), -- ven004
+    ('are029', 'Sr. Lee', 'Sr. Lee aparece entre névoas e estalidos de correntes. Vende doces suspeitos e garante que o ‘açúcar estranho’ não morde... mais.', 'ven', 288, 151, 'lee_busto', 'com'), -- ven005
+    ('are033', 'Sr. Lee', 'Uniformizado (mais ou menos), Sr. Lee comanda a cantina da fortaleza. Serve café turbinado e carne de rei dos mares com disciplina... e sarcasmo.', 'ven', 288, 151, 'lee_busto', 'com'); -- ven006
 
 
 
 INSERT INTO habitante
-    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, moedas_totais, chave_imagem)
+    (identificador_area, nome, descricao, tipo_habitante, coordenada_x, coordenada_y, chave_imagem)
 VALUES
-    ('are034', 'Narrador', null, 'hbt', 0, 0, 0, null), -- hbt001
-    ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 90, 15, 'campones_a'), -- hbt002
-    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 1586, 340, 15, 'camponesa_b'), -- hbt003
-    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 2231, 350, 15, 'campones_b'), -- rct001
-    ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 15, 'camponesa_a'); -- rct002
+    ('are034', 'Narrador', null, 'hbt', 0, 0, null), -- hbt001
+    ('are001', 'Tião Palha', 'Camponês experiente e bem-humorado, Tião é o primeiro rosto amigável que você encontra. Com seu chapéu surrado e risada fácil, ele esconde sob a simplicidade um olhar atento e um coração generoso.', 'hbt', 2040, 90, 'campones_a'), -- hbt002
+    ('are002', 'Tia Cotinha da Cestinha', 'Tia Cotinha é a guardiã não-oficial da vila — e do seu cesto de legumes! Com seu lenço florido, passos curtos e uma memória afiada como faca de cozinha, ela sabe tudo o que acontece por ali. Sempre pronta com um conselho, uma receita ou uma fofoca fresquinha, Cotinha é a primeira a notar quando algo está fora do lugar. Dizem que ela já enfrentou um javali com nada além de uma colher de pau... mas ela nunca confirma nem nega.', 'hbt', 1586, 340, 'camponesa_b'), -- hbt003
+    ('are002', 'Signore Bigodini', 'Antigo pizzaiolo de uma vila costeira que trocou o forno à lenha por uma enxada, Signore Bigodini é o único fazendeiro que tempera a terra com orégano. Seu bigode é tão expressivo quanto sua voz, e ele gesticula tanto que já espantou corvos só com as mãos. Fala com paixão, exagero e um sotaque que ninguém sabe se é real ou só charme.', 'rct', 2231, 350, 'campones_b'), -- rct001
+    ('are002', 'Lina Panela', 'Jovem cozinheira da vila, entusiasmada, dramática e um pouco desastrada. Sonha em criar o “Omurice Supremo” que vai conquistar o mundo — ou pelo menos o paladar dos camponeses. Fala como se estivesse sempre em um programa de culinária.', 'rct', 300, 306, 'camponesa_a'); -- rct002
+
+
+
+INSERT INTO estado_habitante
+    (identificador_progresso, identificador_habitante, moedas_totais)
+VALUES
+    ('pro001', 'ven001', 500),
+    ('pro001', 'ven002', 500),
+    ('pro001', 'ven003', 500),
+    ('pro001', 'ven004', 500),
+    ('pro001', 'ven005', 500),
+    ('pro001', 'ven006', 500),
+    ('pro001', 'hbt002', 15),
+    ('pro001', 'hbt003', 15),
+    ('pro001', 'rct001', 15),
+    ('pro001', 'rct002', 15),
+    ('pro002', 'ven001', 500),
+    ('pro002', 'ven002', 500),
+    ('pro002', 'ven003', 500),
+    ('pro002', 'ven004', 500),
+    ('pro002', 'ven005', 500),
+    ('pro002', 'ven006', 500),
+    ('pro002', 'hbt002', 15),
+    ('pro002', 'hbt003', 15),
+    ('pro002', 'rct001', 15),
+    ('pro002', 'rct002', 15),
+    ('pro003', 'ven001', 500),
+    ('pro003', 'ven002', 500),
+    ('pro003', 'ven003', 500),
+    ('pro003', 'ven004', 500),
+    ('pro003', 'ven005', 500),
+    ('pro003', 'ven006', 500),
+    ('pro003', 'hbt002', 15),
+    ('pro003', 'hbt003', 15),
+    ('pro003', 'rct001', 15),
+    ('pro003', 'rct002', 15);
 
 
 
@@ -980,53 +1173,41 @@ VALUES
 
 
 
-INSERT INTO instancia_lacaio
-    (identificador_lacaio, identificador_area, coordenada_x, coordenada_y, moedas_totais)
+INSERT INTO estado_lacaio
+    (identificador_progresso, identificador_lacaio, identificador_area_origem, identificador_area_atual, coordenada_x, coordenada_y, moedas_totais, vida_atual)
 VALUES
-    ('lac001', 'are001', 3430, 55, 0),
-    ('lac001', 'are001', 4273, 412, 0),
-    ('lac001', 'are001', 3600, 427, 0),
-    ('lac002', 'are002', 1500, 125, 0),
-    ('lac002', 'are002', 1900, 400, 0),
-    ('lac002', 'are002', 2360, 210, 0);
-
-
-
-INSERT INTO estado_instancia_lacaio
-    (identificador_progresso, identificador_instancia_lacaio, identificador_area_atual, vida_atual)
-VALUES
-    ('pro001', 'ins001', 'are001', 5),
-    ('pro001', 'ins002', 'are001', 5),
-    ('pro001', 'ins003', 'are001', 5),
-    ('pro001', 'ins004', 'are003', 7),
-    ('pro001', 'ins005', 'are003', 7),
-    ('pro001', 'ins006', 'are003', 7),
-    ('pro002', 'ins001', 'are001', 5),
-    ('pro002', 'ins002', 'are001', 5),
-    ('pro002', 'ins003', 'are001', 5),
-    ('pro002', 'ins004', 'are003', 7),
-    ('pro002', 'ins005', 'are003', 7),
-    ('pro002', 'ins006', 'are003', 7),
-    ('pro003', 'ins001', 'are001', 5),
-    ('pro003', 'ins002', 'are001', 5),
-    ('pro003', 'ins003', 'are001', 5),
-    ('pro003', 'ins004', 'are003', 7),
-    ('pro003', 'ins005', 'are003', 7),
-    ('pro003', 'ins006', 'are003', 7);
+    ('pro001', 'lac001', 'are001', 'are001', 3430, 55, 0, 5),
+    ('pro001', 'lac001', 'are001', 'are001', 4273, 412, 0, 5),
+    ('pro001', 'lac001', 'are001', 'are001', 3600, 427, 0, 5),
+    ('pro001', 'lac002', 'are002', 'are002', 1500, 125, 0, 7),
+    ('pro001', 'lac002', 'are002', 'are002', 1900, 400, 0, 7),
+    ('pro001', 'lac002', 'are002', 'are002', 2360, 210, 0, 7),
+    ('pro002', 'lac001', 'are001', 'are001', 3430, 55, 0, 5),
+    ('pro002', 'lac001', 'are001', 'are001', 4273, 412, 0, 5),
+    ('pro002', 'lac001', 'are001', 'are001', 3600, 427, 0, 5),
+    ('pro002', 'lac002', 'are002', 'are002', 1500, 125, 0, 7),
+    ('pro002', 'lac002', 'are002', 'are002', 1900, 400, 0, 7),
+    ('pro002', 'lac002', 'are002', 'are002', 2360, 210, 0, 7),
+    ('pro003', 'lac001', 'are001', 'are001', 3430, 55, 0, 5),
+    ('pro003', 'lac001', 'are001', 'are001', 4273, 412, 0, 5),
+    ('pro003', 'lac001', 'are001', 'are001', 3600, 427, 0, 5),
+    ('pro003', 'lac002', 'are002', 'are002', 1500, 125, 0, 7),
+    ('pro003', 'lac002', 'are002', 'are002', 1900, 400, 0, 7),
+    ('pro003', 'lac002', 'are002', 'are002', 2360, 210, 0, 7);
 
 
 
 INSERT INTO chefe
     (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia, moedas_totais)
 VALUES
-    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 0, 0, 14, 10, 20, 0),
-    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 0, 0, 22, 20, 30, 100),
-    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 0, 0, 31, 30, 40, 30),
-    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 0, 0, 41, 40, 50, 50),
-    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 0, 0, 52, 50, 60, 0),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 100, 60, 60, 200),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 120, 60, 70, 200),
-    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.',0, 0, 150, 60, 80, 200);
+    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 5000, 5000, 14, 10, 20, 0),
+    ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 5000, 5000, 22, 20, 30, 100),
+    ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 5000, 5000, 31, 30, 40, 30),
+    ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 5000, 5000, 41, 40, 50, 50),
+    ('are023', 'Aranha Gigante',	'Gosta de se pendurar no teto e pregar sustos. Tem um ego do tamanho do abdômen.', 5000, 5000, 52, 50, 60, 0),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.', 5000, 5000, 100, 60, 60, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.', 5000, 5000, 120, 60, 70, 200),
+    ('are026', 'Vice-Almirante Caelum Drayke',	'Um estrategista implacável... quando sua segunda personalidade não atrapalha.', 5000, 5000, 150, 60, 80, 200);
 
 
 
@@ -1318,18 +1499,6 @@ VALUES
 -- VALUES
 --     ('are004', 'João das Ferramentas', 'Vendedor de armas e acessórios', 'ven', 400, 300, 'arm', 100);
 -- 
-INSERT INTO area_interativa
-    (identificador_area_origem, x, y, largura, altura, tipo_evento, metodo_ativacao, ativa)
-VALUES
-    ('are004', 288, 151, 241, 233, 'abrir_loja', 'ativo', TRUE),
-    ('are020', 288, 151, 241, 233, 'abrir_loja', 'ativo', TRUE);
-
-
-
-INSERT INTO area_interativa
-    (identificador_area_origem, x, y, largura, altura, tipo_evento, metodo_ativacao, ativa, chave_imagem)
-VALUES
-    ('are007', 293, 157, 201, 201, 'abrir_loja', 'ativo', TRUE, 'barraca');
 
 
 

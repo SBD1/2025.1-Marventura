@@ -213,7 +213,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 self.inimigos.add(novo_inimigo)
                 if hasattr(self, 'todos_os_sprites'):
                     self.todos_os_sprites.add(novo_inimigo)
-            vendedores = self.banco_de_dados.buscar_vendedor_por_area(id_area_atual)
+            vendedores = self.banco_de_dados.buscar_vendedor_por_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
             for vendedor_data in vendedores:
                 vendedor_sprite = pygame.sprite.Sprite()
                 # Usa a nova chave de imagem que criamos
@@ -224,7 +224,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 self.npcs.add(vendedor_sprite)
                 self.todos_os_sprites.add(vendedor_sprite)
 
-        areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
+        areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
         for area_data in areas_interativas:
             # Inicializa a área como None para garantir que ela seja criada dentro de um if
             area = None
@@ -297,7 +297,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     self.areas_interacao.add(area)
 
         # --- NOVO: Carregar NPCs ---
-        dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual)
+        dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
         for habitante in dados_habitantes:
             genero = 'F' if self.gerenciador_entidades.jogador.nome == SILVIE else 'M'
             dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante, genero)
@@ -328,7 +328,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
     def atualizar_areas_interativas_passivas(self):
         id_area_atual = self.dados_da_area.identificador_area
-        areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual)
+        areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
 
         self.areas_interacao_passivas.empty()
 
@@ -368,7 +368,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         print(f"Adicionando inimigo de missão: {nome_inimigo} em ({x}, {y})")
         # Você precisará buscar os dados base do inimigo (vida, nível etc.) do DB
         # Aqui, vamos usar valores de exemplo.
-        dados_base_inimigo = self.banco_de_dados.buscar_lacaio_com_habilidades_por_nome(nome_inimigo)[0] # Supondo que você tenha essa função
+        dados_base_inimigo = self.banco_de_dados.buscar_lacaio_por_nome_com_habilidades(nome_inimigo)[0] # Supondo que você tenha essa função
 
         habilidade = [
             Habilidade(
@@ -622,7 +622,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             return {'estado': CHAVE_TRANSICAO_MAPA}
                         
                         elif area.tipo_evento == 'abrir_loja':
-                            vendedores = self.banco_de_dados.buscar_vendedor_por_area(self.dados_da_area.identificador_area)
+                            vendedores = self.banco_de_dados.buscar_vendedor_por_area(self.dados_da_area.identificador_area, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
                             if vendedores:
                                 vendedor = vendedores[0]  # Assume o primeiro vendedor da área
                                 ponto_retorno_jogador = (

@@ -319,6 +319,17 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 
 
+CREATE TABLE estado_chefe (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_chefe ID REFERENCES chefe(identificador_chefe),
+    identificador_area_atual ID REFERENCES area(identificador_area),
+    vida_atual SMALLINT,
+    data_da_morte TIMESTAMP DEFAULT NULL,
+    PRIMARY KEY (identificador_progresso, identificador_chefe)
+);
+
+
+
 CREATE TABLE lacaio (
     identificador_lacaio ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     nome CHAR(20),
@@ -336,6 +347,27 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 
 
+CREATE TABLE estado_lacaio (
+    identificador_instancia_lacaio ID PRIMARY KEY,
+    identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
+    identificador_lacaio ID NOT NULL REFERENCES lacaio(identificador_lacaio),
+    identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
+    identificador_area_atual ID NOT NULL REFERENCES area(identificador_area),
+    tipo CHAR(3) NOT NULL DEFAULT 'ela' CHECK (tipo IN ('ela')),
+    vida_atual SMALLINT,
+    data_da_morte TIMESTAMP DEFAULT NULL,
+    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
+    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+);
+
+CREATE TRIGGER atribui_id_instancia_lacaio
+BEFORE INSERT ON estado_lacaio
+FOR EACH ROW
+EXECUTE FUNCTION public.gerar_id();
+
+
+
 CREATE TABLE habitante (
     identificador_habitante ID PRIMARY KEY REFERENCES tipo_personagem(identificador_personagem),
     identificador_area ID NOT NULL REFERENCES area(identificador_area),
@@ -345,9 +377,7 @@ CREATE TABLE habitante (
     tipo_habitante CHAR(3) NOT NULL CHECK (tipo_habitante IN ('hbt', 'ven', 'coz', 'rct')),
     coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
     coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com')),
-    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999),
-    conhecido BOOLEAN DEFAULT FALSE
+    especialidade char(3) CHECK (especialidade IN ('arm', 'ace', 'com'))
 );
 
 CREATE TRIGGER atribui_id_habitante
@@ -357,19 +387,13 @@ EXECUTE FUNCTION public.gerar_id_tabelas_personagem();
 
 
 
-CREATE TABLE instancia_lacaio (
-    identificador_instancia_lacaio ID PRIMARY KEY,
-    identificador_lacaio ID NOT NULL REFERENCES lacaio(identificador_lacaio),
-    identificador_area ID NOT NULL REFERENCES area(identificador_area),
-    coordenada_x SMALLINT CHECK (coordenada_x BETWEEN 0 AND 5000),
-    coordenada_y SMALLINT CHECK (coordenada_y BETWEEN 0 AND 5000),
-    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999)
+CREATE TABLE estado_habitante (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_habitante ID REFERENCES habitante(identificador_habitante),
+    conhecido BOOLEAN DEFAULT FALSE,
+    moedas_totais SMALLINT NOT NULL CHECK (moedas_totais BETWEEN 0 AND 999),
+    PRIMARY KEY (identificador_progresso, identificador_habitante)
 );
-
-CREATE TRIGGER atribui_id_instancia_lacaio
-BEFORE INSERT ON instancia_lacaio
-FOR EACH ROW
-EXECUTE FUNCTION public.gerar_id();
 
 
 
@@ -458,28 +482,6 @@ CREATE TABLE area_visitada (
     identificador_area ID REFERENCES area(identificador_area),
     PRIMARY KEY (identificador_progresso, identificador_area),
     visitada BOOLEAN NOT NULL DEFAULT FALSE
-);
-
-
-
-CREATE TABLE estado_instancia_lacaio (
-    identificador_progresso ID REFERENCES progresso(identificador_progresso),
-    identificador_instancia_lacaio ID REFERENCES instancia_lacaio(identificador_instancia_lacaio),
-    identificador_area_atual ID REFERENCES area(identificador_area),
-    vida_atual SMALLINT,
-    data_da_morte TIMESTAMP DEFAULT NULL,
-    PRIMARY KEY (identificador_progresso, identificador_instancia_lacaio)
-);
-
-
-
-CREATE TABLE estado_chefe (
-    identificador_progresso ID REFERENCES progresso(identificador_progresso),
-    identificador_chefe ID REFERENCES chefe(identificador_chefe),
-    identificador_area_atual ID REFERENCES area(identificador_area),
-    vida_atual SMALLINT,
-    data_da_morte TIMESTAMP DEFAULT NULL,
-    PRIMARY KEY (identificador_progresso, identificador_chefe)
 );
 
 
@@ -601,10 +603,9 @@ CREATE TABLE area_interativa (
     altura SMALLINT CHECK (altura BETWEEN 0 AND 5000),
     chance_sucesso DECIMAL DEFAULT 1.0 CHECK (chance_sucesso BETWEEN 0.0 AND 1.0),
     tipo_evento CHAR(10) NOT NULL CHECK (
-        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao', 'abrir_loja')
+        tipo_evento IN ('embarcar', 'investigar', 'mudar_area', 'missao', 'abrir_loja', 'cozinhar')
     ),
-    metodo_ativacao CHAR(7) NOT NULL CHECK (metodo_ativacao IN ('ativo', 'passivo')),
-    ativa BOOLEAN NOT NULL DEFAULT TRUE
+    metodo_ativacao CHAR(7) NOT NULL DEFAULT 'ativo' CHECK (metodo_ativacao IN ('ativo', 'passivo'))
 
     CHECK (
         -- Se for 'mudar_area', identificador_area_destino é obrigatório
@@ -619,6 +620,15 @@ CREATE TRIGGER atribui_id_area_interativa
 BEFORE INSERT ON area_interativa
 FOR EACH ROW
 EXECUTE FUNCTION public.gerar_id_tabelas_elemento_espacial();
+
+
+
+CREATE TABLE estado_area_interativa (
+    identificador_progresso ID REFERENCES progresso(identificador_progresso),
+    identificador_area_interativa ID REFERENCES area_interativa(identificador_area_interativa),
+    ativa BOOLEAN NOT NULL DEFAULT TRUE,
+    PRIMARY KEY (identificador_progresso, identificador_area_interativa)
+);
 
 
 

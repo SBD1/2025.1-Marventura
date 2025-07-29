@@ -177,7 +177,7 @@ class TelaLoja(TelaModelo):
             resultado = self.db_manager.realizar_compra(
                 self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
-                self.quantidade_selecionada, preco
+                self.quantidade_selecionada, preco, self.entidades.progresso_do_jogo.identificador_progresso
             )
             if resultado.get('sucesso'):
                 self._mostrar_feedback("Compra realizada com sucesso!", True)
@@ -198,7 +198,7 @@ class TelaLoja(TelaModelo):
             resultado = self.db_manager.realizar_venda(
                 self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
-                self.quantidade_selecionada, preco
+                self.quantidade_selecionada, preco, self.entidades.progresso_do_jogo.identificador_progresso
             )
             print(f"Resultado da venda: {resultado}")
             if resultado.get('sucesso'):
