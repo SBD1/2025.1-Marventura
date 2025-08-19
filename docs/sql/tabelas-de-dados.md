@@ -81,7 +81,7 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 | Nome do Item | Descrição | Efeito | Como é obtido | É usado em receita? | Raridade | Preço de venda |
 | ------------ | --------- | :----: | ------------- | :-----------------: | :------: | :------------: |
 | **Fruta Cítrica do Oeste** | Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida. | Ataque +2 / Eletrificado | Mapa | Sim | ★ | $4 |
-| **Côco do Oásis** | Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros. | Cura +3 / Energia +4 | Mapa | Sim | ★ | $7 |
+| **Coco do Oásis** | Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros. | Cura +3 / Energia +4 | Mapa | Sim | ★ | $7 |
 | **Areia Mineral** | Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante. | Energia +5 / Queimadura | Mapa | Sim | ★★ | $10 |
 
 ## Itens do Deserto – Comprados na Loja
@@ -164,31 +164,35 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 | **Carne Grelhada** | Crocante por fora, suculenta por dentro. Perfeita para qualquer fogueira. | Cura +4 / Ataque +6 | Carne do Deserto | – | ★★ | $18 |
 | **Pérola Caramelizada** | Crocante, mágica e doce. Dizem que revive até o humor de um pirata carrancudo. | Sorte +3 (1 luta) / Cura +4 | Pérola Cantante | Açúcar Estranho | ★★ | $13 |
 | **Pérola da Lua de Inverno** | Um doce etéreo que brilha como a luz da lua sobre a neve. Quem o come sente o universo piscando para si — e os dados da vida rolando a seu favor. | Sorte +7 (1 luta) / Congelado | Pérola Caramelizada | Neve Mágica | ★★★ | $24 |
-| **Pérola do Sol Escaldante** | Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável. | Sorte +5 (1 luta) / Queimadura | Pérola Caramelizada | Neve Mágica | ★★★ | $24 |
+| **Pérola do Sol Escaldante** | Forjada no calor do deserto, essa pérola brilha como o sol ao meio-dia, aquecendo o corpo e dando força para suportar o calor implacável. | Sorte +5 (1 luta) / Queimadura | Pérola Caramelizada | Areia Mineral | ★★★ | $24 |
 | **Gelado de Algas** | Uma sobremesa geladinha com gosto do mar e um toque de frescor sobrenatural. | Energia +8 | Alga Fresca | Neve Mágica | ★ | $15 |
 | **Omurice de Arroz** | Receita tradicional dos viajantes do campo, famosa por causar nostalgia e fome ao mesmo tempo. | Cura +6 / Energia +2 | Arroz do Planalto | Ovo dos Campos | ★★ | $15 |
-| **Bolo do Campo** | Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura! | Cura +4 / Sorte +1 (1 luta) | Farinha | Ovo dos Campos | ★★ | $14 |
+| **Bolo do Campo** | Um bolo simples, mas saboroso, feito com ingredientes fresquinhos do campo. Perfeito para uma pausa na aventura! | Cura +4 / Sorte +1 (1 luta) | Farinha Misteriosa | Ovo dos Campos | ★★ | $14 |
+| **Bolo da Chaminé Encantada** | Dizem que foi feito com açúcar mágico... ou fuligem encantada. Vai saber. Pelo menos é fofo e aquece o coração. | Cura +9 / Cegueira | Bolo do Campo | ButterCream de Fuligem | ★★★ | $18 |
 | **Bombom Nebuloso** | Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra). | Ataque +4 / Cegueira | Sombra Engarrafada | Essência de Névoa Doce | ★★ | $12 |
 | **Bombom Nebuloso** | Um docinho que parece derreter em névoa assim que toca a língua. Feito com carinho (e um pouco de sombra). | Ataque +4 / Cegueira | Sombra Engarrafada | Chocolate Amargo | ★★ | $12 |
 | **Arroz dos Sete Mares** | Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte. | Cura +2 / Ataque +4 | Arroz do Planalto | Fruta do Mar Azul | ★ | $9 |
 | **Arroz dos Sete Mares** | Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte. | Cura +2 / Ataque +4 | Arroz do Planalto | Fruta do Mar Vermelha | ★ | $9 |
 | **Arroz dos Sete Mares** | Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte. | Cura +2 / Ataque +4 | Arroz do Planalto | Fruta Cítrica do Oeste | ★ | $9 |
 | **Arroz dos Sete Mares** | Uma tigela robusta de arroz misturado com sabores do mar. Os marinheiros juram que dá sorte. | Cura +2 / Ataque +4 | Arroz do Planalto | Fruta Fluorescente | ★ | $9 |
-| **Doce da Ilha** | Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto. | Energia +4 / Sorte +1 (1 luta) | Côco | Fruta Cítrica do Oeste | ★★ | $12 |
+| **Doce da Ilha** | Um doce feito com coco e calda cítrica, lembra o pôr do sol nas dunas do deserto. | Energia +4 / Sorte +1 (1 luta) | Coco | Fruta Cítrica do Oeste | ★★ | $12 |
 | **Omelete dos 4 Ventos** | Leve e fofa, com o sabor do campo e a brisa das planícies. | Energia +2 / Ataque +3 | Ovo de Campo | Folha de Hortelã | ★★ | $13 |
 | **Omelete dos 4 Ventos** | Leve e fofa, com o sabor do campo e a brisa das planícies. | Energia +2 / Ataque +3 | Ovo de Campo | Ervas Aromáticas | ★★ | $13 |
 | **Frango Assado Estaladiço** | Crocante por fora, macio por dentro. Tão bom que até o corvo queria roubar. | Ataque +5 / Cura +3 | Carne de Ave Brava | Ervas Aromáticas | ★ | $10 |
 | **Sopa da Guarda Noturna** | Revigorante e quentinha, ideal para noites frias e perseguições por becos. | Energia +1 / Ataque +3 | Repolho | Alga Fresca | ★ | $6 |
 | **Sopa da Guarda Noturna** | Revigorante e quentinha, ideal para noites frias e perseguições por becos. | Energia +1 / Ataque +3 | Repolho | Carne de Ave Brava | ★ | $6 |
-| **Doce de Duna Dourada** | Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos. | Cura +1 / Energia +5 | Areia Mineral | Côco | ★★ | $16 |
+| **Doce de Duna Dourada** | Doce exótico feito com frutas do deserto. Cuidado: pode atrair camelos. | Cura +1 / Energia +5 | Areia Mineral | Coco | ★★ | $16 |
 | **Bife do Abismo** | Um corte suculento direto das profundezas do mar. Tão macio que derrete na boca, mas tão forte que faz os músculos tremerem. | Ataque +10 / Queimadura | Carne de Rei dos Mares | Lamento Gelado | ★★★ | $35 |
-| **Sashimi do Fim do Mundo** | Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor. | Cura +20 / Eletrificado / Cegueira | Carne de Rei dos Mare | Sombra Engarrafada | ★★★ | $35 |
-| **Torta do Marujo Feliz** | Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação. | Cura +4 / Energia +2 | Abóbora Redonduda | Farinha do Campo | ★ | $10 |
+| **Sashimi do Fim do Mundo** | Cru, fino e perfeitamente cortado. Dizem que só quem já viu o mar no escuro da lua nova entende seu verdadeiro sabor. | Cura +20 / Eletrificado / Cegueira | Carne de Rei dos Mares | Sombra Engarrafada | ★★★ | $35 |
+| **Torta do Marujo Feliz** | Um clássico entre os navegadores nostálgicos. Um pedaço e você esquece do enjoo... e do resto da tripulação. | Cura +4 / Energia +2 | Abóbora Redonduda | Farinha Misteriosa | ★ | $10 |
+| **Rosquinha do Quartel Proibida** | Criada por um marinheiro rebelde com talento para confeitaria e zero noção de higiene. Um sucesso entre os subalternos. | Energia +4 / Ataque +2 | Café Turbinado | ButterCream de Fuligem | ★★ | $16 |
 | **Doce Assombrado** | Não se sabe se o sabor é bom ou se é só a maldição agindo. Textura perfeita... demais até. | Ataque +3 / Eletrificado | Abóbora Redonduda | Essência de Névoa Doce | ★★ | $12 |
+| **Doce de Fuligem Cítrica** | Uma sobremesa brilhante com um leve toque de fumaça — parece suspeita, mas é incrivelmente viciante. | Energia +3 / Eletrificado | Fruta Cítrica do Oeste | ButterCream de Fuligem | ★ | $11 |
+| **Torta de Telhado** | Doce crocante e levemente defumado. Dizem que foi assada nos telhados quentes da cidade durante uma greve dos padeiros. | Cura +5 / Ataque +2 | ButterCream de Fuligem | Farinha Misteriosa | ★★ | $15 |
 | **Curry do Capitão Covarde** | O cheiro é intenso, o sabor é duvidoso, mas nenhum pirata consegue parar de comer. | Energia +4 / Cegueira | Abóbora Redonduda | Carne do Deserto | ★★ | $13 |
 | **Elixir Sombrio** | Bebida proibida sussurrada em tavernas assombradas. Quem é que vai querer beber isso...? | Cura +5 / Envenenado | Asa de Morcego Noturno | Sombra Engarrafada | ★★ | $18 |
 | **Poção do Dente Torto** | Um gole é suficiente para se sentir... diferente. Tem certeza que isso não é veneno? | Energia +5 / Tontura | Presa Venenosa | Suco Refrescante Solar | ★★ | $18 |
-| **Cookie de Chocolate** | Crocante por fora, macia por dentro. Derrete na boca como a neve da infância. | Cura +3 / Sorte +1 (1 luta) | Noz Crocante | Chocolate dos Campos Gelados | ★ | $14 |
+| **Cookie de Chocolate** | Crocante por fora, macia por dentro. Derrete na boca como a neve da infância. | Cura +3 / Sorte +1 (1 luta) | Noz Crocante | Chocolate Amargo | ★ | $14 |
 | **Leite Condensado Alpino** | Um creme docinho e suave. | Cura +1 / Energia +3 | Leite de Cabra Alpina | Açúcar Estranho | ★ | $11 |
 | **Chocolate Quente** | Um gole e você sente como se tivesse abraçado um urso de cachecol... que acabou de sair do banho e decidiu virar seu terapeuta de plantão. | Cura +5 / Sorte +1 (1 luta) | Chocolate Amargo | Leite de Cabra Alpina | ★★ | $15 |
 | **Doce do Silêncio Eterno** | Um doce que ecoa sussurros antigos. Quem come diz sentir a presença dos que partiram. | Ataque +3 / Cegueira | Lamento Gelado | Neve Mágica | ★★ | $17 |
@@ -302,4 +306,4 @@ Os itens que são encontrados no mapa não são encontrados nas lojas e, portant
 | `1.0` | Criação do documento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 29/05/2025 | - | - |
 | `1.1` | Adicionando as tabelas de receita, espadas, estilingues/arcos e acessórios e atualizando as tabelas antigas com novas informações | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 04/06/2025 | - | - |
 | `1.2` | Adicionando preço de venda para as receitas, raridade para os itens e uma nova tabela para itens de evento | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 12/06/2025 | [Diassis](https://github.com/Diaxiz)  | 13/06/2025 |
-| `1.3` | Alterando alguns itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 22/06/2025 |  |  |
+| `1.3` | Alterando alguns itens | [Matheus Henrick](https://github.com/MatheusHenrickSantos) | 22/06/2025 | [Israel Thalles](https://github.com/IsraelThalles) | 19/08/2025 |
