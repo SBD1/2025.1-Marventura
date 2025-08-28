@@ -4,6 +4,7 @@ import pygame
 from utilidades.constantes import *
 from entidades.item_inventario import ItemInventario
 from entidades import Inimigo
+from entidades import Chefe
 from entidades import Habitante
 from entidades import Obstaculo
 from entidades import Caminho
@@ -13,15 +14,16 @@ from utilidades import Camera
 from componentes import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 from telas.tela_inventario import TelaInventario
+from telas.tela_cozinha import TelaCozinha
 from gerenciadores import GerenciadorDeEntidades
 from gerenciadores import GerenciadorNotificacoesItem
-import gerenciadores.gerenciador_missoes # Importa o módulo, não a classe diretamente
 from componentes import BarraDeEstado
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from gerenciadores import DBManager
     from gerenciadores import GerenciadorDeRecursos
     from gerenciadores import GerenciadorDeTelas
+    from gerenciadores import GerenciadorDeMissoes
 
 class TelaJogo(TelaModelo): # Herda de TelaModelo
     """
@@ -37,7 +39,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         :param coordenada_y: Posição Y inicial no mundo.
         :param olhando_para_direita: Se o jogador está olhando para direita ou não.
         """
-    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'gerenciadores.DBManager'):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager', gerenciador_missoes: 'GerenciadorDeMissoes'):
         super().__init__(gerenciador_telas, gerenciador_recursos) # Chama o construtor da TelaModelo
         self.gerenciador_entidades = GerenciadorDeEntidades()
         self.gerenciador_recursos = gerenciador_recursos
@@ -52,6 +54,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.menu_viagem_ativo = False
         self.menu_inventario = None
         self.menu_inventario_ativo = False
+        self.menu_cozinha = None
+        self.menu_cozinha_ativo = False
+        self.menu_pausa = None
+        self.menu_pausa_ativo = False
 
         self.barra_de_estado = BarraDeEstado(gerenciador_recursos, self.gerenciador_entidades.jogador)
         self.tempo_ocioso = 0  # Tempo que o jogador está ocioso
@@ -65,6 +71,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self._marcar_ilha_visitada_e_exibir_nome()
 
         self.mapa_fundo_imagem = self.gerenciador_recursos.obter_imagem(self.dados_da_area.chave_imagem_fundo)
+
+        if not self.mapa_fundo_imagem:
+            print(f"ERRO: Imagem de fundo '{self.dados_da_area.chave_imagem_fundo}' não encontrada.")
+            self.mapa_fundo_imagem = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
+            self.mapa_fundo_imagem.fill(CINZA)  # Cor de fallback
 
         self.camada_superior_imagem = None
         if self.dados_da_area.chave_imagem_frente:
@@ -81,24 +92,22 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         
         self.jogador = self.gerenciador_entidades.jogador
 
+        self.chefe = None  # Inicializa como None, será definido se houver um chefe
 
-        # ############### INÍCIO DA CORREÇÃO 1 ###############
         # Inicialize TODOS os seus grupos de sprites aqui
         self.todos_os_sprites = pygame.sprite.Group() # <-- LINHA ADICIONADA
-        self.obstaculos_caminho = pygame.sprite.Group()
-        self.obstaculos_visao = pygame.sprite.Group()
-        self.inimigos = pygame.sprite.Group()
-        self.areas_interacao_passivas = pygame.sprite.Group()
-        self.areas_interacao = pygame.sprite.Group()
-        self.areas_interacao_passivas = pygame.sprite.Group()
-        self.npcs = pygame.sprite.Group()
+        self.obstaculos_caminho: pygame.sprite.Group['Obstaculo'] = pygame.sprite.Group()
+        self.obstaculos_visao: pygame.sprite.Group['Obstaculo'] = pygame.sprite.Group()
+        self.inimigos: pygame.sprite.Group['Inimigo'] = pygame.sprite.Group()
+        self.areas_interacao: pygame.sprite.Group['AreaInteracao'] = pygame.sprite.Group()
+        self.areas_interacao_missao: pygame.sprite.Group['AreaInteracao'] = pygame.sprite.Group()
+        self.npcs: pygame.sprite.Group['Habitante'] = pygame.sprite.Group()
         
         # Adicione o jogador ao grupo de todos os sprites para facilitar a renderização
         self.todos_os_sprites.add(self.jogador)
-        # ############### FIM DA CORREÇÃO 1 ###############
         
         self.areas_interacao_colididas = []
-        self.caminhos = []
+        self.caminhos: list['Caminho'] = []
 
         self._carregar_entidades_dos_dados_do_mapa()
 
@@ -119,28 +128,13 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.imagem_cena_estatica = None # Imagem da cena (tela cheia)
 
         # --- NOVO: Gerenciador de Missões ---
-        # Passe referências importantes para o GerenciadorDeMissoes
-        self.gerenciador_missoes = gerenciadores.gerenciador_missoes.GerenciadorDeMissoes(
-            self.banco_de_dados,
-            self.gerenciador_recursos,
-            self.camera, # Passa a instância da câmera
-            self.jogador,
-            self.caixa_dialogo, # Passa a instância da caixa de diálogo
-            self.npcs, # Passa o grupo de NPCs para interação
-            self.gerenciador_telas, # Para transições de tela
-            self
-        )
+        self.gerenciador_missoes = gerenciador_missoes
+        self.gerenciador_missoes.vincular_nova_tela_jogo(self)  # Vincula a tela de jogo ao gerenciador de missões
         self.gerenciador_entidades.jogador.gerenciador_missoes = self.gerenciador_missoes
         fonte_notificacoes = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_TEXTO)
         self.notificador = GerenciadorNotificacoesItem(fonte_notificacoes, posicao_base=(LARGURA_TELA - 20, 20))
 
-        if self.gerenciador_entidades.iniciar_missao and self.gerenciador_entidades.iniciar_missao.identificador_area == self.dados_da_area.identificador_area:
-            self.gerenciador_missoes.iniciar_missao(self.gerenciador_entidades.iniciar_missao.identificador_missao)
-        # Exemplo de como iniciar um diálogo ao carregar a tela (opcional)
-        # self.iniciar_dialogo(["Não com certeza. Mas ouvi histórias, quando era menor… Sobre uma região ao leste, onde a neblina nunca se dissipa. Chamam de Nublária, ou a névoa eterna. Antigamente era rota de fuga para desertores da Marinha, foragidos, estudiosos… Mas os navios pararam de voltar. Dizem que ela esconde uma ilha. Ou que engole quem ousa procurá-la. É um cemitério de navios.", "Espero que se divirta!"])
-        
-        # Exemplo: Tenta carregar uma missão ativa ao iniciar a tela de jogo
-        # self.gerenciador_missoes.carregar_missao_ativa_se_existir(self.dados_do_progresso.identificador_progresso)
+        self.gerenciador_missoes.notificar_mudanca_de_area(self.dados_da_area.identificador_area)
 
 
 
@@ -173,10 +167,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             
             # Carrega os inimigos, agora passando o caminho da arena
             for dado_do_inimigo in inimigos:
-                print(f"[DEBUG] Carregando inimigo: {dado_do_inimigo.nome_lacaio} ({dado_do_inimigo.identificador_instancia_lacaio})")
+                #print(f"[DEBUG] Carregando inimigo: {dado_do_inimigo.nome_lacaio} ({dado_do_inimigo.identificador_instancia_lacaio})")
                 habilidades = self.banco_de_dados.buscar_habilidades_por_personagem(dado_do_inimigo.identificador_lacaio)
                 itens = self.banco_de_dados.buscar_inventario(dado_do_inimigo.identificador_instancia_lacaio, 'moc', self.dados_do_progresso.identificador_progresso)
-                print(f"[DEBUG] Habilidades encontradas para o inimigo {dado_do_inimigo.nome_lacaio}: {habilidades}")
+                #print(f"[DEBUG] Habilidades encontradas para o inimigo {dado_do_inimigo.nome_lacaio}: {habilidades}")
                 habilidades_obj = [
                     Habilidade(
                         id=h.identificador_habilidade,
@@ -198,6 +192,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 novo_inimigo = Inimigo(
                     self.gerenciador_recursos,
                     dado_do_inimigo.x, dado_do_inimigo.y,
+                    self.dados_da_area.identificador_area,
                     dado_do_inimigo.identificador_lacaio,
                     dado_do_inimigo.identificador_instancia_lacaio,
                     dado_do_inimigo.nome_lacaio,
@@ -213,16 +208,44 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 self.inimigos.add(novo_inimigo)
                 if hasattr(self, 'todos_os_sprites'):
                     self.todos_os_sprites.add(novo_inimigo)
-            vendedores = self.banco_de_dados.buscar_vendedor_por_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
-            for vendedor_data in vendedores:
-                vendedor_sprite = pygame.sprite.Sprite()
-                # Usa a nova chave de imagem que criamos
-                vendedor_sprite.image = self.gerenciador_recursos.obter_imagem('VENDEDOR_JOAO')
-                vendedor_sprite.rect = vendedor_sprite.image.get_rect(
-                    center=(vendedor_data.coordenada_x, vendedor_data.coordenada_y)
+
+        chefe = self.banco_de_dados.buscar_chefe_por_area(id_area_atual, self.dados_do_progresso.identificador_progresso)
+
+        if chefe:
+            habilidades = self.banco_de_dados.buscar_habilidades_por_personagem(chefe.identificador_chefe)
+            itens = self.banco_de_dados.buscar_inventario(chefe.identificador_chefe, 'moc', self.dados_do_progresso.identificador_progresso)
+            habilidades_obj = [
+                Habilidade(
+                    id=h.identificador_habilidade,
+                    nome=h.nome,
+                    descricao=h.descricao,
+                    tipo_de_ataque=h.tipo_de_ataque,
+                    tipo_de_alvo=h.tipo_de_alvo,
+                    dano=h.dano,
+                    custo=h.custo,
+                    efeito=(
+                        {"nome": h.efeito_nome, "valor": h.efeito_valor}
+                        if h.efeito_nome else None
+                    )
                 )
-                self.npcs.add(vendedor_sprite)
-                self.todos_os_sprites.add(vendedor_sprite)
+                for h in habilidades
+            ]
+            novo_chefe = Chefe(
+                self.gerenciador_recursos,
+                chefe.identificador_chefe,
+                self.dados_da_area.identificador_area,
+                chefe.coordenada_x, chefe.coordenada_y,
+                chefe.nome,
+                chefe.descricao,
+                chefe.vida_total,
+                chefe.vida_atual,
+                chefe.nivel,
+                chefe.experiencia,
+                habilidades_obj,
+                itens,
+            )
+            self.chefe = novo_chefe
+            self.todos_os_sprites.add(novo_chefe)
 
         areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
         for area_data in areas_interativas:
@@ -270,10 +293,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     x=area_data.x, y=area_data.y,
                     largura=area_data.largura, altura=area_data.altura,
                     tipo_evento=area_data.tipo_evento,
-                    chance_sucesso=area_data.chance_sucesso,
                     metodo_ativacao=area_data.metodo_ativacao,
                     ativa=area_data.ativa,
                     identificador_missao=area_data.identificador_missao,
+                    chave_imagem=area_data.chave_imagem,
+                    gererenciador_recursos=self.gerenciador_recursos if area_data.chave_imagem else None
                 )
 
             elif area_data.tipo_evento == 'abrir_loja':
@@ -291,8 +315,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             
             # Adiciona a área criada ao grupo de sprites
             if area:
-                if area_data.metodo_ativacao == 'passivo':
-                    self.areas_interacao_passivas.add(area)
+                if area_data.tipo_evento == 'missao':
+                    self.areas_interacao_missao.add(area)
                 else:
                     self.areas_interacao.add(area)
 
@@ -301,6 +325,12 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         for habitante in dados_habitantes:
             genero = 'F' if self.gerenciador_entidades.jogador.nome == SILVIE else 'M'
             dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(habitante.identificador_habitante, genero)
+
+            # Filtra a saudação
+            saudacao = list(filter(lambda d: d.sequencia_local < 10, dialogos))
+
+            # Agora sobrescreve dialogos com apenas as missões
+            dialogos = list(filter(lambda d: d.sequencia_local >= 10, dialogos))
 
             missoes = []
 
@@ -319,34 +349,38 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 habitante.moedas_totais,
                 habitante.especialidade,
                 habitante.chave_imagem,
+                saudacao,
                 dialogos,
-                missoes
+                missoes,
+                habitante.conhecido
             )
             self.npcs.add(novo_npc)
+            self.todos_os_sprites.add(novo_npc)  # Adiciona o NPC ao grupo de todos os sprites
 
 
 
-    def atualizar_areas_interativas_passivas(self):
+    def atualizar_areas_interativas_de_missao(self):
         id_area_atual = self.dados_da_area.identificador_area
         areas_interativas = self.banco_de_dados.buscar_areas_interativas_da_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
 
-        self.areas_interacao_passivas.empty()
+        self.areas_interacao_missao.empty()
 
         for area_data in areas_interativas:
-            print("Atualizar area interativa passiva:", area_data, '\n')
-            area = AreaInteracao(identificador=area_data.identificador,
-                                x=area_data.x, y=area_data.y,
-                                largura=area_data.largura, altura=area_data.altura,
-                                tipo_evento=area_data.tipo_evento,
-                                chance_sucesso=area_data.chance_sucesso,
-                                metodo_ativacao=area_data.metodo_ativacao,
-                                ativa=area_data.ativa,
-                                area_destino=area_data.area_destino,
-                                chave_imagem=area_data.chave_imagem,
-                                identificador_missao=area_data.identificador_missao,
-                                gererenciador_recursos=self.gerenciador_recursos if area_data.chave_imagem else None)
-            
-            self.areas_interacao_passivas.add(area)
+            if area_data.tipo_evento == 'missao':
+                print("Atualizar area interativa de missão:", area_data, '\n')
+                area = AreaInteracao(
+                    identificador=area_data.identificador,
+                    x=area_data.x, y=area_data.y,
+                    largura=area_data.largura, altura=area_data.altura,
+                    tipo_evento=area_data.tipo_evento,
+                    metodo_ativacao=area_data.metodo_ativacao,
+                    ativa=area_data.ativa,
+                    chave_imagem=area_data.chave_imagem,
+                    identificador_missao=area_data.identificador_missao,
+                    gererenciador_recursos=self.gerenciador_recursos if area_data.chave_imagem else None
+                )
+                
+                self.areas_interacao_missao.add(area)
 
 
 
@@ -387,11 +421,12 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         novo_inimigo = Inimigo(
             gerenciador_recursos=self.gerenciador_recursos,
-            x_inicial=x,
-            y_inicial=y,
+            coordenada_x=x,
+            coordenada_y=y,
+            area=self.dados_da_area.identificador_area,
             id_inimigo=dados_base_inimigo.identificador_lacaio,
             identificador_instancia_lacaio=id_instancia,
-            tipo_inimigo=dados_base_inimigo.nome_lacaio, # ou a chave_inimigo
+            nome=dados_base_inimigo.nome_lacaio, # ou a chave_inimigo
             descricao=dados_base_inimigo.descricao,
             vida_atual=dados_base_inimigo.vida,
             vida_total=dados_base_inimigo.vida,
@@ -404,6 +439,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Adiciona um identificador único para podermos encontrá-lo depois
 
         self.inimigos.add(novo_inimigo)
+        self.todos_os_sprites.add(novo_inimigo)  # Adiciona o novo inimigo ao grupo de todos os sprites
 
 
 
@@ -411,13 +447,16 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         """
         Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
         """
-        # db.marcar_ilha_como_visitada(self.dados_da_ilha.identificador_ilha)
+        if not self.dados_da_ilha.visitada:
+            self.banco_de_dados.marcar_ilha_como_visitada(self.dados_da_ilha.identificador_ilha, self.dados_do_progresso.identificador_progresso)
+            self.dados_da_ilha = self.banco_de_dados.buscar_info_ilha(self.dados_da_ilha.identificador_ilha, self.dados_do_progresso.identificador_progresso)
 
         if self.dados_da_ilha.nome or self.dados_da_area.nome: # Só cria a exibição se houver algo para mostrar
             self.exibicao_nome_ilha = _ExibicaoNomeIlha(self.dados_da_ilha.nome, self.dados_da_area.nome, self.gerenciador_recursos)
         else:
             self.exibicao_nome_ilha = None
             print(f"AVISO: Nenhuma informação de ilha ou área para exibir para o mapa ID: {self.dados_da_area.identificador_area}")
+
 
 
     def _detectar_inimigos_acertados(self):
@@ -433,6 +472,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 atingidos.append(inimigo)
 
         return atingidos
+
+
 
     def _ataque_no_mapa(self):
         print("[DEBUG] Jogador atacou no mapa!")
@@ -524,10 +565,34 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     elif evento.button == 5: # Scroll para baixo
                         self.caixa_dialogo.rolar(1)
             return None # Consome o evento, o jogador não deve se mover enquanto o diálogo está ativo
+        
+        if self.menu_pausa_ativo and self.menu_pausa:
+            resultado = self.menu_pausa.processar_eventos(evento)
+            if resultado:
+                if resultado == "continuar":
+                    self.menu_pausa_ativo = False
+                    self.menu_pausa = None
+                elif resultado == "sair":
+                    # Supondo que CHAVE_TRANSICAO_MENU_PRINCIPAL te leve para o menu principal
+                    return {'estado': CHAVE_TRANSICAO_MENU_PRINCIPAL}
+                elif resultado == "enciclopédia":
+                    # Crie esta chave em suas constantes se ainda não existir
+                    # return {'estado': CHAVE_TRANSICAO_ENCICLOPEDIA}
+                    print("INFO: Transição para Enciclopédia ainda não implementada.")
+                    # Por enquanto, apenas fechamos o menu
+                    self.menu_pausa_ativo = False
+                    self.menu_pausa = None
+
+            return None # Consome o evento para não fazer mais nada
+
 
         if self.menu_inventario_ativo and self.menu_inventario:
             self.menu_inventario.processar_eventos(evento)
-            pass
+            return None
+
+        if self.menu_cozinha_ativo and self.menu_cozinha:
+            self.menu_cozinha.processar_eventos(evento)
+            return None # Consome o evento, não processa o input do jogador normal
 
         # --- Lógica do Menu de Viagem (se estiver ativo) ---
         if self.menu_viagem_ativo and self.menu_viagem:
@@ -562,7 +627,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             )
 
                             self.banco_de_dados.atualizar_posicao_jogador(
-                                self.gerenciador_entidades.jogador.identificador_jogador,
+                                self.gerenciador_entidades.jogador.identificador,
                                 id_area,
                                 informacoes_de_destino.ponto_geracao_x,
                                 informacoes_de_destino.ponto_geracao_y,
@@ -584,7 +649,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # SOMENTE reage a um evento KEYDOWN, não ao estado contínuo da tecla.
         if evento.type == pygame.KEYDOWN:
             if evento.key == pygame.K_e:
-                areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
+                areas_colidindo_agora: list[AreaInteracao] = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
                 
                 if not areas_colidindo_agora:
                     print("DEBUG: Tecla 'E' pressionada, mas o jogador NÃO está colidindo com uma área de interação.")
@@ -608,7 +673,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             )
 
                             self.banco_de_dados.atualizar_posicao_jogador(
-                                self.gerenciador_entidades.jogador.identificador_jogador,
+                                self.gerenciador_entidades.jogador.identificador,
                                 area.area_destino,
                                 informacoes_de_destino.ponto_geracao_x,
                                 informacoes_de_destino.ponto_geracao_y,
@@ -625,11 +690,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                             vendedores = self.banco_de_dados.buscar_vendedor_por_area(self.dados_da_area.identificador_area, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
                             if vendedores:
                                 vendedor = vendedores[0]  # Assume o primeiro vendedor da área
-                                ponto_retorno_jogador = (
-                                    self.jogador.mundo_x,
-                                    self.jogador.mundo_y,
-                                    self.jogador.orientacao
-                                )
                                 return {
                                     'estado': CHAVE_TRANSICAO_LOJA,
                                     'vendedor_id': vendedor.identificador_habitante,
@@ -646,21 +706,52 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 return None # Consome o evento
                         
                         
-                        elif area.tipo_evento == 'investigar':
+                        elif area.tipo_evento == 'investigar' and not area.animando:
                             area.iniciar_animacao_chacoalhar()
-                            mensagem = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador_jogador, area.identificador, self.notificador)
-                            if mensagem.startswith("Item"):
-                                self.gerenciador_entidades.jogador.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.gerenciador_entidades.jogador.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
-                            print(mensagem)
+                            resultado = self.banco_de_dados.tentar_coletar_item_no_mapa(self.jogador.identificador, area.identificador, self.notificador)
+                            if resultado['sucesso']:
+                                self.gerenciador_entidades.jogador.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.gerenciador_entidades.jogador.identificador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+
+                                self.gerenciador_entidades.jogador.experiencia_atual += 3
+                                self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
+                                    self.gerenciador_entidades.jogador.identificador,
+                                    self.gerenciador_entidades.jogador.energia_maxima,
+                                    self.gerenciador_entidades.jogador.vida_maxima,
+                                    self.gerenciador_entidades.jogador.nivel,
+                                    self.gerenciador_entidades.jogador.sorte,
+                                    self.gerenciador_entidades.jogador.energia_atual,
+                                    self.gerenciador_entidades.jogador.vida_atual,
+                                    self.gerenciador_entidades.jogador.experiencia_atual,
+                                    self.gerenciador_entidades.jogador.moedas
+                                )
+                            print(resultado['mensagem'])
+
 
                         # Adicione outros tipos de interação aqui (ex: diálogo com NPC)
                         # elif area.tipo_evento == 'dialogo_npc':
                         #     return {'estado': CHAVE_TRANSICAO_DIALOGO, 'npc_id': area.dados_evento['npc_id']}
 
+                 # --- Lógica de Interação com áreas de missão ---
+                areas_de_missao_colidindo_agora: list[AreaInteracao] = pygame.sprite.spritecollide(self.jogador, self.areas_interacao_missao, False)
+
+                for area in areas_de_missao_colidindo_agora:
+                    if area.tipo_evento == 'missao' and area.metodo_ativacao == 'ativo':
+                        print('Notificando interação com área de missão...')
+                        self.gerenciador_missoes.notificar_interacao_area(area.identificador)
+
                  # --- Lógica de Interação com NPCs ---
-                npcs_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.npcs, False)
+                npcs_colidindo_agora: list[Habitante] = pygame.sprite.spritecollide(self.jogador, self.npcs, False)
                 for npc in npcs_colidindo_agora:
-                    # Prioridade: Missões > Diálogos Sem Missão
+                    # Prioridade: Saudação > Missões > Diálogos Sem Missão
+                    # 1. Primeiro tenta iniciar um diálogo de saudação
+                    if not npc.conhecido:
+                        self.banco_de_dados.marcar_habitante_como_conhecido(npc.identificador, self.dados_do_progresso.identificador_progresso)
+                        npc.conhecido = True
+                        
+                        if not self.dialogo_ativo and npc.saudacao:
+                            self.iniciar_dialogo(npc.saudacao)
+                            return None # Consome o evento, o diálogo foi iniciado
+
                     # 1. Tenta iniciar uma missão
                     if npc.missoes_pendentes:
                         missao_iniciada = self.gerenciador_missoes.iniciar_missao(npc.missoes_pendentes[0].identificador_missao)
@@ -689,10 +780,34 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     self.gerenciador_entidades)
                 self.menu_inventario_ativo = True
 
+            # --- Abrir Cozinha ---
+            elif evento.key == pygame.K_c:
+                self.menu_cozinha = TelaCozinha(
+                    self.gerenciador_telas,
+                    self.gerenciador_recursos,
+                    self.banco_de_dados,
+                    self.gerenciador_entidades)
+                self.menu_cozinha_ativo = True
+
+            # --- ABRIR/FECHAR MENU DE PAUSA ---
+            elif evento.key == pygame.K_ESCAPE:
+                # Condição: só abre o menu de pausa se nenhum outro menu estiver ativo
+                if not self.menu_viagem_ativo and not self.menu_inventario_ativo and not self.dialogo_ativo:
+                    if not self.menu_pausa_ativo:
+                        self.menu_pausa_ativo = True
+                        self.menu_pausa = _MenuPausa(self.gerenciador_recursos)
+                    else:
+                        # Se já estiver ativo, o evento é capturado no topo do método
+                        # para fechar o menu, então essa parte não é necessária.
+                        pass
+
 
 
 
     def atualizar(self, dt):
+        if self.menu_pausa_ativo:
+            return
+        
         super().atualizar(dt)
         dt_ms = dt * 1000 # Converte dt para milissegundos para a câmera e eventos
 
@@ -704,6 +819,15 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if self.gerenciador_missoes.esta_em_evento_controlado() or self.cena_estatica_ativa:
             self.jogador.movimento_bloqueado = True # Bloqueia o movimento do jogador
         elif self.menu_inventario_ativo and self.menu_inventario:
+            if self.exibicao_nome_ilha:
+                self.exibicao_nome_ilha.atualizar()
+            # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
+            return
+        elif self.menu_cozinha_ativo and self.menu_cozinha:
+            self.menu_cozinha.atualizar(dt)
+            
+            if self.exibicao_nome_ilha:
+                self.exibicao_nome_ilha.atualizar()
             # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
             return
         else:
@@ -742,16 +866,16 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 self.jogador.rect.bottom = altura_mundo_atual
 
             # Sincroniza as coordenadas de mundo com o rect após o clamp
-            self.jogador.mundo_x = self.jogador.rect.x
-            self.jogador.mundo_y = self.jogador.rect.y
+            self.jogador.coordenada_x = self.jogador.rect.x
+            self.jogador.coordenada_y = self.jogador.rect.y
 
             # Obtém as áreas de interação que estão colidindo com o jogador
-            areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao_passivas, False)
+            areas_colidindo_agora = pygame.sprite.spritecollide(self.jogador, self.areas_interacao_missao, False)
             
             for area in areas_colidindo_agora:
-                if area.tipo_evento == 'missao':
-                    if not self.gerenciador_missoes.missao_ativa_id:
-                        self.gerenciador_missoes.iniciar_missao(area.identificador_missao)
+                # Áreas de interação que ativam uma missão quando o jogador entra em uma área específica
+                if area.metodo_ativacao == 'passivo':
+                    self.gerenciador_missoes.iniciar_missao(area.identificador_missao)
 
 
 
@@ -763,6 +887,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Atualiza os NPCs, passando a posição do jogador para a orientação
         for npc in self.npcs:
             npc.atualizar(dt, self.jogador.rect)
+
+        if self.chefe:
+            self.chefe.atualizar(dt, self.jogador.rect)
 
         for area in self.areas_interacao:
             area.atualizar()
@@ -834,23 +961,13 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         Coleta os dados atuais do jogo (posição, status do jogador) e os salva no banco de dados.
         Este método centraliza a lógica de salvamento para esta tela.
         """
-        print(f"Iniciando salvamento para o jogador: {self.jogador.identificador_jogador}")
+        print(f"Iniciando salvamento para o jogador: {self.jogador.identificador}")
 
-        # --- INÍCIO DA MODIFICAÇÃO ---
-        # REMOVA a busca por dados "frescos", pois isso está causando o problema.
-        # Os dados "frescos" são os que já estão nos atributos da tela.
-        # jogador_db_info_fresco = self.banco_de_dados.buscar_jogador(self.informacoes_jogador.identificador_jogador)
-        # if not jogador_db_info_fresco:
-        #     print(f"ERRO: Não foi possível recarregar os dados do jogador {self.informacoes_jogador.identificador_jogador} para salvar.")
-        #     return
-
-        # Busca as moedas mais recentes. Se o jogador veio de uma loja,
-        # self.informacoes_jogador estará atualizado.
-        moedas_atuais = self.banco_de_dados.buscar_jogador(self.jogador.identificador_jogador).moedas_totais
+        moedas_atuais = self.banco_de_dados.buscar_jogador(self.jogador.identificador).moedas_totais
 
         # Chama o método do DBManager para salvar os dados
         self.banco_de_dados.salvar_progresso_jogador(
-            id_jogador=self.jogador.identificador_jogador,
+            id_jogador=self.jogador.identificador,
             vida=self.jogador.vida_maxima,
             vida_atual=self.jogador.vida_atual,
             energia=self.jogador.energia_maxima,
@@ -858,18 +975,17 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             experiencia_atual=self.jogador.experiencia_atual,
             nivel=self.jogador.nivel,
             moedas_totais=moedas_atuais,  # Use a variável com o valor correto
-            coordenada_x=int(self.jogador.mundo_x),
-            coordenada_y=int(self.jogador.mundo_y),
+            coordenada_x=int(self.jogador.coordenada_x),
+            coordenada_y=int(self.jogador.coordenada_y),
             orientacao=self.jogador.orientacao,
             identificador_area=self.dados_da_area.identificador_area
         )
-        # --- FIM DA MODIFICAÇÃO ---
         
         print("Progresso salvo com sucesso.")
     
 
 
-    def desenhar(self, tela):
+    def desenhar(self, tela: pygame.surface.Surface):
         # Desenha a imagem de fundo
         tela.blit(self.mapa_fundo_imagem, (self.mapa_fundo_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
         
@@ -877,19 +993,14 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if self.cena_estatica_ativa and self.imagem_cena_estatica:
             tela.blit(self.imagem_cena_estatica, (0, 0)) # Desenha a cena cobrindo toda a tela
         else: # Só desenha os elementos do jogo se a cena estática não estiver ativa
-            # Desenha os NPCs
-            for npc in self.npcs:
-                npc.desenhar(tela, self.camera.rect.x, self.camera.rect.y) # NOVO: Desenha NPCs
 
             for area in self.areas_interacao:
                 area.desenhar(tela, self.camera.rect.x)
 
-            # Desenha o jogador
-            self.jogador.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
+            sprites_ordenados = sorted(self.todos_os_sprites, key=lambda sprite: sprite.rect.bottom)
 
-            # Desenha os inimigos
-            for inimigo in self.inimigos:
-                inimigo.desenhar(tela, self.camera.rect.x)
+            for sprite in sprites_ordenados:
+                sprite.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
 
             # Desenha o efeito do ataque no mapa
             for efeito in self.efeitos_visuais:
@@ -901,6 +1012,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 pos = efeito["pos"]
                 tela.blit(sprite, (pos[0]-self.camera.rect.x, pos[1]-self.camera.rect.y))
 
+            for area in self.areas_interacao_missao:
+                area.desenhar(tela, self.camera.rect.x)
+
             # --- Desenhar a camada superior (se existir) ---
             if self.camada_superior_imagem:
                 tela.blit(self.camada_superior_imagem, (self.camada_superior_imagem.get_rect(topleft=(-self.camera.rect.x, -self.camera.rect.y))))
@@ -909,7 +1023,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                 caminho.desenhar(tela, self.camera.rect.x)
 
             if DEBUG_DESENHAR_CAIXAS_COLISAO:
-                for area in list(self.areas_interacao) + list(self.areas_interacao_passivas):
+                for area in list(self.areas_interacao) + list(self.areas_interacao_missao):
                     area_rect_tela = pygame.Rect(
                         area.rect.x - self.camera.rect.x,
                         area.rect.y - self.camera.rect.y,
@@ -946,13 +1060,26 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             if self.menu_viagem_ativo and self.menu_viagem:
                 self.menu_viagem.desenhar(tela)
 
-            # --- Desenha o menu de inventário se estiver ativo ---
-            if self.menu_inventario_ativo and self.menu_inventario:
-                self.menu_inventario.desenhar(tela)
 
             if self.barra_de_estado_visivel:
                 self.barra_de_estado.desenhar(tela)
 
+            # --- DESENHA O MENU DE PAUSA E ESMAECIMENTO ---
+            if self.menu_pausa_ativo and self.menu_pausa:
+                # Cria uma superfície para escurecer a tela
+                esmaecer_superficie = pygame.Surface((LARGURA_TELA, ALTURA_TELA), pygame.SRCALPHA)
+                esmaecer_superficie.fill((0, 0, 0, 150))  # Preto com 150 de alpha (0-255)
+                tela.blit(esmaecer_superficie, (0, 0))
+                # Desenha o menu por cima
+                self.menu_pausa.desenhar(tela)
+
+            # --- Desenha o menu de inventário se estiver ativo ---
+            if self.menu_inventario_ativo and self.menu_inventario:
+                self.menu_inventario.desenhar(tela)
+
+            # --- Desenha o menu de cozinha se estiver ativo ---
+            if self.menu_cozinha_ativo and self.menu_cozinha:
+                self.menu_cozinha.desenhar(tela)
 
             # --- Desenha a caixa de diálogo se estiver ativa ---
             if self.dialogo_ativo and self.caixa_dialogo:
@@ -987,6 +1114,63 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
 
 
+class _MenuPausa:
+    def __init__(self, gerenciador_recursos):
+        self.opcoes = ["Continuar", "Enciclopédia", "Sair"]
+        self.indice_selecionado = 0
+        self.fonte_menu = gerenciador_recursos.obter_fonte(CHAVE_FONTE_COLINER_BOTAO)
+        self.cor_texto_normal = (255, 255, 255)
+        self.cor_texto_selecionado = (255, 255, 0)
+        self.cor_fundo_menu = (10, 10, 20, 220) # Fundo azul escuro, bem opaco
+        self.cor_borda_menu = (200, 200, 200)
+
+
+
+    def processar_eventos(self, evento):
+        if evento.type == pygame.KEYDOWN:
+            if evento.key == pygame.K_UP:
+                self.indice_selecionado = (self.indice_selecionado - 1) % len(self.opcoes)
+            elif evento.key == pygame.K_DOWN:
+                self.indice_selecionado = (self.indice_selecionado + 1) % len(self.opcoes)
+            elif evento.key == pygame.K_RETURN or evento.key == pygame.K_SPACE:
+                # Retorna a opção selecionada em minúsculas para facilitar a verificação
+                return self.opcoes[self.indice_selecionado].lower()
+            elif evento.key == pygame.K_ESCAPE:
+                # Apertar ESC de novo fecha o menu
+                return "continuar"
+        return None
+
+
+
+    def desenhar(self, tela):
+        largura_menu = 400
+        altura_linha = self.fonte_menu.get_height() + 20
+        altura_menu = (len(self.opcoes) * altura_linha) + 40
+
+        pos_x_menu = (LARGURA_TELA - largura_menu) // 2
+        pos_y_menu = (ALTURA_TELA - altura_menu) // 2
+
+        retangulo_menu = pygame.Rect(pos_x_menu, pos_y_menu, largura_menu, altura_menu)
+
+        # Desenha o fundo do menu
+        s = pygame.Surface((largura_menu, altura_menu), pygame.SRCALPHA)
+        s.fill(self.cor_fundo_menu)
+        tela.blit(s, retangulo_menu.topleft)
+
+        # Desenha a borda
+        pygame.draw.rect(tela, self.cor_borda_menu, retangulo_menu, 3)
+
+        # Desenha as opções
+        y_offset = pos_y_menu + 30
+        for i, opcao in enumerate(self.opcoes):
+            cor_texto = self.cor_texto_selecionado if i == self.indice_selecionado else self.cor_texto_normal
+            texto_renderizado = self.fonte_menu.render(opcao, True, cor_texto)
+
+            pos_x_texto = pos_x_menu + (largura_menu - texto_renderizado.get_width()) // 2
+            tela.blit(texto_renderizado, (pos_x_texto, y_offset))
+            y_offset += altura_linha
+
+
 
 class _MenuViagemFlutuante:
     def __init__(self, opcoes_viagem):
@@ -1005,27 +1189,11 @@ class _MenuViagemFlutuante:
             elif evento.key == pygame.K_DOWN:
                 self.indice_selecionado = (self.indice_selecionado + 1) % len(self.opcoes)
             elif evento.key == pygame.K_RETURN:
-                if self.opcoes:
+                if self.opcoes and self.opcoes[self.indice_selecionado].bloqueada is False:
                     return self.opcoes[self.indice_selecionado]  # Retorna o ID da ilha
                 return None
             elif evento.key == pygame.K_ESCAPE:
                 return "cancelar"
-            if evento.type == pygame.KEYDOWN:
-                if evento.key == pygame.K_e:  # Tecla de interação
-            # Procure por código que verifica áreas de interação
-                  for area in self.areas_interacao_atuais:
-                     if self.personagem.rect.colliderect(pygame.Rect(area['x'], area['y'], area['largura'], area['altura'])):
-                    
-                    # ADICIONE AQUI se não existir a função separada:
-                         if area['tipo_evento'] == 'abrir_loja':
-                             return {
-                            'transicao': CHAVE_TRANSICAO_LOJA,
-                            'jogador_id': self.personagem.id_jogador,
-                            'vendedor_id': area['dados_evento']['id_vendedor'],
-                            'nome_vendedor': area['dados_evento']['nome_vendedor']
-                        }
-                    
-        # Se não for uma tecla de navegação ou seleção, não faz nada
         return None
 
     def desenhar(self, tela):
