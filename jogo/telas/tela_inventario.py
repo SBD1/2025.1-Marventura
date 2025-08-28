@@ -89,61 +89,62 @@ class TelaInventario(TelaModelo):
         self._carregar_recursos()
 
 
+
     def _carregar_recursos(self):
         """
         Carrega os recursos necessários para a tela de inventário, incluindo imagens dos botões e seus retângulos.
         """
-        self.fundo_inventario = self.gerenciador_recursos.obter_imagem('inv_painel_fundo')
+        self.fundo_inventario = self.gerenciador_recursos.obter_imagem(INV_PAINEL_FUNDO)
         if not self.fundo_inventario:
-            print("[ERRO] Imagem de fundo do inventário 'inv_painel_fundo' não encontrada.")
+            print("[ERRO] Imagem de fundo do inventário INV_PAINEL_FUNDO não encontrada.")
             self.fundo_inventario = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.fundo_inventario.fill(CINZA_ESCURO)
 
         # Novas imagens para os painéis de itens
-        self.painel_itens = self.gerenciador_recursos.obter_imagem('inv_painel_itens')
+        self.painel_itens = self.gerenciador_recursos.obter_imagem(INV_PAINEL_ITENS)
         if not self.painel_itens:
-            print("[ERRO] Imagem 'inv_painel_itens' não encontrada. Usando fundo cinza.")
+            print("[ERRO] Imagem INV_PAINEL_ITENS não encontrada. Usando fundo cinza.")
             self.painel_itens = pygame.Surface((self.largura_painel_central, self.altura_painel_central))
             self.painel_itens.fill(CINZA)
 
-        self.painel_vazio = self.gerenciador_recursos.obter_imagem('inv_vazio')
+        self.painel_vazio = self.gerenciador_recursos.obter_imagem(INV_VAZIO)
         if not self.painel_vazio:
-            print("[ERRO] Imagem 'inv_vazio' não encontrada. Usando fundo cinza.")
+            print("[ERRO] Imagem INV_VAZIO não encontrada. Usando fundo cinza.")
             self.painel_vazio = pygame.Surface((self.largura_painel_central, self.altura_painel_central))
             self.painel_vazio.fill(CINZA_ESCURO)
 
         # Novas imagens de estatísticas do jogador
-        self.estatistica_shuan = self.gerenciador_recursos.obter_imagem('estatistica_shuan')
+        self.estatistica_shuan = self.gerenciador_recursos.obter_imagem(ESTATISTICA_SHUAN)
         if not self.estatistica_shuan:
-            print("[AVISO] Imagem 'estatistica_shuan' não encontrada.")
-        self.estatistica_silvie = self.gerenciador_recursos.obter_imagem('estatistica_silvie')
+            print("[AVISO] Imagem ESTATISTICA_SHUAN não encontrada.")
+        self.estatistica_silvie = self.gerenciador_recursos.obter_imagem(ESTATISTICA_SILVIE)
         if not self.estatistica_silvie:
-            print("[AVISO] Imagem 'estatistica_silvie' não encontrada.")
+            print("[AVISO] Imagem ESTATISTICA_SILVIE não encontrada.")
 
         # Imagem do menu de informações do item
-        self.menu_info_image = self.gerenciador_recursos.obter_imagem('menu_info')
+        self.menu_info_image = self.gerenciador_recursos.obter_imagem(MENU_INFO)
         if self.menu_info_image:
             self.rect_menu_info = self.menu_info_image.get_rect(center=(LARGURA_TELA // 2, ALTURA_TELA // 2))
         else:
-            print("[AVISO] Imagem 'menu_info' não encontrada. O menu de informações do item não será exibido.")
+            print("[AVISO] Imagem MENU_INFO não encontrada. O menu de informações do item não será exibido.")
             self.rect_menu_info = pygame.Rect(0, 0, 400, 300) # Fallback rect
             self.menu_info_image = pygame.Surface(self.rect_menu_info.size)
             self.menu_info_image.fill(PRETO) # Fallback color
 
         # Botão de fechar para o menu de informações do item (reutiliza a imagem existente)
-        self.botao_fechar_menu_info = self.gerenciador_recursos.obter_imagem('inv_botao_fechar')
+        self.botao_fechar_menu_info = self.gerenciador_recursos.obter_imagem(INV_BOTAO_FECHAR)
         if self.botao_fechar_menu_info and self.rect_menu_info:
             self.rect_botao_fechar_menu_info = self.botao_fechar_menu_info.get_rect(topright=(self.rect_menu_info.right + self.botao_fechar_menu_info.get_width()-1, self.rect_menu_info.top + 10))
         else:
-            print("[AVISO] Imagem 'inv_botao_fechar' não encontrada para o menu de informações do item.")
+            print("[AVISO] Imagem INV_BOTAO_FECHAR não encontrada para o menu de informações do item.")
             self.rect_botao_fechar_menu_info = pygame.Rect(0,0,0,0) # Fallback rect
 
         # Botão "Usar" para o menu de informações do item
-        self.botao_usar_item = self.gerenciador_recursos.obter_imagem('inv_botao_usar') # Assumindo que esta imagem existe
+        self.botao_usar_item = self.gerenciador_recursos.obter_imagem(INV_BOTAO_USAR) # Assumindo que esta imagem existe
         if self.botao_usar_item and self.rect_menu_info:
             self.rect_botao_usar_item = self.botao_usar_item.get_rect(center=(self.rect_menu_info.centerx, self.rect_menu_info.bottom))
         else:
-            print("[AVISO] Imagem 'inv_botao_usar' não encontrada. O botão 'Usar' não será exibido.")
+            print("[AVISO] Imagem INV_BOTAO_USAR não encontrada. O botão 'Usar' não será exibido.")
             # Fallback: criar uma superfície simples para o botão
             self.botao_usar_item = pygame.Surface((100, 40))
             self.botao_usar_item.fill(AZUL)
@@ -159,7 +160,7 @@ class TelaInventario(TelaModelo):
 
 
         # Botão de fechar principal do inventário
-        self.botao_fechar = self.gerenciador_recursos.obter_imagem('inv_botao_fechar')
+        self.botao_fechar = self.gerenciador_recursos.obter_imagem(INV_BOTAO_FECHAR)
         self.rect_botao_fechar = self.botao_fechar.get_rect(topright=(self.x_painel_central + self.fundo_inventario.get_width(), 97))
 
         # Botões laterais e seus retângulos
@@ -168,8 +169,8 @@ class TelaInventario(TelaModelo):
         x_inicial_botoes = self.x_painel_central # Posição X inicial para os botões laterais
 
         # Botão Estado
-        img_estado_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_estado')
-        img_estado_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_estado_ativo')
+        img_estado_normal = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ESTADO)
+        img_estado_ativo = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ESTADO_ATIVO)
         rect_estado = img_estado_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes))
         self.botoes_laterais['estado'] = {
             'normal': img_estado_normal,
@@ -178,8 +179,8 @@ class TelaInventario(TelaModelo):
         }
 
         # Botão Arma
-        img_arma_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_arma')
-        img_arma_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_arma_ativo')
+        img_arma_normal = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ARMA)
+        img_arma_ativo = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ARMA_ATIVO)
         rect_arma = img_arma_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 83)) # Ajuste o espaçamento
         self.botoes_laterais['armas'] = {
             'normal': img_arma_normal,
@@ -188,8 +189,8 @@ class TelaInventario(TelaModelo):
         }
 
         # Botão Acessório
-        img_acessorio_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_acessorio')
-        img_acessorio_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_acessorio_ativo')
+        img_acessorio_normal = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ACESSORIO)
+        img_acessorio_ativo = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ACESSORIO_ATIVO)
         rect_acessorio = img_acessorio_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 166))
         self.botoes_laterais['acessorios'] = {
             'normal': img_acessorio_normal,
@@ -198,8 +199,8 @@ class TelaInventario(TelaModelo):
         }
 
         # Botão Consumível
-        img_consumivel_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_consumivel')
-        img_consumivel_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_consumivel_ativo')
+        img_consumivel_normal = self.gerenciador_recursos.obter_imagem(INV_LATERAL_CONSUMIVEL)
+        img_consumivel_ativo = self.gerenciador_recursos.obter_imagem(INV_LATERAL_CONSUMIVEL_ATIVO)
         rect_consumivel = img_consumivel_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 249))
         self.botoes_laterais['consumiveis'] = {
             'normal': img_consumivel_normal,
@@ -208,8 +209,8 @@ class TelaInventario(TelaModelo):
         }
 
         # Botão Especial (Outros)
-        img_especial_normal = self.gerenciador_recursos.obter_imagem('inv_lateral_especial')
-        img_especial_ativo = self.gerenciador_recursos.obter_imagem('inv_lateral_especial_ativo')
+        img_especial_normal = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ESPECIAL)
+        img_especial_ativo = self.gerenciador_recursos.obter_imagem(INV_LATERAL_ESPECIAL_ATIVO)
         rect_especial = img_especial_normal.get_rect(topleft=(x_inicial_botoes, y_inicial_botoes + 331))
         self.botoes_laterais['especial'] = {
             'normal': img_especial_normal,
@@ -225,39 +226,41 @@ class TelaInventario(TelaModelo):
 
         # Filtros de Armas (apenas espada e projetil)
         self.botoes_filtro['armas_espada'] = {
-            'ativo': self.gerenciador_recursos.obter_imagem('filtro_espada'),
-            'rect': self.gerenciador_recursos.obter_imagem('filtro_espada').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+            'ativo': self.gerenciador_recursos.obter_imagem(FILTRO_ESPADA),
+            'rect': self.gerenciador_recursos.obter_imagem(FILTRO_ESPADA).get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
         }
         self.botoes_filtro['armas_projetil'] = {
-            'ativo': self.gerenciador_recursos.obter_imagem('filtro_projetil'),
-            'rect': self.gerenciador_recursos.obter_imagem('filtro_projetil').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+            'ativo': self.gerenciador_recursos.obter_imagem(FILTRO_PROJETIL),
+            'rect': self.gerenciador_recursos.obter_imagem(FILTRO_PROJETIL).get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
         }
 
         # Filtros de Consumíveis (apenas consumivel e nao_consumivel)
         self.botoes_filtro['consumiveis_consumivel'] = {
-            'ativo': self.gerenciador_recursos.obter_imagem('filtro_consumivel'),
-            'rect': self.gerenciador_recursos.obter_imagem('filtro_consumivel').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+            'ativo': self.gerenciador_recursos.obter_imagem(FILTRO_CONSUMIVEL),
+            'rect': self.gerenciador_recursos.obter_imagem(FILTRO_CONSUMIVEL).get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
         }
         self.botoes_filtro['consumiveis_nao_consumivel'] = {
-            'ativo': self.gerenciador_recursos.obter_imagem('filtro_nao_consumivel'),
-            'rect': self.gerenciador_recursos.obter_imagem('filtro_nao_consumivel').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+            'ativo': self.gerenciador_recursos.obter_imagem(FILTRO_NAO_CONSUMIVEL),
+            'rect': self.gerenciador_recursos.obter_imagem(FILTRO_NAO_CONSUMIVEL).get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
         }
 
         # Filtro de Acessórios (único)
         self.botoes_filtro['acessorios_acessorio'] = {
-            'ativo': self.gerenciador_recursos.obter_imagem('filtro_acessorio'),
-            'rect': self.gerenciador_recursos.obter_imagem('filtro_acessorio').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+            'ativo': self.gerenciador_recursos.obter_imagem(FILTRO_ACESSORIO),
+            'rect': self.gerenciador_recursos.obter_imagem(FILTRO_ACESSORIO).get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
         }
 
         # Filtro Especial (único)
         self.botoes_filtro['especial_especial'] = {
-            'ativo': self.gerenciador_recursos.obter_imagem('filtro_especial'),
-            'rect': self.gerenciador_recursos.obter_imagem('filtro_especial').get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
+            'ativo': self.gerenciador_recursos.obter_imagem(FILTRO_ESPECIAL),
+            'rect': self.gerenciador_recursos.obter_imagem(FILTRO_ESPECIAL).get_rect(topleft=(x_filtro_inicial, y_filtro_inicial))
         }
 
 
         # Carrega os dados do inventário e do jogador
         self._carregar_dados_inventario()
+
+
 
     def _carregar_dados_inventario(self):
         """
@@ -280,15 +283,16 @@ class TelaInventario(TelaModelo):
         self.lista_armas = [item for item in self.mochila.itens if item.tipo == 'arm']
         self.lista_acessorios = [item for item in self.mochila.itens if item.tipo == 'ace']
         # Consumíveis agora inclui 'con' e 'ncn' para permitir filtragem
-        self.lista_consumiveis = [item for item in self.mochila.itens if item.tipo in ['con', 'ncn']]
+        self.lista_consumiveis = [item for item in self.mochila.itens if item.tipo in ['con', 'ncn'] and not item.item_de_missao]
         # Outros agora só inclui 'fru'
-        self.lista_outros = [item for item in self.mochila.itens if item.tipo == 'fru']
+        self.lista_outros = [item for item in self.mochila.itens if item.tipo == 'fru' or item.item_de_missao]
 
         # Ordena as listas por nome para facilitar a visualização
         self.lista_armas.sort(key=lambda item: item.nome)
         self.lista_acessorios.sort(key=lambda item: item.nome)
         self.lista_consumiveis.sort(key=lambda item: item.nome)
         self.lista_outros.sort(key=lambda item: item.nome)
+
 
 
     def processar_eventos(self, evento):
@@ -437,7 +441,7 @@ class TelaInventario(TelaModelo):
             current_filter = self.current_filter_especial # Será 'especial'
             # Para a aba "especial", o filtro "especial" significa mostrar as frutas
             bolsa_de_moedas = self.entidades.jogador.moedas
-            return [item for item in lista_base if item.tipo == 'ncn' and item.item_de_missao]
+            #return [item for item in lista_base if item.tipo == 'ncn' and item.item_de_missao]
 
         return lista_base # Retorna a lista completa da aba se o filtro for 'todos' ou único
 

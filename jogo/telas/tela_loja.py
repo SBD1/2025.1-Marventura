@@ -58,11 +58,11 @@ class TelaLoja(TelaModelo):
         """
         self.inventario_vendedor = self.db_manager.buscar_inventario_vendedor(self.vendedor_id, self.entidades.progresso_do_jogo.identificador_progresso)
 
-        self.inventario_jogador = self.db_manager.buscar_inventario(identificador_personagem=self.entidades.jogador.identificador_jogador, identificador_progresso= self.entidades.progresso_do_jogo.identificador_progresso)
+        self.inventario_jogador = self.db_manager.buscar_inventario(identificador_personagem=self.entidades.jogador.identificador, identificador_progresso= self.entidades.progresso_do_jogo.identificador_progresso)
 
-        self.dados_jogador = self.db_manager.buscar_jogador(self.entidades.jogador.identificador_jogador)
+        self.dados_jogador = self.db_manager.buscar_jogador(self.entidades.jogador.identificador)
 
-        self.id_inventario_jogador = self.db_manager.buscar_id_inventario(self.entidades.jogador.identificador_jogador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
+        self.id_inventario_jogador = self.db_manager.buscar_id_inventario(self.entidades.jogador.identificador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
 
         self.id_inventario_vendedor = self.db_manager.buscar_id_inventario(self.vendedor_id, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
         
@@ -128,7 +128,7 @@ class TelaLoja(TelaModelo):
             self._resetar_selecao()
         elif self.rect_botao_voltar.collidepoint(pos):
             # Busca os dados mais recentes do jogador no banco de dados
-            jogador_atualizado = self.db_manager.buscar_jogador(self.entidades.jogador.identificador_jogador)
+            jogador_atualizado = self.db_manager.buscar_jogador(self.entidades.jogador.identificador)
             
             # Usa a transição de mapa para voltar ao jogo com os dados atualizados
             self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA)
@@ -175,7 +175,7 @@ class TelaLoja(TelaModelo):
         preco = self.item_selecionado.preco_de_compra * self.quantidade_selecionada
         if self.entidades.jogador.moedas >= preco:
             resultado = self.db_manager.realizar_compra(
-                self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
+                self.entidades.jogador.identificador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
                 self.quantidade_selecionada, preco, self.entidades.progresso_do_jogo.identificador_progresso
             )
@@ -194,9 +194,9 @@ class TelaLoja(TelaModelo):
 
         if preco_unitario is not None and preco_unitario > 0:
             preco = preco_unitario * self.quantidade_selecionada
-            print(f"Vendendo {self.quantidade_selecionada}x {self.item_selecionado.nome_item} por {preco} moedas. Identificador do jogador: {self.entidades.jogador.identificador_jogador}, Identificador do vendedor: {self.vendedor_id}, ID Inventário Jogador: {self.id_inventario_jogador}, ID Inventário Vendedor: {self.id_inventario_vendedor}, ID Item: {self.item_selecionado.identificador_item}")
+            print(f"Vendendo {self.quantidade_selecionada}x {self.item_selecionado.nome_item} por {preco} moedas. Identificador do jogador: {self.entidades.jogador.identificador}, Identificador do vendedor: {self.vendedor_id}, ID Inventário Jogador: {self.id_inventario_jogador}, ID Inventário Vendedor: {self.id_inventario_vendedor}, ID Item: {self.item_selecionado.identificador_item}")
             resultado = self.db_manager.realizar_venda(
-                self.entidades.jogador.identificador_jogador, self.vendedor_id, self.id_inventario_jogador,
+                self.entidades.jogador.identificador, self.vendedor_id, self.id_inventario_jogador,
                 self.id_inventario_vendedor, self.item_selecionado.identificador_item,
                 self.quantidade_selecionada, preco, self.entidades.progresso_do_jogo.identificador_progresso
             )
@@ -219,9 +219,9 @@ class TelaLoja(TelaModelo):
         
         # Tocar som (exemplo, requer carregar os sons no gerenciador de recursos)
         if sucesso:
-                 self.gerenciador_recursos.obter_som('som_compra_sucesso').play()
+                 self.gerenciador_recursos.obter_som(SOM_COMPRA_SUCESSO).play()
         else:
-                self.gerenciador_recursos.obter_som('som_compra_falha').play()
+                self.gerenciador_recursos.obter_som(SOM_COMPRA_FALHA).play()
 
 
     def atualizar(self, dt):
@@ -249,7 +249,7 @@ class TelaLoja(TelaModelo):
              # Se o item não existia, busca os dados completos e adiciona
              # (Esta parte ainda pode necessitar de uma consulta se os dados completos do item não estiverem disponíveis)
              # Para simplificar, vamos recarregar apenas o inventário do jogador neste caso.
-             self.inventario_jogador = self.db_manager.buscar_inventario(self.entidades.jogador.identificador_jogador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
+             self.inventario_jogador = self.db_manager.buscar_inventario(self.entidades.jogador.identificador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
         else:
             self.inventario_jogador = inv_jogador
 
@@ -386,13 +386,13 @@ class TelaLoja(TelaModelo):
         """
         print("Sincronizando dados da loja com o banco de dados...")
         self.inventario_vendedor = self.db_manager.buscar_inventario_vendedor(self.vendedor_id, self.entidades.progresso_do_jogo.identificador_progresso)
-        self.inventario_jogador = self.db_manager.buscar_inventario(self.entidades.jogador.identificador_jogador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
+        self.inventario_jogador = self.db_manager.buscar_inventario(self.entidades.jogador.identificador, 'moc', self.entidades.progresso_do_jogo.identificador_progresso)
         
         self.entidades.jogador.mochila = self.db_manager.carregar_mochila_do_jogador(
-            self.entidades.jogador.identificador_jogador, self.entidades.progresso_do_jogo.identificador_progresso
+            self.entidades.jogador.identificador, self.entidades.progresso_do_jogo.identificador_progresso
         )
 
-        self.dados_jogador = self.db_manager.buscar_jogador(self.entidades.jogador.identificador_jogador)
+        self.dados_jogador = self.db_manager.buscar_jogador(self.entidades.jogador.identificador)
         
         # Reseta a seleção para evitar interações com itens que podem ter sumido
         self._resetar_selecao()
