@@ -81,11 +81,11 @@ EXECUTE FUNCTION public.gerar_id_tabelas_item();
 CREATE TABLE nao_consumivel (
     identificador_nao_consumivel ID PRIMARY KEY REFERENCES tipo_item(identificador_item),
     nome CHAR(50) NOT NULL,
-    descricao CHAR(150) NOT NULL,
+    descricao CHAR(200) NOT NULL,
     raridade CHAR(3) DEFAULT '★' CHECK (raridade IN ('★', '★★', '★★★')),
     local_encontrado CHAR(25) NOT NULL CHECK (local_encontrado IN ('Ilha de Borabóia', 'Cidade de Lurien', 'Ilha Glacial de Frimora', 'Cactuaraquara', 'Nublária', 'Quartel Naval D-57')),
     preco_de_compra SMALLINT CHECK (preco_de_compra IS NULL OR preco_de_compra BETWEEN 1 AND 999),
-    preco_de_venda SMALLINT NOT NULL CHECK (preco_de_venda BETWEEN 1 AND 999),
+    preco_de_venda SMALLINT CHECK (preco_de_venda BETWEEN 1 AND 999),
     e_coletado BOOLEAN,
     item_de_missao BOOLEAN DEFAULT FALSE
 );
@@ -403,7 +403,7 @@ CREATE TABLE barco (
     tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
     nome CHAR(30) NOT NULL,
     descricao CHAR (150) NOT NULL,
-    estado CHAR (9) NOT NULL CHECK (estado IN ('bloquedo', 'adquirido', 'destruido'))
+    estado CHAR (9) NOT NULL CHECK (estado IN ('bloqueado', 'adquirido', 'destruido'))
 );
 
 CREATE TRIGGER atribui_id_barco
@@ -423,11 +423,11 @@ CREATE TABLE habilidade_personagem (
 
 
 
-CREATE TABLE receitas_conhecidas (
-    identificador_progresso ID,
+CREATE TABLE livro_de_receitas (
+    identificador_jogador ID,
     identificador_receita ID,
-    PRIMARY KEY (identificador_progresso, identificador_receita),
-    FOREIGN KEY (identificador_progresso) REFERENCES progresso(identificador_progresso),
+    PRIMARY KEY (identificador_jogador, identificador_receita),
+    FOREIGN KEY (identificador_jogador) REFERENCES jogador(identificador_jogador),
     FOREIGN KEY (identificador_receita) REFERENCES receita(identificador_receita)
 );
 
@@ -596,7 +596,7 @@ CREATE TABLE area_interativa (
     identificador_area_origem ID NOT NULL REFERENCES area(identificador_area),
     identificador_area_destino ID REFERENCES area(identificador_area),
     identificador_missao ID REFERENCES missao(identificador_missao),
-    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-z _]+$'),
+    chave_imagem CHAR(50) CHECK (chave_imagem ~ '^[a-zA-Z0-9 _]+$'),
     x SMALLINT CHECK (x BETWEEN 0 AND 5000),
     y SMALLINT CHECK (y BETWEEN 0 AND 5000),
     largura SMALLINT CHECK (largura BETWEEN 0 AND 5000),
