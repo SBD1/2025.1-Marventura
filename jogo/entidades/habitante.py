@@ -1,28 +1,25 @@
 # entidades/habitante.py
 
 import pygame
+from .personagem import Personagem
 from utilidades.constantes import * # Certifique-se que suas constantes estão aqui
 
-class Habitante(pygame.sprite.Sprite):
+class Habitante(Personagem):
     """
     Representa um habitante (NPC) no jogo.
     Ele não se move, mas pode interagir com o jogador e iniciar diálogos.
     Seu sprite se vira para a direção do jogador.
     """
 
-    def __init__(self, gerenciador_recursos, identificador, area, x_inicial, y_inicial, nome, descricao, tipo, moedas, especialidade = None, chave_imagem = None, dialogos = [], missoes = []):
-        super().__init__()
-        self.gerenciador_recursos = gerenciador_recursos
-        self.identificador = identificador
-        self.area = area
-        self.nome = nome
-        self.descricao = descricao
+    def __init__(self, gerenciador_recursos, identificador, area, coordenada_x, coordenada_y, nome, descricao, tipo, moedas, especialidade = None, chave_imagem = None, saudacao = [], dialogos = [], missoes = [], conhecido = False):
+        super().__init__(gerenciador_recursos, identificador, coordenada_x, coordenada_y, nome, descricao, area)
+
         self.tipo = tipo
         self.moedas = moedas
         self.especialidade = especialidade
         self.chave_imagem = chave_imagem
-        self.coordenada_x = float(x_inicial)
-        self.coordenada_y = float(y_inicial)
+        self.conhecido = conhecido # Indica se o jogador já conhece este habitante
+        self.saudacao = saudacao # Lista de strings para a saudação
         self.dialogos = dialogos # Lista de strings para os diálogos
         self.missoes_pendentes = missoes # Lista de missões associadas ao NPC
         self.mostrar_icone_interacao = False # Flag para controlar a visibilidade do ícone
@@ -49,7 +46,7 @@ class Habitante(pygame.sprite.Sprite):
             Verifica se há missões ativas associadas a este habitante
             e atualiza a flag para mostrar ou esconder o ícone de interação.
             """
-            self.mostrar_icone_interacao = bool(self.missoes_pendentes) # True se a lista de missões não estiver vazia
+            self.mostrar_icone_interacao = bool(self.missoes_pendentes or self.dialogos) # True se a lista de missões ou diálogos não estiver vazia
 
 
 

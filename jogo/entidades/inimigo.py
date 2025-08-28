@@ -3,15 +3,14 @@ import pygame
 import random
 import math
 from utilidades.constantes import *
+from .personagem import Personagem
 
-class Inimigo(pygame.sprite.Sprite):
-    def __init__(self, gerenciador_recursos, x_inicial, y_inicial, id_inimigo, identificador_instancia_lacaio, tipo_inimigo,
-                 descricao, vida_atual, vida_total, nivel, experiencia, habilidade, inventario, caminho_container):
-        super().__init__()
-        self.gerenciador_recursos = gerenciador_recursos
+class Inimigo(Personagem):
+    def __init__(self, gerenciador_recursos, coordenada_x, coordenada_y, area, id_inimigo, identificador_instancia_lacaio, nome, descricao, vida_atual, vida_total, nivel, experiencia, habilidade, inventario, caminho_container):
+        super().__init__(gerenciador_recursos, id_inimigo, coordenada_x, coordenada_y, nome, descricao, area)
+
         self.identificador_inimigo = id_inimigo
         self.identificador_instancia_lacaio = identificador_instancia_lacaio
-        self.nome = tipo_inimigo
         self.velocidade_caminhada = VELOCIDADE_CAMINHADA_INIMIGO
         self.velocidade_corrida = VELOCIDADE_CORRIDA_INIMIGO
         self.velocidade_atual = VELOCIDADE_CAMINHADA_INIMIGO
@@ -28,22 +27,20 @@ class Inimigo(pygame.sprite.Sprite):
         self.inventario = inventario
 
         self.imagens_animacao = {}
-        self.carregar_animacoes(tipo_inimigo)
+        self.carregar_animacoes(self.nome)
         self.frame_atual = 0
         self.tempo_ultimo_frame = pygame.time.get_ticks()
         self.velocidade_animacao = 150 # ms por frame
 
         # Define a imagem inicial. Se não houver frames carregados, usa fallback.
-        self.image = self.imagens_animacao.get(0)
-        if not self.image:
-            print(f"AVISO: Imagens de animação para '{tipo_inimigo}' não encontradas. Usando fallback.")
-            self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
-            self.image.fill(VERMELHO)
+        self.imagem = self.imagens_animacao.get(0)
+        if not self.imagem:
+            print(f"AVISO: Imagens de animação para '{self.nome}' não encontradas. Usando fallback.")
+            self.imagem = pygame.Surface((80, 80), pygame.SRCALPHA)
+            self.imagem.fill(VERMELHO)
 
-        self.rect = self.image.get_rect(topleft=(x_inicial, y_inicial))
-        self.mundo_x = x_inicial
-        self.mundo_y = y_inicial
-        self.olhando_direita = True
+        self.rect = self.imagem.get_rect(topleft=(coordenada_x, coordenada_y))
+        self.orientacao = 'esquerda'
 
         self.estado = ESTADO_INIMIGO_PARADO
         self.timer_reacao = 0
@@ -79,23 +76,25 @@ class Inimigo(pygame.sprite.Sprite):
         agora = pygame.time.get_ticks()
         # Se o inimigo estiver se movendo, avança a animação
         if self.estado == ESTADO_INIMIGO_PERSEGUINDO or self.estado == ESTADO_INIMIGO_PATRULHANDO:
-            if agora - self.tempo_ultimo_frame > self.velocidade_animacao:
-                self.frame_atual = (self.frame_atual + 1) % len(self.imagens_animacao)
-                self.tempo_ultimo_frame = agora
+            # Se existem quadros para serem alternados
+            if len(self.imagens_animacao) >= 2:
+                if agora - self.tempo_ultimo_frame > self.velocidade_animacao:
+                    self.frame_atual = (self.frame_atual + 1) % len(self.imagens_animacao)
+                    self.tempo_ultimo_frame = agora
         else: # Se o inimigo não estiver se movendo, volta para o frame 0 (repouso)
             self.frame_atual = 0
 
         # Define a imagem atual e aplica o flip se necessário
         current_animation_image = self.imagens_animacao.get(self.frame_atual)
         if current_animation_image:
-            if self.olhando_direita:
-                self.image = pygame.transform.flip(current_animation_image, True, False)
+            if self.orientacao == 'direita':
+                self.imagem = pygame.transform.flip(current_animation_image, True, False)
             else:
-                self.image = current_animation_image
+                self.imagem = current_animation_image
         else:
             # Fallback se o frame atual não for encontrado (nunca deveria acontecer se as imagens forem carregadas corretamente)
-            self.image = pygame.Surface((80, 80), pygame.SRCALPHA)
-            self.image.fill(VERMELHO)
+            self.imagem = pygame.Surface((80, 80), pygame.SRCALPHA)
+            self.imagem.fill(VERMELHO)
 
     def atualizar(self, dt, jogador, obstaculos_caminho, obstaculos_visao):
         self.atingiu_jogador = False
@@ -108,7 +107,7 @@ class Inimigo(pygame.sprite.Sprite):
         # Apenas se o inimigo estiver perseguindo ou se houver um alvo identificado.
         # Caso contrário, a direção é definida pela patrulha.
         if self.alvo_identificado or self.estado == ESTADO_INIMIGO_PERSEGUINDO:
-             self.olhando_direita = jogador_centro.x > inimigo_centro.x
+            self.orientacao = 'direita' if jogador_centro.x > inimigo_centro.x else 'esquerda'
 
         # Visão
         if distancia_ao_jogador <= self.alcance_visao:
@@ -149,14 +148,14 @@ class Inimigo(pygame.sprite.Sprite):
 
 
         # Primeiro, atualiza o rect com base nas coordenadas do mundo calculadas
-        self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
+        self.rect.topleft = (int(self.coordenada_x), int(self.coordenada_y))
 
         # NOVO: Aplica o clamp para confinar o inimigo ao seu caminho
         if self.caminho_container:
             self.rect.clamp_ip(self.caminho_container)
             # Re-sincroniza as coordenadas de mundo com a posição do rect após o clamp
-            self.mundo_x = float(self.rect.x)
-            self.mundo_y = float(self.rect.y)
+            self.coordenada_x = float(self.rect.x)
+            self.coordenada_y = float(self.rect.y)
 
         # Atualiza a animação com base no estado de movimento
         self._atualiza_animacao(dt)
@@ -180,35 +179,35 @@ class Inimigo(pygame.sprite.Sprite):
             dx = self.direcao_patrulha.x * self.velocidade_caminhada * dt
             dy = self.direcao_patrulha.y * self.velocidade_caminhada * dt
 
-            self.mundo_x += dx
-            self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
+            self.coordenada_x += dx
+            self.rect.topleft = (int(self.coordenada_x), int(self.coordenada_y))
             self._resolver_colisoes(obstaculos, 'x', dx)
 
-            self.mundo_y += dy
-            self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
+            self.coordenada_y += dy
+            self.rect.topleft = (int(self.coordenada_x), int(self.coordenada_y))
             self._resolver_colisoes(obstaculos, 'y', dy)
 
             # Atualiza a direção que o inimigo está olhando com base no movimento de patrulha
             if dx > 0:
-                self.olhando_direita = True
+                self.orientacao = 'direita'
             elif dx < 0:
-                self.olhando_direita = False
+                self.orientacao = 'esquerda'
 
 
     def _perseguir_jogador(self, dt, jogador_centro, obstaculos):
-        direcao = jogador_centro - pygame.math.Vector2(self.mundo_x, self.mundo_y)
+        direcao = jogador_centro - pygame.math.Vector2(self.coordenada_x, self.coordenada_y)
         if direcao.length() > 0:
             direcao.normalize_ip()
 
         dx = direcao.x * self.velocidade_corrida * dt
         dy = direcao.y * self.velocidade_corrida * dt
 
-        self.mundo_x += dx
-        self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
+        self.coordenada_x += dx
+        self.rect.topleft = (int(self.coordenada_x), int(self.coordenada_y))
         self._resolver_colisoes(obstaculos, 'x', dx)
 
-        self.mundo_y += dy
-        self.rect.topleft = (int(self.mundo_x), int(self.mundo_y))
+        self.coordenada_y += dy
+        self.rect.topleft = (int(self.coordenada_x), int(self.coordenada_y))
         self._resolver_colisoes(obstaculos, 'y', dy)
 
 
@@ -232,16 +231,16 @@ class Inimigo(pygame.sprite.Sprite):
         for obstaculo in colisoes:
             if direcao == 'x':
                 if delta > 0:  # Indo para a direita
-                    self.mundo_x = obstaculo.rect.left - self.rect.width
+                    self.coordenada_x = obstaculo.rect.left - self.rect.width
                 elif delta < 0:  # Indo para a esquerda
-                    self.mundo_x = obstaculo.rect.right
-                self.rect.x = int(self.mundo_x)
+                    self.coordenada_x = obstaculo.rect.right
+                self.rect.x = int(self.coordenada_x)
             elif direcao == 'y':
                 if delta > 0:  # Indo para baixo
-                    self.mundo_y = obstaculo.rect.top - self.rect.height
+                    self.coordenada_y = obstaculo.rect.top - self.rect.height
                 elif delta < 0:  # Indo para cima
-                    self.mundo_y = obstaculo.rect.bottom
-                self.rect.y = int(self.mundo_y)
+                    self.coordenada_y = obstaculo.rect.bottom
+                self.rect.y = int(self.coordenada_y)
 
 
     def _verifica_linha_de_visao(self, inimigo_centro, retangulo_do_jogador, obstaculos_visao):
@@ -253,7 +252,7 @@ class Inimigo(pygame.sprite.Sprite):
 
         raio = self.alcance_visao
         origem = inimigo_centro
-        angulo_base = 0 if self.olhando_direita else math.pi
+        angulo_base = 0 if self.orientacao == 'direita' else math.pi
         angulo_inicio = angulo_base - self.angulo_visao / 2
         angulo_fim = angulo_base + self.angulo_visao / 2
 
@@ -300,15 +299,15 @@ class Inimigo(pygame.sprite.Sprite):
         return dentro
 
 
-    def desenhar(self, tela, camera_x):
+    def desenhar(self, tela, camera_x, camera_y):
         # --- Desenha o campo de visão do inimigo ---
-        centro_x = self.mundo_x - camera_x + self.rect.width // 2
-        centro_y = self.mundo_y + self.rect.height // 2
+        centro_x = self.coordenada_x - camera_x + self.rect.width // 2
+        centro_y = self.coordenada_y + self.rect.height // 2
         origem = pygame.math.Vector2(centro_x, centro_y)
     
         # Desenha o cone de visão como um polígono (visualmente mais fácil)
         raio = self.alcance_visao
-        angulo_base = 0 if self.olhando_direita else math.pi  # 0 rad = direita, π rad = esquerda
+        angulo_base = 0 if self.orientacao == 'direita' else math.pi  # 0 rad = direita, π rad = esquerda
 
         angulo_inicio = angulo_base - self.angulo_visao / 2
         angulo_fim = angulo_base + self.angulo_visao / 2
@@ -329,7 +328,7 @@ class Inimigo(pygame.sprite.Sprite):
 
 
         # --- Desenha o inimigo ---
-        tela.blit(self.image, (self.mundo_x - camera_x, self.mundo_y))
+        tela.blit(self.imagem, (self.coordenada_x - camera_x, self.coordenada_y - camera_y))
 
         icone = None
         if self.alvo_identificado and self.timer_reacao < self.tempo_reacao_ms:
@@ -338,8 +337,8 @@ class Inimigo(pygame.sprite.Sprite):
             icone = self.icone_alerta
             
         if icone:
-            icone_x = self.mundo_x - camera_x + self.rect.width // 2 - icone.get_width() // 2
-            icone_y = self.mundo_y - icone.get_height() - 10  # Acima da cabeça, com margem
+            icone_x = self.coordenada_x - camera_x + self.rect.width // 2 - icone.get_width() // 2
+            icone_y = self.coordenada_y - icone.get_height() - 10  # Acima da cabeça, com margem
             tela.blit(icone, (icone_x, icone_y))
 
 

@@ -3,35 +3,31 @@
 import pygame
 from utilidades.constantes import * # Importa as constantes
 from entidades.habilidades import Habilidade
+from .personagem import Personagem
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from gerenciadores.db_manager import DBManager
     from gerenciadores import GerenciadorDeRecursos
+    from gerenciadores import GerenciadorDeMissoes
     from entidades.item_inventario import ItemInventario
     from entidades.mochila import Mochila
     from entidades.kit import KitDoExplorador
 
-class Jogador(pygame.sprite.Sprite):
+class Jogador(Personagem):
     """Representa o jogador no jogo."""
 
-    def __init__(self, gerenciador_banco_de_dados: 'DBManager', gerenciador_recursos, progresso, x_inicial, y_inicial, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila: 'Mochila' = [], kit: 'KitDoExplorador' = [], id_inventario = None):
-        super().__init__()
-        self.gerenciador_recursos = gerenciador_recursos
+    def __init__(self, gerenciador_banco_de_dados: 'DBManager', gerenciador_recursos: 'GerenciadorDeRecursos', progresso, coordenada_x, coordenada_y, identificador_jogador, nome, descricao, energia_maxima, vida_maxima, nivel, sorte, energia_atual, vida_atual, experiencia_atual, moedas, orientacao='direita', mochila: 'Mochila' = [], kit: 'KitDoExplorador' = [], id_inventario = None):
+        super().__init__(gerenciador_recursos, identificador_jogador, coordenada_x, coordenada_y, nome, descricao)
+        
         self.banco_de_dados = gerenciador_banco_de_dados
-        self.gerenciador_missoes = None
+        self.gerenciador_missoes: 'GerenciadorDeMissoes' = None
         self.fator_de_escala = 1.0
 
         # Estado do jogador
-        self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
-        self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.velocidade = VELOCIDADE_JOGADOR
         self.orientacao = orientacao
-        self.identificador_jogador = identificador_jogador
-        self.nome = nome
-        self.identificador_jogador = identificador_jogador
         self.identificador_progresso = progresso
-        self.descricao = descricao
         self.energia_maxima = energia_maxima
         self.vida_maxima = vida_maxima
         self.nivel = nivel
@@ -68,7 +64,7 @@ class Jogador(pygame.sprite.Sprite):
             self.imagem = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR))
             self.imagem.fill(AZUL) # Uma cor diferente para indicar um erro mais grave
         
-        self.rect = self.imagem.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
+        self.rect = self.imagem.get_rect(topleft=(int(self.coordenada_x), int(self.coordenada_y)))
 
         altura_pes = 18
         self.pes_rect = pygame.Rect(
@@ -101,13 +97,13 @@ class Jogador(pygame.sprite.Sprite):
 
     def inserir_item_na_mochila(self, item: 'ItemInventario', identificador_progresso):
         if self.banco_de_dados.adicionar_item_ao_inventario(self.id_mochila, item.identificador_item, item.quantidade):
-            self.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.identificador_jogador, identificador_progresso)
+            self.mochila = self.banco_de_dados.carregar_mochila_do_jogador(self.identificador, identificador_progresso)
 
 
 
     def usar_item_da_mochila(self, item: 'ItemInventario'):
         if self.banco_de_dados.remover_item_do_inventario(self.id_mochila, item.identificador_item):
-            print(f"[DEBUG] Item {item.identificador_item} removido do inventário do jogador {self.identificador_jogador}.")
+            print(f"[DEBUG] Item {item.identificador_item} removido do inventário do jogador {self.identificador}.")
             self.mochila.usar_item(item.identificador_item, self)
 
 
@@ -120,7 +116,7 @@ class Jogador(pygame.sprite.Sprite):
 
     def equipar_item(self, item: 'ItemInventario', identificador_progresso):
         if self.banco_de_dados.equipar_item_no_kit(
-            self.identificador_jogador,
+            self.identificador,
             item.identificador_item,
             item.tipo,
             identificador_progresso
@@ -354,8 +350,8 @@ class Jogador(pygame.sprite.Sprite):
 
 
     def atualizar_posicao_jogador(self, x_inicial, y_inicial, orientacao='direita'):
-        self.mundo_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
-        self.mundo_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.coordenada_x = float(x_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
+        self.coordenada_y = float(y_inicial) # Usar float para movimento mais suave, depois converter para int para o rect
         self.orientacao = orientacao
     
 
@@ -369,7 +365,7 @@ class Jogador(pygame.sprite.Sprite):
         self.carregar_animacoes()  # Recarrega frames com o novo sufixo (_ampliada)
 
         self.imagem = self.frames_animacao[self.estado][self.indice_frame]
-        self.rect = self.imagem.get_rect(topleft=(int(self.mundo_x), int(self.mundo_y)))
+        self.rect = self.imagem.get_rect(topleft=(int(self.coordenada_x), int(self.coordenada_y)))
 
         altura_pes = int(18 * fator)
         self.pes_rect = pygame.Rect(
@@ -512,7 +508,7 @@ class Jogador(pygame.sprite.Sprite):
 
     def carregar_habilidades(self):
         identificadores_do_equipamento = self.kit_do_explorador.obter_ids_do_equipamento()
-        habilidades_personagem = self.banco_de_dados.buscar_habilidades_por_personagem(self.identificador_jogador) or []
+        habilidades_personagem = self.banco_de_dados.buscar_habilidades_por_personagem(self.identificador) or []
         habilidades_arma = self.banco_de_dados.buscar_habilidades_por_arma(identificadores_do_equipamento["id_arma"]) if identificadores_do_equipamento["id_arma"] else []
         habilidades_fruta = self.banco_de_dados.buscar_habilidades_por_fruta(identificadores_do_equipamento["id_fruta"]) if identificadores_do_equipamento["id_fruta"] else []
 
@@ -578,8 +574,8 @@ class Jogador(pygame.sprite.Sprite):
 
             # --- FIM DA NOVA LÓGICA ---
 
-            pos_anterior_x = self.mundo_x
-            pos_anterior_y = self.mundo_y
+            pos_anterior_x = self.coordenada_x
+            pos_anterior_y = self.coordenada_y
 
             if self.movendo_esquerda:
                 dx -= velocidade_efetiva
@@ -591,8 +587,8 @@ class Jogador(pygame.sprite.Sprite):
                 dy += velocidade_efetiva
 
             # --- Verificação de colisão em X ---
-            self.mundo_x += dx
-            self.rect.x = int(self.mundo_x)
+            self.coordenada_x += dx
+            self.rect.x = int(self.coordenada_x)
             self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
             self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
 
@@ -605,14 +601,14 @@ class Jogador(pygame.sprite.Sprite):
             fora_do_caminho_x = not self._esta_dentro_do_caminho(lista_de_caminhos)
 
             if colidiu_obstaculo_x or fora_do_caminho_x:
-                self.mundo_x = pos_anterior_x
-                self.rect.x = int(self.mundo_x)
+                self.coordenada_x = pos_anterior_x
+                self.rect.x = int(self.coordenada_x)
                 self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
                 self.pes_rect.bottom = self.rect.bottom
 
             # --- Verificação de colisão em Y ---
-            self.mundo_y += dy
-            self.rect.y = int(self.mundo_y)
+            self.coordenada_y += dy
+            self.rect.y = int(self.coordenada_y)
             self.pes_rect.centerx = self.rect.centerx # NOVO: Sincroniza o X dos pés
             self.pes_rect.bottom = self.rect.bottom   # NOVO: Sincroniza o Y dos pés
 
@@ -625,12 +621,12 @@ class Jogador(pygame.sprite.Sprite):
             fora_do_caminho_y = not self._esta_dentro_do_caminho(lista_de_caminhos)
 
             if colidiu_obstaculo_y or fora_do_caminho_y:
-                self.mundo_y = pos_anterior_y
-                self.rect.y = int(self.mundo_y)
+                self.coordenada_y = pos_anterior_y
+                self.rect.y = int(self.coordenada_y)
                 self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
                 self.pes_rect.bottom = self.rect.bottom
-            self.mundo_x = max(0, min(self.mundo_x, largura_mundo - self.rect.width))
-            self.mundo_y = max(0, min(self.mundo_y, altura_mundo - self.rect.height))
+            self.coordenada_x = max(0, min(self.coordenada_x, largura_mundo - self.rect.width))
+            self.coordenada_y = max(0, min(self.coordenada_y, altura_mundo - self.rect.height))
         
             # --- Atualizar Animação --- (O resto do método permanece idêntico)
             esta_movendo = (self.movendo_esquerda or self.movendo_direita or
@@ -684,8 +680,8 @@ class Jogador(pygame.sprite.Sprite):
         :param camera_y: A posição Y da câmera (se o jogo rolar verticalmente).
         """
         # A posição do jogador na tela é sua posição no mundo menos a posição da câmera
-        posicao_tela_x = self.mundo_x - camera_x
-        posicao_tela_y = self.mundo_y - camera_y
+        posicao_tela_x = self.coordenada_x - camera_x
+        posicao_tela_y = self.coordenada_y - camera_y
         
         tela.blit(self.imagem, (int(posicao_tela_x), int(posicao_tela_y)))
 
