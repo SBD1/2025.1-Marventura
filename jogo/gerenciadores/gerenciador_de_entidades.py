@@ -1,8 +1,36 @@
 # entidades/gerenciador_entidades.py
 
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Optional, Literal
 if TYPE_CHECKING:
     from entidades import Jogador
+
+@dataclass
+class ProgressoDoJogo:
+    identificador_progresso: str
+    numero_do_slot: int
+    data_ultimo_salvamento: int
+    ocupado: bool
+    nome_jogador: str
+    identificador_jogador: str
+    percentual_concluido: float
+
+@dataclass
+class Area:
+    identificador_area: str
+    identificador_ilha: str
+    nome: str
+    tipo_area: Literal['Área de combate', 'Área neutra', 'Vila', 'Porto', 'Loja', 'Yomotsu Hirasaka']
+    chave_imagem_fundo: str
+    chave_imagem_frente: str
+    visitada: bool
+
+@dataclass
+class Ilha:
+    identificador_ilha: str
+    nome: str
+    visitada: bool
+
 
 
 class GerenciadorDeEntidades:
@@ -26,15 +54,15 @@ class GerenciadorDeEntidades:
         self._iniciar_missao = None
 
 
-        self._ilha_atual = None
-        self._area_atual = None
+        self._ilha_atual: Ilha = None
+        self._area_atual: Area = None
         self._ponto_de_renascimento = (360, 410)    # Coordenadas da praia
 
         self._entidade_inimigos = None
         # Adicione outros atributos para entidades globais persistentes aqui
         # self._inventario_global = None
-        self._dados_salvos = None # Dados de todos os slots
-        self._progresso_do_jogo = None # Dados de um slot específico
+        self._dados_salvos: list[ProgressoDoJogo] = [] # Dados de todos os slots
+        self._progresso_do_jogo: Optional[ProgressoDoJogo] = None # Dados de um slot específico
 
 
 
@@ -75,12 +103,12 @@ class GerenciadorDeEntidades:
 
 
     @property
-    def ilha_atual(self):
+    def ilha_atual(self) -> Ilha:
         """Retorna a ilha atual do jogador principal."""
         return self._ilha_atual
 
     @ilha_atual.setter
-    def ilha_atual(self, ilha_atual):
+    def ilha_atual(self, ilha_atual: Ilha):
         """Define a ilha atual do jogador principal."""
         self._ilha_atual = ilha_atual
 
@@ -99,12 +127,12 @@ class GerenciadorDeEntidades:
  
  
     @property
-    def area_atual(self):
+    def area_atual(self) -> Area:
         """Retorna a área atual do jogador principal."""
         return self._area_atual
 
     @area_atual.setter
-    def area_atual(self, area_atual):
+    def area_atual(self, area_atual: Area):
         """Define a área atual do jogador principal."""
         if area_atual.tipo_area == 'Loja':
             self._entidade_jogador.aplicar_fator_de_escala(2.5)
@@ -131,12 +159,12 @@ class GerenciadorDeEntidades:
     #     self._inventario_global = inventario
     #
     @property
-    def progresso_do_jogo(self):
+    def progresso_do_jogo(self) -> Optional[ProgressoDoJogo]:
         """Retorna os dados do slot selecionado."""
         return self._progresso_do_jogo
 
     @progresso_do_jogo.setter
-    def progresso_do_jogo(self, progresso):
+    def progresso_do_jogo(self, progresso: ProgressoDoJogo):
         """Define os dados do slot selecionado."""
         self._progresso_do_jogo = progresso
     
