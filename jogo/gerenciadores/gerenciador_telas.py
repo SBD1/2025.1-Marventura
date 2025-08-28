@@ -10,6 +10,7 @@ from telas import TelaJogo
 from telas import TelaBatalha
 from telas import TelaLoja
 from gerenciadores import GerenciadorDeEntidades
+from gerenciadores.gerenciador_missoes import GerenciadorDeMissoes
 from utilidades.constantes import *
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -26,6 +27,7 @@ class GerenciadorDeTelas:
         self.gerenciador_recursos = gerenciador_recursos
         self.gerenciador_banco_de_dados = gerenciador_banco_de_dados
         self.gerenciador_entidades = GerenciadorDeEntidades()
+        self.gerenciador_missoes = None  # Será inicializado quando necessário
         self.tela_atual = None
         self.telas_carregadas = {} # Cache de telas já criadas, se aplicável (ex: para não recriar a tela inicial)
 
@@ -37,6 +39,20 @@ class GerenciadorDeTelas:
         Cria uma nova instância de tela com base no estado desejado e nos argumentos.
         Esta função é a 'fábrica' de telas.
         """
+
+        if estado_desejado in [CHAVE_TRANSICAO_CARREGAR_JOGO, CHAVE_TRANSICAO_NOVO_JOGO]:
+            if self.gerenciador_missoes is None:
+                self.gerenciador_missoes = GerenciadorDeMissoes(
+                    self.gerenciador_banco_de_dados,
+                    self.gerenciador_recursos,
+                    self,
+                    self.gerenciador_entidades
+                )
+
+            self.gerenciador_missoes.limpar_estados_das_missoes()
+
+
+
         if estado_desejado == CHAVE_TRANSICAO_MENU_PRINCIPAL:
             # A TelaInicial não precisa de 'gerenciador_telas' no seu __init__
             # A não ser que você queira que ela chame diretamente self.gerenciador_telas.mudar_tela
@@ -49,23 +65,31 @@ class GerenciadorDeTelas:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos,
                                          self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
+            print(self.gerenciador_missoes.missoes_ativas)
+            self.gerenciador_missoes.iniciar_missao('mis001')
+            
             return TelaJogo(self, self.gerenciador_recursos,
-                            self.gerenciador_banco_de_dados)
-        elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:
+                            self.gerenciador_banco_de_dados,
+                            self.gerenciador_missoes)
+        elif estado_desejado == CHAVE_TRANSICAO_CARREGAR_JOGO:            
             return TelaJogo(self, self.gerenciador_recursos,
-                            self.gerenciador_banco_de_dados)
+                            self.gerenciador_banco_de_dados,
+                            self.gerenciador_missoes)
 
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
             print(f"Tela: {kwargs.get('ponto_geracao_jogador')}")
             
             return TelaJogo(self, self.gerenciador_recursos,
-                            self.gerenciador_banco_de_dados)
+                            self.gerenciador_banco_de_dados,
+                            self.gerenciador_missoes)
         elif estado_desejado == CHAVE_TRANSICAO_BATALHA:
             return TelaBatalha(self, self.gerenciador_recursos, # Passa self aqui
                                self.gerenciador_banco_de_dados,
+                               self.gerenciador_missoes,
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
                                jogador_iniciou= kwargs.get('jogador_iniciou', False),
-                               modo_batalha=kwargs.get('modo_batalha', 'normal'))
+                               modo_batalha=kwargs.get('modo_batalha', 'normal'),
+                               fuga_habilitada=kwargs.get('fuga_habilitada', True))
         elif estado_desejado == CHAVE_TRANSICAO_LOJA:
             return TelaLoja(self, self.gerenciador_recursos,
                         self.gerenciador_banco_de_dados,

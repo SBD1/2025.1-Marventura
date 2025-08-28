@@ -1,5 +1,5 @@
 class ItemInventario:
-    def __init__(self, id_item, nome, descricao, tipo, raridade, quantidade, efeitos=None):
+    def __init__(self, id_item, nome, descricao, tipo, raridade, quantidade, efeitos=None, item_de_missao=False):
         self.identificador_item = id_item
         self.nome = nome
         self.descricao = descricao
@@ -7,6 +7,7 @@ class ItemInventario:
         self.raridade = raridade
         self.quantidade = quantidade
         self.efeitos = efeitos or []  # Lista de dicionários: [{"nome": "Cura", "valor": 2}, ...]
+        self.item_de_missao = item_de_missao
 
     def adicionar_efeito(self, nome, valor):
         self.efeitos.append({"nome": nome, "valor": valor})

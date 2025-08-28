@@ -2,6 +2,9 @@
 
 import pygame
 from utilidades.constantes import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import GerenciadorDeRecursos
 
 class AreaInteracao(pygame.sprite.Sprite):
     """
@@ -9,7 +12,7 @@ class AreaInteracao(pygame.sprite.Sprite):
     e interage (ex: pressiona uma tecla). Não é um obstáculo sólido.
     """
     def __init__(self, identificador, x, y, largura, altura, tipo_evento, metodo_ativacao,
-                ativa, chance_sucesso=1.0, area_destino=None, chave_imagem=None, identificador_missao=None, gererenciador_recursos=None):
+                ativa, chance_sucesso=1.0, area_destino=None, chave_imagem=None, identificador_missao=None, gererenciador_recursos:'GerenciadorDeRecursos'=None):
         """
         Inicializa uma Área de Interação.
         :param x: Posição X no mundo do jogo (canto superior esquerdo).
@@ -38,11 +41,15 @@ class AreaInteracao(pygame.sprite.Sprite):
         self.amplitude_chacoalho = 4  # pixels de deslocamento lateral
         self.contador_ciclo = 0
 
+        self._imagem_alternativa = None
 
         # Se for usar imagem
         if chave_imagem:
             if not self.gerenciador_recursos:
                 raise ValueError("gerenciador_recursos é obrigatório se chave_imagem for usada.")
+
+            if chave_imagem == 'cerca':
+                self._imagem_alternativa = self.gerenciador_recursos.obter_imagem(f"{chave_imagem}_danificada")
 
             imagem = self.gerenciador_recursos.obter_imagem(chave_imagem)
             if imagem:
@@ -93,7 +100,9 @@ class AreaInteracao(pygame.sprite.Sprite):
             deslocamento = self.amplitude_chacoalho if self.contador_ciclo % 2 == 0 else -self.amplitude_chacoalho
             pos_x += deslocamento
 
-        if self.imagem:
+        if self._imagem_alternativa and self.ativa:
+            superficie.blit(self._imagem_alternativa, (pos_x, pos_y))
+        else:
             superficie.blit(self.imagem, (pos_x, pos_y))
 
         if DEBUG_DESENHAR_CAIXAS_COLISAO:

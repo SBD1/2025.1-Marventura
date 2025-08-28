@@ -93,9 +93,9 @@ class TelaSelecaoPersonagem(TelaModelo):
                 self.gerenciador_entidades.jogador = Jogador(
                     gerenciador_banco_de_dados=self.banco_de_dados,
                     gerenciador_recursos=self.gerenciador_recursos,
-                    x_inicial=jogador.coordenada_x,
+                    coordenada_x=jogador.coordenada_x,
                     progresso=self.dados_slot.identificador_progresso,
-                    y_inicial=jogador.coordenada_y,
+                    coordenada_y=jogador.coordenada_y,
                     identificador_jogador=jogador.identificador_jogador,
                     nome=jogador.nome,
                     descricao=jogador.descricao,
@@ -117,9 +117,21 @@ class TelaSelecaoPersonagem(TelaModelo):
                 self.gerenciador_entidades.ilha_atual = ilha
                 self.gerenciador_entidades.area_atual = area
 
-                missao = self.banco_de_dados.buscar_missoes_aceitas_pelo_jogador(jogador.identificador_jogador)[0]
+                # Recarrega os dados dos slots para obter o estado atualizado do banco de dados
+                self.gerenciador_entidades.dados_salvos = self.banco_de_dados.carregar_dados_dos_slots()
+                print(f"Dados dos slots carregados: {self.gerenciador_entidades.dados_salvos}")
+                
+                # --- LÓGICA CORRIGIDA ---
+                # Em vez de usar o índice do slot antigo, encontre o progresso correto
+                # usando o ID do jogador recém-criado. Isso é mais seguro.
+                id_progresso_atual = self.gerenciador_entidades.jogador.identificador_progresso
+                for progresso_salvo in self.gerenciador_entidades.dados_salvos:
+                    if progresso_salvo.identificador_progresso == id_progresso_atual:
+                        self.gerenciador_entidades.progresso_do_jogo = progresso_salvo
+                        break
 
-                self.gerenciador_entidades.iniciar_missao = missao
+                print(f"Progresso do jogo definido: {self.gerenciador_entidades.progresso_do_jogo}")
+
 
                 self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_NOVO_JOGO)
         return None

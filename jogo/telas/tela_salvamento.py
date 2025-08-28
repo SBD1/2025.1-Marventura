@@ -97,8 +97,9 @@ class TelaSalvamento(TelaModelo):
                 for i, rect_slot in enumerate(self._rects_slots):
                     if rect_slot.collidepoint(evento.pos):
                         self.gerenciador_entidades.progresso_do_jogo = self.gerenciador_entidades.dados_salvos[i]
+                        print(f"Slot {i} selecionado: {self.gerenciador_entidades.progresso_do_jogo}")
                         if self.gerenciador_entidades.progresso_do_jogo.ocupado:
-                            print(f"Carregando jogo do Slot {i+1}...\n{self.gerenciador_entidades.progresso_do_jogo}")
+                            print(f"Carregando jogo do Slot {i}...\n{self.gerenciador_entidades.progresso_do_jogo}")
                             jogador, mochila_jogador, kit_jogador, ilha, area, id_inventario = self.banco_de_dados.carregar_dados_do_progresso(self.gerenciador_entidades.progresso_do_jogo.identificador_jogador, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
                             ponto_de_revive = self.banco_de_dados.buscar_ponto_de_renascimento(area.identificador_area)
                             
@@ -107,9 +108,9 @@ class TelaSalvamento(TelaModelo):
                             self.gerenciador_entidades.jogador = Jogador(
                                 gerenciador_banco_de_dados=self.banco_de_dados,
                                 gerenciador_recursos=self.gerenciador_recursos,
-                                x_inicial=jogador.coordenada_x,
+                                coordenada_x=jogador.coordenada_x,
                                 progresso=self.gerenciador_entidades.progresso_do_jogo.identificador_progresso,
-                                y_inicial=jogador.coordenada_y,
+                                coordenada_y=jogador.coordenada_y,
                                 identificador_jogador=jogador.identificador_jogador,
                                 nome=jogador.nome,
                                 descricao=jogador.descricao,
@@ -134,7 +135,7 @@ class TelaSalvamento(TelaModelo):
                             
                             self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_CARREGAR_JOGO)
                         else:
-                            print(f"Slot {i+1} vazio. Iniciando novo jogo a partir daqui (ou indo para seleção de personagem).")
+                            print(f"Slot {i} vazio. Iniciando novo jogo a partir daqui (ou indo para seleção de personagem).")
                             self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_SELECAO_PERSONAGEM) # Ou CHAVE_TRANSICAO_NOVO_JOGO se for direto
 
                 # Verifica clique no botão "Voltar"

@@ -6,7 +6,10 @@ from utilidades.constantes import *
 from .tela_modelo import TelaModelo
 from componentes import BarraDeEstado
 from gerenciadores import GerenciadorDeEntidades
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from gerenciadores import DBManager
+    from gerenciadores import GerenciadorDeMissoes
 
 
 class _IconeAcao:
@@ -19,10 +22,11 @@ class _IconeAcao:
         tela.blit(self.image, self.rect)
 
 class TelaBatalha(TelaModelo):
-    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados, inimigos_na_batalha, jogador_iniciou=False, modo_batalha='normal'):
+    def __init__(self, gerenciador_telas, gerenciador_recursos, gerenciador_banco_de_dados: 'DBManager', gerenciador_missoes: 'GerenciadorDeMissoes', inimigos_na_batalha, jogador_iniciou=False, modo_batalha='normal', fuga_habilitada=True):
         super().__init__(gerenciador_telas, gerenciador_recursos)
 
         self.entidades = GerenciadorDeEntidades()
+        self.missoes = gerenciador_missoes
         self.banco_de_dados = gerenciador_banco_de_dados
 
         self.habilidades_visiveis = []
@@ -76,6 +80,7 @@ class TelaBatalha(TelaModelo):
         self.jogador_iniciou = jogador_iniciou
         self.experiencia_acumulada = 0
         self.itens_obtidos = []
+        self.fuga_habilitada = fuga_habilitada
 
         # Prepara a lista de inimigos que serão enfrentados
         self.inimigos = []
@@ -87,6 +92,8 @@ class TelaBatalha(TelaModelo):
         self.numero_da_onda = 0
 
         self.inimigos_lutando = inimigos_na_batalha
+
+        self.tipo_inimigo = inimigos_na_batalha[0].nome if inimigos_na_batalha else None
 
         for inimigo_mapa in inimigos_na_batalha:
             nome = inimigo_mapa.nome
@@ -453,7 +460,7 @@ class TelaBatalha(TelaModelo):
             self._adiconar_item_ao_invetario_do_jogador(self.itens_obtidos)
     
             self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
-                self.entidades.jogador.identificador_jogador,
+                self.entidades.jogador.identificador,
                 self.entidades.jogador.energia_maxima,
                 self.entidades.jogador.vida_maxima,
                 self.entidades.jogador.nivel,
@@ -463,6 +470,8 @@ class TelaBatalha(TelaModelo):
                 self.entidades.jogador.experiencia_atual,
                 self.entidades.jogador.moedas
             )
+
+            self.missoes.notificar_vitoria_em_batalha(self.tipo_inimigo)
     
             self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA)
     
@@ -486,7 +495,7 @@ class TelaBatalha(TelaModelo):
             self._adiconar_item_ao_invetario_do_jogador(self.itens_obtidos)
     
             self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
-                self.entidades.jogador.identificador_jogador,
+                self.entidades.jogador.identificador,
                 self.entidades.jogador.energia_maxima,
                 self.entidades.jogador.vida_maxima,
                 self.entidades.jogador.nivel,
@@ -586,9 +595,12 @@ class TelaBatalha(TelaModelo):
                 if icone.rect.collidepoint(evento.pos):
                     match icone.acao:
                         case "fugir":
-                            self.gerenciador_telas.mudar_tela(
-                                CHAVE_TRANSICAO_MAPA
-                            )
+                            if self.fuga_habilitada:
+                                self.gerenciador_telas.mudar_tela(
+                                    CHAVE_TRANSICAO_MAPA
+                                )
+                            else:
+                                print("Fuga não está habilitada nesta batalha.")
                             return
 
                         case "mochila":
