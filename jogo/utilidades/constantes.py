@@ -25,6 +25,7 @@ AMARELO_CLARO = (255, 255, 153)
 VERDE_CLARO = pygame.Color("#23EA52")
 BRANCO_CLARO = pygame.Color("#F0F0F0")
 AZUL_CLARO = pygame.Color("#4B85C8")
+MARROM = (139, 69, 19)
 
 # --- Tags de Alvo ---
 TAGS_DE_ALVO = {
@@ -66,6 +67,7 @@ CHAVE_TRANSICAO_SELECAO_PERSONAGEM = 'selecao_personagem'
 CHAVE_TRANSICAO_NOVO_JOGO = 'novo_jogo'
 CHAVE_TRANSICAO_CARREGAR_JOGO = 'carregar_jogo'
 CHAVE_TRANSICAO_INVENTARIO = 'inventario'
+CHAVE_TRANSICAO_VIAGEM = "VIAGEM"
 
 # --- Estados do Inimigo ---
 ESTADO_INIMIGO_PARADO = 'parado'
@@ -92,6 +94,9 @@ SHUAN = 'Shuan'
 # --- Inimigos ---
 INIMIGO_LOBO = 'Lobo'
 INIMIGO_CORVO = 'Corvo'
+INIMIGO_BRUTAMONTES = 'Brutamontes'
+INIMIGO_MARINHEIRO_CORRUPTO = 'Marinheiro Corrupto'
+
 
 # --- Habitantes ---
 BIGODINI = 'campones_b'
@@ -100,6 +105,17 @@ LINA_PANELA = 'camponesa_a'
 TIA_COTINHA = 'camponesa_b'
 SR_LEE = 'lee'
 SR_LEE_LOGISTA = 'lee_busto'
+
+
+ALTURA_RETANGULO_PES = {
+    BIGODINI: 19,
+    TIAO_PALHA: 20,
+    LINA_PANELA: 18,
+    TIA_COTINHA: 18,
+    SR_LEE: 18,
+    SR_LEE_LOGISTA: 0,
+
+}
 
 
 # --- Identificadores de Mapas ---
@@ -166,6 +182,49 @@ CHAVE_CAIXA_DE_TEXTO = 'caixa_de_texto'
 CHAVE_BARRA_DE_ESTADO = 'barra_de_estado'
 CHAVE_CAMPO_DE_BATALHA_CAMPOS = 'campo_de_batalha_campos'
 
+# --- Chaves de menu de mochila ---
+INV_PAINEL_FUNDO = 'inv_painel_fundo'
+INV_BOTAO_FECHAR = 'inv_botao_fechar'
+INV_LATERAL_ESTADO = 'inv_lateral_estado'
+INV_LATERAL_ESTADO_ATIVO = 'inv_lateral_estado_ativo'
+INV_LATERAL_ARMA = 'inv_lateral_arma'
+INV_LATERAL_ARMA_ATIVO = 'inv_lateral_arma_ativo'
+INV_LATERAL_ACESSORIO = 'inv_lateral_acessorio'
+INV_LATERAL_ACESSORIO_ATIVO = 'inv_lateral_acessorio_ativo'
+INV_LATERAL_CONSUMIVEL = 'inv_lateral_consumivel'
+INV_LATERAL_CONSUMIVEL_ATIVO = 'inv_lateral_consumivel_ativo'
+INV_LATERAL_ESPECIAL = 'inv_lateral_especial'
+INV_LATERAL_ESPECIAL_ATIVO = 'inv_lateral_especial_ativo'
+INV_PAINEL_ITENS = 'inv_painel_itens'
+INV_VAZIO = 'inv_vazio'
+FILTRO_ESPADA = 'filtro_espada'
+FILTRO_PROJETIL = 'filtro_projetil'
+FILTRO_CONSUMIVEL = 'filtro_consumivel'
+FILTRO_NAO_CONSUMIVEL = 'filtro_nao_consumivel'
+FILTRO_ESPECIAL = 'filtro_especial'
+FILTRO_ACESSORIO = 'filtro_acessorio'
+ESTATISTICA_SILVIE = 'estatistica_silvie'
+ESTATISTICA_SHUAN = 'estatistica_shuan'
+MENU_INFO = 'menu_info'
+INV_BOTAO_USAR = 'inv_botao_usar'
+
+# --- Chaves de menu de cozinha ---
+ABA_LATERAL_COZINHAR = 'aba_lateral_cozinhar'
+ABA_LATERAL_COZINHAR_ATIVO = 'aba_lateral_cozinhar_ativo'
+ABA_LATERAL_RECEITAS = 'aba_lateral_receitas'
+ABA_LATERAL_RECEITAS_ATIVO = 'aba_lateral_receitas_ativo'
+PAINEL_RECEITAS = 'painel_receitas'
+ITEM_GENERICO = 'item_generico'
+ETIQUETA = 'etiqueta'
+SLOT_INGREDIENTE_VAZIO = "slot_ingrediente_vazio"
+BOTAO_COZINHAR_ATIVO = "botao_cozinhar_ativo"
+BOTAO_COZINHAR_INATIVO = "botao_cozinhar_inativo"
+PAINEL_SELECAO_INGREDIENTES = "painel_selecao_ingredientes"
+
+# --- Chaves de áudio ---
+SOM_COMPRA_SUCESSO = 'som_compra_sucesso'
+SOM_COMPRA_FALHA = 'som_compra_falha'
+
 # --- Chaves de Ação em Batalhas ---
 CHAVE_ACAO_ESTRATEGIAS = 'acao_estrategias'
 CHAVE_ACAO_MOCHILA = 'acao_mochila'
@@ -176,6 +235,8 @@ CHAVE_ACAO_ESPADA = 'acao_espada'
 CHAVE_ACAO_PROJETIL = 'acao_projetil'
 
 CHAVE_BARRACA = 'barraca'
+CHAVE_CERCA = 'cerca'
+CHAVE_CERCA_DANIFICADA = 'cerca_danificada'
 CHAVE_LOJA_INTERIOR = 'loja_interior'
 CHAVE_LOJA_ARMAS_E_ACESSORIOS_INTERIOR = 'loja_armas_e_acessorios_interior'
 CHAVE_COZINHA_INTERIOR = 'cozinha_interior'
