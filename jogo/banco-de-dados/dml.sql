@@ -324,7 +324,7 @@ VALUES
     ('Leite de Cabra Alpina', 'Quentinho, cremoso e nutritivo. Perfeito para combater o frio e o mau humor.', '★', 'Ilha Glacial de Frimora', 10, 6, FALSE, FALSE),
     ('Chocolate Amargo', 'Amargo como a vida no gelo. Derrete o cansaço e o coração congelado.', '★', 'Ilha Glacial de Frimora', 15, 8, FALSE, FALSE),
     ('Fruta Cítrica do Oeste', 'Azeda, suculenta e cheia de energia solar. Ótima pra acordar até múmia adormecida.', '★', 'Cactuaraquara', NULL, 4, FALSE, TRUE),
-    ('Côco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara', NULL, 7, FALSE, TRUE),
+    ('Coco do Oásis', 'Pesado, difícil de abrir, mas vale cada gole. Ideal pra hidratar e bater na cabeça dos outros.', '★', 'Cactuaraquara', NULL, 7, FALSE, TRUE),
     ('Areia Mineral', 'Tem gosto de... areia. Mas misture bem e talvez vire um tônico impressionante.', '★★', 'Cactuaraquara', NULL, 10, FALSE, TRUE),
     ('Carne do Deserto', 'Picante o suficiente pra te fazer cuspir fogo. +1 em coragem depois de comer.', '★★', 'Cactuaraquara',  20, 8, FALSE, FALSE),
     ('Geleia de Cacto Doce', 'Um docinho raro feito do néctar de um cacto bem zangado. Cuidadosamente colhida!', '★★', 'Cactuaraquara', 11, 6, FALSE, FALSE),
@@ -377,6 +377,16 @@ VALUES
     ('Rosquinha do Quartel Proibida', 'Criada por um marinheiro rebelde com talento para confeitaria e zero noção de higiene. Um sucesso entre os subalternos.', '★★', 'Cozinha', NULL, 16, TRUE, FALSE),
     ('Bolo da Chaminé Encantada', 'Dizem que foi feito com açúcar mágico... ou fuligem encantada. Vai saber. Pelo menos é fofo e aquece o coração.', '★★★', 'Cozinha', NULL, 18, TRUE, FALSE),
     ('Frankenprato', 'Uma aberração culinária nascida da mistura de ingredientes incompatíveis. Não parece comida... mas tecnicamente é.', '★', 'Cozinha', NULL, 5, TRUE, FALSE);
+
+
+-- Itens de missão
+INSERT INTO nao_consumivel
+    (nome, descricao, raridade, local_encontrado,
+     preco_de_compra, preco_de_venda, e_coletado, item_de_missao)
+VALUES
+    ('Água do poço', 'Colhida às 10h sob o sol glorioso, essa água brilha, tem gosto de vitória e zero sapos (em teoria). Ideal pra quem não quer lamber um brejo sem querer.', '★', 'Ilha de Borabóia', NULL, NULL, FALSE, TRUE),
+    ('Arroz do Planalto', 'Grãos branquinhos, colhidos sob sol escaldante e formigas sedentas. Dança na panela, mas machuca na colheita!', '★', 'Ilha de Borabóia', NULL, NULL, FALSE, TRUE),
+    ('Ovo dos Campos', 'Fruto da bravura e da corrida estratégica entre arbustos, este Ovo dos Campos foi conquistado sob olhar julgador de galinhas nervosas. Ideal para receitas... ou escaramuças gourmet.', '★', 'Ilha de Borabóia', NULL, NULL, FALSE, TRUE);
 
 
 
@@ -515,85 +525,97 @@ VALUES
 INSERT INTO receita
     (consumivel_produzido)
 VALUES
-    ('con028'),
-    ('con029'),
-    ('con030'),
-    ('con031'),
-    ('con032'),
-    ('con033'),
-    ('con034'),
-    ('con035'),
-    ('con036'),
-    ('con037'),
-    ('con038'),
-    ('con039'),
-    ('con040'),
-    ('con041'),
-    ('con042'),
-    ('con043'),
-    ('con044'),
-    ('con045'),
-    ('con046'),
-    ('con047'),
-    ('con048'),
-    ('con049'),
-    ('con050'),
-    ('con051'),
-    ('con052'),
-    ('con053'),
-    ('con054'),
-    ('con055'),
-    ('con056'),
-    ('con057'),
-    ('con058'),
-    ('con059'),
-    ('con060'),
-    ('con061'),
-    ('con062'),
-    ('con063'),
-    ('con064'),
-    ('con065'),
-    ('con066'),
-    ('con067');
+    ('con028'), -- rec001
+    ('con029'), -- rec002
+    ('con030'), -- rec003
+    ('con031'), -- rec004
+    ('con031'), -- rec005
+    ('con032'), -- rec006
+    ('con033'), -- rec007
+    ('con034'), -- rec008
+    ('con035'), -- rec009
+    ('con036'), -- rec010
+    ('con037'), -- rec011
+    ('con038'), -- rec012
+    ('con039'), -- rec013
+    ('con040'), -- rec014
+    ('con041'), -- rec015
+    ('con042'), -- rec016
+    ('con042'), -- rec017
+    ('con043'), -- rec018
+    ('con043'), -- rec019
+    ('con043'), -- rec020
+    ('con043'), -- rec021
+    ('con044'), -- rec022
+    ('con045'), -- rec023
+    ('con045'), -- rec024
+    ('con046'), -- rec025
+    ('con047'), -- rec026
+    ('con047'), -- rec027
+    ('con048'), -- rec028
+    ('con049'), -- rec029
+    ('con050'), -- rec030
+    ('con051'), -- rec031
+    ('con052'), -- rec032
+    ('con053'), -- rec033
+    ('con054'), -- rec034
+    ('con055'), -- rec035
+    ('con056'), -- rec036
+    ('con057'), -- rec037
+    ('con058'), -- rec038
+    ('con059'), -- rec039
+    ('con060'), -- rec040
+    ('con061'), -- rec041
+    ('con062'), -- rec042
+    ('con063'), -- rec043
+    ('con064'), -- rec044
+    ('con065'), -- rec045
+    ('con066'), -- rec046
+    ('con067'); -- rec047
 
 
 
 INSERT INTO ingrediente_nao_consumivel
     (identificador_receita, identificador_nao_consumivel)
 VALUES
-    ('rec001', 'ncn020'),
-    ('rec005', 'ncn017'),
-    ('rec009', 'ncn010'),
-    ('rec009', 'ncn016'),
-    ('rec013', 'ncn002'),
-    ('rec013', 'ncn003'),
-    ('rec014', 'ncn006'),
+    ('rec001', 'ncn019'),
+    ('rec006', 'ncn016'),
+    ('rec010', 'ncn009'),
+    ('rec010', 'ncn015'),
+    ('rec014', 'ncn002'),
     ('rec014', 'ncn003'),
-    ('rec015', 'ncn015'),
-    ('rec015', 'ncn017'),
-    ('rec016', 'ncn002'),
-    ('rec018', 'ncn003'),
-    ('rec019', 'ncn004'),
-    ('rec020', 'ncn004'),
-    ('rec022', 'ncn012'),
-    ('rec023', 'ncn015'),
-    ('rec024', 'ncn001'),
-    ('rec024', 'ncn006'),
-    ('rec025', 'ncn001'),
-    ('rec025', 'ncn017'),
-    ('rec026', 'ncn001'),
-    ('rec027', 'ncn018'),
-    ('rec027', 'ncn015'),
-    ('rec028', 'ncn019'),
-    ('rec030', 'ncn016'),
-    ('rec032', 'ncn012'),
+    ('rec015', 'ncn006'),
+    ('rec015', 'ncn003'),
+    ('rec016', 'ncn014'),
+    ('rec016', 'ncn016'),
+    ('rec018', 'ncn002'),
+    ('rec023', 'ncn003'),
+    ('rec025', 'ncn004'),
+    ('rec026', 'ncn004'),
+    ('rec029', 'ncn011'),
+    ('rec030', 'ncn014'),
+    ('rec031', 'ncn001'),
+    ('rec031', 'ncn006'),
+    ('rec032', 'ncn001'),
+    ('rec032', 'ncn016'),
+    ('rec033', 'ncn001'),
+    ('rec034', 'ncn017'),
     ('rec034', 'ncn014'),
-    ('rec035', 'ncn021'),
-    ('rec036', 'ncn007'),
-    ('rec036', 'ncn006'),
-    ('rec037', 'ncn007'),
-    ('rec038', 'ncn007'),
-    ('rec039', 'ncn007');
+    ('rec035', 'ncn018'),
+    ('rec037', 'ncn015'),
+    ('rec039', 'ncn011'),
+    ('rec041', 'ncn013'),
+    ('rec042', 'ncn020'),
+    ('rec043', 'ncn007'),
+    ('rec043', 'ncn006'),
+    ('rec044', 'ncn007'),
+    ('rec045', 'ncn007'),
+    ('rec046', 'ncn007'),
+    ('rec017', 'ncn014'),
+    ('rec019', 'ncn002'),
+    ('rec020', 'ncn002'),
+    ('rec021', 'ncn002'),
+    ('rec024', 'ncn003');
 
 
 
@@ -604,52 +626,54 @@ VALUES
     ('rec002', 'con006'),
     ('rec003', 'con002'),
     ('rec003', 'con017'),
-    ('rec004', 'con017'),
-    ('rec004', 'con010'),
     ('rec004', 'con003'),
-    ('rec005', 'con016'),
-    ('rec006', 'con011'),
-    ('rec006', 'con003'),
-    ('rec007', 'con028'),
-    ('rec007', 'con031'),
-    ('rec008', 'con017'),
-    ('rec010', 'con036'),
-    ('rec010', 'con011'),
+    ('rec004', 'con017'),
+    ('rec006', 'con016'),
+    ('rec007', 'con011'),
+    ('rec007', 'con003'),
+    ('rec008', 'con028'),
+    ('rec008', 'con031'),
+    ('rec009', 'con017'),
     ('rec011', 'con036'),
-    ('rec011', 'con016'),
-    ('rec012', 'con006'),
-    ('rec012', 'con011'),
-    ('rec015', 'con013'),
-    ('rec016', 'con001'),
-    ('rec016', 'con002'),
-    ('rec016', 'con014'),
-    ('rec016', 'con021'),
-    ('rec017', 'con015'),
-    ('rec017', 'con014'),
-    ('rec018', 'con003'),
-    ('rec018', 'con010'),
-    ('rec019', 'con010'),
-    ('rec020', 'con005'),
-    ('rec020', 'con006'),
-    ('rec021', 'con016'),
-    ('rec021', 'con015'),
-    ('rec022', 'con026'),
-    ('rec023', 'con026'),
-    ('rec026', 'con017'),
-    ('rec028', 'con019'),
-    ('rec029', 'con009'),
-    ('rec029', 'con013'),
-    ('rec030', 'con012'),
-    ('rec031', 'con013'),
-    ('rec031', 'con012'),
-    ('rec032', 'con011'),
-    ('rec033', 'con018'),
-    ('rec033', 'con014'),
-    ('rec034', 'con016'),
-    ('rec035', 'con017'),
-    ('rec037', 'con014'),
-    ('rec038', 'con025'),
-    ('rec039', 'con041');
+    ('rec011', 'con011'),
+    ('rec012', 'con036'),
+    ('rec012', 'con016'),
+    ('rec013', 'con006'),
+    ('rec013', 'con011'),
+    ('rec018', 'con001'),
+    ('rec022', 'con015'),
+    ('rec022', 'con014'),
+    ('rec023', 'con003'),
+    ('rec025', 'con010'),
+    ('rec026', 'con005'),
+    ('rec028', 'con016'),
+    ('rec028', 'con015'),
+    ('rec029', 'con026'),
+    ('rec030', 'con026'),
+    ('rec033', 'con017'),
+    ('rec035', 'con019'),
+    ('rec036', 'con009'),
+    ('rec036', 'con013'),
+    ('rec037', 'con012'),
+    ('rec038', 'con013'),
+    ('rec038', 'con012'),
+    ('rec039', 'con011'),
+    ('rec040', 'con018'),
+    ('rec040', 'con014'),
+    ('rec041', 'con016'),
+    ('rec042', 'con017'),
+    ('rec044', 'con014'),
+    ('rec045', 'con025'),
+    ('rec046', 'con041'),
+    ('rec005', 'con010'),
+    ('rec005', 'con017'),
+    ('rec017', 'con013'),
+    ('rec019', 'con002'),
+    ('rec020', 'con014'),
+    ('rec021', 'con021'),
+    ('rec024', 'con010'),
+    ('rec027', 'con005'),
+    ('rec027', 'con006');
 
 
 
@@ -905,132 +929,6 @@ VALUES
 
 
 INSERT INTO estado_area_interativa
-    (identificador_progresso, identificador_area_interativa)
-VALUES
-    ('pro001', 'ari001'),
-    ('pro001', 'ari002'),
-    ('pro001', 'ari003'),
-    ('pro001', 'ari004'),
-    ('pro001', 'ari005'),
-    ('pro001', 'ari006'),
-    ('pro001', 'ari007'),
-    ('pro001', 'ari008'),
-    ('pro001', 'ari009'),
-    ('pro001', 'ari010'),
-    ('pro001', 'ari011'),
-    ('pro001', 'ari012'),
-    ('pro001', 'ari013'),
-    ('pro001', 'ari014'),
-    ('pro001', 'ari015'),
-    ('pro001', 'ari016'),
-    ('pro001', 'ari017'),
-    ('pro001', 'ari018'),
-    ('pro001', 'ari019'),
-    ('pro001', 'ari020'),
-    ('pro001', 'ari021'),
-    ('pro001', 'ari022'),
-    ('pro001', 'ari023'),
-    ('pro001', 'ari024'),
-    ('pro001', 'ari025'),
-    ('pro001', 'ari026'),
-    ('pro001', 'ari027'),
-    ('pro001', 'ari028'),
-    ('pro001', 'ari029'),
-    ('pro001', 'ari030'),
-    ('pro001', 'ari031'),
-    ('pro001', 'ari032'),
-    ('pro001', 'ari034'),
-    ('pro001', 'ari035'),
-    ('pro001', 'ari036'),
-    ('pro001', 'ari037'),
-    ('pro001', 'ari038'),
-    ('pro001', 'ari039'),
-    ('pro001', 'ari040'),
-    ('pro001', 'ari041'),
-    ('pro002', 'ari001'),
-    ('pro002', 'ari002'),
-    ('pro002', 'ari003'),
-    ('pro002', 'ari004'),
-    ('pro002', 'ari005'),
-    ('pro002', 'ari006'),
-    ('pro002', 'ari007'),
-    ('pro002', 'ari008'),
-    ('pro002', 'ari009'),
-    ('pro002', 'ari010'),
-    ('pro002', 'ari011'),
-    ('pro002', 'ari012'),
-    ('pro002', 'ari013'),
-    ('pro002', 'ari014'),
-    ('pro002', 'ari015'),
-    ('pro002', 'ari016'),
-    ('pro002', 'ari017'),
-    ('pro002', 'ari018'),
-    ('pro002', 'ari019'),
-    ('pro002', 'ari020'),
-    ('pro002', 'ari021'),
-    ('pro002', 'ari022'),
-    ('pro002', 'ari023'),
-    ('pro002', 'ari024'),
-    ('pro002', 'ari025'),
-    ('pro002', 'ari026'),
-    ('pro002', 'ari027'),
-    ('pro002', 'ari028'),
-    ('pro002', 'ari029'),
-    ('pro002', 'ari030'),
-    ('pro002', 'ari031'),
-    ('pro002', 'ari032'),
-    ('pro002', 'ari034'),
-    ('pro002', 'ari035'),
-    ('pro002', 'ari036'),
-    ('pro002', 'ari037'),
-    ('pro002', 'ari038'),
-    ('pro002', 'ari039'),
-    ('pro002', 'ari040'),
-    ('pro002', 'ari041'),
-    ('pro003', 'ari001'),
-    ('pro003', 'ari002'),
-    ('pro003', 'ari003'),
-    ('pro003', 'ari004'),
-    ('pro003', 'ari005'),
-    ('pro003', 'ari006'),
-    ('pro003', 'ari007'),
-    ('pro003', 'ari008'),
-    ('pro003', 'ari009'),
-    ('pro003', 'ari010'),
-    ('pro003', 'ari011'),
-    ('pro003', 'ari012'),
-    ('pro003', 'ari013'),
-    ('pro003', 'ari014'),
-    ('pro003', 'ari015'),
-    ('pro003', 'ari016'),
-    ('pro003', 'ari017'),
-    ('pro003', 'ari018'),
-    ('pro003', 'ari019'),
-    ('pro003', 'ari020'),
-    ('pro003', 'ari021'),
-    ('pro003', 'ari022'),
-    ('pro003', 'ari023'),
-    ('pro003', 'ari024'),
-    ('pro003', 'ari025'),
-    ('pro003', 'ari026'),
-    ('pro003', 'ari027'),
-    ('pro003', 'ari028'),
-    ('pro003', 'ari029'),
-    ('pro003', 'ari030'),
-    ('pro003', 'ari031'),
-    ('pro003', 'ari032'),
-    ('pro003', 'ari034'),
-    ('pro003', 'ari035'),
-    ('pro003', 'ari036'),
-    ('pro003', 'ari037'),
-    ('pro003', 'ari038'),
-    ('pro003', 'ari039'),
-    ('pro003', 'ari040'),
-    ('pro003', 'ari041');
-
-
-
-INSERT INTO estado_area_interativa
     (identificador_progresso, identificador_area_interativa, ativa)
 VALUES
     ('pro001', 'ari033', FALSE),
@@ -1179,21 +1077,33 @@ VALUES
     ('pro001', 'lac001', 'are001', 'are001', 3430, 55, 0, 5),
     ('pro001', 'lac001', 'are001', 'are001', 4273, 412, 0, 5),
     ('pro001', 'lac001', 'are001', 'are001', 3600, 427, 0, 5),
-    ('pro001', 'lac002', 'are002', 'are002', 1500, 125, 0, 7),
-    ('pro001', 'lac002', 'are002', 'are002', 1900, 400, 0, 7),
-    ('pro001', 'lac002', 'are002', 'are002', 2360, 210, 0, 7),
+    ('pro001', 'lac002', 'are003', 'are003', 1500, 125, 0, 7),
+    ('pro001', 'lac002', 'are003', 'are003', 1900, 400, 0, 7),
+    ('pro001', 'lac002', 'are003', 'are003', 2360, 210, 0, 7),
+    ('pro001', 'lac003', 'are009', 'are009', 837, 165, 15, 16),
+    ('pro001', 'lac003', 'are009', 'are009', 1265, 317, 14, 16),
+    ('pro001', 'lac004', 'are009', 'are009', 1079, 444, 25, 20),
+    ('pro001', 'lac004', 'are009', 'are009', 1506, 153, 24, 20),
     ('pro002', 'lac001', 'are001', 'are001', 3430, 55, 0, 5),
     ('pro002', 'lac001', 'are001', 'are001', 4273, 412, 0, 5),
     ('pro002', 'lac001', 'are001', 'are001', 3600, 427, 0, 5),
-    ('pro002', 'lac002', 'are002', 'are002', 1500, 125, 0, 7),
-    ('pro002', 'lac002', 'are002', 'are002', 1900, 400, 0, 7),
-    ('pro002', 'lac002', 'are002', 'are002', 2360, 210, 0, 7),
+    ('pro002', 'lac002', 'are003', 'are003', 1500, 125, 0, 7),
+    ('pro002', 'lac002', 'are003', 'are003', 1900, 400, 0, 7),
+    ('pro002', 'lac002', 'are003', 'are003', 2360, 210, 0, 7),
+    ('pro002', 'lac003', 'are009', 'are009', 837, 165, 15, 16),
+    ('pro002', 'lac003', 'are009', 'are009', 1265, 317, 14, 16),
+    ('pro002', 'lac004', 'are009', 'are009', 1079, 444, 25, 20),
+    ('pro002', 'lac004', 'are009', 'are009', 1506, 153, 24, 20),
     ('pro003', 'lac001', 'are001', 'are001', 3430, 55, 0, 5),
     ('pro003', 'lac001', 'are001', 'are001', 4273, 412, 0, 5),
     ('pro003', 'lac001', 'are001', 'are001', 3600, 427, 0, 5),
-    ('pro003', 'lac002', 'are002', 'are002', 1500, 125, 0, 7),
-    ('pro003', 'lac002', 'are002', 'are002', 1900, 400, 0, 7),
-    ('pro003', 'lac002', 'are002', 'are002', 2360, 210, 0, 7);
+    ('pro003', 'lac002', 'are003', 'are003', 1500, 125, 0, 7),
+    ('pro003', 'lac002', 'are003', 'are003', 1900, 400, 0, 7),
+    ('pro003', 'lac002', 'are003', 'are003', 2360, 210, 0, 7),
+    ('pro003', 'lac003', 'are009', 'are009', 837, 165, 15, 16),
+    ('pro003', 'lac003', 'are009', 'are009', 1265, 317, 14, 16),
+    ('pro003', 'lac004', 'are009', 'are009', 1079, 444, 25, 20),
+    ('pro003', 'lac004', 'are009', 'are009', 1506, 153, 24, 20);
 
 
 
@@ -1214,30 +1124,30 @@ VALUES
 INSERT INTO estado_chefe
     (identificador_area_atual, identificador_progresso, identificador_chefe, vida_atual)
 VALUES
-    ('are001', 'pro001', 'che001', 14),
-    ('are009', 'pro001', 'che002', 22),
-    ('are015', 'pro001', 'che003', 31),
-    ('are019', 'pro001', 'che004', 41),
-    ('are023', 'pro001', 'che005', 52),
-    ('are026', 'pro001', 'che006', 100),
-    ('are026', 'pro001', 'che007', 120),
-    ('are026', 'pro001', 'che008', 150),
-    ('are001', 'pro002', 'che001', 14),
-    ('are009', 'pro002', 'che002', 22),
-    ('are015', 'pro002', 'che003', 31),
-    ('are019', 'pro002', 'che004', 41),
-    ('are023', 'pro002', 'che005', 52),
-    ('are026', 'pro002', 'che006', 100),
-    ('are026', 'pro002', 'che007', 120),
-    ('are026', 'pro002', 'che008', 150),
-    ('are001', 'pro003', 'che001', 14),
-    ('are009', 'pro003', 'che002', 22),
-    ('are015', 'pro003', 'che003', 31),
-    ('are019', 'pro003', 'che004', 41),
-    ('are023', 'pro003', 'che005', 52),
-    ('are026', 'pro003', 'che006', 100),
-    ('are026', 'pro003', 'che007', 120),
-    ('are026', 'pro003', 'che008', 150);
+    (null, 'pro001', 'che001', 14),
+    (null, 'pro001', 'che002', 22),
+    (null, 'pro001', 'che003', 31),
+    (null, 'pro001', 'che004', 41),
+    (null, 'pro001', 'che005', 52),
+    (null, 'pro001', 'che006', 100),
+    (null, 'pro001', 'che007', 120),
+    (null, 'pro001', 'che008', 150),
+    (null, 'pro002', 'che001', 14),
+    (null, 'pro002', 'che002', 22),
+    (null, 'pro002', 'che003', 31),
+    (null, 'pro002', 'che004', 41),
+    (null, 'pro002', 'che005', 52),
+    (null, 'pro002', 'che006', 100),
+    (null, 'pro002', 'che007', 120),
+    (null, 'pro002', 'che008', 150),
+    (null, 'pro003', 'che001', 14),
+    (null, 'pro003', 'che002', 22),
+    (null, 'pro003', 'che003', 31),
+    (null, 'pro003', 'che004', 41),
+    (null, 'pro003', 'che005', 52),
+    (null, 'pro003', 'che006', 100),
+    (null, 'pro003', 'che007', 120),
+    (null, 'pro003', 'che008', 150);
 
 
 
@@ -1438,8 +1348,8 @@ INSERT INTO missao
     (identificador_area, identificador_missao_dependente, nivel_de_desbloqueio, identificador_recrutador, descricao, nome)
 VALUES
     ('are001', 'mis002', 0, null, 'Desperte nesse local desconhecido', 'Acordei e Já Tô Perdido'), -- mis001
-    ('are001', 'mis003', 0, null, 'Derrote o lobo que te atacou de repente no caminho para a vila.', 'Lobicho Maldito!'), -- mis002
-    ('are002', null, 1, null, 'Chegue na vila.', 'Cadê o Waze Medieval?'), -- mis003
+    ('are002', null, 0, null, 'Chegue na vila.', 'Cadê o Waze Medieval?'), -- mis002
+    ('are001', null, 0, null, 'Derrote o lobo que te atacou de repente no caminho para a vila.', 'Lobicho Maldito!'), -- mis003
     ('are001', null, 1,'rct001', 'Espante os corvos da plantação', 'Corvo Não Paga Aluguel'), -- mis004
     ('are003', null, 2,'rct001', 'Conserte a cerca danificada', 'Cercando o Prejuízo'), -- mis005
     ('are003', null, 3,'rct001', 'Afugente os lobos', 'Sai Pra Lá, Fido!'), -- mis006
@@ -1449,6 +1359,157 @@ VALUES
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
     ('are001', null, 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
     ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
+
+
+
+-- Áreas interativas de missões
+INSERT INTO area_interativa
+    (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, chave_imagem)
+VALUES
+    ('are003', 'mis005', 188, 310, 102, 81, 'missao', 'cerca'), -- ari042
+    ('are003', 'mis005', 378, 310, 102, 81, 'missao', 'cerca'), -- ari043
+    ('are003', 'mis005', 473, 310, 102, 81, 'missao', 'cerca'), -- ari044
+    ('are003', 'mis005', 663, 310, 102, 81, 'missao', 'cerca'); -- ari045
+
+
+
+INSERT INTO estado_area_interativa
+    (identificador_progresso, identificador_area_interativa)
+VALUES
+    ('pro001', 'ari001'),
+    ('pro001', 'ari002'),
+    ('pro001', 'ari003'),
+    ('pro001', 'ari004'),
+    ('pro001', 'ari005'),
+    ('pro001', 'ari006'),
+    ('pro001', 'ari007'),
+    ('pro001', 'ari008'),
+    ('pro001', 'ari009'),
+    ('pro001', 'ari010'),
+    ('pro001', 'ari011'),
+    ('pro001', 'ari012'),
+    ('pro001', 'ari013'),
+    ('pro001', 'ari014'),
+    ('pro001', 'ari015'),
+    ('pro001', 'ari016'),
+    ('pro001', 'ari017'),
+    ('pro001', 'ari018'),
+    ('pro001', 'ari019'),
+    ('pro001', 'ari020'),
+    ('pro001', 'ari021'),
+    ('pro001', 'ari022'),
+    ('pro001', 'ari023'),
+    ('pro001', 'ari024'),
+    ('pro001', 'ari025'),
+    ('pro001', 'ari026'),
+    ('pro001', 'ari027'),
+    ('pro001', 'ari028'),
+    ('pro001', 'ari029'),
+    ('pro001', 'ari030'),
+    ('pro001', 'ari031'),
+    ('pro001', 'ari032'),
+    ('pro001', 'ari034'),
+    ('pro001', 'ari035'),
+    ('pro001', 'ari036'),
+    ('pro001', 'ari037'),
+    ('pro001', 'ari038'),
+    ('pro001', 'ari039'),
+    ('pro001', 'ari040'),
+    ('pro001', 'ari041'),
+    ('pro001', 'ari042'),
+    ('pro001', 'ari043'),
+    ('pro001', 'ari044'),
+    ('pro001', 'ari045'),
+    ('pro002', 'ari001'),
+    ('pro002', 'ari002'),
+    ('pro002', 'ari003'),
+    ('pro002', 'ari004'),
+    ('pro002', 'ari005'),
+    ('pro002', 'ari006'),
+    ('pro002', 'ari007'),
+    ('pro002', 'ari008'),
+    ('pro002', 'ari009'),
+    ('pro002', 'ari010'),
+    ('pro002', 'ari011'),
+    ('pro002', 'ari012'),
+    ('pro002', 'ari013'),
+    ('pro002', 'ari014'),
+    ('pro002', 'ari015'),
+    ('pro002', 'ari016'),
+    ('pro002', 'ari017'),
+    ('pro002', 'ari018'),
+    ('pro002', 'ari019'),
+    ('pro002', 'ari020'),
+    ('pro002', 'ari021'),
+    ('pro002', 'ari022'),
+    ('pro002', 'ari023'),
+    ('pro002', 'ari024'),
+    ('pro002', 'ari025'),
+    ('pro002', 'ari026'),
+    ('pro002', 'ari027'),
+    ('pro002', 'ari028'),
+    ('pro002', 'ari029'),
+    ('pro002', 'ari030'),
+    ('pro002', 'ari031'),
+    ('pro002', 'ari032'),
+    ('pro002', 'ari034'),
+    ('pro002', 'ari035'),
+    ('pro002', 'ari036'),
+    ('pro002', 'ari037'),
+    ('pro002', 'ari038'),
+    ('pro002', 'ari039'),
+    ('pro002', 'ari040'),
+    ('pro002', 'ari041'),
+    ('pro002', 'ari042'),
+    ('pro002', 'ari043'),
+    ('pro002', 'ari044'),
+    ('pro002', 'ari045'),
+    ('pro003', 'ari001'),
+    ('pro003', 'ari002'),
+    ('pro003', 'ari003'),
+    ('pro003', 'ari004'),
+    ('pro003', 'ari005'),
+    ('pro003', 'ari006'),
+    ('pro003', 'ari007'),
+    ('pro003', 'ari008'),
+    ('pro003', 'ari009'),
+    ('pro003', 'ari010'),
+    ('pro003', 'ari011'),
+    ('pro003', 'ari012'),
+    ('pro003', 'ari013'),
+    ('pro003', 'ari014'),
+    ('pro003', 'ari015'),
+    ('pro003', 'ari016'),
+    ('pro003', 'ari017'),
+    ('pro003', 'ari018'),
+    ('pro003', 'ari019'),
+    ('pro003', 'ari020'),
+    ('pro003', 'ari021'),
+    ('pro003', 'ari022'),
+    ('pro003', 'ari023'),
+    ('pro003', 'ari024'),
+    ('pro003', 'ari025'),
+    ('pro003', 'ari026'),
+    ('pro003', 'ari027'),
+    ('pro003', 'ari028'),
+    ('pro003', 'ari029'),
+    ('pro003', 'ari030'),
+    ('pro003', 'ari031'),
+    ('pro003', 'ari032'),
+    ('pro003', 'ari034'),
+    ('pro003', 'ari035'),
+    ('pro003', 'ari036'),
+    ('pro003', 'ari037'),
+    ('pro003', 'ari038'),
+    ('pro003', 'ari039'),
+    ('pro003', 'ari040'),
+    ('pro003', 'ari041'),
+    ('pro003', 'ari042'),
+    ('pro003', 'ari043'),
+    ('pro003', 'ari044'),
+    ('pro003', 'ari045');
+
+
 
 -- -- Adicione vendedores nas áreas das lojas
 -- INSERT INTO habitante
@@ -1547,6 +1608,10 @@ VALUES
 INSERT INTO item_missao
     (identificador_missao, identificador_item, quantidade)
 VALUES
+    ('mis003', 'ncn005', 1),
+    ('mis007', 'ncn022', 1),
+    ('mis008', 'ncn023', 1),
+    ('mis009', 'ncn024', 1),
     ('mis010', 'con040', 1);
 
 
@@ -1568,10 +1633,10 @@ VALUES
     ('hbt002', 'mis001', 8, 'M', 'Hm. Perigoso andar por aí sem memória — disse o aldeão, coçando a barba. — Mas se estiver bem, mais à frente tem uma vila. Vá até lá, talvez alguém possa te ajudar.'),
     ('hbt001', 'mis001', 9, 'F', 'Silvie assentiu, ainda atordoada, mas determinada. Pegou a pequena bolsa ao seu lado e começou a andar.'),
     ('hbt001', 'mis001', 9, 'M', 'Shuan assentiu, ainda atordoado, mas determinado. Pegou a pequena bolsa ao seu lado e começou a andar.'),
-    ('hbt001', 'mis003', 1, 'F', 'Algumas horas depois, ela chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
-    ('hbt001', 'mis003', 1, 'M', 'Algumas horas depois, ele chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
-    (null, 'mis003', 2, 'F', 'Ora, quem é você, jovem?'),
-    (null, 'mis003', 2, 'M', 'Ora, quem é você, jovem?'),
+    ('hbt001', 'mis002', 1, 'F', 'Algumas horas depois, ela chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
+    ('hbt001', 'mis002', 1, 'M', 'Algumas horas depois, ele chegou à Vila de Borabóia, uma comunidade simples, com casas de madeira, plantações e moradores de semblante gentil.'),
+    (null, 'mis002', 2, 'F', 'Ora, quem é você, jovem?'),
+    (null, 'mis002', 2, 'M', 'Ora, quem é você, jovem?'),
     ('rct002', null, 1, 'F', 'Silvie! Minha musa da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
     ('rct002', null, 1, 'M', 'Shuan! Meu rei da colher de pau! Estou prestes a criar o prato mais revolucionário da história da culinária camponesa: o Omurice de Arroz! Mas... estou sem ingredientes. E sem tempo. E sem dignidade. Você me ajuda?'),
     ('rct002', 'mis007', 1, 'F', 'Antes de tudo, preciso de água do poço. Mas não qualquer água! Tem que ser aquela que brilha sob o sol das 10h e tem gosto de vitória! Ou... pelo menos que não tenha sapo dentro. Vai lá, guerreira!'),
