@@ -40,9 +40,6 @@ class TelaModelo:
         #     # self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PAUSA)
         #     return None # Ou um dicionário de transição, se a TelaModelo decidir a transição
 
-        if evento.type == pygame.KEYDOWN and evento.key == pygame.K_ESCAPE:
-            self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MENU_PRINCIPAL)
-            return None # Ou um dicionário de transição, se a TelaModelo decidir a transição
 
         return None # Por padrão, não faz nada e não solicita transição
 
