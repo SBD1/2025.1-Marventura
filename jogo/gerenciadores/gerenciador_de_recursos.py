@@ -196,6 +196,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_LOJA_INTERIOR, 'recursos/imagens/cenario/loja_interior.png')
         self._carregar_imagem(CHAVE_LOJA_ARMAS_E_ACESSORIOS_INTERIOR, 'recursos/imagens/cenario/loja_armas_e_acessorios_interior.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CHAVE_COZINHA_INTERIOR, 'recursos/imagens/cenario/cozinha_interior.png')
+        self._carregar_imagem(CHAVE_CENARIO_OCEANO, 'recursos/imagens/cenario/oceano.png')
 
         # --- Carregar Imagens de Componentes do Inventário ---
         self._carregar_imagem(INV_PAINEL_FUNDO, 'recursos/imagens/mochila/painel_fundo.png')
@@ -286,6 +287,11 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(TIA_COTINHA, 'recursos/imagens/habitantes/camponesa_b.png')
         self._carregar_imagem(SR_LEE, 'recursos/imagens/habitantes/lee.png')
         self._carregar_imagem(SR_LEE_LOGISTA, 'recursos/imagens/habitantes/lee-busto.png')
+
+        self._carregar_imagem(CANOA, 'recursos/imagens/barcos/canoa.png')
+        self._carregar_imagem(f'{CANOA}_fundo', 'recursos/imagens/barcos/canoa_fundo.png')
+        self._carregar_imagem(VELEIRO, 'recursos/imagens/barcos/veleiro.png')
+        self._carregar_imagem(f'{VELEIRO}_fundo', 'recursos/imagens/barcos/veleiro_fundo.png')
 
         # --- Carregar Ícone de Interação ---
         self._carregar_imagem(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)

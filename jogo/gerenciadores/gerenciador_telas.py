@@ -9,6 +9,8 @@ from telas import TelaSelecaoPersonagem
 from telas import TelaJogo
 from telas import TelaBatalha
 from telas import TelaLoja
+from telas import TelaTransicaoIlha
+
 from gerenciadores import GerenciadorDeEntidades
 from gerenciadores.gerenciador_missoes import GerenciadorDeMissoes
 from utilidades.constantes import *
@@ -96,6 +98,13 @@ class GerenciadorDeTelas:
                         self.gerenciador_entidades,
                         kwargs.get('vendedor_id'),
                         kwargs.get('nome_vendedor'),)
+        
+        elif estado_desejado == CHAVE_TRANSICAO_VIAGEM:
+            return TelaTransicaoIlha(self, self.gerenciador_recursos,
+                                     self.gerenciador_banco_de_dados,
+                                     self.gerenciador_entidades,
+                                     dados_destino=kwargs.get('dados_destino'))
+        
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")
             return None

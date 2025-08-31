@@ -7,3 +7,4 @@ from .tela_selecao_personagem import TelaSelecaoPersonagem
 from .tela_loja import TelaLoja
 from .tela_inventario import TelaInventario
 from .tela_cozinha import TelaCozinha
+from .tela_transicao_ilha import TelaTransicaoIlha

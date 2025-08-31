@@ -467,7 +467,7 @@ class Jogador(Personagem):
 
         for caminho in lista_de_caminhos:
             # Verifica se os pés do jogador colidem com o retângulo do caminho
-            if self.pes_rect.colliderect(caminho):
+            if self.pes_rect.colliderect(caminho) and hasattr(caminho, 'tipo_terreno'):
                 terreno_encontrado = caminho.tipo_terreno
                 # Se o terreno for neve, ele tem prioridade máxima, então já podemos retornar.
                 if terreno_encontrado == 'neve':
@@ -546,7 +546,7 @@ class Jogador(Personagem):
 
 
 
-    def atualizar(self, dt, obstaculos, lista_de_caminhos, largura_mundo, altura_mundo): # NOVO: Adicionado 'lista_de_caminhos'
+    def atualizar(self, dt, obstaculos, lista_de_caminhos, largura_mundo, altura_mundo, limitar_posicao_no_mundo=True):
         """
         Atualiza a posição do jogador e a animação a cada frame do jogo.
         :param dt: Delta time (tempo em segundos desde o último frame).
@@ -625,8 +625,10 @@ class Jogador(Personagem):
                 self.rect.y = int(self.coordenada_y)
                 self.pes_rect.centerx = self.rect.centerx # Re-sincroniza após reverter
                 self.pes_rect.bottom = self.rect.bottom
-            self.coordenada_x = max(0, min(self.coordenada_x, largura_mundo - self.rect.width))
-            self.coordenada_y = max(0, min(self.coordenada_y, altura_mundo - self.rect.height))
+
+            if limitar_posicao_no_mundo:
+                self.coordenada_x = max(0, min(self.coordenada_x, largura_mundo - self.rect.width))
+                self.coordenada_y = max(0, min(self.coordenada_y, altura_mundo - self.rect.height))
         
             # --- Atualizar Animação --- (O resto do método permanece idêntico)
             esta_movendo = (self.movendo_esquerda or self.movendo_direita or

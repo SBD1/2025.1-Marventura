@@ -280,6 +280,10 @@ CENA_JANTAR_COMUNITARIO = 'cena_jantar_comunitario'
 
 ARBUSTO = 'arbusto'
 
+CANOA = 'canoa'
+VELEIRO = 'veleiro'
+NAVIO = 'navio'
+
 # --- Debugging ---
 DEBUG_DESENHAR_CAIXAS_COLISAO = False # (True para exibir, False para ocultar)
 COR_CAIXA_COLISAO = (255, 0, 255) # Magenta para caixas de colisão

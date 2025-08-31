@@ -611,34 +611,33 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                         print(f"porto_destino: {porto_destino}")
                         if porto_destino:
                             self.menu_viagem_ativo = False
-                            self.menu_viagem = None # Limpa a instância do menu
-                            id_area = porto_destino.identificador_area
-
-                            self.gerenciador_entidades.ilha_atual = ilha_selecionada
-
-                            self.gerenciador_entidades.area_atual = porto_destino
-
-                            informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, id_area)
+                            self.menu_viagem = None
                             
-                            self.gerenciador_entidades.jogador.atualizar_posicao_jogador(
-                                informacoes_de_destino.ponto_geracao_x,
-                                informacoes_de_destino.ponto_geracao_y,
-                                informacoes_de_destino.orientacao
-                            )
+                            id_area_destino = porto_destino.identificador_area
 
-                            self.banco_de_dados.atualizar_posicao_jogador(
-                                self.gerenciador_entidades.jogador.identificador,
-                                id_area,
-                                informacoes_de_destino.ponto_geracao_x,
-                                informacoes_de_destino.ponto_geracao_y,
-                            )
-
+                            # 1. Prepara os Gerenciadores para o estado *após* a viagem
+                            self.gerenciador_entidades.ilha_atual = ilha_selecionada
+                            self.gerenciador_entidades.area_atual = porto_destino
+                            
+                            informacoes_de_destino = self.banco_de_dados.buscar_conexao_entre_areas(self.dados_da_area.identificador_area, id_area_destino)
+                            
                             self.gerenciador_entidades.ponto_de_renascimento = (
                                 informacoes_de_destino.ponto_geracao_x,
                                 informacoes_de_destino.ponto_geracao_y
                             )
+                            
+                            # 2. Define os dados para a transição final (depois da animação)
+                            dados_para_tela_final = {
+                                'coordenada_x': informacoes_de_destino.ponto_geracao_x,
+                                'coordenada_y': informacoes_de_destino.ponto_geracao_y,
+                                'orientacao': informacoes_de_destino.orientacao,
+                            }
 
-                            return {'estado': CHAVE_TRANSICAO_MAPA}
+                            # 3. Inicia a tela de transição, passando os dados do destino final
+                            return {
+                                'estado': CHAVE_TRANSICAO_VIAGEM,
+                                'dados_destino': dados_para_tela_final
+                            }
                         else:
                             print(f"AVISO: Não foi possível determinar o mapa de destino para a ilha '{ilha_selecionada.nome}'.")
                     else:
