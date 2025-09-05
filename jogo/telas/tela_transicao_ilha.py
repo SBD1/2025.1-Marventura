@@ -1,26 +1,44 @@
 # telas/tela_transicao_ilha.py
 
 import pygame
+import random
 from utilidades.constantes import *
+from utilidades import Camera
 from .tela_modelo import TelaModelo
-from entidades.barco import Canoa, Veleiro, Navio
+from entidades import Canoa, Veleiro, Navio
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
-    from gerenciadores import GerenciadorDeTelas, GerenciadorDeRecursos, GerenciadorDeEntidades, DBManager
+    from gerenciadores import GerenciadorDeTelas, GerenciadorDeRecursos, GerenciadorDeEntidades, DBManager, GerenciadorDeMissoes
 
 class TelaTransicaoIlha(TelaModelo):
     """
     Uma tela intermediária que mostra o jogador em um barco
     viajando da esquerda para a direita, simulando a viagem entre ilhas.
     """
-    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager', gerenciador_entidades: 'GerenciadorDeEntidades', dados_destino: dict):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager', gerenciador_entidades: 'GerenciadorDeEntidades', gerenciador_missoes: 'GerenciadorDeMissoes', dados_destino: dict, iniciar_missao: Optional[str] = None):
         super().__init__(gerenciador_telas, gerenciador_recursos)
         
         self.entidades = gerenciador_entidades
         self.banco_de_dados = gerenciador_banco_de_dados
+        self.missoes = gerenciador_missoes
         self.jogador = self.entidades.jogador
         self.dados_destino = dados_destino # Dicionário com informações para a próxima tela
+
+        self.barco = self.banco_de_dados.buscar_barco_atual(self.entidades.progresso_do_jogo.identificador_progresso)
+        self.tipo_barco = 'can' # Valor padrão
+        if self.barco:
+            self.tipo_barco = self.barco.tipo_barco
+            
+        self.DURACAO_VIAGEM = 12.0  # Duração da fase "VIAJANDO" em segundos
+        self.tempo_decorrido = 0.0
+        self.fase_viagem = 'VIAJANDO' # Controla o estado da transição
+        self.iniciar_missao = iniciar_missao
+        self.evento_maritimo = None
+
+        if self.iniciar_missao is None:
+            if 0.25 > random.random():
+                self.evento_maritimo = random.choice(['Ataque de piratas', 'Ataque do Rei dos Mares'])
 
         # Carrega a imagem de fundo do oceano
         self.fundo_oceano = self.gerenciador_recursos.obter_imagem(CHAVE_CENARIO_OCEANO)
@@ -28,10 +46,17 @@ class TelaTransicaoIlha(TelaModelo):
             self.fundo_oceano = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.fundo_oceano.fill(AZUL) # Cor de fallback
 
-        # Cria o barco fora da tela, à esquerda
-        self.barco = Navio(self.gerenciador_recursos)
+        self.largura_fundo = self.fundo_oceano.get_width()
 
-        # --- LÓGICA DE POSICIONAMENTO REFEITA USANDO A ÂNCORA ---
+
+        # --- CONFIGURAÇÃO DO BARCO E JOGADOR ---
+        # Cria o barco fora da tela, à esquerda
+        if self.tipo_barco == 'can':
+            self.barco = Canoa(self.gerenciador_recursos)
+        elif self.tipo_barco == 'vel':
+            self.barco = Veleiro(self.gerenciador_recursos)
+        else:
+            self.barco = Navio(self.gerenciador_recursos)
 
         # 1. Calcula a posição absoluta (no mundo) do ponto de ancoragem do barco.
         ponto_ancoragem_absoluto_x = self.barco.rect.x + self.barco.ponto_ancoragem[0]
@@ -55,24 +80,53 @@ class TelaTransicaoIlha(TelaModelo):
         self.jogador.orientacao = 'direita' # O jogador sempre olha para a direita durante a viagem
         self.jogador.mostrar_icone_interacao = False # Não mostra ícone de interação
         
-        # --- FIM DA NOVA LÓGICA ---
-        
         # Bloqueia o movimento do jogador controlado por script, mas não pelo teclado
         self.jogador.movimento_bloqueado = False
 
         self.todos_os_sprites = pygame.sprite.Group(self.barco, self.jogador)
 
+        # --- CONFIGURAÇÃO DA CÂMERA ---
+        largura_mundo_viagem = self.barco.velocidade * (self.DURACAO_VIAGEM + 5) # Distância + uma margem
+        self.camera = Camera(
+            largura_janela=LARGURA_TELA,
+            altura_janela=ALTURA_TELA,
+            tamanho_mundo=(largura_mundo_viagem, ALTURA_TELA)
+        )
+
+
 
 
     def atualizar(self, dt):
         """Atualiza a posição do barco e do jogador, garantindo que o jogador acompanhe o barco."""
-        
+
+        # 1. ATUALIZAR ESTADO DA VIAGEM
+        if self.fase_viagem == 'VIAJANDO':
+            self.tempo_decorrido += dt
+
+            if self.iniciar_missao:
+                if self.tempo_decorrido >= 6.0 and not self.missoes.esta_em_evento_controlado():
+                    print(f"Iniciou a missao '{self.iniciar_missao}'")
+                    #self.missoes.iniciar_missao(self.iniciar_missao)
+
+                    self.iniciar_missao = None
+
+            if self.evento_maritimo:
+                if self.tempo_decorrido >= 6.0:
+                    print(f"O evento marítimo '{self.evento_maritimo}' está prestes a acontecer")
+                    self.evento_maritimo = None
+
+            if self.tempo_decorrido >= self.DURACAO_VIAGEM and not self.missoes.esta_em_evento_controlado():
+                self.fase_viagem = 'FINALIZANDO'
+                # Trava a câmera na posição atual
+                self.camera.focar_em_ponto(self.camera.rect.centerx, self.camera.rect.centery)
+
+        # 2. ATUALIZAR BARCO E JOGADOR (acontece em ambas as fases)
         # Guarda a posição COMPLETA do barco antes do movimento
         posicao_anterior_barco = self.barco.rect.topleft
 
         # Atualiza o barco (que agora se move em X e Y)
         self.barco.atualizar(dt)
-        
+
         # Calcula o deslocamento em AMBOS os eixos
         deslocamento_x = self.barco.rect.x - posicao_anterior_barco[0]
         deslocamento_y = self.barco.rect.y - posicao_anterior_barco[1]
@@ -84,38 +138,49 @@ class TelaTransicaoIlha(TelaModelo):
         # Atualiza o jogador, desativando o limite de mundo
         self.jogador.atualizar(dt, obstaculos=[], lista_de_caminhos=[self.barco.caminho_rect_absoluto], largura_mundo=LARGURA_TELA, altura_mundo=ALTURA_TELA, limitar_posicao_no_mundo=False)
 
-        # Verifica a condição de término da transição (sem alterações aqui)
-        if self.barco.rect.left > LARGURA_TELA:
-            print("Viagem concluída. Transicionando para o destino...")
+        # 3. ATUALIZAR A CÂMERA
+        # O método atualizar da câmera já sabe se deve seguir ou ficar parada
+        self.camera.atualizar(dt, self.jogador.rect)
 
-            self.entidades.jogador.atualizar_posicao_jogador(
-                self.dados_destino['coordenada_x'],
-                self.dados_destino['coordenada_y'],
-                self.dados_destino['orientacao']
-            )
-            
-            self.banco_de_dados.atualizar_posicao_jogador(
-                self.entidades.jogador.identificador,
-                self.entidades.area_atual.identificador_area,
-                self.dados_destino['coordenada_x'],
-                self.dados_destino['coordenada_y']
-            )
+        # 4. VERIFICAR CONDIÇÃO DE TÉRMINO
+        if self.fase_viagem == 'FINALIZANDO':
+            # A transição termina quando o barco sai da VISÃO DA CÂMERA
+            if self.barco.rect.left > self.camera.rect.right:
+                self.entidades.jogador.atualizar_posicao_jogador(
+                    self.dados_destino['coordenada_x'],
+                    self.dados_destino['coordenada_y'],
+                    self.dados_destino['orientacao']
+                )
+                
+                self.banco_de_dados.atualizar_posicao_jogador(
+                    self.entidades.jogador.identificador,
+                    self.entidades.area_atual.identificador_area,
+                    self.dados_destino['coordenada_x'],
+                    self.dados_destino['coordenada_y']
+                )
 
-            self.gerenciador_telas.mudar_tela(
-                CHAVE_TRANSICAO_MAPA
-            )
+                self.gerenciador_telas.mudar_tela(
+                    CHAVE_TRANSICAO_MAPA
+                )
 
 
 
     def desenhar(self, tela):
         """Desenha o oceano, o barco e o jogador."""
-        tela.blit(self.fundo_oceano, (0, 0))
-        
-        self.barco.desenhar_plano_fundo(tela)
+        tela.fill(AZUL_OCEANO)
 
-        self.jogador.desenhar(tela, camera_x=0, camera_y=0)
+        # --- LÓGICA DO FUNDO INFINITO ---
+        # Usa o operador módulo (%) para fazer o fundo "resetar" a posição
+        x_desenho = -(self.camera.rect.x % self.largura_fundo)
+        tela.blit(self.fundo_oceano, (x_desenho, 0))
+        # Desenha uma segunda cópia do fundo logo em seguida para não haver espaços vazios
+        tela.blit(self.fundo_oceano, (x_desenho + self.largura_fundo, 0))
+
+        self.barco.desenhar_plano_fundo(tela, self.camera.rect.x, self.camera.rect.y)
+
+        self.jogador.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
         
-        self.barco.desenhar(tela)
+        self.barco.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
 
 
     def processar_eventos(self, evento):

@@ -1624,6 +1624,20 @@ class DBManager:
             WHERE TRIM(lacaio.nome) = %s;
         """
         return self.executar_query(consulta, (nome_lacaio,), fetchall=True)
+    
+
+
+    def buscar_barco_atual(self, identificador_progresso):
+        consulta = """
+            SELECT
+                identificador_barco,
+                tipo_barco,
+                TRIM(nome) AS nome,
+                TRIM(descricao) AS descricao
+            FROM barco
+            WHERE identificador_progresso = %s AND estado = 'adquirido';
+        """
+        return self.executar_query(consulta, (identificador_progresso,), fetchone=True)
 
 
 

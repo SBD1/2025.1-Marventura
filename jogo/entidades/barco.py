@@ -63,9 +63,12 @@ class _Barco(pygame.sprite.Sprite):
 
 
 
-    def desenhar(self, tela):
-        """Desenha o barco na tela."""
-        tela.blit(self.imagem, self.rect)
+    def desenhar(self, tela, camera_x=0, camera_y=0):
+        """Desenha o barco na tela, ajustado pela posição da câmera."""
+        posicao_tela_x = self.rect.x - camera_x
+        posicao_tela_y = self.rect.y - camera_y
+
+        tela.blit(self.imagem, (posicao_tela_x, posicao_tela_y))
         
         # DEBUG: Desenha a área caminhável para visualização
         if DEBUG_DESENHAR_CAIXAS_COLISAO:
@@ -74,9 +77,12 @@ class _Barco(pygame.sprite.Sprite):
 
 
 
-    def desenhar_plano_fundo(self, tela):
+    def desenhar_plano_fundo(self, tela, camera_x=0, camera_y=0):
         """Desenha o plano de fundo do barco na tela."""
-        tela.blit(self.plano_fundo, self.rect)
+        posicao_tela_x = self.rect.x - camera_x
+        posicao_tela_y = self.rect.y - camera_y
+
+        tela.blit(self.plano_fundo, (posicao_tela_x, posicao_tela_y))
 
 
 

@@ -6,3 +6,4 @@ from .inimigo import Inimigo
 from .chefe import Chefe
 from .caminho import Caminho
 from .habitante import Habitante
+from .barco import Canoa, Veleiro, Navio

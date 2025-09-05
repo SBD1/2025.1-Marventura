@@ -103,7 +103,9 @@ class GerenciadorDeTelas:
             return TelaTransicaoIlha(self, self.gerenciador_recursos,
                                      self.gerenciador_banco_de_dados,
                                      self.gerenciador_entidades,
-                                     dados_destino=kwargs.get('dados_destino'))
+                                     self.gerenciador_missoes,
+                                     dados_destino=kwargs.get('dados_destino'),
+                                     iniciar_missao=kwargs.get('iniciar_missao'))
         
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")

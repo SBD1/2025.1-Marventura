@@ -25,6 +25,7 @@ AMARELO_CLARO = (255, 255, 153)
 VERDE_CLARO = pygame.Color("#23EA52")
 BRANCO_CLARO = pygame.Color("#F0F0F0")
 AZUL_CLARO = pygame.Color("#4B85C8")
+AZUL_OCEANO = (10, 152, 170)
 MARROM = (139, 69, 19)
 
 # --- Tags de Alvo ---
