@@ -686,6 +686,21 @@ VALUES
 
 
 
+INSERT INTO barco
+    (identificador_progresso, tipo_barco, nome, descricao)
+VALUES
+    ('pro001', 'can', 'Suspiro de Borabóia', 'Uma obra-prima da engenharia improvisada, feita com madeira que provavelmente já pediu aposentadoria. Levemente inclinada para o lado da tragédia, equipada com um compartimento secreto que só guarda farelos e esperança. Ideal para quem gosta de viver perigosamente... ou não viver por muito tempo.'),
+    ('pro001', 'vel', 'Sorriso do Kraken', 'Um barco médio com alma de boteco flutuante. Possui um fogareiro instável, dois ladrões com mais fome que juízo, e uma vela que só funciona quando quer. Perfeito para quem busca aventuras culinárias e traições marítimas. Agora sob nova direção: {nome_jogador} S.A.'),
+    ('pro001', 'nav', 'Eco Errante', 'Pequeno, sim. Mas com mais personalidade que muito galeão por aí. Construído com madeira de tamareira ancestral, é o tipo de embarcação que parece sussurrar: “subestime-me e afunde”.'),
+    ('pro002', 'can', 'Suspiro de Borabóia', 'Uma obra-prima da engenharia improvisada, feita com madeira que provavelmente já pediu aposentadoria. Levemente inclinada para o lado da tragédia, equipada com um compartimento secreto que só guarda farelos e esperança. Ideal para quem gosta de viver perigosamente... ou não viver por muito tempo.'),
+    ('pro002', 'vel', 'Sorriso do Kraken', 'Um barco médio com alma de boteco flutuante. Possui um fogareiro instável, dois ladrões com mais fome que juízo, e uma vela que só funciona quando quer. Perfeito para quem busca aventuras culinárias e traições marítimas. Agora sob nova direção: {nome_jogador} S.A.'),
+    ('pro002', 'nav', 'Eco Errante', 'Pequeno, sim. Mas com mais personalidade que muito galeão por aí. Construído com madeira de tamareira ancestral, é o tipo de embarcação que parece sussurrar: “subestime-me e afunde”.'),
+    ('pro003', 'can', 'Suspiro de Borabóia', 'Uma obra-prima da engenharia improvisada, feita com madeira que provavelmente já pediu aposentadoria. Levemente inclinada para o lado da tragédia, equipada com um compartimento secreto que só guarda farelos e esperança. Ideal para quem gosta de viver perigosamente... ou não viver por muito tempo.'),
+    ('pro003', 'vel', 'Sorriso do Kraken', 'Um barco médio com alma de boteco flutuante. Possui um fogareiro instável, dois ladrões com mais fome que juízo, e uma vela que só funciona quando quer. Perfeito para quem busca aventuras culinárias e traições marítimas. Agora sob nova direção: {nome_jogador} S.A.'),
+    ('pro003', 'nav', 'Eco Errante', 'Pequeno, sim. Mas com mais personalidade que muito galeão por aí. Construído com madeira de tamareira ancestral, é o tipo de embarcação que parece sussurrar: “subestime-me e afunde”.');
+
+
+
 INSERT INTO ilha
 	(nome)
 VALUES

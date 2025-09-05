@@ -84,6 +84,10 @@ BEGIN
         IF NEW.identificador_progresso IS NOT NULL THEN
             RAISE EXCEPTION 'A coluna "identificador_progresso" é gerada automaticamente; não forneça valor manualmente.';
         END IF;
+    ELSIF TG_TABLE_NAME = 'barco' THEN
+        IF NEW.identificador_barco IS NOT NULL THEN
+            RAISE EXCEPTION 'A coluna "identificador_barco" é gerada automaticamente; não forneça valor manualmente.';
+        END IF;
     END IF;
 
     /* 2.2 ─ obtém o prefixo ---------------------------------------------------*/
@@ -141,6 +145,8 @@ BEGIN
         NEW.identificador_missao := prefixo || lpad(numero_serial::text, 3, '0');
     ELSIF TG_TABLE_NAME = 'progresso' THEN
         NEW.identificador_progresso := prefixo || lpad(numero_serial::text, 3, '0');
+    ELSIF TG_TABLE_NAME = 'barco' THEN
+        NEW.identificador_barco := prefixo || lpad(numero_serial::text, 3, '0');
     END IF;
 
 

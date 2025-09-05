@@ -402,8 +402,8 @@ CREATE TABLE barco (
     identificador_progresso ID NOT NULL REFERENCES progresso(identificador_progresso),
     tipo_barco CHAR(3) NOT NULL CHECK (tipo_barco IN ('can', 'vel', 'nav')),
     nome CHAR(30) NOT NULL,
-    descricao CHAR (150) NOT NULL,
-    estado CHAR (9) NOT NULL CHECK (estado IN ('bloqueado', 'adquirido', 'destruido'))
+    descricao CHAR (300) NOT NULL,
+    estado CHAR (9) NOT NULL DEFAULT 'bloqueado' CHECK (estado IN ('bloqueado', 'adquirido', 'destruido'))
 );
 
 CREATE TRIGGER atribui_id_barco
