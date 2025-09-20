@@ -543,17 +543,32 @@ class DBManager:
         """
         Envia um inimigo para o Yomotsu Hirasaka.
         """
-        consulta = """
-            UPDATE estado_lacaio
-            SET 
-                vida_atual = 0,
-                data_da_morte = now(),
-                identificador_area_atual = 'are034'
-            WHERE 
-                identificador_instancia_lacaio = %s
-                AND identificador_progresso = %s
-                AND data_da_morte IS NULL;
-        """
+        # Define a consulta SQL com base no tipo de inimigo
+        
+        if id_inimigo.startswith('che'):
+            consulta = """
+                UPDATE estado_chefe
+                SET 
+                    vida_atual = 0,
+                    data_da_morte = now(),
+                    identificador_area_atual = 'are034'
+                WHERE 
+                    identificador_chefe = %s
+                    AND identificador_progresso = %s
+                    AND data_da_morte IS NULL;
+            """
+        else:
+            consulta = """
+                UPDATE estado_lacaio
+                SET 
+                    vida_atual = 0,
+                    data_da_morte = now(),
+                    identificador_area_atual = 'are034'
+                WHERE 
+                    identificador_instancia_lacaio = %s
+                    AND identificador_progresso = %s
+                    AND data_da_morte IS NULL;
+            """
         return self.executar_query(consulta, (id_inimigo, identificador_progresso))
 
 
@@ -842,39 +857,25 @@ class DBManager:
 
     def buscar_missoes_aceitas_pelo_jogador(self, id_jogador):
         """
-        Retorna todas as missões aceitas atualmente pelo jogador,
-        incluindo o nome do item de recompensa (se houver) e o ID da área da missão.
+        Retorna todas as missões aceitas atualmente pelo jogador.
         
         :param id_jogador: ID do jogador
-        :return: Lista com (id_missao, nome_missao, descricao, nivel_de_desbloqueio, id_area, id_item, nome_item)
+        :return: Lista com (identificador_missao, nome, descricao, nivel_de_desbloqueio, passo_atual, identificador_area)
         """
         consulta = """
             SELECT 
-                m.identificador_missao,
-                TRIM(m.nome) AS nome,
-                TRIM(m.descricao) AS descricao,
-                m.nivel_de_desbloqueio,
-                m.identificador_area,
-                im.identificador_item,
-                COALESCE(
-                    TRIM(a.nome),
-                    TRIM(f.nome),
-                    TRIM(ac.nome),
-                    TRIM(c.nome),
-                    TRIM(nc.nome)
-                ) AS nome_item
-            FROM jogador j
-            JOIN estado_missao em ON em.identificador_progresso = j.identificador_progresso
-            JOIN missao m ON m.identificador_missao = em.identificador_missao
-            LEFT JOIN item_missao im ON im.identificador_missao = m.identificador_missao
-            LEFT JOIN arma a ON a.identificador_arma = im.identificador_item
-            LEFT JOIN fruta f ON f.identificador_fruta = im.identificador_item
-            LEFT JOIN acessorio ac ON ac.identificador_acessorio = im.identificador_item
-            LEFT JOIN consumivel c ON c.identificador_consumivel = im.identificador_item
-            LEFT JOIN nao_consumivel nc ON nc.identificador_nao_consumivel = im.identificador_item
-            WHERE j.identificador_jogador = %s
-            AND em.estado = 'aceita'
-            ORDER BY m.nivel_de_desbloqueio, m.nome;
+                missao.identificador_missao,
+                TRIM(missao.nome) AS nome,
+                TRIM(missao.descricao) AS descricao,
+                missao.nivel_de_desbloqueio,
+                estado_missao.passo_atual,
+                missao.identificador_area
+            FROM jogador
+            JOIN estado_missao ON estado_missao.identificador_progresso = jogador.identificador_progresso
+            JOIN missao ON missao.identificador_missao = estado_missao.identificador_missao
+            WHERE jogador.identificador_jogador = %s
+            AND estado_missao.estado = 'aceita'
+            ORDER BY missao.nivel_de_desbloqueio, missao.nome;
         """
         return self.executar_query(consulta, (id_jogador,), fetchall=True)
 
@@ -919,6 +920,25 @@ class DBManager:
             AND identificador_progresso = %s;
         """
         return self.executar_query(consulta, (novo_estado, id_missao, id_progresso))
+
+
+
+    def atualizar_passo_atual_missao(self, id_missao, id_progresso, novo_passo):
+        """
+        Atualiza o passo atual de uma missão específica no progresso do jogador.
+        
+        :param id_missao: ID da missão (ex: 'mis012')
+        :param id_progresso: ID do progresso (vinculado ao jogador)
+        :param novo_passo: Novo passo atual (inteiro)
+        :return: True se atualizado com sucesso, False se falhou
+        """
+        consulta = """
+            UPDATE estado_missao
+            SET passo_atual = %s
+            WHERE identificador_missao = %s
+            AND identificador_progresso = %s;
+        """
+        return self.executar_query(consulta, (novo_passo, id_missao, id_progresso))
 
 
 
@@ -979,7 +999,8 @@ class DBManager:
                 TRIM(missao.nome) AS nome,
                 TRIM(missao.descricao) AS descricao,
                 missao.nivel_de_desbloqueio,
-                estado_missao.estado
+                estado_missao.estado,
+                estado_missao.passo_atual
             FROM estado_missao
             JOIN missao ON estado_missao.identificador_missao = missao.identificador_missao
             WHERE estado_missao.identificador_progresso = %s;
@@ -1460,8 +1481,7 @@ class DBManager:
                         WHERE 
                             chefe.identificador_chefe = estado_chefe.identificador_chefe AND
                             estado_chefe.identificador_chefe = %s AND
-                            estado_chefe.identificador_progresso = %s AND
-                            estado_chefe.data_da_morte IS NOT NULL;
+                            estado_chefe.identificador_progresso = %s;
                     """, (identificador_chefe, identificador_progresso))
 
                     if cur.rowcount == 0:
@@ -1486,15 +1506,54 @@ class DBManager:
 
 
 
-    def buscar_habitante(self, id_habitante):
+    def buscar_habitante(self, id_habitante, id_progresso):
         """Busca dados de um habitante pelo ID."""
         consulta = """
-            SELECT nome, tipo, especialidade, coordenada_x, coordenada_y
+            SELECT
+                habitante.identificador_habitante,
+                habitante.identificador_area,
+                TRIM(habitante.nome) AS nome,
+                TRIM(habitante.descricao) AS descricao,
+                TRIM(habitante.chave_imagem) AS chave_imagem,
+                habitante.tipo_habitante,
+                habitante.coordenada_x,
+                habitante.coordenada_y,
+                habitante.especialidade,
+                estado_habitante.moedas_totais,
+                estado_habitante.conhecido
             FROM habitante
-            WHERE id_habitante = %s;
+            JOIN estado_habitante
+                ON habitante.identificador_habitante = estado_habitante.identificador_habitante
+            WHERE habitante.identificador_habitante = %s
+            AND estado_habitante.identificador_progresso = %s;
         """
-        return self.executar_query(consulta, (id_habitante,), fetchone=True)
-    
+        return self.executar_query(consulta, (id_habitante, id_progresso), fetchone=True)
+
+
+
+    def buscar_habitante_pelo_nome(self, nome_habitante, id_progresso):
+        """Busca dados de um habitante pelo nome (exato, sem curinga)."""
+        consulta = """
+            SELECT
+                habitante.identificador_habitante,
+                habitante.identificador_area,
+                TRIM(habitante.nome) AS nome,
+                TRIM(habitante.descricao) AS descricao,
+                TRIM(habitante.chave_imagem) AS chave_imagem,
+                habitante.tipo_habitante,
+                habitante.coordenada_x,
+                habitante.coordenada_y,
+                habitante.especialidade,
+                estado_habitante.moedas_totais,
+                estado_habitante.conhecido
+            FROM habitante
+            JOIN estado_habitante
+                ON habitante.identificador_habitante = estado_habitante.identificador_habitante
+            WHERE TRIM(nome) = %s
+            AND estado_habitante.identificador_progresso = %s;
+        """
+        return self.executar_query(consulta, (nome_habitante, id_progresso), fetchone=True)
+
 
 
     def buscar_habitante_por_area(self, id_area, id_progresso):
@@ -1962,8 +2021,26 @@ class DBManager:
             AND identificador_progresso = %s;
         """
         return self.executar_query(consulta, (id_ilha, id_progresso))
-    
-    
+
+
+
+    def desbloquear_rota(self, identificador_progresso, ilha_a, ilha_b):
+        """
+        Desbloqueia uma rota entre duas ilhas em um progresso específico.
+        """
+        if ilha_a is None or ilha_b is None or identificador_progresso is None:
+            raise ValueError("Os identificadores das ilhas e do progresso são obrigatórios.")
+        
+        consulta = """
+            UPDATE conexao_entre_ilhas
+            SET bloqueada = 'false'
+            WHERE identificador_progresso = %s
+                AND identificador_ilha_a = %s
+                AND identificador_ilha_b = %s;
+        """
+        self.executar_query(consulta, (identificador_progresso, ilha_a, ilha_b))
+
+
 
     # ===============================================
     # Métodos de Operações de Fabricação (Receitas)
@@ -2696,6 +2773,20 @@ class DBManager:
             WHERE f.identificador_fruta = %s;
         """
         return self.executar_query(consulta, (id_fruta,), fetchone=True)
+
+
+
+    def adquirir_novo_barco(self, identificador_progresso, tipo_barco):
+        """
+        Marca um barco como adquirido em um progresso específico
+        """
+        consulta = """
+            UPDATE barco
+            SET estado = 'adquirido'
+            WHERE identificador_progresso = %s
+                AND tipo_barco = %s;
+        """
+        self.executar_query(consulta, (identificador_progresso, tipo_barco))
 
 
 

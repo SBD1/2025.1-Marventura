@@ -1125,7 +1125,7 @@ VALUES
 INSERT INTO chefe
     (identificador_area, nome, descricao, coordenada_x, coordenada_y, vida, nivel, experiencia, moedas_totais)
 VALUES
-    ('are001', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 5000, 5000, 14, 10, 20, 0),
+    ('are003', 'Javali',	'Um tanque com presas. Corre como se tivesse dívida com o vento.', 1045, 170, 14, 10, 20, 0),
     ('are009', 'Capitão Renegado',	'Exibido, barulhento e com um corte de cabelo que grita "autoridade duvidosa".', 5000, 5000, 22, 20, 30, 100),
     ('are015', 'Imediato Espectral',	'Leal até depois da morte. Ainda segue ordens do velho capitão pirata.', 5000, 5000, 31, 30, 40, 30),
     ('are019', 'Capitão das Areias',	'Tático, traiçoeiro e com um bigode que desafia a gravidade.', 5000, 5000, 41, 40, 50, 50),
@@ -1373,7 +1373,7 @@ VALUES
     ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
     ('are001', null, 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
-    ('are003', null, 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
+    ('are003', 'mis011', 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
 
 
 

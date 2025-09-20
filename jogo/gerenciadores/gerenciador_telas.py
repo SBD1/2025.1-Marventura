@@ -51,7 +51,7 @@ class GerenciadorDeTelas:
                     self.gerenciador_entidades
                 )
 
-            self.gerenciador_missoes.limpar_estados_das_missoes()
+            self.gerenciador_missoes.carregar_missoes_ativas_do_jogador()
 
 
 
@@ -67,9 +67,6 @@ class GerenciadorDeTelas:
             return TelaSelecaoPersonagem(self, self.gerenciador_recursos,
                                          self.gerenciador_banco_de_dados)
         elif estado_desejado == CHAVE_TRANSICAO_NOVO_JOGO:
-            print(self.gerenciador_missoes.missoes_ativas)
-            self.gerenciador_missoes.iniciar_missao('mis001')
-            
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados,
                             self.gerenciador_missoes)
@@ -79,8 +76,6 @@ class GerenciadorDeTelas:
                             self.gerenciador_missoes)
 
         elif estado_desejado == CHAVE_TRANSICAO_MAPA:
-            print(f"Tela: {kwargs.get('ponto_geracao_jogador')}")
-            
             return TelaJogo(self, self.gerenciador_recursos,
                             self.gerenciador_banco_de_dados,
                             self.gerenciador_missoes)

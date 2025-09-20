@@ -97,6 +97,7 @@ INIMIGO_LOBO = 'Lobo'
 INIMIGO_CORVO = 'Corvo'
 INIMIGO_BRUTAMONTES = 'Brutamontes'
 INIMIGO_MARINHEIRO_CORRUPTO = 'Marinheiro Corrupto'
+CHEFE_JAVALI = 'Javali'
 
 
 # --- Habitantes ---

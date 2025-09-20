@@ -95,6 +95,8 @@ class TelaBatalha(TelaModelo):
 
         self.tipo_inimigo = inimigos_na_batalha[0].nome if inimigos_na_batalha else None
 
+        self.modo_batalha = modo_batalha  # 'normal' ou 'chefe'
+
         for inimigo_mapa in inimigos_na_batalha:
             nome = inimigo_mapa.nome
             vida = inimigo_mapa.vida_total
@@ -102,19 +104,20 @@ class TelaBatalha(TelaModelo):
             nivel = inimigo_mapa.nivel
             experiencia = inimigo_mapa.experiencia
             habilidade=inimigo_mapa.habilidade[0]
-            item = self.banco_de_dados.buscar_item_do_lacaio(inimigo_mapa.identificador_inimigo)
 
             onda = []
             if modo_batalha == 'normal':
+                item = self.banco_de_dados.buscar_item_do_lacaio(inimigo_mapa.identificador_inimigo)
                 # Cria 3 clones do mesmo inimigo em versão "batalha"
                 onda = [
                     InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
                     for _ in range(3)
                 ]
             elif modo_batalha == 'chefe':
+                item = [] # Substituir por item de chefe se necessário
                 # Cria apenas 1 inimigo chefe
                 onda = [
-                    InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item)
+                    InimigoBatalha(nome, vida, nivel, experiencia, habilidade, item, inimigo_comum=False)
                 ]
 
             self.ondas_pendentes.append(onda)
@@ -274,6 +277,7 @@ class TelaBatalha(TelaModelo):
         for i, inimigo in enumerate(self.inimigos):
             if not inimigo:
                 continue
+
             imagem = self.gerenciador_recursos.obter_imagem(inimigo.imagem_id)
             posicao = posicoes[i]
             sprite_animado = InimigoAnimado(imagem, posicao)
@@ -697,8 +701,8 @@ class TelaBatalha(TelaModelo):
             if inimigo:
                 self.itens_obtidos.append(inimigo.item)
             inimigo_pop = self.inimigos_lutando.pop(0)
-            print(f"Inimigo derrotado: {inimigo_pop.identificador_instancia_lacaio}")
-            self.banco_de_dados.sekishiki_meikai_ha(inimigo_pop.identificador_instancia_lacaio, self.entidades.progresso_do_jogo.identificador_progresso)
+            print(f"Inimigo derrotado: {inimigo_pop.identificador_instancia_lacaio if self.modo_batalha == 'normal' else inimigo_pop.nome}")
+            self.banco_de_dados.sekishiki_meikai_ha(inimigo_pop.identificador_instancia_lacaio if self.modo_batalha == 'normal' else inimigo_pop.identificador, self.entidades.progresso_do_jogo.identificador_progresso)
             if not self._carregar_proxima_onda():
                 print("Todas as ondas foram derrotadas!")
                 self._finalizar_batalha(venceu=True)
@@ -1006,9 +1010,12 @@ class TelaBatalha(TelaModelo):
 
 
 class InimigoBatalha:
-    def __init__(self, nome, vida_total, nivel, experiencia, habilidade, item):
+    def __init__(self, nome, vida_total, nivel, experiencia, habilidade, item, inimigo_comum=True):
         self.nome = nome
-        self.imagem_id = f"{nome}_0"  # Ex: "Lobo_0"
+        if inimigo_comum:
+            self.imagem_id = f"{nome}_0"  # Ex: "Lobo_0"
+        else:
+            self.imagem_id = nome  # Ex: "Javali"
         self.vida_total = vida_total
         self.vida_atual = vida_total
         self.nivel = nivel

@@ -443,6 +443,70 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
 
 
+    def definir_coordenada_de_habitante_especifico(self, nome_habitante, nova_coordenada_x, nova_coordenada_y):
+        """
+        Define a coordenada de um Habitante pelo nome dentro do grupo de NPCs.
+        """
+        for npc in self.npcs:
+            if npc.nome == nome_habitante:
+                npc.coordenada_x = nova_coordenada_x
+                npc.coordenada_y = nova_coordenada_y
+                npc.rect.x = int(nova_coordenada_x)  # Atualiza a posição do rect também
+                npc.rect.y = int(nova_coordenada_y)
+                # print(f"Coordenadas do habitante '{nome_habitante}' atualizadas para ({nova_coordenada_x}, {nova_coordenada_y}).")
+                return  # Encontrou e atualizou, pode sair da função
+
+        print(f"AVISO: Habitante com o nome '{nome_habitante}' não encontrado.")
+
+
+
+    def inserir_habitante_em_missao(self, identificador_habitante, x, y):
+        """
+        Cria e adiciona um habitante específico para uma missão.
+        Diferente do carregamento normal do mapa.
+        """
+        print(f"Adicionando habitante de missão: {identificador_habitante} em ({x}, {y})")
+        dados_habitante = self.banco_de_dados.buscar_habitante(identificador_habitante, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+        if not dados_habitante:
+            print(f"ERRO: Habitante com o ID '{identificador_habitante}' não encontrado no banco de dados.")
+            return
+
+        genero = 'F' if self.gerenciador_entidades.jogador.nome == SILVIE else 'M'
+        dialogos = self.banco_de_dados.buscar_dialogos_sem_missao(dados_habitante.identificador_habitante, genero)
+
+        # Filtra a saudação
+        saudacao = list(filter(lambda d: d.sequencia_local < 10, dialogos))
+
+        # Agora sobrescreve dialogos com apenas as missões
+        dialogos = list(filter(lambda d: d.sequencia_local >= 10, dialogos))
+
+        missoes = []
+
+        if dados_habitante.tipo_habitante == 'rct':
+            missoes = self.banco_de_dados.buscar_missoes_de_habitante_nao_concluidas(dados_habitante.identificador_habitante, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+
+        novo_npc = Habitante(
+            self.gerenciador_recursos,
+            dados_habitante.identificador_habitante,
+            self.dados_da_area.identificador_area,
+            x,
+            y,
+            dados_habitante.nome,
+            dados_habitante.descricao,
+            dados_habitante.tipo_habitante,
+            dados_habitante.moedas_totais,
+            dados_habitante.especialidade,
+            dados_habitante.chave_imagem,
+            saudacao,
+            dialogos,
+            missoes,
+            conhecido=dados_habitante.conhecido
+        )
+        self.npcs.add(novo_npc)
+        self.todos_os_sprites.add(novo_npc)  # Adiciona o NPC ao grupo de todos os sprites
+
+
+
     def _marcar_ilha_visitada_e_exibir_nome(self):
         """
         Marca a ilha atual como visitada e inicializa a exibição do nome da ilha e da área.
@@ -738,7 +802,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                         print('Notificando interação com área de missão...')
                         self.gerenciador_missoes.notificar_interacao_area(area.identificador)
 
-                 # --- Lógica de Interação com NPCs ---
+                # --- Lógica de Interação com NPCs ---
                 npcs_colidindo_agora: list[Habitante] = pygame.sprite.spritecollide(self.jogador, self.npcs, False)
                 for npc in npcs_colidindo_agora:
                     # Prioridade: Saudação > Missões > Diálogos Sem Missão
@@ -767,6 +831,19 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     if not self.dialogo_ativo and npc.dialogos:
                         self.iniciar_dialogo(npc.dialogos)
                         return None # Consome o evento
+                    
+                # --- Lógica de Interação com Chefes ---
+                chefe_colidindo = False
+                if self.chefe:
+                    chefe_colidindo = pygame.sprite.collide_rect(self.jogador, self.chefe)
+
+                if chefe_colidindo and self.chefe is not None:
+                    self.gerenciador_telas.mudar_tela(
+                        CHAVE_TRANSICAO_BATALHA,
+                        inimigos_na_batalha=[self.chefe],
+                        modo_batalha='chefe'
+                    )
+
             elif evento.key == pygame.K_k:
                 self._ataque_no_mapa()
 
@@ -880,8 +957,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
         # Atualiza a visibilidade do ícone de interação
         self.areas_interacao_colididas = pygame.sprite.spritecollide(self.jogador, self.areas_interacao, False)
-        self.inimigos_lutando = pygame.sprite.spritecollide(self.jogador, self.inimigos, False)
-        self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0
+        colidindo_com_chefe = pygame.sprite.collide_rect(self.jogador, self.chefe) if self.chefe else False
+        self.jogador.mostrar_icone_interacao = len(self.areas_interacao_colididas) > 0 or colidindo_com_chefe
 
         # Atualiza os NPCs, passando a posição do jogador para a orientação
         for npc in self.npcs:

@@ -540,6 +540,7 @@ CREATE TABLE estado_missao (
     identificador_missao ID REFERENCES missao(identificador_missao), 
     identificador_progresso ID REFERENCES progresso(identificador_progresso), 
     estado CHAR(9) NOT NULL DEFAULT 'pendente' CHECK (estado IN ('concluida', 'aceita', 'pendente')),
+    passo_atual SMALLINT NOT NULL DEFAULT 0 CHECK (passo_atual >= 0),
     PRIMARY KEY (identificador_missao, identificador_progresso)
 );
 

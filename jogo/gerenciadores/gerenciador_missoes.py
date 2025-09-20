@@ -92,6 +92,54 @@ class GerenciadorDeMissoes:
 
 
 
+    def carregar_missoes_ativas_do_jogador(self):
+        """
+        Carrega as missões que já foram aceitas pelo jogador a partir do banco de dados
+        e as adiciona ao dicionário de missões ativas para continuar de onde parou.
+        Esta função deve ser chamada após o jogador ser carregado.
+        """
+        print("Carregando missões ativas do jogador...")
+        # Limpa as missões ativas atuais para evitar duplicatas ao carregar um jogo salvo
+        self.limpar_estados_das_missoes()
+
+        # Garante que temos uma referência válida para o jogador
+        jogador = self.gerenciador_entidades.jogador
+        if not jogador:
+            print("ERRO: Tentativa de carregar missões sem um jogador definido.")
+            return
+
+        missoes_aceitas = self.banco_de_dados.buscar_missoes_aceitas_pelo_jogador(jogador.identificador)
+
+        if not missoes_aceitas:
+            print("Nenhuma missão ativa encontrada para o jogador.")
+            return
+
+        for dados_missao in missoes_aceitas:
+            id_missao = dados_missao.identificador_missao
+            
+            if id_missao in ['mis003', 'mis012']: # Essas missões devem ser recomeçadas, se o progresso da missão for interrompido.
+                passo_atual = 0
+            else:
+                passo_atual = dados_missao.passo_atual
+
+            if id_missao in self.scripts_missoes:
+                print(f"Restaurando missão '{id_missao}' a partir do passo {passo_atual}.")
+                script_da_missao = self.scripts_missoes[id_missao]
+
+                # Cria o objeto de estado da missão com o índice do passo recuperado do banco
+                estado_missao = EstadoMissao(
+                    id_missao=id_missao,
+                    script=script_da_missao,
+                    indice_passo=passo_atual
+                )
+
+                # Adiciona a missão restaurada ao dicionário de missões ativas
+                self.missoes_ativas[id_missao] = estado_missao
+            else:
+                print(f"AVISO: A missão ativa '{id_missao}' do banco de dados não foi encontrada nos scripts carregados.")
+
+
+
     def notificar_vitoria_em_batalha(self, inimigo_derrotado):
         """
         Método chamado quando uma batalha é vencida.
@@ -110,6 +158,7 @@ class GerenciadorDeMissoes:
                     print(f"Batalha vencida na missão {missao_id}. Avançando no script.")
                     estado_missao.esta_pausado = False
                     self._avancar_passo(estado_missao)
+
 
 
     def notificar_mudanca_de_area(self, id_area):
@@ -263,15 +312,28 @@ class GerenciadorDeMissoes:
                 {'tipo': 'recompensa', 'xp': 25}
             ],
             'mis011': [
+                {'tipo': 'aguardar_mudanca_de_area', 'id_area': 'are002'},
                 {'tipo': 'cena_dialogo_missao', 'missao_id': 'mis011', 'chave_imagem_cena': CENA_JANTAR_COMUNITARIO},
+                {'tipo': 'finalizar_cena'},
+                {'tipo': 'posicionar_jogador', 'x': 2141, 'y': 366, 'orientacao': 'direita'},
                 {'tipo': 'carregar_chefe', 'chefe': 'Javali', 'id_chefe': 'che001'},
                 {'tipo': 'aguardar_batalha', 'inimigo': 'Javali'},
                 {'tipo': 'finalizar_missao'},
-                {'tipo': 'recompensa', 'xp': 50}
+                {'tipo': 'recompensa', 'xp': 50},
+                {'tipo': 'ativar_proxima_missao', 'id_missao': 'mis012'}
             ],
             'mis012': [
                 {'tipo': 'aguardar_mudanca_de_area', 'id_area': 'are002'},
+                {'tipo': 'posicionar_jogador', 'x': 3361, 'y': 370, 'orientacao': 'esquerda'},
+                {'tipo': 'posicionar_habitante', 'x': 2500, 'y': 325, 'nome': 'Lina Panela', 'id_habitante': 'rct002'},
+                {'tipo': 'posicionar_habitante', 'x': 2030, 'y': 325, 'nome': 'Tia Cotinha da Cestinha', 'id_habitante': 'hbt003'},
+                {'tipo': 'inserir_habitante', 'x': 2117, 'y': 372, 'nome': 'Tião Palha', 'id_habitante': 'hbt002'},
+                {'tipo': 'inserir_habitante', 'x': 1802, 'y': 303, 'nome': 'Sr. Lee', 'id_habitante': 'ven002'},
+                {'tipo': 'mover_jogador_para', 'x': 2230, 'y': 400},
                 {'tipo': 'dialogo', 'missao_id': 'mis012'},
+                {'tipo': 'desbloquear_rota', 'ilha_a': 'ilh001', 'ilha_b': 'ilh002'},
+                {'tipo': 'adquirir_novo_barco', 'tipo_barco': 'can'},
+                #{'tipo': 'aguardar_mudanca_de_area', 'id_area': 'oceano'},
                 {'tipo': 'finalizar_missao'},
             ]
 
@@ -467,10 +529,37 @@ class GerenciadorDeMissoes:
             )
             self._avancar_passo(estado)
 
+        elif tipo_passo == 'posicionar_habitante':
+            self.tela_jogo.definir_coordenada_de_habitante_especifico(
+                passo['nome'],
+                passo['x'],
+                passo['y']
+            )
+            
+            self._avancar_passo(estado)
+
+        elif tipo_passo == 'inserir_habitante':
+            self.tela_jogo.inserir_habitante_em_missao(
+                passo['id_habitante'],
+                passo['x'],
+                passo['y']
+            )
+
+            self._avancar_passo(estado)
+
         elif tipo_passo == 'posicionar_jogador':
-            self.gerenciador_entidades.jogador.coordenada_x = passo['x']
-            self.gerenciador_entidades.jogador.coordenada_y = passo['y']
-            self.gerenciador_entidades.jogador.orientacao = passo['orientacao']
+            self.gerenciador_entidades.jogador.atualizar_posicao_jogador(
+                passo['x'],
+                passo['y'],
+                passo['orientacao']
+            )
+
+            self.banco_de_dados.atualizar_posicao_jogador(
+                self.gerenciador_entidades.jogador.identificador,
+                self.gerenciador_entidades.area_atual.identificador_area,
+                passo['x'],
+                passo['y'],
+            )
             self._avancar_passo(estado)
 
         elif tipo_passo == 'mover_jogador_para':
@@ -565,6 +654,16 @@ class GerenciadorDeMissoes:
 
         elif tipo_passo == 'focar_jogador':
             self.camera.retornar_para_jogador()
+            self._avancar_passo(estado)
+
+        elif tipo_passo == 'adquirir_novo_barco':
+            self.banco_de_dados.adquirir_novo_barco(self.gerenciador_entidades.progresso_do_jogo.identificador_progresso, passo.get('tipo_barco'))
+
+            self._avancar_passo(estado)
+
+        elif tipo_passo == 'desbloquear_rota':
+            self.banco_de_dados.desbloquear_rota(self.gerenciador_entidades.progresso_do_jogo.identificador_progresso, passo.get('ilha_a'), passo.get('ilha_b'))
+
             self._avancar_passo(estado)
 
         elif tipo_passo == 'entregar_itens':
@@ -701,6 +800,7 @@ class GerenciadorDeMissoes:
     def _avancar_passo(self, estado: EstadoMissao):
         """Avança para o próximo passo do script."""
         estado.indice_passo += 1
+        self.banco_de_dados.atualizar_passo_atual_missao(estado.id_missao, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso, estado.indice_passo)
         estado.esta_pausado = False # Garante que o script não esteja mais pausado após o avanço
 
 
