@@ -2,6 +2,7 @@
 
 import pygame
 import math
+import random
 from utilidades.constantes import *
 from .tela_modelo import TelaModelo
 from componentes import BarraDeEstado
@@ -28,12 +29,30 @@ class TelaBatalha(TelaModelo):
         self.habilidades_visiveis = []
         self.habilidade_selecionada_index = 0
 
+        print(f"[DEBUG] Vida máxima para o jogador {self.entidades.jogador.nome}: {self.entidades.jogador.vida_maxima} (Base: {self.entidades.jogador.vida_maxima_base} + Bônus: {getattr(self, 'bonus_vida', 0)})")
+        print(f"[DEBUG] Energia máxima para o jogador {self.entidades.jogador.nome}: {self.entidades.jogador.energia_maxima} (Base: {self.entidades.jogador.energia_maxima_base} + Bônus: {getattr(self, 'bonus_energia', 0)})")
+        print(f"[DEBUG] Aumento de ataque para o jogador {self.entidades.jogador.nome}: {self.entidades.jogador.aumento_de_ataque} (Bônus: {getattr(self, 'bonus_ataque', 0)})")
+        print(f"[DEBUG] Sorte para o jogador {self.entidades.jogador.nome}: {self.entidades.jogador.sorte} (Base + Bônus: {getattr(self, 'bonus_sorte', 0)})")
+
+
+        self.bonus_do_jogador = 0
+        self.bonus_do_inimigo = 0
+
         self.inimigo_da_esquerda = None
         self.inimigo_do_meio = None
         self.inimigo_da_direita = None
 
         # Carrega o fundo da batalha
-        self.fundo_batalha = self.gerenciador_recursos.obter_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS)
+        self.campo_de_batalha = self.entidades._ilha_atual.nome
+        self.fundo_batalha = None
+        match self.campo_de_batalha:
+            case "Ilha de Borabóia":
+                self.fundo_batalha = self.gerenciador_recursos.obter_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS)
+            case "Cidade de Lurien":
+                self.fundo_batalha = self.gerenciador_recursos.obter_imagem(CHAVE_CAMPO_DE_BATALHA_CIDADE)
+            case "Ilha Glacial de Frimora":
+                self.fundo_batalha = self.gerenciador_recursos.obter_imagem(CHAVE_CAMPO_DE_BATALHA_NEVE)
+
         if not self.fundo_batalha:
             self.fundo_batalha = pygame.Surface((LARGURA_TELA, ALTURA_TELA))
             self.fundo_batalha.fill(CINZA_ESCURO)
@@ -41,7 +60,7 @@ class TelaBatalha(TelaModelo):
 
         # Inicializa os ícones de ação
         self.icones_acao = [
-            _IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_ESTRATEGIAS), acao="fugir"),
+            _IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_ESTRATEGIAS), acao="estrategias"),
             _IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_MOCHILA), acao="mochila"),
         ]
         self._icones_acao_equipaveis()
@@ -51,17 +70,23 @@ class TelaBatalha(TelaModelo):
         self.titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TITULO)
         self.tempo_mensagem_onda = 0
         self.texto_mensagem_onda = ""
-        self.posicao_jogador = (180, ALTURA_TELA - 170)
+        self.posicao_jogador = (180, ALTURA_TELA - 120)
         self.caixa_de_texto = self.gerenciador_recursos.obter_imagem(CHAVE_CAIXA_DE_TEXTO)
         self.largura_caixa_de_texto = self.caixa_de_texto.get_width()
         self.altura_caixa_de_texto = self.caixa_de_texto.get_height()
         self.x_central = (LARGURA_TELA - self.largura_caixa_de_texto) // 2
 
-        self.quadro_de_itens = self.gerenciador_recursos.obter_imagem(CHAVE_MENU_ITENS)
-        self.largura_quadro = self.quadro_de_itens.get_width()
-        self.altura_quadro = self.quadro_de_itens.get_height()
-        self.x_quadro = LARGURA_TELA // 2 - self.largura_quadro // 2
-        self.y_quadro = 144  # ou calcule centralizado em Y também se quiser
+        self.menu_estrategias = self.gerenciador_recursos.obter_imagem(CHAVE_MENU_ESTRATEGIAS)
+        self.largura_menu_estrategias = self.menu_estrategias.get_width()
+        self.altura_menu_estrategias = self.menu_estrategias.get_height()
+        self.x_menu_estrategias = LARGURA_TELA // 4 - self.largura_menu_estrategias // 2
+        self.y_menu_estrategias = ALTURA_TELA // 2 - self.altura_menu_estrategias // 2
+
+        self.menu_mochila = self.gerenciador_recursos.obter_imagem(CHAVE_MENU_ITENS)
+        self.largura_menu_mochila = self.menu_mochila.get_width()
+        self.altura_menu_mochila = self.menu_mochila.get_height()
+        self.x_menu_mochila = LARGURA_TELA // 2 - self.largura_menu_mochila // 2
+        self.y_menu_mochila = 144
 
         self.menu_de_habilidade = self.gerenciador_recursos.obter_imagem(CHAVE_MENU_SELECAO_HABILIDADE)
         self.largura_menu_habilidade = self.menu_de_habilidade.get_width()
@@ -70,7 +95,7 @@ class TelaBatalha(TelaModelo):
         self.y_menu_habilidade = ALTURA_TELA / 2
 
         self.rect_quadro = pygame.Rect(
-            self.x_quadro, self.y_quadro, self.largura_quadro, self.altura_quadro
+            self.x_menu_mochila, self.y_menu_mochila, self.largura_menu_mochila, self.altura_menu_mochila
         )
 
         self.jogador_iniciou = jogador_iniciou
@@ -78,7 +103,7 @@ class TelaBatalha(TelaModelo):
         self.itens_obtidos = []
 
         # Prepara a lista de inimigos que serão enfrentados
-        self.inimigos = []
+        self.inimigos: list[InimigoBatalha] = []
         self.inimigos_animados = []
         self.fila_ataques_inimigos = []
         
@@ -127,7 +152,6 @@ class TelaBatalha(TelaModelo):
             if item.tipo == "con"
         ]
         
-        self.menu_mochila_ativo = False
         self.item_selecionado = None
 
         self.indice_item_mochila = 0
@@ -145,47 +169,29 @@ class TelaBatalha(TelaModelo):
         if not self.inimigos:
             return
 
-        jogador = self.entidades.jogador
+        if self.entidades.jogador.kit_do_explorador.arma is None:
+            habilidade = self.entidades.jogador.habilidades[0]  # soco
+        else:
+            habilidade = self.entidades.jogador.habilidades[2]  # arma equipada
 
-        # Define prioridades: arma > estilingue/arco > soco
-        habilidades_disponiveis = [
-            h for h in jogador.habilidades
-            if h.tipo_de_ataque in ("espada", "estilingue", "arco", "soco")
-        ]
-
-        if not habilidades_disponiveis:
+        if not habilidade:
             print("[AVISO] Nenhuma habilidade básica disponível para ataque extra.")
             return
 
-        habilidade = habilidades_disponiveis[0]
-
         # Determina raridade baseada na arma (ou usa padrão)
         raridade = "★"
-        if habilidade.tipo_de_ataque != "soco" and jogador.kit_do_explorador.arma:
-            raridade = jogador.kit_do_explorador.armararidade
+        if habilidade.tipo_de_ataque != "soco" and self.entidades.jogador.kit_do_explorador.arma:
+            raridade = self.entidades.jogador.kit_do_explorador.arma.raridade
 
         dano = habilidade.calcular_dano_final(
-            nivel_jogador=jogador.nivel,
+            nivel_jogador=self.entidades.jogador.nivel,
             valor_do_efeito_ataque=self.entidades.jogador.aumento_de_ataque,
             raridade=raridade
         )
 
         tipo = habilidade.tipo_de_alvo
-        aplicou_dano = False
 
-        if tipo == "fila":
-            # Aplica no primeiro inimigo vivo (geralmente o mais à esquerda)
-            for i, inimigo in enumerate(self.inimigos):
-                if inimigo.vida_atual > 0:
-                    self._aplicar_dano(i, dano)
-                    animado = self.inimigos_animados[i]
-                    self.danos_flutuantes.append(
-                        DanoFlutuante(str(dano), (animado.pos[0], animado.pos[1] - 30))
-                    )
-                    aplicou_dano = True
-                    break
-
-        elif tipo in ("terrestre", "area"):
+        if tipo in ("terrestre", "area"):
             # Aplica em todos os inimigos vivos
             for i, inimigo in enumerate(self.inimigos):
                 if inimigo.vida_atual > 0:
@@ -194,10 +200,8 @@ class TelaBatalha(TelaModelo):
                     self.danos_flutuantes.append(
                         DanoFlutuante(str(dano), (animado.pos[0], animado.pos[1] - 30))
                     )
-                    aplicou_dano = True
-
-        elif tipo in ("alvo_terrestre", "alvo_livre"):
-            # Aplica em um único inimigo vivo (qualquer um, pode ser o primeiro)
+        else:
+            # Aplica no primeiro inimigo vivo (geralmente o mais à esquerda)
             for i, inimigo in enumerate(self.inimigos):
                 if inimigo.vida_atual > 0:
                     self._aplicar_dano(i, dano)
@@ -205,14 +209,7 @@ class TelaBatalha(TelaModelo):
                     self.danos_flutuantes.append(
                         DanoFlutuante(str(dano), (animado.pos[0], animado.pos[1] - 30))
                     )
-                    aplicou_dano = True
                     break
-
-        else:
-            print(f"[AVISO] Tipo de alvo não reconhecido: {tipo}")
-
-        if aplicou_dano:
-            print(f"[DEBUG] Ataque extra com: {habilidade.nome} ({habilidade.tipo_de_ataque}) → Dano: {dano}")
 
 
 
@@ -223,6 +220,7 @@ class TelaBatalha(TelaModelo):
             self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_FRUTA), acao="fruta"))
 
         if identificador_de_ataques['id_arma']:
+            print(f"Tipo de arma equipada: {self.entidades.jogador.kit_do_explorador.arma.tipo_arma}")
             if self.entidades.jogador.kit_do_explorador.arma.tipo_arma == 'esp':
                 self.icones_acao.append(_IconeAcao(self.gerenciador_recursos.obter_imagem(CHAVE_ACAO_ESPADA), acao="espada"))
             elif self.entidades.jogador.kit_do_explorador.arma.tipo_arma == 'est':
@@ -257,9 +255,9 @@ class TelaBatalha(TelaModelo):
 
         # Posicionamento dos inimigos na tela de batalha
         posicoes = [
-            (LARGURA_TELA - 350, ALTURA_TELA - 225) if self.inimigo_da_esquerda else None,
-            (LARGURA_TELA - 250, ALTURA_TELA - 150),
-            (LARGURA_TELA - 120, ALTURA_TELA - 200) if self.inimigo_da_direita else None
+            (LARGURA_TELA - 350, ALTURA_TELA - 175) if self.inimigo_da_esquerda else None,
+            (LARGURA_TELA - 250, ALTURA_TELA - 100),
+            (LARGURA_TELA - 120, ALTURA_TELA - 150) if self.inimigo_da_direita else None
         ]
 
         self.inimigos_animados = []
@@ -292,11 +290,25 @@ class TelaBatalha(TelaModelo):
 
 
 
+    def _analisar_inimigos(self, index_inimigo):
+        if not self.inimigos or index_inimigo is None or index_inimigo >= len(self.inimigos):
+            return
+        inimigo_escolhido = self.inimigos[index_inimigo]
+        if not inimigo_escolhido or not inimigo_escolhido.esta_vivo():
+            return
+        tipo = inimigo_escolhido.nome
+        for inimigo in self.inimigos:
+            if inimigo and inimigo.nome == tipo:
+                inimigo.analizado = True
+        print(f"Inimigos do tipo {tipo} foram analisados!")
+
+
+
     def usar_item_da_mochila(self, item):
         self.entidades.jogador.usar_item_da_mochila(item)
         
         # Fecha o menu e passa a vez
-        self.menu_mochila_ativo = False
+        self.estado_batalha = "turno_jogador"
         print("Passa o turno depois de usar o item")
         self._realizar_turno_inimigo()
 
@@ -309,7 +321,14 @@ class TelaBatalha(TelaModelo):
             print(f"[DEBUG] Energia insuficiente para usar {self.habilidade_usando.nome}")
             self.estado_batalha = "turno_jogador"  # ou mantém no menu
             return  # Cancela a preparação
-      
+        
+        if self.habilidade_usando.tipo_de_ataque in ["fruta"]:
+            for efeito in self.entidades.jogador.efeitos_ativos:
+                if efeito["nome"] == "Molhado":
+                    print("😰 Não pode usar frutas estando molhado!")
+                    self.estado_batalha = "turno_jogador"
+                    return
+
         self.estado_batalha = "selecao_de_alvo"
 
 
@@ -324,14 +343,25 @@ class TelaBatalha(TelaModelo):
         if tipo in ["area", "terrestre"]:
             for i in range(len(self.inimigos)):
                 if self.inimigos[i] and self.inimigos[i].esta_vivo():
-                    self._aplicar_dano(i, dano)
-        elif tipo in ["fila"]:
-            alvo = self._proximo_inimigo_vivo()
-            if alvo:
-                self._aplicar_dano(self.inimigos.index(alvo), dano)
+                    self._aplicar_dano(i, dano, self.habilidade_usando.efeito)
         else:
-            self._aplicar_dano(alvo_index, dano)
-
+            tontura_aplicada = False
+            for efeito in self.entidades.jogador.efeitos_ativos:
+                if efeito["nome"] == "Tontura":
+                    tontura_aplicada = True
+                    break
+            if tontura_aplicada:
+                alvo = random.randint(0, len(self.inimigos) - 1)
+                self._aplicar_dano(self.inimigos.index(alvo), dano, self.habilidade_usando.efeito)
+                print(f"😵 Tontura ativa! Ataque pode errar e atingir inimigo aleatório (índice {alvo})")
+            else:
+                if tipo in ["fila"]:
+                    alvo = self._proximo_inimigo_vivo()
+                    if alvo:
+                        self._aplicar_dano(self.inimigos.index(alvo), dano, self.habilidade_usando.efeito)
+                else:
+                    self._aplicar_dano(alvo_index, dano, self.habilidade_usando.efeito)
+        
         # Recupera energia se for ataque básico
         if self.habilidade_usando.custo == 0:
             energia_recuperada = 1  # ou outro valor que preferir
@@ -347,6 +377,7 @@ class TelaBatalha(TelaModelo):
     def _calcular_dano(self, habilidade):
         nivel = self.entidades.jogador.nivel
         ataque = self.entidades.jogador.aumento_de_ataque
+        self.bonus_do_jogador = 0
 
         # Determinar raridade da fonte
         if habilidade.tipo_de_ataque in ["espada", "estilingue", "arco"]:
@@ -356,27 +387,71 @@ class TelaBatalha(TelaModelo):
         else:
             raridade = "★"
 
-        return habilidade.calcular_dano_final(nivel, ataque, raridade=raridade)
+        dano_final = habilidade.calcular_dano_final(nivel, ataque, raridade=raridade)
 
+        for efeito in self.entidades.jogador.efeitos_ativos:
+            if efeito["nome"] == "Molhado":
+                self.bonus_do_jogador -= 20         # Reduz dano em 20% 
+            if efeito["nome"] == "Envenenado":
+                self.bonus_do_jogador -= 10         # Reduz dano em 10%
 
+        dano_final = dano_final * (1 + self.bonus_do_jogador / 100)
 
-    def _aplicar_dano(self, index, dano):
+        return dano_final
+
+    def _calcular_esquiva(self):
+        chance = self.entidades.jogador.sorte * 5
+        roll = random.randint(1, 100)
+        return roll <= chance
+
+    def _aplicar_dano(self, index, dano, efeito_da_habilidade=None):
         if not (0 <= index < len(self.inimigos)):
             print(f"[AVISO] Índice de inimigo inválido: {index}")
             return
+
+        chance_de_errar = 0
+        for efeito in self.entidades.jogador.efeitos_ativos:
+            if efeito["nome"] == "Cegueira":
+                chance_de_errar = 0.25  # 25% de chance de errar
 
         inimigo = self.inimigos[index]
         animado = self.inimigos_animados[index]
 
         # Garante que dano mínimo seja 0 (caso algo negativo escape)
-        dano = max(0, dano)
-        inimigo.vida_atual = max(0, inimigo.vida_atual - dano)
+        dano_final = max(0, dano)
+
+        # Verifica se o inimigo tem efeitos que alteram o dano recebido
+        for efeito in inimigo.efeitos_ativos:
+            if efeito["nome"] == "Queimadura":
+                dano_final = math.floor(dano_final * 1.1)  # Aumenta dano em 10%
 
         # Adiciona dano flutuante visual
         x, y = animado.pos
+
+        if chance_de_errar > 0 and random.random() < chance_de_errar:
+            print("❌ Ataque errou devido à cegueira!")
+            self.danos_flutuantes.append(DanoFlutuante("Errou!", (x, y - 30), CINZA))
+            return
+        
         self.danos_flutuantes.append(DanoFlutuante(str(dano), (x, y - 30)))
 
+        inimigo.vida_atual = max(0, inimigo.vida_atual - dano)
         print(f"💥 {inimigo.nome} recebeu {dano} de dano! Vida restante: {inimigo.vida_atual}/{inimigo.vida_total}")
+
+        # Devolve dano ao jogador se inimigo estiver eletrificado
+        x, y = self.posicao_jogador
+        for efeito in inimigo.efeitos_ativos:
+            if efeito["nome"] == "Eletrificado":
+                self.entidades.jogador.vida_atual = max(0, self.entidades.jogador.vida_atual - 2)
+                self.danos_flutuantes.append(DanoFlutuante(2, (x, y - 30)))
+                if self.entidades.jogador.vida_atual <= 0:
+                    self._finalizar_batalha(venceu=False)
+                    return
+
+        if efeito_da_habilidade:
+            chance_de_aplicar_efeito = 0.3  # 30% de chance padrão
+            if random.random() < chance_de_aplicar_efeito:
+                inimigo.aplicar_efeitos([efeito_da_habilidade])  
 
 
 
@@ -389,7 +464,7 @@ class TelaBatalha(TelaModelo):
 
 
     def _encerrar_turno_jogador(self):
-        self.entidades.jogador.aplicar_dano_continuo("depois")
+        self.entidades.jogador.processar_efeitos_de_fim_de_turno()
         self.estado_batalha = "turno_inimigo"
         self.inimigo_index_atacando = 0
         self.tempo_proximo_ataque = 0.7
@@ -418,31 +493,73 @@ class TelaBatalha(TelaModelo):
 
         inimigo = self.inimigos[i]
         animado = self.inimigos_animados[i]
-
-        print(inimigo)
-        dano = inimigo.habilidade.calcular_dano_final(inimigo.nivel, 0, "★")
-        animado.iniciar_ataque()
-
-        self.entidades.jogador.vida_atual = max(0, self.entidades.jogador.vida_atual - dano)
-
-        pos = self.posicao_jogador
-        self.danos_flutuantes.append(
-            DanoFlutuante(str(dano), (pos[0], pos[1] - 50))
-        )
-
-        print(f"🧟 Inimigo ({inimigo.nome}) atacou! Jogador perdeu {dano} PV.")
-
-        if self.entidades.jogador.vida_atual <= 0:
-            self._finalizar_batalha(venceu=False)
-            return
         
-        inimigo.aplicar_dano_continuo("depois")
+        if inimigo.processar_efeitos_de_inicio_de_turno():
+            print(inimigo)
+            dano = inimigo.habilidade.calcular_dano_final(inimigo.nivel, 0, "★")
+
+            for efeito in self.entidades.jogador.efeitos_ativos:
+                if efeito["nome"] == "Queimadura":
+                    dano = math.floor(dano * 1.1)  # Aumenta dano em 10%
+
+            chance_de_errar = 0
+            for efeito in inimigo.efeitos_ativos:
+                if efeito["nome"] == "Envenenado":
+                    dano = math.floor(dano * 0.9)  # Reduz dano em 10%
+                if efeito["nome"] == "Cegueira":
+                    chance_de_errar = 0.25  # 25% de chance de errar
+
+            animado.iniciar_ataque()
+
+            pos = self.posicao_jogador
+            if chance_de_errar > 0 and random.random() < chance_de_errar:
+                print("❌ Ataque errou devido à cegueira!")
+                self.danos_flutuantes.append(DanoFlutuante("Errou!", (pos[0], pos[1] - 50), CINZA))
+            else:
+                if self._calcular_esquiva():
+                    self.danos_flutuantes.append(DanoFlutuante("Por pouco!", (pos[0], pos[1] - 50), AMARELO))
+                    print(f"{self.entidades.jogador.nome} esquivou do ataque!")
+                else:
+                    self.entidades.jogador.vida_atual = max(0, self.entidades.jogador.vida_atual - dano)
+
+                    self.danos_flutuantes.append(
+                        DanoFlutuante(str(dano), (pos[0], pos[1] - 50))
+                    )
+
+                    print(f"🧟 Inimigo ({inimigo.nome}) atacou! Jogador perdeu {dano} PV.")
+
+                    if self.entidades.jogador.vida_atual <= 0:
+                        self._finalizar_batalha(venceu=False)
+                        return
+
+                    for efeito in self.entidades.jogador.efeitos_ativos:
+                        if efeito["nome"] == "Eletrificado":
+                            inimigo.vida_atual = max(0, inimigo.vida_atual - 2)
+                            inimigo.danos_flutuantes.append(
+                                DanoFlutuante(2, (animado.pos[0], animado.pos[1] - 30))
+                            )
+                            if inimigo.vida_atual <= 0:
+                                print(f"💀 Inimigo ({inimigo.nome}) foi derrotado pela eletricidade!")
+                            break
+
+                    # Aplica efeito do ataque do inimigo, se houver
+                    if inimigo.habilidade.efeito:
+                        chancer_de_aplicar_efeito = 0.3  # 30% de chance padrão
+                        if random.random() < chancer_de_aplicar_efeito:
+                            self.entidades.jogador.aplicar_efeitos([inimigo.habilidade.efeito])
+        
+        inimigo.processar_efeitos_de_fim_de_turno()
 
         self.tempo_proximo_ataque = 0.7  # Delay entre ataques
 
         
     
     def _finalizar_batalha(self, venceu):
+        self.entidades.jogador.efeitos_ativos = [
+            e for e in self.entidades.jogador.efeitos_ativos 
+            if e["nome"] not in ["Sangramento", "Queimadura", "Envenenado"]
+        ]
+
         if venceu:
             print("Todos os inimigos foram derrotados! Você venceu a batalha!")
     
@@ -454,10 +571,10 @@ class TelaBatalha(TelaModelo):
     
             self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
                 self.entidades.jogador.identificador_jogador,
-                self.entidades.jogador.energia_maxima,
-                self.entidades.jogador.vida_maxima,
+                self.entidades.jogador.energia_maxima_base,
+                self.entidades.jogador.vida_maxima_base,
                 self.entidades.jogador.nivel,
-                self.entidades.jogador.sorte,
+                self.entidades.jogador.sorte_base,
                 self.entidades.jogador.energia_atual,
                 self.entidades.jogador.vida_atual,
                 self.entidades.jogador.experiencia_atual,
@@ -487,10 +604,10 @@ class TelaBatalha(TelaModelo):
     
             self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
                 self.entidades.jogador.identificador_jogador,
-                self.entidades.jogador.energia_maxima,
-                self.entidades.jogador.vida_maxima,
+                self.entidades.jogador.energia_maxima_base,
+                self.entidades.jogador.vida_maxima_base,
                 self.entidades.jogador.nivel,
-                self.entidades.jogador.sorte,
+                self.entidades.jogador.sorte_base,
                 self.entidades.jogador.energia_atual,
                 self.entidades.jogador.vida_atual,
                 self.entidades.jogador.experiencia_atual,
@@ -515,12 +632,12 @@ class TelaBatalha(TelaModelo):
         #print(f"[DEBUG] Estado da batalha no clique: {self.estado_batalha}")
 
         # Se o menu da mochila está aberto, verifica clique nos itens
-        if evento.type == pygame.MOUSEBUTTONDOWN and self.menu_mochila_ativo:
+        if evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "menu_mochila":
             if evento.button != 1:
                 return
 
             margem_lateral = 16
-            margem_superior = 16
+            margem_superior = 56
             altura_item = 32
             espacamento = 8
 
@@ -529,11 +646,11 @@ class TelaBatalha(TelaModelo):
             ]
 
             for i, item in enumerate(itens_visiveis):
-                y_item = self.y_quadro + margem_superior + i * (altura_item + espacamento)
+                y_item = self.y_menu_mochila + margem_superior + i * (altura_item + espacamento)
                 rect_item = pygame.Rect(
-                    self.x_quadro + margem_lateral,
+                    self.x_menu_mochila + margem_lateral,
                     y_item,
-                    self.largura_quadro - 2 * margem_lateral,
+                    self.largura_menu_mochila - 2 * margem_lateral,
                     altura_item
                 )
 
@@ -543,11 +660,11 @@ class TelaBatalha(TelaModelo):
 
             if not self.rect_quadro.collidepoint(evento.pos):
                 print("Clique fora da caixa – fechando mochila.")
-                self.menu_mochila_ativo = False
+                self.estado_batalha = "turno_jogador"
                 return
 
 
-        elif evento.type == pygame.MOUSEWHEEL and self.menu_mochila_ativo:
+        elif evento.type == pygame.MOUSEWHEEL and self.estado_batalha == "menu_mochila":
             total_itens = len(self.mochila_batalha)
             max_offset = max(0, total_itens - self.itens_visiveis_por_pagina)
 
@@ -559,7 +676,7 @@ class TelaBatalha(TelaModelo):
             clicou_em_habilidade = False
             print(f"[DEBUG] Habilidades visíveis: {[h.nome for h in habilidades]}")
             for i, habilidade in enumerate(habilidades):
-                y = self.y_menu_habilidade + 16 + i * 40
+                y = self.y_menu_habilidade + 56 + i * 40
                 rect_item = pygame.Rect(self.x_menu_habilidade + 8, y, self.largura_menu_habilidade - 16, 32)
                 print(f"[DEBUG] Verificando clique na habilidade: {habilidade.nome} (índice {i})")
                 if rect_item.collidepoint(evento.pos):
@@ -580,20 +697,53 @@ class TelaBatalha(TelaModelo):
                 if rect.collidepoint(evento.pos):
                     self._executar_ataque_jogador(i)
                     break
+                
+        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "menu_estrategias":
+            mouse_pos = pygame.mouse.get_pos()
+
+            # Define regiões para os botões (pode ser um pequeno quadro)
+            rect_analisar = pygame.Rect(self.x_menu_estrategias + 8, self.y_menu_estrategias + 56, self.largura_menu_estrategias - 16, 32)
+            rect_fugir = pygame.Rect(self.x_menu_estrategias, self.y_menu_estrategias + 96, self.largura_menu_estrategias - 16, 32)
+
+            if rect_analisar.collidepoint(mouse_pos):
+                self.estado_batalha = "selecionando_inimigo_para_analise"
+                return
+
+            if rect_fugir.collidepoint(mouse_pos):
+                self.entidades.jogador.efeitos_ativos = [
+                    e for e in self.entidades.jogador.efeitos_ativos 
+                    if e["nome"] not in ["Sangramento", "Queimadura", "Envenenado"]
+                ]
+                self.gerenciador_telas.mudar_tela(CHAVE_TRANSICAO_MAPA)
+                return
+
+            # clique fora → volta para turno normal
+            if not rect_analisar.collidepoint(mouse_pos) and not rect_fugir.collidepoint(mouse_pos):
+                self.estado_batalha = "turno_jogador"
+
+        elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "selecionando_inimigo_para_analise":
+            for i, animado in enumerate(self.inimigos_animados):
+                rect = animado.imagem.get_rect(topleft=animado.pos)
+                if rect.collidepoint(evento.pos):
+                    self._analisar_inimigos(i)
+                    self._encerrar_turno_jogador()
+                    break
+            # Se clicar fora, volta ao turno do jogador
+            #self.estado_batalha = "turno_jogador"
 
         elif evento.type == pygame.MOUSEBUTTONDOWN and self.estado_batalha == "turno_jogador":
             for icone in self.icones_acao:
                 if icone.rect.collidepoint(evento.pos):
                     match icone.acao:
-                        case "fugir":
-                            self.gerenciador_telas.mudar_tela(
-                                CHAVE_TRANSICAO_MAPA
-                            )
+                        case "estrategias":
+                            print("Abrir menu de estratégias")
+                            self.estado_batalha = "menu_estrategias"
                             return
+
 
                         case "mochila":
                             print("Abrir mochila")
-                            self.menu_mochila_ativo = True
+                            self.estado_batalha = "menu_mochila"
                             return
 
                         case "fruta":
@@ -624,8 +774,9 @@ class TelaBatalha(TelaModelo):
     def atualizar(self, dt):
         # Verifica se o jogador iniciou a luta
         if self.jogador_iniciou:
-            self._usar_ataque_extra()
-            self.jogador_iniciou = False
+            if all(animado.estado == "parado" for animado in self.inimigos_animados):
+                self._usar_ataque_extra()
+                self.jogador_iniciou = False
 
         # Atualiza contadores de tempo
         if self.tempo_mensagem_onda > 0:
@@ -639,14 +790,12 @@ class TelaBatalha(TelaModelo):
             if self.tempo_proximo_ataque <= 0 and self.fila_ataques_inimigos:
                 index = self.fila_ataques_inimigos[self.inimigo_index_atacando]
                 inimigo = self.inimigos[index]  # ← Isso aqui é uma instância de InimigoBatalha
-                inimigo.aplicar_dano_continuo("antes")
                 self._executar_ataque_inimigo()
             elif not self.fila_ataques_inimigos:
                 # Se não há mais inimigos na fila, volta para o turno do jogador
                 self.estado_batalha = "turno_jogador"
-                self.entidades.jogador.aplicar_dano_continuo("antes")
-                # E atualiza os efeitos aplicados (se houver) decrementando a duração em 1 turno
-                self.entidades.jogador.atualizar_efeitos()
+                if not self.entidades.jogador.processar_efeitos_de_inicio_de_turno():
+                    self._encerrar_turno_jogador()
                 for inimigo in self.inimigos:
                     if inimigo is not None:
                         inimigo.atualizar_efeitos()
@@ -712,10 +861,27 @@ class TelaBatalha(TelaModelo):
             rect = imagem.get_rect(center=self.posicao_jogador)
             tela.blit(imagem, rect)
 
-
         # Desenhar todos os inimigos da onda atual
         for animado in self.inimigos_animados:
             animado.draw(tela)
+
+        # Desenha os ícones de efeito acima do jogador
+        self._desenhar_efeitos_ativos(tela, self.entidades.jogador.efeitos_ativos, (self.posicao_jogador[0], self.posicao_jogador[1] - 50))
+
+        for i, inimigo in enumerate(self.inimigos):
+            if inimigo and inimigo.esta_vivo():
+                animado = self.inimigos_animados[i]
+                x, y = animado.pos
+
+                # Desenha os ícones de efeito acima dos inimigos
+                self._desenhar_efeitos_ativos(tela, inimigo.efeitos_ativos, (x + animado.imagem.get_width() // 2, y - 20))
+                
+                # se analisado → mostrar barra de vida
+                if hasattr(inimigo, "analizado") and inimigo.analizado:
+                    fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+                    texto = fonte.render(f"{inimigo.vida_atual}/{inimigo.vida_total}", True, PRETO)
+                    rect = texto.get_rect(center=(x + animado.imagem.get_width() // 2, y - 50))
+                    tela.blit(texto, rect)
 
         fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
         for dano in self.danos_flutuantes:
@@ -741,10 +907,53 @@ class TelaBatalha(TelaModelo):
             rect = texto.get_rect(center=(LARGURA_TELA * 4/5, 125))
             tela.blit(texto, rect)
 
-        if self.menu_mochila_ativo:
-            tela.blit(self.quadro_de_itens, (self.x_quadro, self.y_quadro))
+        if self.estado_batalha == "menu_estrategias":
+            tela.blit(self.menu_estrategias, (self.x_menu_estrategias, self.y_menu_estrategias))
 
-            print(f"[DEBUG] Itens na mochila: {[item.nome for item in self.mochila_batalha]}")
+            fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_SUBTITULO)
+            texto_estrategias = fonte_titulo.render("Estratégias", True, BRANCO_CLARO)
+            rect_estrategias = texto_estrategias.get_rect(center=(self.x_menu_estrategias + self.largura_menu_estrategias // 2, self.y_menu_estrategias + 16))
+            tela.blit(texto_estrategias, rect_estrategias)
+
+            # Opções do menu
+            opcoes = [
+                ("Olhar feio e estudar", self.x_menu_estrategias + 16, self.y_menu_estrategias + 50),
+                ("Operação pernas pra que te quero", self.x_menu_estrategias + 16, self.y_menu_estrategias + 100)
+            ]
+            mouse_pos = pygame.mouse.get_pos()
+            item_em_foco = None
+
+            for texto, x, y in opcoes:
+                rect_item = pygame.Rect(x, y, self.largura_menu_estrategias - 32, 32)
+                mouse_sobre = rect_item.collidepoint(mouse_pos)
+
+                tamanho_fonte = 32 if mouse_sobre else 28
+                fonte = self.gerenciador_recursos.obter_fonte(
+                    CHAVE_FONTE_CHERRY_SUBTITULO if mouse_sobre else CHAVE_FONTE_CHERRY_TEXTO
+                )
+
+                if mouse_sobre:
+                    item_em_foco = texto
+
+                largura_texto_max = self.largura_menu_estrategias - 32
+                texto_nome = self.renderizar_texto_limitado(fonte, texto, BRANCO_CLARO, largura_texto_max)
+                self._desenhar_texto_com_borda(
+                    tela,
+                    texto_nome,
+                    fonte,
+                    BRANCO_CLARO,
+                    PRETO,
+                    1,
+                    (self.x_menu_estrategias + self.largura_menu_estrategias // 2, y + 4 - (tamanho_fonte - 28) // 2),
+                )
+
+        if self.estado_batalha == "menu_mochila":
+            tela.blit(self.menu_mochila, (self.x_menu_mochila, self.y_menu_mochila))
+
+            fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_SUBTITULO)
+            texto_mochila = fonte_titulo.render("Mochila", True, BRANCO_CLARO)
+            rect_mochila = texto_mochila.get_rect(center=(self.x_menu_mochila + self.largura_menu_mochila // 2, self.y_menu_mochila + 16))
+            tela.blit(texto_mochila, rect_mochila)
 
             inicio = self.scroll_offset_mochila
             fim = inicio + self.itens_visiveis_por_pagina
@@ -754,8 +963,8 @@ class TelaBatalha(TelaModelo):
             item_em_foco = None
         
             for i, item in enumerate(itens_visiveis):
-                y = self.y_quadro + 16 + i * 40
-                rect_item = pygame.Rect(self.x_quadro + 8, y, self.largura_quadro - 16, 32)
+                y = self.y_menu_mochila + 56 + i * 40
+                rect_item = pygame.Rect(self.x_menu_mochila + 8, y, self.largura_menu_mochila - 16, 32)
         
                 mouse_sobre = rect_item.collidepoint(mouse_pos)
         
@@ -768,7 +977,7 @@ class TelaBatalha(TelaModelo):
                 
                 if mouse_sobre:
                     item_em_foco = item
-                largura_texto_max = self.largura_quadro - 32  # margem lateral + margem direita
+                largura_texto_max = self.largura_menu_mochila - 32  # margem lateral + margem direita
                 texto_nome = self.renderizar_texto_limitado(fonte, f" {item.nome} x{item.quantidade} ", (255, 255, 255), largura_texto_max)
                 self._desenhar_texto_com_borda(
                     tela,
@@ -777,7 +986,7 @@ class TelaBatalha(TelaModelo):
                     BRANCO_CLARO,
                     PRETO,
                     1,
-                    (self.x_quadro + self.largura_quadro // 2, y + 4 - (tamanho_fonte - 28) // 2),
+                    (self.x_menu_mochila + self.largura_menu_mochila // 2, y + 4 - (tamanho_fonte - 28) // 2),
                 )
         
             # Mostrar descrição e efeitos do item em foco
@@ -810,6 +1019,11 @@ class TelaBatalha(TelaModelo):
         if self.estado_batalha == "selecionando_habilidade":
             tela.blit(self.menu_de_habilidade, (self.x_menu_habilidade, self.y_menu_habilidade))
 
+            fonte_titulo = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_SUBTITULO)
+            texto_habilidade = fonte_titulo.render("Habilidades", True, BRANCO_CLARO)
+            rect_habilidade = texto_habilidade.get_rect(center=(self.x_menu_habilidade + self.largura_menu_habilidade // 2, self.y_menu_habilidade + 16))
+            tela.blit(texto_habilidade, rect_habilidade)
+
             habilidades = self.habilidades_visiveis
             inicio = 0  # por agora sem scroll
             fim = len(habilidades)
@@ -819,7 +1033,7 @@ class TelaBatalha(TelaModelo):
             habilidade_em_foco = None
 
             for i, habilidade in enumerate(habilidades_visiveis):
-                y = self.y_menu_habilidade + 16 + i * 40
+                y = self.y_menu_habilidade + 56 + i * 40
                 rect_item = pygame.Rect(self.x_menu_habilidade + 8, y, self.largura_menu_habilidade - 16, 32)
                 mouse_sobre = rect_item.collidepoint(mouse_pos)
 
@@ -920,6 +1134,46 @@ class TelaBatalha(TelaModelo):
 
 
 
+    def _desenhar_efeitos_ativos(self, tela, efeitos, pos_centro):
+        espacamento = 4
+        tamanho_icone = 24
+        largura_total = len(efeitos) * (tamanho_icone + espacamento)
+        x, y = pos_centro
+
+        for efeito in efeitos:
+            match efeito["nome"]:
+                case "Cegueira":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_CEGUEIRA)
+                case "Congelado":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_CONGELADO)
+                case "Eletrificado":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_ELETRIFICADO)
+                case "Envenenado":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_ENVENENADO)
+                case "Molhado":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_MOLHADO)
+                case "Queimadura":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_QUEIMADURA)
+                case "Sangramento":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_SANGRAMENTO)
+                case "Tontura":
+                    icone = self.gerenciador_recursos.obter_imagem(CHAVE_ICONE_TONTURA)
+                case _:
+                    icone = None
+
+            if icone:
+                # Cria uma superfície fumê (translúcida) para o fundo do ícone
+                fundo = pygame.Surface((tamanho_icone + 4, tamanho_icone + 4), pygame.SRCALPHA)
+                fundo.fill((30, 30, 30, 160))  # RGBA: cor escura + alpha (160 = ~60% opaco)
+                rect = icone.get_rect()
+                rect.center = (x - largura_total // 2 + tamanho_icone // 2, y)
+                rect_fundo = fundo.get_rect(center=rect.center)
+                tela.blit(fundo, rect_fundo)  # desenha o fundo fumê
+                tela.blit(icone, rect)        # desenha o ícone por cima
+                x += tamanho_icone + espacamento
+
+
+
     def desenhar_tags_de_alvo(tela, fonte, tags, pos_x_inicial, pos_y_final, cor_texto, cor_fundo, raio_borda=6):
         x = pos_x_inicial
         espacamento = 8
@@ -1003,6 +1257,7 @@ class InimigoBatalha:
         self.experiencia = experiencia
         self.habilidade = habilidade
         self.item = item
+        self.analizado = False
         self.efeitos_ativos = []  # status como 'Envenenado', 'Tontura', etc.
 
     def clonar(self):
@@ -1026,13 +1281,12 @@ class InimigoBatalha:
         """
         for efeito in efeitos:
             tipo = efeito["nome"]
-            valor = efeito["valor"]
 
             match tipo:
                 case "Eletrificado":  # Aplica o status eletrificado
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
+                        "valor": 2,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1040,7 +1294,6 @@ class InimigoBatalha:
                 case "Congelado":  # Aplica o status congelado
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
                         "duracao": 1,
                         "tipo": "status"
                     })
@@ -1048,7 +1301,6 @@ class InimigoBatalha:
                 case "Molhado":  # Aplica o status molhado
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1056,7 +1308,7 @@ class InimigoBatalha:
                 case "Envenenado":  # Aplica o status envenenado
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
+                        "valor": 1,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1064,7 +1316,7 @@ class InimigoBatalha:
                 case "Sangramento":  # Aplica o status sangramento
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
+                        "valor": 2,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1072,7 +1324,7 @@ class InimigoBatalha:
                 case "Queimadura":  # Aplica o status queimadura
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
+                        "valor": 1,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1080,7 +1332,6 @@ class InimigoBatalha:
                 case "Tontura":  # Aplica o status tontura
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1088,7 +1339,6 @@ class InimigoBatalha:
                 case "Cegueira":  # Aplica o status cegueira
                     self.efeitos_ativos.append({
                         "nome": tipo,
-                        "valor": valor,
                         "duracao": 2,
                         "tipo": "status"
                     })
@@ -1096,7 +1346,54 @@ class InimigoBatalha:
                 case _:  # Caso o efeito não seja reconhecido
                     print(f"Efeito desconhecido: {tipo}")
 
-            # Você pode adicionar suporte a outros tipos de efeito aqui futuramente
+    def processar_efeitos_de_inicio_de_turno(self) -> bool:
+        """
+        Processa efeitos que ocorrem ANTES da ação da unidade.
+        Isso inclui dano por turno (DoT) e status que impedem a ação.
+        Retorna True se a unidade pode agir, False caso contrário.
+        """
+        print(f"--- Início do turno de {self.nome} ---")
+        pode_agir = True
+        
+        # Copia a lista para iterar, pois podemos modificar a original indiretamente
+        for efeito in list(self.efeitos_ativos):
+            nome = efeito["nome"]
+
+            # 1. Verifica status que impedem a ação
+            if nome == "Congelado":
+                print(f"{self.nome} está congelado e não pode agir!")
+                pode_agir = False
+
+            # 2. Aplica dano contínuo (DoT)
+            if nome in ["Queimadura", "Envenenado", "Sangramento"]:
+                print(efeito)
+                dano = efeito["valor"]
+                self.vida_atual = max(0, self.vida_atual - dano)
+                print(f"{self.nome} sofreu {dano} de dano de {nome}. Vida restante: {self.vida_atual}")
+                if self.vida_atual == 0:
+                    print(f"{self.nome} foi derrotado por {nome}!")
+                    pode_agir = False # Morreu antes de agir
+                    break
+
+        return pode_agir
+    
+    def processar_efeitos_de_fim_de_turno(self):
+        """
+        Atualiza a duração dos efeitos e remove os que expiraram.
+        Isso acontece DEPOIS que a unidade agiu (ou tentou agir).
+        """
+        efeitos_restantes = []
+        for efeito in self.efeitos_ativos:
+            efeito["duracao"] -= 1
+            if efeito["duracao"] > 0:
+                efeitos_restantes.append(efeito)
+            else:
+                # O efeito expirou, informa o jogador
+                print(f"O efeito '{efeito['nome']}' em {self.nome} acabou.")
+        
+        self.efeitos_ativos = efeitos_restantes
+        print(f"Efeitos de {self.nome} atualizados.")
+        print("-" * 20)
 
     def atualizar_efeitos(self):
         novos = []
@@ -1106,23 +1403,7 @@ class InimigoBatalha:
                 novos.append(efeito)
         self.efeitos_ativos = novos
 
-    def aplicar_dano_continuo(self, momento: str):
-        """
-        Aplica dano de efeitos por turno com base no momento:
-        - "antes": antes da ação da unidade (ex: Queimadura)
-        - "depois": após a ação da unidade (ex: Envenenado, Sangramento)
-        """
-        for efeito in self.efeitos_ativos:
-            nome = efeito["nome"]
-            valor = efeito["valor"]
 
-            if momento == "antes" and nome == "Queimadura":
-                self.receber_dano(valor)
-                print(f"{self.nome} sofreu {valor} de dano por {nome} (antes de agir).")
-
-            elif momento == "depois" and nome in ["Envenenado", "Sangramento"]:
-                self.receber_dano(valor)
-                print(f"{self.nome} sofreu {valor} de dano por {nome} (após agir).")
 
 
   
@@ -1203,12 +1484,13 @@ class InimigoAnimado:
 
 
 class DanoFlutuante:
-    def __init__(self, texto, pos):
-        self.texto = texto
+    def __init__(self, texto, pos, cor=(255, 60, 60)):
+        self.texto = str(texto)
         self.pos = list(pos)
         self.tempo = 0
         self.max_tempo = 0.8
         self.alpha = 255
+        self.cor = cor
 
     def update(self, dt):
         self.tempo += dt
@@ -1217,7 +1499,7 @@ class DanoFlutuante:
 
     def draw(self, tela, fonte):
         if self.tempo < self.max_tempo:
-            img = fonte.render(self.texto, True, (255, 60, 60))
+            img = fonte.render(self.texto, True, self.cor)
             img.set_alpha(int(self.alpha))
             rect = img.get_rect(center=self.pos)
             tela.blit(img, rect)
