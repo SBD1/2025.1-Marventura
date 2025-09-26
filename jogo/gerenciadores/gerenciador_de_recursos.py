@@ -163,6 +163,7 @@ class GerenciadorDeRecursos:
         #self._carregar_imagem('mapa_mundi', 'recursos/imagens/interface/mapa_mundi.jpg')
         self._carregar_imagem(CHAVE_BARRA_DE_ESTADO, 'recursos/imagens/interface/barra_de_estado.png')
         self._carregar_imagem(CHAVE_CAIXA_DE_TEXTO, 'recursos/imagens/interface/caixa_de_texto.png')
+        self._carregar_imagem(CHAVE_MENU_ESTRATEGIAS, 'recursos/imagens/interface/menu_estrategias.png')
         self._carregar_imagem(CHAVE_MENU_ITENS, 'recursos/imagens/interface/menu_itens.png')
         self._carregar_imagem(CHAVE_MENU_SELECAO_HABILIDADE, 'recursos/imagens/interface/caixa_de_habilidades.png')
 
@@ -216,8 +217,11 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CENA_SILVIE_NO_CAMPO, 'recursos/imagens/cenas/cena_silvie_no_campo.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CENA_SHUAN_NO_CAMPO, 'recursos/imagens/cenas/cena_shuan_no_campo.png', escalar_para_altura=ALTURA_TELA)
         self._carregar_imagem(CENA_JANTAR_COMUNITARIO, 'recursos/imagens/cenas/cena_jantar_comunitario.png', escalar_para_altura=ALTURA_TELA)
+        
         # --- Carregar Imagens de Campos de Batalha ---
         self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_CAMPOS, 'recursos/imagens/cenario/campo_de_batalha_campos.png')
+        self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_CIDADE, 'recursos/imagens/cenario/campo_de_batalha_cidade.png')
+        self._carregar_imagem(CHAVE_CAMPO_DE_BATALHA_NEVE, 'recursos/imagens/cenario/campo_de_batalha_neve.png')
 
         # --- Carregar Imagens de Ações em Batalhas ---
         self._carregar_imagem(CHAVE_ACAO_ESTRATEGIAS, 'recursos/imagens/interface/balao_de_estrategias.png', escalar_para_altura=100)
@@ -232,6 +236,14 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_ICONE_CORACAO, 'recursos/imagens/icones/coracao.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_ENERGIA, 'recursos/imagens/icones/energia.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_MOEDA, 'recursos/imagens/icones/moeda.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_ICONE_CEGUEIRA, 'recursos/imagens/icones/efeito_cegueira.png')
+        self._carregar_imagem(CHAVE_ICONE_CONGELADO, 'recursos/imagens/icones/efeito_congelado.png')
+        self._carregar_imagem(CHAVE_ICONE_ELETRIFICADO, 'recursos/imagens/icones/efeito_eletrificado.png')
+        self._carregar_imagem(CHAVE_ICONE_ENVENENADO, 'recursos/imagens/icones/efeito_envenenado.png')
+        self._carregar_imagem(CHAVE_ICONE_MOLHADO, 'recursos/imagens/icones/efeito_molhado.png')
+        self._carregar_imagem(CHAVE_ICONE_QUEIMADURA, 'recursos/imagens/icones/efeito_queimadura.png')
+        self._carregar_imagem(CHAVE_ICONE_SANGRAMENTO, 'recursos/imagens/icones/efeito_sangramento.png')
+        self._carregar_imagem(CHAVE_ICONE_TONTURA, 'recursos/imagens/icones/efeito_tontura.png')
 
         # --- Carregar Imagens do Jogador para Animação ---
         self._carregar_imagem(SHUAN, 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=300)
