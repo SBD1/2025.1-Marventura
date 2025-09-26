@@ -344,8 +344,8 @@ class GerenciadorDeMissoes:
 
             self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
                 self.jogador.identificador_jogador,
-                self.jogador.energia_maxima,
-                self.jogador.vida_maxima,
+                self.jogador.energia_maxima_base,
+                self.jogador.vida_maxima_base,
                 self.jogador.nivel,
                 self.jogador.sorte,
                 self.jogador.energia_atual,
