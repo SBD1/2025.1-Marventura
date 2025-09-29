@@ -224,6 +224,31 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(MENU_INFO, 'recursos/imagens/mochila/menu_info.png')
         self._carregar_imagem(INV_BOTAO_USAR, 'recursos/imagens/mochila/botao.png')
 
+        # --- Carregar imagens de Componetes de Mapa ---
+        self._carregar_imagem(CHAVE_MARCADOR_MAPA_SILVIE, 'recursos/imagens/icones/marcador_mapa_silvie.png', escalar_para_altura=48)
+        self._carregar_imagem(CHAVE_MARCADOR_MAPA_SHUAN, 'recursos/imagens/icones/marcador_mapa_shuan.png', escalar_para_altura=48)
+        self._carregar_imagem(ICONE_ILHA_ASSOMBRADA, 'recursos/imagens/mapa/assombrada.png')
+        self._carregar_imagem(ICONE_ILHA_CAMPOS, 'recursos/imagens/mapa/campos.png')
+        self._carregar_imagem(ICONE_ILHA_CIDADE, 'recursos/imagens/mapa/cidade.png')
+        self._carregar_imagem(ICONE_ILHA_DESERTO, 'recursos/imagens/mapa/deserto.png')
+        self._carregar_imagem(ICONE_ILHA_FORTALEZA, 'recursos/imagens/mapa/fortaleza.png')
+        self._carregar_imagem(ICONE_ILHA_NEVE, 'recursos/imagens/mapa/neve.png')
+        self._carregar_imagem(CHAVE_IMAGEM_MAPA_FUNDO, 'recursos/imagens/mapa/mapa.png')
+        self._carregar_imagem(ICONE_NUVEM_ASSOMBRADA, 'recursos/imagens/mapa/nuvem_assombrada.png')
+        self._carregar_imagem(ICONE_NUVEM_CIDADE, 'recursos/imagens/mapa/nuvem_cidade.png')
+        self._carregar_imagem(ICONE_NUVEM_DESERTO, 'recursos/imagens/mapa/nuvem_deserto.png')
+        self._carregar_imagem(ICONE_NUVEM_FORTALEZA, 'recursos/imagens/mapa/nuvem_fortaleza.png')
+        self._carregar_imagem(ICONE_NUVEM_NEVE, 'recursos/imagens/mapa/nuvem_neve.png')
+        self._carregar_imagem(ROTA_ASSOMBRADA_FORTALEZA, 'recursos/imagens/mapa/rota_assombrada-fortaleza.png')
+        self._carregar_imagem(ROTA_CAMPOS_CIDADE, 'recursos/imagens/mapa/rota_campos-cidade.png')
+        self._carregar_imagem(ROTA_CAMPOS_DESERTO, 'recursos/imagens/mapa/rota_campos-deserto.png')
+        self._carregar_imagem(ROTA_CIDADE_FORTALEZA, 'recursos/imagens/mapa/rota_cidade-fortaleza.png')
+        self._carregar_imagem(ROTA_CIDADE_NEVE, 'recursos/imagens/mapa/rota_cidade-neve.png')
+        self._carregar_imagem(ROTA_NEVE_DESERTO, 'recursos/imagens/mapa/rota_neve-deserto.png')
+        self._carregar_imagem(ROTA_NEVE_ASSOMBRADA, 'recursos/imagens/mapa/rota_neve-assombrada.png')
+
+        
+
         self._carregar_som(SOM_COMPRA_SUCESSO, 'recursos/audio/compra_sucesso.mp3') 
         self._carregar_som(SOM_COMPRA_FALHA, 'recursos/audio/compra_falha.mp3')
      
@@ -278,6 +303,7 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(f"{INIMIGO_CORVO}_1", 'recursos/imagens/inimigos/Corvo_1.png', escalar_para_altura=60)
         self._carregar_imagem(f"{INIMIGO_BRUTAMONTES}_0", 'recursos/imagens/inimigos/Brutamontes_0.png')
         self._carregar_imagem(f"{INIMIGO_MARINHEIRO_CORRUPTO}_0", 'recursos/imagens/inimigos/Marinheiro_corrupto_0.png')
+        self._carregar_imagem(CHEFE_JAVALI, 'recursos/imagens/inimigos/Javali.png')
 
         # --- Carregar Imagens dos Habitantes ---
         self._carregar_imagem('VENDEDOR_JOAO', 'recursos/imagens/jogador/vendedor.png', escalar_para_altura=200)
@@ -297,7 +323,6 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(CHAVE_ICONE_INTERACAO, 'recursos/imagens/icones/icone_interacao.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_ALERTA, 'recursos/imagens/icones/alerta.png', escalar_para_altura=48)
         self._carregar_imagem(CHAVE_ICONE_INTERROGACAO, 'recursos/imagens/icones/interrogacao.png', escalar_para_altura=48)
-        self._carregar_imagem(CHAVE_MARCADOR_MAPA_SILVIE, 'recursos/imagens/icones/marcador_mapa_silvie.png', escalar_para_altura=48)
         self._carregar_imagem(f'{SHUAN}_inventario', 'recursos/imagens/jogador/Shuan_pose-descanso.png', escalar_para_altura=160)
         self._carregar_imagem(f'{SILVIE}_inventario', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=160)
         

@@ -15,6 +15,7 @@ from componentes import CaixaDeDialogo
 from .tela_modelo import TelaModelo
 from telas.tela_inventario import TelaInventario
 from telas.tela_cozinha import TelaCozinha
+from telas.tela_mapa import Mapa
 from gerenciadores import GerenciadorDeEntidades
 from gerenciadores import GerenciadorNotificacoesItem
 from componentes import BarraDeEstado
@@ -50,8 +51,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.banco_de_dados = gerenciador_banco_de_dados
 
         # --- Atributos para o menu de viagem ---
-        self.menu_viagem = None
-        self.menu_viagem_ativo = False
+        self.menu_mapa = None
+        self.menu_mapa_ativo = False
         self.menu_inventario = None
         self.menu_inventario_ativo = False
         self.menu_cozinha = None
@@ -659,12 +660,12 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             return None # Consome o evento, não processa o input do jogador normal
 
         # --- Lógica do Menu de Viagem (se estiver ativo) ---
-        if self.menu_viagem_ativo and self.menu_viagem:
-            resultado_menu = self.menu_viagem.processar_eventos(evento)
+        if self.menu_mapa_ativo and self.menu_mapa:
+            resultado_menu = self.menu_mapa.processar_eventos(evento)
             if resultado_menu is not None:
                 if resultado_menu == "cancelar":
-                    self.menu_viagem_ativo = False
-                    self.menu_viagem = None # Limpa a instância do menu
+                    self.menu_mapa_ativo = False
+                    self.menu_mapa = None # Limpa a instância do menu
                     return None # Consome o evento
                 else: # Uma ilha foi selecionada
                     ilha_selecionada = resultado_menu
@@ -674,8 +675,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                         porto_destino = self.banco_de_dados.buscar_porto_da_ilha(ilha_selecionada.identificador_ilha, self.dados_do_progresso.identificador_progresso)
                         print(f"porto_destino: {porto_destino}")
                         if porto_destino:
-                            self.menu_viagem_ativo = False
-                            self.menu_viagem = None
+                            self.menu_mapa_ativo = False
+                            self.menu_mapa = None
                             
                             id_area_destino = porto_destino.identificador_area
 
@@ -760,12 +761,12 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                                 }
                             
                         elif area.tipo_evento == 'embarcar':
-                            if not self.menu_viagem_ativo:
+                            if not self.menu_mapa_ativo:
                                 print('Embarcando na viagem...')
                                 self.ilhas_vizinhas = self.banco_de_dados.buscar_conexoes_ilha(self.dados_da_area.identificador_ilha, self.dados_do_progresso.identificador_progresso)
 
-                                self.menu_viagem = _MenuViagemFlutuante(self.ilhas_vizinhas)
-                                self.menu_viagem_ativo = True
+                                self.menu_mapa = Mapa(self.gerenciador_telas, self.gerenciador_recursos, self.banco_de_dados, self.gerenciador_entidades, modo='Navegar', opcoes_destino=self.ilhas_vizinhas)
+                                self.menu_mapa_ativo = True
                                 return None # Consome o evento
                         
                         
@@ -865,10 +866,21 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     self.gerenciador_entidades)
                 self.menu_cozinha_ativo = True
 
+            # --- Abrir Mapa ---
+            elif evento.key == pygame.K_m:
+                self.menu_mapa = Mapa(
+                    self.gerenciador_telas,
+                    self.gerenciador_recursos,
+                    self.banco_de_dados,
+                    self.gerenciador_entidades,
+                    modo='Exibir'
+                )
+                self.menu_mapa_ativo = True
+
             # --- ABRIR/FECHAR MENU DE PAUSA ---
             elif evento.key == pygame.K_ESCAPE:
                 # Condição: só abre o menu de pausa se nenhum outro menu estiver ativo
-                if not self.menu_viagem_ativo and not self.menu_inventario_ativo and not self.dialogo_ativo:
+                if not self.menu_mapa_ativo and not self.menu_inventario_ativo and not self.dialogo_ativo:
                     if not self.menu_pausa_ativo:
                         self.menu_pausa_ativo = True
                         self.menu_pausa = _MenuPausa(self.gerenciador_recursos)
@@ -902,6 +914,11 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         elif self.menu_cozinha_ativo and self.menu_cozinha:
             self.menu_cozinha.atualizar(dt)
             
+            if self.exibicao_nome_ilha:
+                self.exibicao_nome_ilha.atualizar()
+            # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
+            return
+        elif self.menu_mapa_ativo and self.menu_mapa:
             if self.exibicao_nome_ilha:
                 self.exibicao_nome_ilha.atualizar()
             # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
@@ -1007,7 +1024,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             self.caixa_dialogo.atualizar()
         
         # Se o menu de viagem estiver ativo, ele tem prioridade no atualizar
-        if self.menu_viagem_ativo and self.menu_viagem:
+        if self.menu_mapa_ativo and self.menu_mapa:
             # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
             pass
 
@@ -1131,12 +1148,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             # --- Desenha o nome da ilha com fade ---
             if self.exibicao_nome_ilha:
                 self.exibicao_nome_ilha.desenhar(tela)
-            
-            # --- Desenha o menu de viagem se estiver ativo ---
-            if self.menu_viagem_ativo and self.menu_viagem:
-                self.menu_viagem.desenhar(tela)
 
-
+            # --- Desenha a barra de estado se estiver visível ---
             if self.barra_de_estado_visivel:
                 self.barra_de_estado.desenhar(tela)
 
@@ -1156,6 +1169,10 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             # --- Desenha o menu de cozinha se estiver ativo ---
             if self.menu_cozinha_ativo and self.menu_cozinha:
                 self.menu_cozinha.desenhar(tela)
+
+            # --- Desenha o menu de viagem se estiver ativo ---
+            if self.menu_mapa_ativo and self.menu_mapa:
+                self.menu_mapa.desenhar(tela)
 
             # --- Desenha a caixa de diálogo se estiver ativa ---
             if self.dialogo_ativo and self.caixa_dialogo:

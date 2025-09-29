@@ -166,8 +166,6 @@ CHAVE_CARTAZ_VAZIO = 'cartaz_vazio'
 CHAVE_ICONE_INTERACAO = 'icone_interacao'
 CHAVE_ICONE_ALERTA = 'icone_alerta'
 CHAVE_ICONE_INTERROGACAO = 'icone_interrogacao'
-CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
-CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
 CHAVE_CAIXA_DIALOGO = 'caixa_dialogo'
 
 CHAVE_FONTE_CHERRY_TITULO = 'fonte_cherry_titulo'
@@ -222,6 +220,29 @@ SLOT_INGREDIENTE_VAZIO = "slot_ingrediente_vazio"
 BOTAO_COZINHAR_ATIVO = "botao_cozinhar_ativo"
 BOTAO_COZINHAR_INATIVO = "botao_cozinhar_inativo"
 PAINEL_SELECAO_INGREDIENTES = "painel_selecao_ingredientes"
+
+# --- Chaves de menu de mapa ---
+CHAVE_MARCADOR_MAPA_SILVIE = 'marcador_mapa_silvie'
+CHAVE_MARCADOR_MAPA_SHUAN = 'marcador_mapa_shuan'
+ICONE_ILHA_ASSOMBRADA = 'icone_ilha_assombrada'
+ICONE_ILHA_CAMPOS = 'icone_ilha_campos'
+ICONE_ILHA_CIDADE = 'icone_ilha_cidade'
+ICONE_ILHA_DESERTO = 'icone_ilha_deserto'
+ICONE_ILHA_FORTALEZA = 'icone_ilha_fortaleza'
+ICONE_ILHA_NEVE = 'icone_ilha_neve'
+CHAVE_IMAGEM_MAPA_FUNDO = 'mapa_fundo'
+ICONE_NUVEM_ASSOMBRADA = 'icone_nuvem_assombrada'
+ICONE_NUVEM_CIDADE = 'icone_nuvem_cidade'
+ICONE_NUVEM_DESERTO = 'icone_nuvem_deserto'
+ICONE_NUVEM_FORTALEZA = 'icone_nuvem_fortaleza'
+ICONE_NUVEM_NEVE = 'icone_nuvem_neve'
+ROTA_ASSOMBRADA_FORTALEZA = 'rota_assombrada_fortaleza'
+ROTA_CAMPOS_CIDADE = 'rota_campos_cidade'
+ROTA_CAMPOS_DESERTO = 'rota_campos_deserto'
+ROTA_CIDADE_FORTALEZA = 'rota_cidade_fortaleza'
+ROTA_CIDADE_NEVE = 'rota_cidade_neve'
+ROTA_NEVE_DESERTO = 'rota_neve_deserto'
+ROTA_NEVE_ASSOMBRADA = 'rota_neve_assombrada'
 
 # --- Chaves de áudio ---
 SOM_COMPRA_SUCESSO = 'som_compra_sucesso'

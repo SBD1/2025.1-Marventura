@@ -1719,7 +1719,25 @@ class DBManager:
             WHERE i.identificador_ilha = %s;
             """
         return self.executar_query(consulta, (identificador_progresso, id_ilha), fetchone=True)
-    
+
+
+
+    def buscar_ilhas(self, identificador_progresso):
+        """
+         Retorna todas as ilhas e se foram visitadas no progresso atual.
+        """
+        consulta = """
+            SELECT
+                ilha.identificador_ilha,
+                TRIM(ilha.nome) AS nome,
+                ilha_visitada.visitada
+            FROM ilha
+            LEFT JOIN ilha_visitada
+              ON ilha.identificador_ilha = ilha_visitada.identificador_ilha AND ilha_visitada.identificador_progresso = %s
+            ORDER BY ilha.identificador_ilha;
+            """
+        return self.executar_query(consulta, (identificador_progresso,), fetchall=True)
+
 
 
     def buscar_caminhos_da_area(self, area):
