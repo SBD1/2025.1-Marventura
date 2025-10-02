@@ -426,6 +426,7 @@ class DBManager:
                 nome=row.nome_item,
                 descricao=row.descricao,
                 tipo=row.tipo_item,
+                tipo_arma=row.tipo_arma,
                 raridade=row.raridade,
                 quantidade=row.quantidade,
                 item_de_missao=row.item_de_missao
@@ -451,6 +452,7 @@ class DBManager:
                 nome=row.nome_item,
                 descricao=row.descricao,
                 tipo=row.tipo_item,
+                tipo_arma=row.tipo_arma,
                 raridade=row.raridade,
                 quantidade=row.quantidade
             )
@@ -1087,6 +1089,9 @@ class DBManager:
                     TRIM(arma.descricao)
                 ) AS descricao,
                 item_inventario.quantidade,
+
+                -- Tipo de arma (se aplicável)
+                COALESCE(arma.tipo_arma, '') AS tipo_arma,
 
                 -- Preço de compra
                 COALESCE(

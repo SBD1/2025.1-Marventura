@@ -26,18 +26,37 @@ class Chefe(Personagem):
         self.inventario = inventario
 
         # Carregar a imagem base e configurar o sprite inicial
-        self.imagem_original = self.gerenciador_recursos.obter_imagem(self.nome)
+        self.imagens_animacao = {}
+        self.carregar_animacoes(self.nome)
+        self.quadro_atual = 0
         
-        if self.imagem_original:
-            self.imagem = self.imagem_original
-        else:
-            print(f"AVISO: Imagem '{self.nome}.png' não encontrada para o chefe '{self.nome}'. Usando fallback padrão.")
-            self.imagem = pygame.Surface((LARGURA_JOGADOR, ALTURA_JOGADOR), pygame.SRCALPHA) # Usa tamanho similar ao jogador como fallback
-            self.imagem.fill(CINZA)
+        # Define a imagem inicial. Se não houver frames carregados, usa fallback.
+        self.imagem = self.imagens_animacao.get(0)
+        if not self.imagem:
+            print(f"AVISO: Imagens de animação para '{self.nome}' não encontradas. Usando fallback.")
+            self.imagem = pygame.Surface((80, 80), pygame.SRCALPHA)
+            self.imagem.fill(VERMELHO)
 
         self.rect = self.imagem.get_rect(topleft=(int(self.coordenada_x), int(self.coordenada_y)))
 
         self.orientacao_atual = 'direita'
+
+
+
+    def carregar_animacoes(self, chave_base):
+        # Carrega as imagens de animação com base na chave_base (ex: 'javali')
+        # e os sufixos '_0', '_1', etc.
+        i = 0
+        while True:
+            chave_frame = f"{chave_base}_{i}"
+            imagem_frame = self.gerenciador_recursos.obter_imagem(chave_frame)
+            if imagem_frame:
+                self.imagens_animacao[i] = imagem_frame
+                i += 1
+            else:
+                break
+        if not self.imagens_animacao:
+            print(f"AVISO: Nenhuma imagem de animação encontrada para a chave base: {chave_base}")
 
 
 
@@ -54,7 +73,7 @@ class Chefe(Personagem):
             self.orientacao_atual = 'esquerda'
         
         # Aplica o flip na imagem se necessário
-        imagem_para_desenhar = self.imagem_original
+        imagem_para_desenhar = self.imagens_animacao.get(self.quadro_atual)
         if imagem_para_desenhar:
             if self.orientacao_atual == 'esquerda':
                 self.imagem = pygame.transform.flip(imagem_para_desenhar, True, False)

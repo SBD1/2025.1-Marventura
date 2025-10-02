@@ -626,7 +626,7 @@ class GerenciadorDeMissoes:
                 self.gerenciador_telas.mudar_tela(
                     CHAVE_TRANSICAO_BATALHA,
                     inimigos_na_batalha=inimigos_para_batalha,
-                    modo_batalha='chefe',
+                    numero_inimigos=len(inimigos_para_batalha),
                     fuga_habilitada=passo.get('fuga_habilitada', True)
                     # Adicione quaisquer outros dados que sua tela de batalha precise
                 )
@@ -699,8 +699,8 @@ class GerenciadorDeMissoes:
 
             self.banco_de_dados.atualizar_atributos_de_batalha_do_jogador(
                 self.gerenciador_entidades.jogador.identificador,
-                self.gerenciador_entidades.jogador.energia_maxima,
-                self.gerenciador_entidades.jogador.vida_maxima,
+                self.gerenciador_entidades.jogador.energia_maxima_base,
+                self.gerenciador_entidades.jogador.vida_maxima_base,
                 self.gerenciador_entidades.jogador.nivel,
                 self.gerenciador_entidades.jogador.sorte,
                 self.gerenciador_entidades.jogador.energia_atual,

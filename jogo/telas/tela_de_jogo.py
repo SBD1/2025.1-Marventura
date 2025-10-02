@@ -524,7 +524,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
 
 
 
-    def _detectar_inimigos_acertados(self):
+    def _detectar_inimigos_acertados(self) -> list['Inimigo']:
         """Verifica quais inimigos foram atingidos pelo ataque do jogador."""
         atingidos = []
 
@@ -842,7 +842,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     self.gerenciador_telas.mudar_tela(
                         CHAVE_TRANSICAO_BATALHA,
                         inimigos_na_batalha=[self.chefe],
-                        modo_batalha='chefe'
+                        numero_inimigos=1
                     )
 
             elif evento.key == pygame.K_k:
@@ -1061,9 +1061,9 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         # Chama o método do DBManager para salvar os dados
         self.banco_de_dados.salvar_progresso_jogador(
             id_jogador=self.jogador.identificador,
-            vida=self.jogador.vida_maxima,
+            vida=self.jogador.vida_maxima_base,
             vida_atual=self.jogador.vida_atual,
-            energia=self.jogador.energia_maxima,
+            energia=self.jogador.energia_maxima_base,
             energia_atual=self.jogador.energia_atual,
             experiencia_atual=self.jogador.experiencia_atual,
             nivel=self.jogador.nivel,

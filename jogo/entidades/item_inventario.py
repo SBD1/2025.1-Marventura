@@ -1,9 +1,10 @@
 class ItemInventario:
-    def __init__(self, id_item, nome, descricao, tipo, raridade, quantidade, efeitos=None, item_de_missao=False):
+    def __init__(self, id_item, nome, descricao, tipo, raridade, quantidade, efeitos=None, tipo_arma=None, item_de_missao=False):
         self.identificador_item = id_item
         self.nome = nome
         self.descricao = descricao
         self.tipo = tipo  # Ex: 'con', 'ncn', etc.
+        self.tipo_arma = tipo_arma
         self.raridade = raridade
         self.quantidade = quantidade
         self.efeitos = efeitos or []  # Lista de dicionários: [{"nome": "Cura", "valor": 2}, ...]

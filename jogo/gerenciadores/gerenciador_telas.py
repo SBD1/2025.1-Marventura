@@ -85,7 +85,7 @@ class GerenciadorDeTelas:
                                self.gerenciador_missoes,
                                inimigos_na_batalha=kwargs.get('inimigos_na_batalha'),
                                jogador_iniciou= kwargs.get('jogador_iniciou', False),
-                               modo_batalha=kwargs.get('modo_batalha', 'normal'),
+                               numero_inimigos=kwargs.get('numero_inimigos', 3),
                                fuga_habilitada=kwargs.get('fuga_habilitada', True))
         elif estado_desejado == CHAVE_TRANSICAO_LOJA:
             return TelaLoja(self, self.gerenciador_recursos,

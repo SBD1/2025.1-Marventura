@@ -28,9 +28,13 @@ class Jogador(Personagem):
         self.velocidade = VELOCIDADE_JOGADOR
         self.orientacao = orientacao
         self.identificador_progresso = progresso
+        self.descricao = descricao
+        self.vida_maxima_base = vida_maxima
+        self.energia_maxima_base = energia_maxima
         self.energia_maxima = energia_maxima
         self.vida_maxima = vida_maxima
         self.nivel = nivel
+        self.sorte_base = sorte
         self.sorte = sorte
         self.energia_atual = energia_atual  # Energia atual do jogador
         self.vida_atual = vida_atual
@@ -170,18 +174,40 @@ class Jogador(Personagem):
 
     def aplicar_efeito_do_acessorio(self):
         ids = self.kit_do_explorador.obter_ids_do_equipamento()
+        self.bonus_vida = 0
+        self.bonus_energia = 0
+        self.bonus_ataque = 0
+        self.bonus_sorte = 0
+        print(f"[DEBUG] Equipamento atual do jogador {self.nome}: {ids}")
         if ids["id_acessorio"]:
             efeito_acessorio = self.banco_de_dados.buscar_efeito_por_acessorio(ids["id_acessorio"])
-            print(f"[DEBUG] Efeito do acessório encontrado: {efeito_acessorio}")
             if efeito_acessorio:
-                lista_de_efeitos = [
-                    {
-                        "nome": efeito.efeito_nome,
-                        "valor": efeito.efeito_valor
-                    }
-                    for efeito in efeito_acessorio
-                ]
-                self.aplicar_efeitos(lista_de_efeitos)
+                for efeito in efeito_acessorio:
+                    match efeito.efeito_nome:
+                        case "Vida Máxima":
+                            self.bonus_vida += efeito.efeito_valor
+                        case "Energia Máxima":
+                            self.bonus_energia += efeito.efeito_valor
+                        case "Ataque":
+                            self.bonus_ataque += efeito.efeito_valor
+                        case "Sorte":
+                            self.bonus_sorte += efeito.efeito_valor
+        print(f"[DEBUG] Bônus do acessório aplicado ao jogador {self.nome}: Vida +{self.bonus_vida}, Energia +{self.bonus_energia}, Ataque +{self.bonus_ataque}, Sorte +{self.bonus_sorte}")
+        self.recalcular_atributos()
+
+    def recalcular_atributos(self):
+        self.vida_maxima = self.vida_maxima_base + getattr(self, "bonus_vida", 0)
+        print(f"[DEBUG] Vida máxima recalculada para o jogador {self.nome}: {self.vida_maxima} (Base: {self.vida_maxima_base} + Bônus: {getattr(self, 'bonus_vida', 0)})")
+        self.energia_maxima = self.energia_maxima_base + getattr(self, "bonus_energia", 0)
+        print(f"[DEBUG] Energia máxima recalculada para o jogador {self.nome}: {self.energia_maxima} (Base: {self.energia_maxima_base} + Bônus: {getattr(self, 'bonus_energia', 0)})")
+        self.aumento_de_ataque = getattr(self, "bonus_ataque", 0)
+        print(f"[DEBUG] Aumento de ataque recalculado para o jogador {self.nome}: {self.aumento_de_ataque} (Bônus: {getattr(self, 'bonus_ataque', 0)})")
+        self.sorte = max(1, self.sorte + getattr(self, "bonus_sorte", 0))  # Sorte nunca deve ser menor que 1
+        print(f"[DEBUG] Sorte recalculada para o jogador {self.nome}: {self.sorte} (Base + Bônus: {getattr(self, 'bonus_sorte', 0)})")
+
+        # garante que vida/energia atuais não passem do máximo
+        self.vida_atual = min(self.vida_atual, self.vida_maxima)
+        self.energia_atual = min(self.energia_atual, self.energia_maxima)
 
 
 
@@ -201,12 +227,6 @@ class Jogador(Personagem):
                 case "Energia":  # Recupera de energia
                     self.energia_atual += valor
                     self.energia_atual = min(self.energia_atual, self.energia_maxima)
-
-                case "Vida Máxima":  # Aumenta a vida máxima
-                    self.vida_maxima += valor
-
-                case "Energia Máxima":  # Aumenta a energia máxima
-                    self.energia_maxima += valor
                 
                 case "Ataque":  # Aumenta o ataque
                     self.efeitos_ativos.append({
@@ -217,7 +237,7 @@ class Jogador(Personagem):
                     })
                     self.aumento_de_ataque += valor
 
-                case "Sorte":  # Aumenta a sorte
+                case "Sorte":  # Aumenta a sorte: Aumente a chance de esquivar-se de um ataque
                     self.efeitos_ativos.append({
                         "nome": tipo,
                         "valor": valor,
@@ -226,69 +246,137 @@ class Jogador(Personagem):
                     })
                     self.sorte += valor
 
-                case "Eletrificado":  # Aplica o status eletrificado
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                case "Eletrificado":  # Aplica o status eletrificado: Cause 2 de dano ao ser atacado
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Eletrificado":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está eletrificado. Não reaplicando.")
+                            break
 
-                case "Congelado":  # Aplica o status congelado
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 1,
-                        "tipo": "status"
-                    })
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "valor": 2,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
 
-                case "Molhado":  # Aplica o status molhado
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                case "Congelado":  # Aplica o status congelado: Passe a vez
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Congelado":
+                            existente = True
+                            e["duracao"] = 1  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está Congelado. Não reaplicando.")
+                            break
+                    
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "duracao": 1,
+                            "tipo": "status"
+                        })
 
-                case "Envenenado":  # Aplica o status envenenado
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                case "Molhado":  # Aplica o status molhado: Bloqueia habilidades de Akuma no Mi e reduz o dano causado em 20%
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Molhado":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está Molhado. Não reaplicando.")
+                            break
 
-                case "Sangramento":  # Aplica o status sangramento
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
 
-                case "Queimadura":  # Aplica o status queimadura
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                case "Envenenado":  # Aplica o status envenenado: Causa 1 de dano antes de agir e reduz o dano causado em 10%
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Envenenado":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está Envenenado. Não reaplicando.")
+                            break
 
-                case "Tontura":  # Aplica o status tontura
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "valor": 1,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
 
-                case "Cegueira":  # Aplica o status cegueira
-                    self.efeitos_ativos.append({
-                        "nome": tipo,
-                        "valor": valor,
-                        "duracao": 2,
-                        "tipo": "status"
-                    })
+                case "Sangramento":  # Aplica o status sangramento: Causa 2 de dano antes de agir
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Sangramento":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está com Sangramento. Não reaplicando.")
+                            break
+
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "valor": 2,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
+
+                case "Queimadura":  # Aplica o status queimadura: Causa 1 de dano antes de agir e aumenta o dano sofrido em 10%
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Queimadura":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está com Queimadura. Não reaplicando.")
+                            break
+
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "valor": 1,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
+
+                case "Tontura":  # Aplica o status tontura: Aumenta a chance de errar o alvo
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Tontura":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está com Tontura. Não reaplicando.")
+                            break
+
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
+
+                case "Cegueira":  # Aplica o status cegueira: Aumenta a chance de errar o ataque
+                    existente = False
+                    for e in self.efeitos_ativos:
+                        if e["nome"] == "Cegueira":
+                            existente = True
+                            e["duracao"] = 2  # Reinicia a duração
+                            print(f"[DEBUG] Jogador {self.nome} já está com Cegueira. Não reaplicando.")
+                            break
+
+                    if not existente:
+                        self.efeitos_ativos.append({
+                            "nome": tipo,
+                            "duracao": 2,
+                            "tipo": "status"
+                        })
 
                 case "Purificação":
                     efeitos_aplicados = [
@@ -307,45 +395,53 @@ class Jogador(Personagem):
 
 
 
-    def atualizar_efeitos(self):
-        novos = []
+    def processar_efeitos_de_inicio_de_turno(self) -> bool:
+        """
+        Processa efeitos que ocorrem ANTES da ação da unidade.
+        Isso inclui dano por turno (DoT) e status que impedem a ação.
+        Retorna True se a unidade pode agir, False caso contrário.
+        """
+        print(f"--- Início do turno de {self.nome} ---")
+        pode_agir = True
+        
+        # Copia a lista para iterar, pois podemos modificar a original indiretamente
+        for efeito in list(self.efeitos_ativos):
+            nome = efeito["nome"]
+
+            # 1. Verifica status que impedem a ação
+            if nome == "Congelado":
+                print(f"{self.nome} está congelado e não pode agir!")
+                pode_agir = False
+
+            # 2. Aplica dano contínuo (DoT)
+            if nome in ["Queimadura", "Envenenado", "Sangramento"]:
+                dano = efeito["valor"]
+                self.vida_atual = max(0, self.vida_atual - dano)
+                print(f"{self.nome} sofreu {dano} de dano de {nome}. Vida restante: {self.vida_atual}")
+                if self.vida_atual == 0:
+                    print(f"{self.nome} foi derrotado por {nome}!")
+                    pode_agir = False # Morreu antes de agir
+                    break
+
+        return pode_agir
+    
+    def processar_efeitos_de_fim_de_turno(self):
+        """
+        Atualiza a duração dos efeitos e remove os que expiraram.
+        Isso acontece DEPOIS que a unidade agiu (ou tentou agir).
+        """
+        efeitos_restantes = []
         for efeito in self.efeitos_ativos:
             efeito["duracao"] -= 1
             if efeito["duracao"] > 0:
-                novos.append(efeito)
+                efeitos_restantes.append(efeito)
             else:
-                # Efeito expirou
-                if efeito["nome"] == "Ataque":
-                    self.aumento_de_ataque = max(0, self.aumento_de_ataque - efeito["valor"])
-
-                    print(f"[DEBUG] Efeito de ataque expirou (-{efeito['valor']})")
-
-                elif efeito["nome"] == "Sorte":
-                    self.sorte = max(1, self.sorte - efeito["valor"])
-                    print(f"[DEBUG] Efeito de sorte expirou (-{efeito['valor']})")
-        self.efeitos_ativos = novos
-
-
-
-    def aplicar_dano_continuo(self, momento: str):
-        """
-        Aplica dano de efeitos por turno com base no momento:
-        - "antes": antes da ação da unidade (ex: Queimadura)
-        - "depois": após a ação da unidade (ex: Envenenado, Sangramento)
-        """
-        for efeito in self.efeitos_ativos:
-            nome = efeito["nome"]
-            valor = efeito["valor"]
-    
-            if momento == "antes" and nome == "Queimadura":
-                self.vida_atual -= valor
-                self.vida_atual = max(0, self.vida_atual)  # Garante que a vida não fique negativa
-                print(f"{self.nome} sofreu {valor} de dano por {nome} (antes de agir).")
-    
-            elif momento == "depois" and nome in ["Envenenado", "Sangramento"]:
-                self.vida_atual -= valor
-                self.vida_atual = max(0, self.vida_atual)  # Garante que a vida não fique negativa
-                print(f"{self.nome} sofreu {valor} de dano por {nome} (após agir).")
+                # O efeito expirou, informa o jogador
+                print(f"O efeito '{efeito['nome']}' em {self.nome} acabou.")
+        
+        self.efeitos_ativos = efeitos_restantes
+        print(f"Efeitos de {self.nome} atualizados.")
+        print("-" * 20)
 
 
 
@@ -374,7 +470,6 @@ class Jogador(Personagem):
             self.rect.width,
             altura_pes
         )
-
 
 
 

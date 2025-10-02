@@ -176,11 +176,16 @@ CHAVE_ICONE_CORACAO = 'icone_coracao'
 CHAVE_ICONE_ENERGIA = 'icone_energia'
 CHAVE_ICONE_MOEDA = 'icone_moeda'
 
+CHAVE_MENU_ESTRATEGIAS = 'menu_estrategias'
 CHAVE_MENU_SELECAO_HABILIDADE = 'menu_selecao_habilidade'
 CHAVE_MENU_ITENS = 'menu_itens'
 CHAVE_CAIXA_DE_TEXTO = 'caixa_de_texto'
 CHAVE_BARRA_DE_ESTADO = 'barra_de_estado'
+
+# --- Chaves de Campos de Batalha ---
 CHAVE_CAMPO_DE_BATALHA_CAMPOS = 'campo_de_batalha_campos'
+CHAVE_CAMPO_DE_BATALHA_CIDADE = 'campo_de_batalha_cidade'
+CHAVE_CAMPO_DE_BATALHA_NEVE = 'campo_de_batalha_neve'
 
 # --- Chaves de menu de mochila ---
 INV_PAINEL_FUNDO = 'inv_painel_fundo'
@@ -317,3 +322,13 @@ CHAVE_TRANSICAO_LOJA = 'loja'
 
 # --- Eventos de área ---
 EVENTO_TIPO_LOJA = 'abrir_loja'
+
+# --- Ícones de Efeitos de Batalha ---
+CHAVE_ICONE_CEGUEIRA = 'icone_cegueira'
+CHAVE_ICONE_CONGELADO = 'icone_congelado'
+CHAVE_ICONE_ELETRIFICADO = 'icone_eletrificado'
+CHAVE_ICONE_ENVENENADO = 'icone_envenenado'
+CHAVE_ICONE_MOLHADO = 'icone_molhado'
+CHAVE_ICONE_QUEIMADURA = 'icone_queimadura'
+CHAVE_ICONE_SANGRAMENTO = 'icone_sangramento'
+CHAVE_ICONE_TONTURA = 'icone_tontura'
