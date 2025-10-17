@@ -22,6 +22,21 @@ class Mapa(TelaModelo):
         # Dicionário para mapear nomes de ilhas para seus dados
         self.dados_das_ilhas = {ilha.nome: ilha for ilha in self.banco_de_dados.buscar_ilhas(self.entidades.progresso_do_jogo.identificador_progresso)}
 
+        # Busca o barco atual para saber se possui um barco que possa ser navegado
+        self.barco = self.banco_de_dados.buscar_barco_atual(self.entidades.progresso_do_jogo.identificador_progresso)
+
+        if modo == 'Navegar':
+            if not self.barco:
+                print("Você não possui um barco para navegar")
+                self._carregar_recursos_minimos()
+                return None
+            
+            if not self.opcoes_destino or all(destino.bloqueada for destino in self.opcoes_destino):
+                print("Não é possível navegar agora.")
+                self._carregar_recursos_minimos()
+                return None
+            
+
         # Carrega todas as imagens e fontes necessárias
         self._carregar_recursos()
 
@@ -66,10 +81,24 @@ class Mapa(TelaModelo):
 
 
 
+    def _carregar_recursos_minimos(self):
+        self.imagem_fundo = self.gerenciador_recursos.obter_imagem(CHAVE_CAIXA_DE_TEXTO)
+
+        # Centraliza a imagem de fundo na tela
+        self.fundo_rect = self.imagem_fundo.get_rect(center=(LARGURA_TELA / 2, ALTURA_TELA / 2))
+
+        self.fonte = self.gerenciador_recursos.obter_fonte(CHAVE_FONTE_CHERRY_TEXTO)
+
+        self.mensagem = "Você não possui um barco para navegar." if not self.barco else "Não há destinos disponíveis para navegar agora."
+
+        self.mensagem_superficie = self.fonte.render(self.mensagem, True, BRANCO_CLARO)
+        self.mensagem_rect = self.mensagem_superficie.get_rect(center=(self.fundo_rect.centerx, self.fundo_rect.centery))
+
+
+
     def _definir_posicoes_ilhas(self) -> dict[str, pygame.Rect]:
         """
         Define manualmente as coordenadas e o tamanho das áreas clicáveis para cada ilha.
-        !!! IMPORTANTE: Você precisará ajustar estes valores (x, y, largura, altura) !!!
         """
         # A posição (x,y) é relativa à janela do jogo.
         # A largura/altura deve ser aproximada ao tamanho do ícone da ilha.
@@ -106,6 +135,10 @@ class Mapa(TelaModelo):
             
         if self.modo != 'Navegar':
             return None
+        
+        # Se não houver barco ou destino disponíveis e o modo for 'Navegar', apenas permite fechar a tela
+        if not self.barco or not self.opcoes_destino:
+            return None
 
         if evento.type == pygame.MOUSEBUTTONDOWN:
             if evento.button == 1:  # Botão esquerdo do mouse
@@ -121,8 +154,25 @@ class Mapa(TelaModelo):
 
 
 
+    def desenhar_mensagem(self, tela: pygame.Surface):
+        """"""
+        # 1. Desenha a imagem de fundo
+        tela.blit(self.imagem_fundo, self.fundo_rect)
+
+        # 2. Desenha a mensagem centralizada
+        self._desenhar_texto_com_borda(tela, self.mensagem, self.fonte, BRANCO_CLARO, PRETO, 1, self.mensagem_rect.center)
+
+        
+
+
+
     def desenhar(self, tela: pygame.Surface):
         """Desenha todos os elementos visuais do mapa na tela."""
+        if self.modo == 'Navegar':
+            if not self.barco or not self.opcoes_destino or all(destino.bloqueada for destino in self.opcoes_destino):
+                self.desenhar_mensagem(tela)
+                return
+            
         # 1. Desenha a imagem de fundo
         tela.blit(self.imagem_fundo, self.fundo_rect)
         
@@ -139,14 +189,12 @@ class Mapa(TelaModelo):
             icone_ilha = self.icones_das_ilhas.get(nome_ilha)
             if icone_ilha:
                 # Cria um rect para o ícone centralizado dentro da área clicável
-                icone_rect = icone_ilha.get_rect(center=rect_ilha.center)
                 tela.blit(icone_ilha, self.fundo_rect)
 
             # Desenha a nuvem por cima se a ilha não foi visitada
             if not ilha_data.visitada:
                 nuvem_ilha = self.icones_das_nuvens.get(nome_ilha)
                 if nuvem_ilha:
-                    nuvem_rect = nuvem_ilha.get_rect(center=rect_ilha.center)
                     tela.blit(nuvem_ilha, self.fundo_rect)
 
             # 3. Efeito de hover no modo 'Navegar'
