@@ -919,6 +919,8 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
             # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos
             return
         elif self.menu_mapa_ativo and self.menu_mapa:
+            self.menu_mapa.atualizar(dt)
+
             if self.exibicao_nome_ilha:
                 self.exibicao_nome_ilha.atualizar()
             # Não faz nada aqui no atualizar, pois ele é controlado por processar_eventos

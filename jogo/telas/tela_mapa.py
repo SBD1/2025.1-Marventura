@@ -22,6 +22,8 @@ class Mapa(TelaModelo):
         # Dicionário para mapear nomes de ilhas para seus dados
         self.dados_das_ilhas = {ilha.nome: ilha for ilha in self.banco_de_dados.buscar_ilhas(self.entidades.progresso_do_jogo.identificador_progresso)}
 
+        self.ilha_atual = self.entidades.ilha_atual
+
         # Busca o barco atual para saber se possui um barco que possa ser navegado
         self.barco = self.banco_de_dados.buscar_barco_atual(self.entidades.progresso_do_jogo.identificador_progresso)
 
@@ -49,6 +51,23 @@ class Mapa(TelaModelo):
         # Encontra a ilha atual para posicionar o marcador
         self.ilha_atual_nome = self.entidades.ilha_atual.nome
         self.posicao_marcador = self._calcular_posicao_marcador()
+
+        self.destino_recem_desbloqueado = next(
+            (destino for destino in self.opcoes_destino if not destino.bloqueada and not destino.visitada),
+            None  # Valor padrão caso não encontre nenhum destino
+        )
+
+        if self.destino_recem_desbloqueado:
+            self._animacao_de_nuvem = True
+            self.nuvem_animada = self.icones_das_nuvens.get(self.destino_recem_desbloqueado.nome).copy()
+        else:
+            self._animacao_de_nuvem = False
+            self.nuvem_animada = None
+
+        self.velocidade_desaparecimento = 4  # Velocidade do desaparecimento da nuvem
+        self.velocidade_deslocamento = 1  # Velocidade do desaparecimento da nuvem
+        self.opacidade_atual = 255
+        self.nuvem_deslocamento_x = 0
 
 
 
@@ -164,6 +183,16 @@ class Mapa(TelaModelo):
 
         
 
+    def atualizar(self, dt):
+        """Atualiza a animação do mapa"""
+        if self._animacao_de_nuvem:
+
+            self.opacidade_atual -= self.velocidade_desaparecimento
+
+            self.nuvem_animada.set_alpha(max(0, self.opacidade_atual))
+
+            self.nuvem_deslocamento_x += self.velocidade_deslocamento
+
 
 
     def desenhar(self, tela: pygame.Surface):
@@ -195,7 +224,10 @@ class Mapa(TelaModelo):
             if not ilha_data.visitada:
                 nuvem_ilha = self.icones_das_nuvens.get(nome_ilha)
                 if nuvem_ilha:
-                    tela.blit(nuvem_ilha, self.fundo_rect)
+                    if self.destino_recem_desbloqueado and nome_ilha == self.destino_recem_desbloqueado.nome:
+                            tela.blit(self.nuvem_animada, (self.fundo_rect.x + self.nuvem_deslocamento_x, self.fundo_rect.y))
+                    else:
+                        tela.blit(nuvem_ilha, self.fundo_rect)
 
             # 3. Efeito de hover no modo 'Navegar'
             if self.modo == 'Navegar' and pos_mouse and rect_ilha.collidepoint(pos_mouse):
