@@ -2,6 +2,7 @@
 
 import pygame
 import math # Para funções de interpolação se necessário
+from utilidades.constantes import *
 
 class Camera:
     def __init__(self, largura_janela, altura_janela, tamanho_mundo):
@@ -53,11 +54,11 @@ class Camera:
         """Garra que a câmera não saia dos limites do mundo."""
         if self.rect.left < 0:
             self.rect.left = 0
-        if self.rect.right > self.largura_mundo:
+        if not self.largura_mundo == INFINITO and self.rect.right > self.largura_mundo:
             self.rect.right = self.largura_mundo
         if self.rect.top < 0:
             self.rect.top = 0
-        if self.rect.bottom > self.altura_mundo:
+        if not self.altura_mundo == INFINITO and self.rect.bottom > self.altura_mundo:
             self.rect.bottom = self.altura_mundo
 
         # Atualiza os offsets com base na posição final do rect
