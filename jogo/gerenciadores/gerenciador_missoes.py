@@ -50,6 +50,7 @@ class GerenciadorDeMissoes:
         self.missao_que_ativou_dialogo: EstadoMissao = None # ID da missão que ativou o diálogo controlado
         self.dialogos_controlados_atuais = []
         self.indice_dialogo_controlado = 0
+        self.tela_atual = None
         
         # NOVO: Atributos para controle de movimento
         self.entidade_em_movimento = None
@@ -117,7 +118,7 @@ class GerenciadorDeMissoes:
         for dados_missao in missoes_aceitas:
             id_missao = dados_missao.identificador_missao
             
-            if id_missao in ['mis003', 'mis012']: # Essas missões devem ser recomeçadas, se o progresso da missão for interrompido.
+            if id_missao in ['mis003', 'mis012', 'mis013']: # Essas missões devem ser recomeçadas, se o progresso da missão for interrompido.
                 passo_atual = 0
             else:
                 passo_atual = dados_missao.passo_atual
@@ -176,6 +177,32 @@ class GerenciadorDeMissoes:
                 if not estado_missao.lista_ids_areas_aguardadas:
                     estado_missao.esta_pausado = False
                     self._avancar_passo(estado_missao)
+
+
+
+    def notificar_mudanca_de_tela(self, tela: str) -> bool:
+        """
+        Método chamado quando o jogador muda de tela.
+        Verifica se alguma das missões ativas está aguardando essa mudança.
+        """
+        if not tela == self.tela_atual:
+            print("Notificando mudança de tela...")
+            self.tela_atual = tela
+            missao_aguandando = False
+            print(f"[MISSÕES] Tela atual: {self.tela_atual}")
+
+            for missao_id, estado_missao in self.missoes_ativas.items():
+                passo_atual = estado_missao.script[estado_missao.indice_passo]
+
+                if passo_atual['tipo'] == 'verificar_tela_atual' and passo_atual['tela'] == tela:
+                    print(f"Mudança de tela detectada na missão {missao_id}. Avançando no script.")
+                    estado_missao.esta_pausado = False
+                    self._avancar_passo(estado_missao)
+
+                    missao_aguandando = True
+                
+            return missao_aguandando
+
 
 
 
@@ -333,8 +360,16 @@ class GerenciadorDeMissoes:
                 {'tipo': 'dialogo', 'missao_id': 'mis012'},
                 {'tipo': 'desbloquear_rota', 'ilha_a': 'ilh001', 'ilha_b': 'ilh002'},
                 {'tipo': 'adquirir_novo_barco', 'tipo_barco': 'can'},
-                #{'tipo': 'aguardar_mudanca_de_area', 'id_area': 'oceano'},
+                {'tipo': 'aguardar_mudanca_de_area', 'id_area': 'mar001'},
                 {'tipo': 'finalizar_missao'},
+                {'tipo': 'ativar_proxima_missao', 'id_missao': 'mis013'}
+            ],
+            'mis013': [
+                {'tipo': 'verificar_tela_atual', 'tela': 'TelaTransicaoIlha'},
+                {'tipo': 'dialogo', 'missao_id': 'mis013'},
+                {'tipo': 'adquirir_fruta'},
+                {'tipo': 'finalizar_missao'},
+                {'tipo': 'desbloquear_rota', 'ilha_a': 'ilh002', 'ilha_b': 'ilh003'}, # Desbloqueia a rota para a terceira ilha, pois a história da segunda ilha, que desbloquearia essa rota, não está implementada ainda. Remover depois.
             ]
 
 
@@ -493,6 +528,10 @@ class GerenciadorDeMissoes:
                 if id_area_alvo not in estado.lista_ids_areas_aguardadas:
                     estado.lista_ids_areas_aguardadas.append(id_area_alvo)
                 estado.esta_pausado = True
+
+        elif tipo_passo == 'verificar_tela_atual':
+            print("Aguardando mudança de tela...")
+            estado.esta_pausado = True
 
         elif tipo_passo == 'aprender_receita':
             self.banco_de_dados.aprender_receita(passo.get('receita_id'), self.gerenciador_entidades.jogador.identificador)
@@ -655,6 +694,27 @@ class GerenciadorDeMissoes:
         elif tipo_passo == 'focar_jogador':
             self.camera.retornar_para_jogador()
             self._avancar_passo(estado)
+
+        elif tipo_passo == 'adquirir_fruta':
+            fruta = self.banco_de_dados.buscar_item_por_id('fru001')
+
+            if fruta:
+                item = ItemInventario(
+                    fruta.identificador_item,
+                    fruta.nome,
+                    fruta.descricao,
+                    fruta.tipo,
+                    fruta.raridade,
+                    1
+                )
+
+                self.gerenciador_entidades.jogador.inserir_item_na_mochila(item, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+
+                self.gerenciador_entidades.jogador.equipar_item(item, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
+
+                self._avancar_passo(estado)
+            else:
+                print("ERRO: Fruta não encontrada no banco de dados.")
 
         elif tipo_passo == 'adquirir_novo_barco':
             self.banco_de_dados.adquirir_novo_barco(self.gerenciador_entidades.progresso_do_jogo.identificador_progresso, passo.get('tipo_barco'))

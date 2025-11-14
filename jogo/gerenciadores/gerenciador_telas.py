@@ -99,8 +99,7 @@ class GerenciadorDeTelas:
                                      self.gerenciador_banco_de_dados,
                                      self.gerenciador_entidades,
                                      self.gerenciador_missoes,
-                                     dados_destino=kwargs.get('dados_destino'),
-                                     iniciar_missao=kwargs.get('iniciar_missao'))
+                                     dados_destino=kwargs.get('dados_destino'))
         
         else:
             print(f"ERRO: Estado de tela desconhecido: {estado_desejado}")

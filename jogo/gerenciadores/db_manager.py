@@ -266,6 +266,30 @@ class DBManager:
                     'sequencia': 7,
                     'fala': 'Isso é ótimo... mas como eu chego lá?',
                 },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'F',
+                    'sequencia': 3,
+                    'fala': 'Ugh... Eu devia ter trazido alguma coisa da vila — murmurou, com uma das mãos sobre a barriga.',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'F',
+                    'sequencia': 5,
+                    'fala': 'O que será que é isso? Será que é venenosa?',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'F',
+                    'sequencia': 7,
+                    'fala': 'Tá, só uma mordida.',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'F',
+                    'sequencia': 9,
+                    'fala': 'Argh! Isso é horrível!',
+                },
             ],
             SHUAN: [
                 {
@@ -357,6 +381,30 @@ class DBManager:
                     'genero': 'M',
                     'sequencia': 7,
                     'fala': 'Isso é ótimo... mas como eu chego lá?',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'M',
+                    'sequencia': 3,
+                    'fala': 'Ugh... Eu devia ter trazido alguma coisa da vila — murmurou, com uma das mãos sobre a barriga.',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'M',
+                    'sequencia': 5,
+                    'fala': 'O que será que é isso? Será que é venenosa?',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'M',
+                    'sequencia': 7,
+                    'fala': 'Tá, só uma mordida.',
+                },
+                {
+                    'id_missao': 'mis013',
+                    'genero': 'M',
+                    'sequencia': 9,
+                    'fala': 'Argh! Isso é horrível!',
                 },
             ]
         }
@@ -1234,75 +1282,79 @@ class DBManager:
 
 
 
-    def buscar_item_por_nome(self, nome_item, autocommit=True):
+    def buscar_item_por_id(self, identificador_item):
         """
-        Busca um item pelo nome em todas as tabelas de itens.
+        Busca um item pelo ID.
         """
 
         consulta = """
-            (SELECT
-                identificador_arma AS identificador,
-                nome,
-                descricao,
-                raridade,
-            FROM
-                arma
-            WHERE
-                nome = %s)
+            SELECT 
+                tipo_item.identificador_item,
+                tipo_item.tipo,
+                
+                -- Atributos Comuns
+                COALESCE(
+                    arma.nome,
+                    fruta.nome,
+                    acessorio.nome,
+                    consumivel.nome,
+                    nao_consumivel.nome
+                ) AS nome,
+                COALESCE(
+                    arma.descricao,
+                    fruta.descricao,
+                    acessorio.descricao,
+                    consumivel.descricao,
+                    nao_consumivel.descricao
+                ) AS descricao,
+                COALESCE(
+                    arma.raridade,
+                    fruta.raridade,
+                    acessorio.raridade,
+                    consumivel.raridade,
+                    nao_consumivel.raridade
+                ) AS raridade,
+                COALESCE(
+                    arma.local_encontrado,
+                    fruta.local_encontrado,
+                    acessorio.local_encontrado,
+                    consumivel.local_encontrado,
+                    nao_consumivel.local_encontrado
+                ) AS local_encontrado,
 
-            UNION ALL
+                -- Atributos de Preço
+                COALESCE(
+                    arma.preco_de_compra,
+                    acessorio.preco_de_compra,
+                    consumivel.preco_de_compra,
+                    nao_consumivel.preco_de_compra
+                ) AS preco_compra,
+                COALESCE(
+                    fruta.preco_de_venda,
+                    consumivel.preco_de_venda,
+                    nao_consumivel.preco_de_venda
+                ) AS preco_venda,
 
-            (SELECT
-                identificador_fruta AS identificador,
-                nome,
-                descricao,
-                raridade,
-            FROM
-                fruta
-            WHERE
-                nome = %s)
+                -- Atributos Específicos (Virão como NULL se o item não for do tipo correspondente)
+                arma.tipo_arma,
+                consumivel.e_fabricavel,
+                COALESCE(
+                    consumivel.e_coletado,
+                    nao_consumivel.e_coletado
+                ) AS e_coletado,
+                nao_consumivel.item_de_missao
 
-            UNION ALL
+            FROM tipo_item
+            LEFT JOIN arma ON tipo_item.identificador_item = arma.identificador_arma
+            LEFT JOIN fruta ON tipo_item.identificador_item = fruta.identificador_fruta
+            LEFT JOIN acessorio ON tipo_item.identificador_item = acessorio.identificador_acessorio
+            LEFT JOIN consumivel ON tipo_item.identificador_item = consumivel.identificador_consumivel
+            LEFT JOIN nao_consumivel ON tipo_item.identificador_item = nao_consumivel.identificador_nao_consumivel
 
-            (SELECT
-                identificador_acessorio AS identificador,
-                nome,
-                descricao,
-                raridade,
-            FROM
-                acessorio
-            WHERE
-                nome = %s)
-
-            UNION ALL
-
-            (SELECT
-                identificador_consumivel AS identificador,
-                nome,
-                descricao,
-                raridade,
-            FROM
-                consumivel
-            WHERE
-                nome = %s)
-
-            UNION ALL
-
-            (SELECT
-                identificador_nao_consumivel AS identificador,
-                nome,
-                descricao,
-                raridade,
-            FROM
-                nao_consumivel
-            WHERE
-                nome = %s);
+            WHERE tipo_item.identificador_item = %s;
         """
 
-        return self.executar_query(consulta, 
-            (nome_item, nome_item, nome_item, nome_item, nome_item), 
-            fetchone=True, autocommit=autocommit
-        )
+        return self.executar_query(consulta, (identificador_item,), fetchone=True)
 
 
 

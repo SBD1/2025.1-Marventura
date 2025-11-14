@@ -136,6 +136,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         self.notificador = GerenciadorNotificacoesItem(fonte_notificacoes, posicao_base=(LARGURA_TELA - 20, 20))
 
         self.gerenciador_missoes.notificar_mudanca_de_area(self.dados_da_area.identificador_area)
+        self.gerenciador_missoes.notificar_mudanca_de_tela(self.__class__.__name__)
 
 
 

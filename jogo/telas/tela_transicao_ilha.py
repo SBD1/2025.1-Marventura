@@ -7,7 +7,7 @@ from utilidades import Camera
 from .tela_modelo import TelaModelo
 from entidades import Canoa, Veleiro, Navio
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from gerenciadores import GerenciadorDeTelas, GerenciadorDeRecursos, GerenciadorDeEntidades, DBManager, GerenciadorDeMissoes
 
@@ -16,7 +16,7 @@ class TelaTransicaoIlha(TelaModelo):
     Uma tela intermediária que mostra o jogador em um barco
     viajando da esquerda para a direita, simulando a viagem entre ilhas.
     """
-    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager', gerenciador_entidades: 'GerenciadorDeEntidades', gerenciador_missoes: 'GerenciadorDeMissoes', dados_destino: dict, iniciar_missao: Optional[str] = None):
+    def __init__(self, gerenciador_telas: 'GerenciadorDeTelas', gerenciador_recursos: 'GerenciadorDeRecursos', gerenciador_banco_de_dados: 'DBManager', gerenciador_entidades: 'GerenciadorDeEntidades', gerenciador_missoes: 'GerenciadorDeMissoes', dados_destino: dict):
         super().__init__(gerenciador_telas, gerenciador_recursos)
         
         self.entidades = gerenciador_entidades
@@ -33,12 +33,10 @@ class TelaTransicaoIlha(TelaModelo):
         self.DURACAO_VIAGEM = 12.0  # Duração da fase "VIAJANDO" em segundos
         self.tempo_decorrido = 0.0
         self.fase_viagem = 'VIAJANDO' # Controla o estado da transição
-        self.iniciar_missao = iniciar_missao
+        self.missoes.notificar_mudanca_de_area('mar001')
+        self.verificacao_evento_realizada = False
+        self.missao_ativada = False
         self.evento_maritimo = None
-
-        if self.iniciar_missao is None:
-            if 0.25 > random.random():
-                self.evento_maritimo = random.choice(['Ataque de piratas', 'Ataque do Rei dos Mares'])
 
         # Carrega a imagem de fundo do oceano
         self.fundo_oceano = self.gerenciador_recursos.obter_imagem(CHAVE_CENARIO_OCEANO)
@@ -90,9 +88,14 @@ class TelaTransicaoIlha(TelaModelo):
         self.camera = Camera(
             largura_janela=LARGURA_TELA,
             altura_janela=ALTURA_TELA,
-            tamanho_mundo=(largura_mundo_viagem, ALTURA_TELA)
+            tamanho_mundo=(INFINITO, ALTURA_TELA)
         )
 
+
+    def sortear_evento(self):
+        """Sorteia um evento aleatório com 25% de chance"""
+        if 0.25 > random.random():
+            self.evento_maritimo = random.choice(['Ataque de piratas', 'Ataque do Rei dos Mares'])
 
 
 
@@ -103,20 +106,24 @@ class TelaTransicaoIlha(TelaModelo):
         if self.fase_viagem == 'VIAJANDO':
             self.tempo_decorrido += dt
 
-            if self.iniciar_missao:
-                if self.tempo_decorrido >= 6.0 and not self.missoes.esta_em_evento_controlado():
-                    print(f"Iniciou a missao '{self.iniciar_missao}'")
-                    #self.missoes.iniciar_missao(self.iniciar_missao)
+            # Verifica apenas uma vez após 6 segundos
+            if self.tempo_decorrido >= 6.0 and not self.verificacao_evento_realizada:
+                self.verificacao_evento_realizada = True  # Marca que já verificou
 
-                    self.iniciar_missao = None
+                # Tenta retomar missão
+                self.missao_ativada = self.missoes.notificar_mudanca_de_tela(self.__class__.__name__)
 
-            if self.evento_maritimo:
-                if self.tempo_decorrido >= 6.0:
+                if not self.missao_ativada:
+                    self.sortear_evento()
+
+                if self.evento_maritimo:
                     print(f"O evento marítimo '{self.evento_maritimo}' está prestes a acontecer")
-                    self.evento_maritimo = None
-
-            if self.tempo_decorrido >= self.DURACAO_VIAGEM and not self.missoes.esta_em_evento_controlado():
+            
+            esta_em_evento_controlado = self.missoes.esta_em_evento_controlado()
+           # print(f"[VIAGEM] Está em evento controlado: {self.tempo_decorrido >= self.DURACAO_VIAGEM and not esta_em_evento_controlado}")
+            if self.tempo_decorrido >= self.DURACAO_VIAGEM and not esta_em_evento_controlado:
                 self.fase_viagem = 'FINALIZANDO'
+                print("FINALIZANDO")
                 # Trava a câmera na posição atual
                 self.camera.focar_em_ponto(self.camera.rect.centerx, self.camera.rect.centery)
 
@@ -126,6 +133,7 @@ class TelaTransicaoIlha(TelaModelo):
 
         # Atualiza o barco (que agora se move em X e Y)
         self.barco.atualizar(dt)
+        self.missoes.atualizar(dt * 1000)
 
         # Calcula o deslocamento em AMBOS os eixos
         deslocamento_x = self.barco.rect.x - posicao_anterior_barco[0]
@@ -182,11 +190,17 @@ class TelaTransicaoIlha(TelaModelo):
         
         self.barco.desenhar(tela, self.camera.rect.x, self.camera.rect.y)
 
+        if self.missoes.dialogo_controlado_ativo and self.missoes.caixa_dialogo:
+            self.missoes.caixa_dialogo.desenhar(tela)
+
 
     def processar_eventos(self, evento):
         """Processa eventos, principalmente para permitir que o jogador se mova no barco."""
         if evento.type == pygame.QUIT:
             pygame.quit()
             quit()
-        # Não é necessário processar outros eventos, mas a estrutura está aqui
-        return None
+        
+        if self.missao_ativada:
+            if self.missoes.esta_em_evento_controlado():
+                self.missoes.processar_eventos(evento)
+                return None # Consome o evento para evitar que o jogador se mova ou faça outra coisa
