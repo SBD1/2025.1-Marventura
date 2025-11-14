@@ -1372,8 +1372,9 @@ VALUES
     ('are001', 'mis010', 5, 'rct002', 'Colete Arroz do Planalto', 'Grão a Grão, o Saco Enche'), -- mis008
     ('are002', 'mis010', 5, 'rct002', 'Colete Ovo dos Campos', 'Operação: Caça ao Ovo'), -- mis009
     ('are002', null, 5, 'rct002', 'Entregue os ingredientes para o Omurice de Arroz', 'Missão: Omelete Impossível'), -- mis010
-    ('are001', null, 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
-    ('are003', 'mis011', 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'); -- mis012
+    ('are001', 'mis012', 10, null, 'Enfrente a fera que está atacando camponeses e destruindo plantações perto da vila.', 'A Fera Tá Solta (E Brava)'), -- mis011
+    ('are003', 'mis013', 10, null, 'Embarque para a próxima ilha', 'Remando e Rezando'), -- mis012
+    ('are003', null, 10, null, 'A fome falou mais alto. A fruta falou mais estranho ainda. Agora é tarde pra cuspir.', 'Decisões Ruins em Alto-Mar'); -- mis013
 
 
 
@@ -1593,6 +1594,7 @@ VALUES
     ('mis010', 'pro001'),
     ('mis011', 'pro001'),
     ('mis012', 'pro001'),
+    ('mis013', 'pro001'),
     ('mis001', 'pro002'),
     ('mis002', 'pro002'),
     ('mis003', 'pro002'),
@@ -1605,6 +1607,7 @@ VALUES
     ('mis010', 'pro002'),
     ('mis011', 'pro002'),
     ('mis012', 'pro002'),
+    ('mis013', 'pro002'),
     ('mis001', 'pro003'),
     ('mis002', 'pro003'),
     ('mis003', 'pro003'),
@@ -1616,7 +1619,8 @@ VALUES
     ('mis009', 'pro003'),
     ('mis010', 'pro003'),
     ('mis011', 'pro003'),
-    ('mis012', 'pro003');
+    ('mis012', 'pro003'),
+    ('mis013', 'pro003');
 
 
 
@@ -1731,4 +1735,18 @@ VALUES
     ('hbt001', 'mis012', 8, 'F', 'O aldeão de chapéu de palha deu uma risada curta.'),
     ('hbt001', 'mis012', 8, 'M', 'O aldeão de chapéu de palha deu uma risada curta.'),
     ('hbt002', 'mis012', 9, 'F', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.'),
-    ('hbt002', 'mis012', 9, 'M', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.');
+    ('hbt002', 'mis012', 9, 'M', 'Tenho uma canoa velha. Não vai ganhar nenhuma corrida, mas vai te levar até lá.'),
+    ('hbt001', 'mis013', 1, 'F', 'O som das ondas se chocando contra a lateral da pequena canoa era o único companheiro da Silvie naquela manhã. O céu estava limpo, e o sol refletia sobre a água como se traçasse um caminho dourado rumo ao horizonte.'),
+    ('hbt001', 'mis013', 1, 'M', 'O som das ondas se chocando contra a lateral da pequena canoa era o único companheiro de Shuan naquela manhã. O céu estava limpo, e o sol refletia sobre a água como se traçasse um caminho dourado rumo ao horizonte.'),
+    ('hbt001', 'mis013', 2, 'F', 'Sentada com as pernas cruzadas, Silvie sentia o estômago roncar.'),
+    ('hbt001', 'mis013', 2, 'M', 'Sentado com as pernas cruzadas, Shuan sentia o estômago roncar.'),
+    ('hbt001', 'mis013', 4, 'F', 'Foi então que seus olhos caíram sobre a fruta estranha guardada na mochila. Ela tinha uma casca metálica, esverdeada, com espirais naturais desenhadas em sua superfície. Só de olhar, já parecia... errada.'),
+    ('hbt001', 'mis013', 4, 'M', 'Foi então que seus olhos caíram sobre a fruta estranha guardada na mochila. Ela tinha uma casca metálica, esverdeada, com espirais naturais desenhadas em sua superfície. Só de olhar, já parecia... errada.'),
+    ('hbt001', 'mis013', 6, 'F', 'A hesitação durou pouco. A fome venceu o bom senso.'),
+    ('hbt001', 'mis013', 6, 'M', 'A hesitação durou pouco. A fome venceu o bom senso.'),
+    ('hbt001', 'mis013', 8, 'F', 'O primeiro contato com a fruta foi suficiente para fazer uma careta profunda tomar conta do rosto da Silvie. O gosto era amargo, salgado e ao mesmo tempo pastoso. Uma mistura horrenda.'),
+    ('hbt001', 'mis013', 8, 'M', 'O primeiro contato com a fruta foi suficiente para fazer uma careta profunda tomar conta do rosto de Shuan. O gosto era amargo, salgado e ao mesmo tempo pastoso. Uma mistura horrenda.'),
+    ('hbt001', 'mis013', 10, 'F', 'Mesmo assim, ela engoliu. O gosto persistia na boca como se zombasse da decisão.'),
+    ('hbt001', 'mis013', 10, 'M', 'Mesmo assim, ele engoliu. O gosto persistia na boca como se zombasse da decisão.'),
+    ('hbt001', 'mis013', 11, 'F', 'Minutos depois, uma brisa suave trouxe o cheiro de sal e peixe grelhado. No horizonte, os contornos da próxima ilha começavam a surgir. Construções de pedra, torres e chaminés se erguiam próximas ao porto movimentado. Estava chegando à Cidade.'),
+    ('hbt001', 'mis013', 11, 'M', 'Minutos depois, uma brisa suave trouxe o cheiro de sal e peixe grelhado. No horizonte, os contornos da próxima ilha começavam a surgir. Construções de pedra, torres e chaminés se erguiam próximas ao porto movimentado. Estava chegando à Cidade.');
