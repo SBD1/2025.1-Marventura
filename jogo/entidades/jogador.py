@@ -133,17 +133,17 @@ class Jogador(Personagem):
 
             match item.tipo:
                 case "arma":
-                    if self.kit.arma:
-                        item_substituido = self.kit.arma
-                    self.kit.arma = item
+                    if self.kit_do_explorador.arma:
+                        item_substituido = self.kit_do_explorador.arma
+                    self.kit_do_explorador.arma = item
                 case "fruta":
-                    if self.kit.fruta:
-                        item_substituido = self.kit.fruta
-                    self.kit.fruta = item
+                    if self.kit_do_explorador.fruta:
+                        item_substituido = self.kit_do_explorador.fruta
+                    self.kit_do_explorador.fruta = item
                 case "acessorio":
-                    if self.kit.acessorio:
-                        item_substituido = self.kit.acessorio
-                    self.kit.acessorio = item
+                    if self.kit_do_explorador.acessorio:
+                        item_substituido = self.kit_do_explorador.acessorio
+                    self.kit_do_explorador.acessorio = item
 
             # 3. Adiciona item substituído de volta à mochila
             if item_substituido:
