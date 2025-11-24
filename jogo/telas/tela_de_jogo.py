@@ -321,6 +321,7 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
                     self.areas_interacao_missao.add(area)
                 else:
                     self.areas_interacao.add(area)
+                    self.todos_os_sprites.add(area)
 
         # --- NOVO: Carregar NPCs ---
         dados_habitantes = self.banco_de_dados.buscar_habitante_por_area(id_area_atual, self.gerenciador_entidades.progresso_do_jogo.identificador_progresso)
@@ -1089,9 +1090,6 @@ class TelaJogo(TelaModelo): # Herda de TelaModelo
         if self.cena_estatica_ativa and self.imagem_cena_estatica:
             tela.blit(self.imagem_cena_estatica, (0, 0)) # Desenha a cena cobrindo toda a tela
         else: # Só desenha os elementos do jogo se a cena estática não estiver ativa
-
-            for area in self.areas_interacao:
-                area.desenhar(tela, self.camera.rect.x)
 
             sprites_ordenados = sorted(self.todos_os_sprites, key=lambda sprite: sprite.rect.bottom)
 

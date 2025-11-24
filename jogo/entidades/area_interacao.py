@@ -88,13 +88,13 @@ class AreaInteracao(pygame.sprite.Sprite):
 
 
 
-    def desenhar(self, superficie, camera_x):
+    def desenhar(self, superficie, camera_x, camera_y=0):
         """
         Desenha a imagem da área de interação (se houver),
         ou o retângulo de colisão para debug.
         """
         pos_x = self.rect.x - camera_x
-        pos_y = self.rect.y
+        pos_y = self.rect.y - camera_y
 
         if self.animando:
             deslocamento = self.amplitude_chacoalho if self.contador_ciclo % 2 == 0 else -self.amplitude_chacoalho
