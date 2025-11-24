@@ -308,6 +308,10 @@ CENA_SHUAN_NO_CAMPO = 'cena_shuan_no_campo'
 CENA_JANTAR_COMUNITARIO = 'cena_jantar_comunitario'
 
 ARBUSTO = 'arbusto'
+ARBUSTO_NEVADO = 'arbusto_nevado'
+BARRIL = 'barril'
+CAIXAS = 'caixas'
+TRONCO = 'tronco'
 
 CANOA = 'canoa'
 VELEIRO = 'veleiro'

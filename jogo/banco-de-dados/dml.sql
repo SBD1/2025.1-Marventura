@@ -227,6 +227,8 @@ INSERT INTO fruta
 VALUES
     ('Mimi Mimi no Mi: Fruta do Eco', 'Uma fruta rara, de cor chamativa e com um aroma meio doce, meio… enxerido. Quem a come desenvolve habilidades sonoras peculiares — perfeitas para quem adora ouvir, repetir e, claro, se meter onde não foi chamado.', '★★★', 'Missão');
 
+
+
 INSERT INTO habilidade_arma
     (identificador_arma, identificador_habilidade)
 VALUES
@@ -891,7 +893,9 @@ VALUES
     ('are007', null, 2472, 375, 93, 67, 'embarcar', 'ativo'), -- → navegar
     ('are008', 'are007', 0, 480, 50, 150, 'mudar_area', 'ativo'), -- → porto
     ('are008', 'are009', 1656, 484, 50, 150, 'mudar_area', 'ativo'), -- → praça
+    ('are008', 'are013', 1068, 441, 113, 25, 'mudar_area', 'ativo'), -- → loja de armas
     ('are009', 'are008', 0, 500, 50, 85, 'mudar_area', 'ativo'), -- → centro
+    ('are009', 'are014', 276, 439, 113, 25, 'mudar_area', 'ativo'), -- → loja de acessórios
     ('are015', 'are016', 0, 745, 50, 100, 'mudar_area', 'ativo'), -- → vila
     ('are015', null, 960, 930, 80, 90, 'embarcar', 'ativo'), -- → navegar
     ('are016', 'are015', 2950, 473, 50, 100, 'mudar_area', 'ativo'), -- → costa
@@ -910,45 +914,48 @@ VALUES
 INSERT INTO area_interativa
     (identificador_area_origem, chave_imagem, x, y, chance_sucesso, tipo_evento)
 VALUES
-    ('are001', 'arbusto', 1247, 119, 0.5, 'investigar'),
-    ('are001', 'arbusto', 2955, 111, 0.5, 'investigar'),
-    ('are002', 'arbusto', 559, 359, 0.5, 'investigar'),
-    ('are002', 'arbusto', 741, 361, 0.5, 'investigar'),
-    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar'),
-    ('are003', 'arbusto', 817, 138, 0.5, 'investigar'),
-    ('are003', 'arbusto', 2692, 126, 0.5, 'investigar'),
-    ('are003', 'arbusto', 3160, 132, 0.5, 'investigar');
+    ('are001', 'arbusto', 1247, 119, 0.5, 'investigar'), -- ari026
+    ('are001', 'arbusto', 2955, 111, 0.5, 'investigar'), -- ari027
+    ('are002', 'arbusto', 559, 359, 0.5, 'investigar'), -- ari028
+    ('are002', 'arbusto', 741, 361, 0.5, 'investigar'), -- ari029
+    ('are002', 'arbusto', 1903, 354, 0.5, 'investigar'), -- ari030
+    ('are003', 'arbusto', 817, 138, 0.5, 'investigar'), -- ari031
+    ('are003', 'arbusto', 2692, 126, 0.5, 'investigar'), -- ari032
+    ('are003', 'arbusto', 3160, 132, 0.5, 'investigar'), -- ari033
+    ('are007', 'barril', 1942, 237, 0.5, 'investigar'), -- ari034
+    ('are007', 'caixas', 865, 204, 0.5, 'investigar'), -- ari035
+    ('are008', 'caixas', 192, 537, 0.5, 'investigar'), -- ari036
+    ('are008', 'barril', 676, 399, 0.5, 'investigar'), -- ari037
+    ('are009', 'caixas', 1661, 85, 0.5, 'investigar'), -- ari038
+    ('are009', 'barril', 960, 114, 0.5, 'investigar'), -- ari039
+    ('are015', 'tronco', 165, 858, 0.5, 'investigar'), -- ari040
+    ('are0116', 'tronco', 0, 293, 0.5, 'investigar'), -- ari041
+    ('are0116', 'arbusto_nevado', 480, 336, 0.5, 'investigar'), -- ari042
+    ('are0116', 'arbusto_nevado', 808, 332, 0.5, 'investigar'), -- ari043
+    ('are0116', 'arbusto_nevado', 1316, 335, 0.5, 'investigar'), -- ari044
+    ('are0117', 'tronco', 357, 584, 0.5, 'investigar'); -- ari045
 
 
 -- Áreas para abrir o menu de loja
 INSERT INTO area_interativa
     (identificador_area_origem, x, y, largura, altura, tipo_evento)
 VALUES
-    ('are004', 288, 151, 241, 233, 'abrir_loja'),
-    ('are013', 288, 151, 241, 233, 'abrir_loja'),
-    ('are014', 288, 151, 241, 233, 'abrir_loja'),
-    ('are019', 288, 151, 241, 233, 'cozinhar'),
-    ('are020', 288, 151, 241, 233, 'abrir_loja'),
-    ('are024', 288, 151, 241, 233, 'abrir_loja'),
-    ('are025', 288, 151, 241, 233, 'abrir_loja'),
-    ('are029', 288, 151, 241, 233, 'abrir_loja'),
-    ('are033', 288, 151, 241, 233, 'abrir_loja');
+    ('are004', 288, 151, 241, 233, 'abrir_loja'), -- ari046
+    ('are013', 288, 151, 241, 233, 'abrir_loja'), -- ari047
+    ('are014', 288, 151, 241, 233, 'abrir_loja'), -- ari048
+    ('are019', 288, 151, 241, 233, 'cozinhar'), -- ari049
+    ('are020', 288, 151, 241, 233, 'abrir_loja'), -- ari050
+    ('are024', 288, 151, 241, 233, 'abrir_loja'), -- ari051
+    ('are025', 288, 151, 241, 233, 'abrir_loja'), -- ari052
+    ('are029', 288, 151, 241, 233, 'abrir_loja'), -- ari053
+    ('are033', 288, 151, 241, 233, 'abrir_loja'); -- ari054
 
 
 
 INSERT INTO area_interativa
     (identificador_area_origem, x, y, largura, altura, tipo_evento, chave_imagem)
 VALUES
-    ('are007', 293, 157, 201, 201, 'abrir_loja', 'barraca'); -- ari041
-
-
-
-INSERT INTO estado_area_interativa
-    (identificador_progresso, identificador_area_interativa, ativa)
-VALUES
-    ('pro001', 'ari033', FALSE),
-    ('pro002', 'ari033', FALSE),
-    ('pro003', 'ari033', FALSE);
+    ('are007', 293, 157, 201, 201, 'abrir_loja', 'barraca'); -- ari055
 
 
 
@@ -1001,6 +1008,7 @@ VALUES
     ('are007', 1413, 390, 93, 22),
     ('are007', 2472, 390, 93, 22),
     ('are007', 322, 302, 137, 36),
+    ('are007', 867, 310, 129, 20),
     ('are008', 1539, 418, 102, 17),
     ('are008', 1641, 435, 41, 25),
     ('are017', 635, 781, 56, 100),
@@ -1382,148 +1390,193 @@ VALUES
 INSERT INTO area_interativa
     (identificador_area_origem, identificador_missao, x, y, largura, altura, tipo_evento, chave_imagem)
 VALUES
-    ('are003', 'mis005', 188, 310, 102, 81, 'missao', 'cerca'), -- ari042
-    ('are003', 'mis005', 378, 310, 102, 81, 'missao', 'cerca'), -- ari043
-    ('are003', 'mis005', 473, 310, 102, 81, 'missao', 'cerca'), -- ari044
-    ('are003', 'mis005', 663, 310, 102, 81, 'missao', 'cerca'); -- ari045
+    ('are003', 'mis005', 188, 310, 102, 81, 'missao', 'cerca'), -- ari056
+    ('are003', 'mis005', 378, 310, 102, 81, 'missao', 'cerca'), -- ari057
+    ('are003', 'mis005', 473, 310, 102, 81, 'missao', 'cerca'), -- ari058
+    ('are003', 'mis005', 663, 310, 102, 81, 'missao', 'cerca'); -- ari059
 
 
 
 INSERT INTO estado_area_interativa
-    (identificador_progresso, identificador_area_interativa)
+    (identificador_progresso, identificador_area_interativa, ativa)
 VALUES
-    ('pro001', 'ari001'),
-    ('pro001', 'ari002'),
-    ('pro001', 'ari003'),
-    ('pro001', 'ari004'),
-    ('pro001', 'ari005'),
-    ('pro001', 'ari006'),
-    ('pro001', 'ari007'),
-    ('pro001', 'ari008'),
-    ('pro001', 'ari009'),
-    ('pro001', 'ari010'),
-    ('pro001', 'ari011'),
-    ('pro001', 'ari012'),
-    ('pro001', 'ari013'),
-    ('pro001', 'ari014'),
-    ('pro001', 'ari015'),
-    ('pro001', 'ari016'),
-    ('pro001', 'ari017'),
-    ('pro001', 'ari018'),
-    ('pro001', 'ari019'),
-    ('pro001', 'ari020'),
-    ('pro001', 'ari021'),
-    ('pro001', 'ari022'),
-    ('pro001', 'ari023'),
-    ('pro001', 'ari024'),
-    ('pro001', 'ari025'),
-    ('pro001', 'ari026'),
-    ('pro001', 'ari027'),
-    ('pro001', 'ari028'),
-    ('pro001', 'ari029'),
-    ('pro001', 'ari030'),
-    ('pro001', 'ari031'),
-    ('pro001', 'ari032'),
-    ('pro001', 'ari034'),
-    ('pro001', 'ari035'),
-    ('pro001', 'ari036'),
-    ('pro001', 'ari037'),
-    ('pro001', 'ari038'),
-    ('pro001', 'ari039'),
-    ('pro001', 'ari040'),
-    ('pro001', 'ari041'),
-    ('pro001', 'ari042'),
-    ('pro001', 'ari043'),
-    ('pro001', 'ari044'),
-    ('pro001', 'ari045'),
-    ('pro002', 'ari001'),
-    ('pro002', 'ari002'),
-    ('pro002', 'ari003'),
-    ('pro002', 'ari004'),
-    ('pro002', 'ari005'),
-    ('pro002', 'ari006'),
-    ('pro002', 'ari007'),
-    ('pro002', 'ari008'),
-    ('pro002', 'ari009'),
-    ('pro002', 'ari010'),
-    ('pro002', 'ari011'),
-    ('pro002', 'ari012'),
-    ('pro002', 'ari013'),
-    ('pro002', 'ari014'),
-    ('pro002', 'ari015'),
-    ('pro002', 'ari016'),
-    ('pro002', 'ari017'),
-    ('pro002', 'ari018'),
-    ('pro002', 'ari019'),
-    ('pro002', 'ari020'),
-    ('pro002', 'ari021'),
-    ('pro002', 'ari022'),
-    ('pro002', 'ari023'),
-    ('pro002', 'ari024'),
-    ('pro002', 'ari025'),
-    ('pro002', 'ari026'),
-    ('pro002', 'ari027'),
-    ('pro002', 'ari028'),
-    ('pro002', 'ari029'),
-    ('pro002', 'ari030'),
-    ('pro002', 'ari031'),
-    ('pro002', 'ari032'),
-    ('pro002', 'ari034'),
-    ('pro002', 'ari035'),
-    ('pro002', 'ari036'),
-    ('pro002', 'ari037'),
-    ('pro002', 'ari038'),
-    ('pro002', 'ari039'),
-    ('pro002', 'ari040'),
-    ('pro002', 'ari041'),
-    ('pro002', 'ari042'),
-    ('pro002', 'ari043'),
-    ('pro002', 'ari044'),
-    ('pro002', 'ari045'),
-    ('pro003', 'ari001'),
-    ('pro003', 'ari002'),
-    ('pro003', 'ari003'),
-    ('pro003', 'ari004'),
-    ('pro003', 'ari005'),
-    ('pro003', 'ari006'),
-    ('pro003', 'ari007'),
-    ('pro003', 'ari008'),
-    ('pro003', 'ari009'),
-    ('pro003', 'ari010'),
-    ('pro003', 'ari011'),
-    ('pro003', 'ari012'),
-    ('pro003', 'ari013'),
-    ('pro003', 'ari014'),
-    ('pro003', 'ari015'),
-    ('pro003', 'ari016'),
-    ('pro003', 'ari017'),
-    ('pro003', 'ari018'),
-    ('pro003', 'ari019'),
-    ('pro003', 'ari020'),
-    ('pro003', 'ari021'),
-    ('pro003', 'ari022'),
-    ('pro003', 'ari023'),
-    ('pro003', 'ari024'),
-    ('pro003', 'ari025'),
-    ('pro003', 'ari026'),
-    ('pro003', 'ari027'),
-    ('pro003', 'ari028'),
-    ('pro003', 'ari029'),
-    ('pro003', 'ari030'),
-    ('pro003', 'ari031'),
-    ('pro003', 'ari032'),
-    ('pro003', 'ari034'),
-    ('pro003', 'ari035'),
-    ('pro003', 'ari036'),
-    ('pro003', 'ari037'),
-    ('pro003', 'ari038'),
-    ('pro003', 'ari039'),
-    ('pro003', 'ari040'),
-    ('pro003', 'ari041'),
-    ('pro003', 'ari042'),
-    ('pro003', 'ari043'),
-    ('pro003', 'ari044'),
-    ('pro003', 'ari045');
+    ('pro001', 'ari001', TRUE),
+    ('pro001', 'ari002', TRUE),
+    ('pro001', 'ari003', TRUE),
+    ('pro001', 'ari004', TRUE),
+    ('pro001', 'ari005', TRUE),
+    ('pro001', 'ari006', TRUE),
+    ('pro001', 'ari007', TRUE),
+    ('pro001', 'ari008', TRUE),
+    ('pro001', 'ari009', TRUE),
+    ('pro001', 'ari010', TRUE),
+    ('pro001', 'ari011', TRUE),
+    ('pro001', 'ari012', FALSE),
+    ('pro001', 'ari013', TRUE),
+    ('pro001', 'ari014', FALSE),
+    ('pro001', 'ari015', TRUE),
+    ('pro001', 'ari016', TRUE),
+    ('pro001', 'ari017', TRUE),
+    ('pro001', 'ari018', TRUE),
+    ('pro001', 'ari019', TRUE),
+    ('pro001', 'ari020', TRUE),
+    ('pro001', 'ari021', TRUE),
+    ('pro001', 'ari022', TRUE),
+    ('pro001', 'ari023', TRUE),
+    ('pro001', 'ari024', TRUE),
+    ('pro001', 'ari025', TRUE),
+    ('pro001', 'ari026', TRUE),
+    ('pro001', 'ari027', TRUE),
+    ('pro001', 'ari028', TRUE),
+    ('pro001', 'ari029', TRUE),
+    ('pro001', 'ari030', TRUE),
+    ('pro001', 'ari031', TRUE),
+    ('pro001', 'ari032', TRUE),
+    ('pro001', 'ari033', TRUE),
+    ('pro001', 'ari034', TRUE),
+    ('pro001', 'ari035', TRUE),
+    ('pro001', 'ari036', TRUE),
+    ('pro001', 'ari037', TRUE),
+    ('pro001', 'ari038', TRUE),
+    ('pro001', 'ari039', TRUE),
+    ('pro001', 'ari040', TRUE),
+    ('pro001', 'ari041', TRUE),
+    ('pro001', 'ari042', TRUE),
+    ('pro001', 'ari043', TRUE),
+    ('pro001', 'ari044', TRUE),
+    ('pro001', 'ari045', TRUE),
+    ('pro001', 'ari046', TRUE),
+    ('pro001', 'ari047', TRUE),
+    ('pro001', 'ari048', TRUE),
+    ('pro001', 'ari049', TRUE),
+    ('pro001', 'ari050', TRUE),
+    ('pro001', 'ari051', TRUE),
+    ('pro001', 'ari052', TRUE),
+    ('pro001', 'ari053', TRUE),
+    ('pro001', 'ari054', TRUE),
+    ('pro001', 'ari055', TRUE),
+    ('pro001', 'ari056', TRUE),
+    ('pro001', 'ari057', TRUE),
+    ('pro001', 'ari058', TRUE),
+    ('pro001', 'ari059', TRUE),
+    ('pro002', 'ari001', TRUE),
+    ('pro002', 'ari002', TRUE),
+    ('pro002', 'ari003', TRUE),
+    ('pro002', 'ari004', TRUE),
+    ('pro002', 'ari005', TRUE),
+    ('pro002', 'ari006', TRUE),
+    ('pro002', 'ari007', TRUE),
+    ('pro002', 'ari008', TRUE),
+    ('pro002', 'ari009', TRUE),
+    ('pro002', 'ari010', TRUE),
+    ('pro002', 'ari011', TRUE),
+    ('pro002', 'ari012', FALSE),
+    ('pro002', 'ari013', TRUE),
+    ('pro002', 'ari014', FALSE),
+    ('pro002', 'ari015', TRUE),
+    ('pro002', 'ari016', TRUE),
+    ('pro002', 'ari017', TRUE),
+    ('pro002', 'ari018', TRUE),
+    ('pro002', 'ari019', TRUE),
+    ('pro002', 'ari020', TRUE),
+    ('pro002', 'ari021', TRUE),
+    ('pro002', 'ari022', TRUE),
+    ('pro002', 'ari023', TRUE),
+    ('pro002', 'ari024', TRUE),
+    ('pro002', 'ari025', TRUE),
+    ('pro002', 'ari026', TRUE),
+    ('pro002', 'ari027', TRUE),
+    ('pro002', 'ari028', TRUE),
+    ('pro002', 'ari029', TRUE),
+    ('pro002', 'ari030', TRUE),
+    ('pro002', 'ari031', TRUE),
+    ('pro002', 'ari032', TRUE),
+    ('pro002', 'ari033', TRUE),
+    ('pro002', 'ari034', TRUE),
+    ('pro002', 'ari035', TRUE),
+    ('pro002', 'ari036', TRUE),
+    ('pro002', 'ari037', TRUE),
+    ('pro002', 'ari038', TRUE),
+    ('pro002', 'ari039', TRUE),
+    ('pro002', 'ari040', TRUE),
+    ('pro002', 'ari041', TRUE),
+    ('pro002', 'ari042', TRUE),
+    ('pro002', 'ari043', TRUE),
+    ('pro002', 'ari044', TRUE),
+    ('pro002', 'ari045', TRUE),
+    ('pro002', 'ari046', TRUE),
+    ('pro002', 'ari047', TRUE),
+    ('pro002', 'ari048', TRUE),
+    ('pro002', 'ari049', TRUE),
+    ('pro002', 'ari050', TRUE),
+    ('pro002', 'ari051', TRUE),
+    ('pro002', 'ari052', TRUE),
+    ('pro002', 'ari053', TRUE),
+    ('pro002', 'ari054', TRUE),
+    ('pro002', 'ari055', TRUE),
+    ('pro002', 'ari056', TRUE),
+    ('pro002', 'ari057', TRUE),
+    ('pro002', 'ari058', TRUE),
+    ('pro002', 'ari059', TRUE),
+    ('pro003', 'ari001', TRUE),
+    ('pro003', 'ari002', TRUE),
+    ('pro003', 'ari003', TRUE),
+    ('pro003', 'ari004', TRUE),
+    ('pro003', 'ari005', TRUE),
+    ('pro003', 'ari006', TRUE),
+    ('pro003', 'ari007', TRUE),
+    ('pro003', 'ari008', TRUE),
+    ('pro003', 'ari009', TRUE),
+    ('pro003', 'ari010', TRUE),
+    ('pro003', 'ari011', TRUE),
+    ('pro003', 'ari012', FALSE),
+    ('pro003', 'ari013', TRUE),
+    ('pro003', 'ari014', FALSE),
+    ('pro003', 'ari015', TRUE),
+    ('pro003', 'ari016', TRUE),
+    ('pro003', 'ari017', TRUE),
+    ('pro003', 'ari018', TRUE),
+    ('pro003', 'ari019', TRUE),
+    ('pro003', 'ari020', TRUE),
+    ('pro003', 'ari021', TRUE),
+    ('pro003', 'ari022', TRUE),
+    ('pro003', 'ari023', TRUE),
+    ('pro003', 'ari024', TRUE),
+    ('pro003', 'ari025', TRUE),
+    ('pro003', 'ari026', TRUE),
+    ('pro003', 'ari027', TRUE),
+    ('pro003', 'ari028', TRUE),
+    ('pro003', 'ari029', TRUE),
+    ('pro003', 'ari030', TRUE),
+    ('pro003', 'ari031', TRUE),
+    ('pro003', 'ari032', TRUE),
+    ('pro003', 'ari033', TRUE),
+    ('pro003', 'ari034', TRUE),
+    ('pro003', 'ari035', TRUE),
+    ('pro003', 'ari036', TRUE),
+    ('pro003', 'ari037', TRUE),
+    ('pro003', 'ari038', TRUE),
+    ('pro003', 'ari039', TRUE),
+    ('pro003', 'ari040', TRUE),
+    ('pro003', 'ari041', TRUE),
+    ('pro003', 'ari042', TRUE),
+    ('pro003', 'ari043', TRUE),
+    ('pro003', 'ari044', TRUE),
+    ('pro003', 'ari045', TRUE),
+    ('pro003', 'ari046', TRUE),
+    ('pro003', 'ari047', TRUE),
+    ('pro003', 'ari048', TRUE),
+    ('pro003', 'ari049', TRUE),
+    ('pro003', 'ari050', TRUE),
+    ('pro003', 'ari051', TRUE),
+    ('pro003', 'ari052', TRUE),
+    ('pro003', 'ari053', TRUE),
+    ('pro003', 'ari054', TRUE),
+    ('pro003', 'ari055', TRUE),
+    ('pro003', 'ari056', TRUE),
+    ('pro003', 'ari057', TRUE),
+    ('pro003', 'ari058', TRUE),
+    ('pro003', 'ari059', TRUE);
 
 
 

@@ -339,6 +339,10 @@ class GerenciadorDeRecursos:
         self._carregar_imagem(f'{SILVIE}_inventario', 'recursos/imagens/jogador/Silvie_pose-descanso.png', escalar_para_altura=160)
         
         self._carregar_imagem(ARBUSTO, 'recursos/imagens/itens/arbusto.png')
+        self._carregar_imagem(BARRIL, 'recursos/imagens/itens/barril.png')
+        self._carregar_imagem(CAIXAS, 'recursos/imagens/itens/caixas.png')
+        self._carregar_imagem(ARBUSTO_NEVADO, 'recursos/imagens/itens/arbusto_nevado.png')
+        self._carregar_imagem(TRONCO, 'recursos/imagens/itens/tronco.png')
         self._carregar_imagem(CHAVE_CERCA, 'recursos/imagens/cenario/cerca.png')
         self._carregar_imagem(CHAVE_CERCA_DANIFICADA, 'recursos/imagens/cenario/cerca_danificada.png')
 
